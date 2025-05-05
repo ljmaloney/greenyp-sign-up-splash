@@ -8,10 +8,10 @@ const HeroSection = () => {
       <div className="container mx-auto px-4 md:px-8 flex flex-col md:flex-row items-center justify-between">
         <div className="md:w-1/2 mb-10 md:mb-0 animate-fade-in">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-gray-900 leading-tight">
-            The Sustainable Landscaping & Garden Business Directory
+            The Green Industry Business Directory
           </h1>
           <p className="text-xl text-gray-700 mb-8 max-w-lg">
-            Connect with eco-conscious customers looking for lawn care, landscaping, nurseries, and green businesses through GreenYP's comprehensive directory.
+            Connect with customers looking for landscaping, lawn care, hardscaping, nurseries, and other green industry services through GreenYP's comprehensive directory.
           </p>
           
           <SubscriptionForm />
