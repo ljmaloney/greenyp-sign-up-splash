@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Check, MapPin, Leaf, TreeDeciduous, Plant } from 'lucide-react';
+import { Check, MapPin, Leaf, TreeDeciduous } from 'lucide-react';
 
 const features = [
   {
@@ -14,7 +14,7 @@ const features = [
     title: "Specialized Categories",
     description: "Reach customers looking specifically for lawn care, nurseries, landscaping, garden supplies, or sustainable plant options.",
     icon: (
-      <Plant className="w-10 h-10 text-greenyp-500" />
+      <TreeDeciduous className="w-10 h-10 text-greenyp-500" />
     ),
   },
   {
