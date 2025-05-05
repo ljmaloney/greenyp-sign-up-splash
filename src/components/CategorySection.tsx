@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { TreeDeciduous, Shrub, LeafyGreen, Tractor, Shovel, WateringCan } from 'lucide-react';
+import { TreeDeciduous, Shrub, LeafyGreen, Tractor, Shovel, Droplets } from 'lucide-react';
 
 // Define the categories with icons, titles, and descriptions
 const categories = [
@@ -32,7 +32,7 @@ const categories = [
   {
     title: "Pond & Water Features",
     description: "Installation and maintenance of ponds, fountains, and irrigation",
-    icon: <WateringCan className="w-12 h-12 text-greenyp-500 mx-auto mb-4" />,
+    icon: <Droplets className="w-12 h-12 text-greenyp-500 mx-auto mb-4" />,
   },
 ];
 
