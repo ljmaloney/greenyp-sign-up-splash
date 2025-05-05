@@ -20,7 +20,7 @@ const SubscriptionForm = () => {
     
     // Simulate API call
     setTimeout(() => {
-      toast.success("Thank you for signing up! Check your email to complete registration.");
+      toast.success("Thank you for your interest! Check your email for listing information.");
       setEmail('');
       setLoading(false);
     }, 1500);
@@ -32,7 +32,7 @@ const SubscriptionForm = () => {
         type="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        placeholder="Enter your email"
+        placeholder="Enter your business email"
         className="flex-grow bg-white border border-gray-300 focus:border-greenyp-500 focus:ring focus:ring-greenyp-200 transition-all"
         required
       />
@@ -41,7 +41,7 @@ const SubscriptionForm = () => {
         className="bg-greenyp-600 hover:bg-greenyp-700 text-white font-medium px-6"
         disabled={loading}
       >
-        {loading ? "Processing..." : "Get Started"}
+        {loading ? "Processing..." : "List Your Business"}
       </Button>
     </form>
   );

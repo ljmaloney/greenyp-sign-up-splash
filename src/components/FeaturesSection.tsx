@@ -1,48 +1,36 @@
 
 import React from 'react';
-import { Check } from 'lucide-react';
+import { Check, MapPin, Leaf, TreeDeciduous, Plant } from 'lucide-react';
 
 const features = [
   {
-    title: "Streamlined Subscription Management",
-    description: "Easily manage all your GreenYP listings, featured placements, and analytics from one simple dashboard.",
-    icon: (
-      <svg className="w-10 h-10 text-greenyp-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
-        <path d="M12 8V16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-        <path d="M8 12H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      </svg>
-    ),
-  },
-  {
     title: "Enhanced Business Visibility",
-    description: "Reach eco-conscious customers actively searching for sustainable businesses like yours.",
+    description: "Stand out in the competitive green industry with premium listings that highlight your sustainable landscaping services.",
+    icon: (
+      <MapPin className="w-10 h-10 text-greenyp-500" />
+    ),
+  },
+  {
+    title: "Specialized Categories",
+    description: "Reach customers looking specifically for lawn care, nurseries, landscaping, garden supplies, or sustainable plant options.",
+    icon: (
+      <Plant className="w-10 h-10 text-greenyp-500" />
+    ),
+  },
+  {
+    title: "Customer Reviews & Ratings",
+    description: "Build your reputation with verified customer reviews and showcase your quality service to potential clients.",
     icon: (
       <svg className="w-10 h-10 text-greenyp-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
-        <path d="M12 8V16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-        <path d="M9 10L12 7L15 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
   },
   {
-    title: "Detailed Analytics & Reporting",
-    description: "Gain insights into how customers interact with your listing and measure your ROI with comprehensive reports.",
+    title: "Eco-Certification Badges",
+    description: "Showcase your green credentials with special badges for organic, sustainable, and eco-friendly business practices.",
     icon: (
-      <svg className="w-10 h-10 text-greenyp-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M21 21H4C3.44772 21 3 20.5523 3 20V3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-        <path d="M7 14L11 10L15 14L21 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    ),
-  },
-  {
-    title: "Automated Renewal Notifications",
-    description: "Never miss a renewal with timely notifications and easy subscription management tools.",
-    icon: (
-      <svg className="w-10 h-10 text-greenyp-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 7V12L15 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
-      </svg>
+      <Leaf className="w-10 h-10 text-greenyp-500" />
     ),
   },
 ];
@@ -60,14 +48,73 @@ const FeatureList = () => {
           <p className="text-gray-600">{feature.description}</p>
           
           <ul className="mt-4 space-y-2">
-            {[1, 2].map((item) => (
-              <li key={item} className="flex items-center">
-                <Check className="h-5 w-5 text-greenyp-500 mr-2" />
-                <span className="text-sm text-gray-600">
-                  Feature benefit {item}
-                </span>
-              </li>
-            ))}
+            {index === 0 && (
+              <>
+                <li className="flex items-center">
+                  <Check className="h-5 w-5 text-greenyp-500 mr-2" />
+                  <span className="text-sm text-gray-600">
+                    Featured in search results
+                  </span>
+                </li>
+                <li className="flex items-center">
+                  <Check className="h-5 w-5 text-greenyp-500 mr-2" />
+                  <span className="text-sm text-gray-600">
+                    Enhanced business profile
+                  </span>
+                </li>
+              </>
+            )}
+            
+            {index === 1 && (
+              <>
+                <li className="flex items-center">
+                  <Check className="h-5 w-5 text-greenyp-500 mr-2" />
+                  <span className="text-sm text-gray-600">
+                    Custom category tagging
+                  </span>
+                </li>
+                <li className="flex items-center">
+                  <Check className="h-5 w-5 text-greenyp-500 mr-2" />
+                  <span className="text-sm text-gray-600">
+                    Multiple service listings
+                  </span>
+                </li>
+              </>
+            )}
+            
+            {index === 2 && (
+              <>
+                <li className="flex items-center">
+                  <Check className="h-5 w-5 text-greenyp-500 mr-2" />
+                  <span className="text-sm text-gray-600">
+                    Review management tools
+                  </span>
+                </li>
+                <li className="flex items-center">
+                  <Check className="h-5 w-5 text-greenyp-500 mr-2" />
+                  <span className="text-sm text-gray-600">
+                    Response capabilities
+                  </span>
+                </li>
+              </>
+            )}
+            
+            {index === 3 && (
+              <>
+                <li className="flex items-center">
+                  <Check className="h-5 w-5 text-greenyp-500 mr-2" />
+                  <span className="text-sm text-gray-600">
+                    Verified eco-credentials
+                  </span>
+                </li>
+                <li className="flex items-center">
+                  <Check className="h-5 w-5 text-greenyp-500 mr-2" />
+                  <span className="text-sm text-gray-600">
+                    Sustainability highlights
+                  </span>
+                </li>
+              </>
+            )}
           </ul>
         </div>
       ))}
@@ -81,10 +128,10 @@ const FeaturesSection = () => {
       <div className="container mx-auto px-4 md:px-8">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900">
-            Everything You Need to Grow Your Green Business
+            Grow Your Green Business with GreenYP
           </h2>
           <p className="text-xl text-gray-700">
-            Our subscription management portal gives you all the tools to maximize your presence in the sustainable business directory.
+            The premier directory connecting eco-conscious customers with lawn care, landscaping, and plant businesses.
           </p>
         </div>
         

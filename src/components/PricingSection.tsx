@@ -5,46 +5,49 @@ import { Check } from 'lucide-react';
 
 const pricingPlans = [
   {
-    name: "Basic",
-    description: "Perfect for small eco-friendly businesses just getting started",
-    price: "$9",
-    period: "per month",
+    name: "Basic Listing",
+    description: "Perfect for small local landscaping or gardening businesses",
+    price: "$0",
+    period: "forever",
     features: [
-      "Standard business listing",
-      "Basic analytics dashboard",
-      "Business profile page",
-      "Email support"
+      "Basic business listing",
+      "Contact information",
+      "Business hours",
+      "Single category listing",
+      "Map location"
     ],
-    cta: "Get Started",
+    cta: "Get Started Free",
     popular: false,
   },
   {
-    name: "Growth",
-    description: "Ideal for established sustainable businesses looking to expand",
+    name: "Featured Business",
+    description: "Ideal for established landscaping and garden businesses",
     price: "$29",
     period: "per month",
     features: [
-      "Enhanced business visibility",
-      "Featured in category searches",
-      "Advanced analytics & reporting",
-      "Customer reviews management",
-      "Priority email & chat support"
+      "Priority placement in searches",
+      "Enhanced business profile",
+      "Photo gallery (up to 15 images)",
+      "Customer reviews & ratings",
+      "Multiple category listings",
+      "Business verification badge"
     ],
     cta: "Start Free Trial",
     popular: true,
   },
   {
-    name: "Premium",
-    description: "For market-leading green brands with multiple locations",
+    name: "Premium Partner",
+    description: "For multi-location nurseries and landscaping companies",
     price: "$79",
     period: "per month",
     features: [
-      "Top placement in search results",
+      "Top search placement",
       "Multiple location management",
-      "Custom business showcase page",
-      "Competitor analysis tools",
-      "Dedicated account manager",
-      "24/7 priority support"
+      "Seasonal promotional features",
+      "Eco-certification badges",
+      "Extended photo gallery (50+ images)",
+      "Video showcase option",
+      "Featured in 'Recommended' section"
     ],
     cta: "Contact Sales",
     popular: false,
@@ -59,10 +62,10 @@ const PricingSection = () => {
       <div className="container mx-auto px-4 md:px-8">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900">
-            Simple, Transparent Pricing
+            Directory Listing Options
           </h2>
           <p className="text-xl text-gray-700 mb-8">
-            Choose the plan that's right for your sustainable business
+            Choose the perfect visibility package for your lawn care, landscaping, or garden business
           </p>
           
           <div className="inline-flex p-1 rounded-lg bg-gray-100 mb-8">
@@ -111,15 +114,17 @@ const PricingSection = () => {
               <div className="mb-6">
                 <div className="flex items-end">
                   <span className="text-4xl font-bold text-gray-900">
-                    {billingPeriod === 'yearly' ? 
+                    {plan.price === "$0" ? "Free" : 
+                      billingPeriod === 'yearly' ? 
                       `$${parseInt(plan.price.replace('$', '')) * 0.8 * 12}` : 
                       plan.price}
                   </span>
                   <span className="text-gray-500 ml-1">
-                    {billingPeriod === 'yearly' ? '/year' : plan.period}
+                    {plan.price === "$0" ? "" :
+                      billingPeriod === 'yearly' ? '/year' : plan.period}
                   </span>
                 </div>
-                {billingPeriod === 'yearly' && (
+                {plan.price !== "$0" && billingPeriod === 'yearly' && (
                   <p className="text-greenyp-600 text-sm mt-1">Save 20% with annual billing</p>
                 )}
               </div>
