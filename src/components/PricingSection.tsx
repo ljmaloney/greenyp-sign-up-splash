@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Check } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const pricingPlans = [
   {
@@ -18,6 +19,7 @@ const pricingPlans = [
     ],
     cta: "Get Started Free",
     popular: false,
+    planId: "basic"
   },
   {
     name: "Featured Business",
@@ -34,6 +36,7 @@ const pricingPlans = [
     ],
     cta: "Start Free Trial",
     popular: true,
+    planId: "featured"
   },
   {
     name: "Premium Partner",
@@ -51,11 +54,24 @@ const pricingPlans = [
     ],
     cta: "Contact Sales",
     popular: false,
+    planId: "premium"
   }
 ];
 
 const PricingSection = () => {
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
+  const navigate = useNavigate();
+
+  const handleSubscriptionClick = (planId: string) => {
+    if (planId === "premium") {
+      // For premium plan, navigate to a contact sales page
+      window.location.href = "mailto:sales@greenyp.com?subject=Premium Plan Inquiry";
+      return;
+    }
+    
+    // For other plans, navigate to the subscription page with the selected plan
+    navigate(`/subscribe?plan=${planId}&billing=${billingPeriod}`);
+  };
 
   return (
     <section id="pricing" className="py-20">
@@ -96,8 +112,8 @@ const PricingSection = () => {
           {pricingPlans.map((plan, index) => (
             <div 
               key={index}
-              className={`pricing-card relative ${
-                plan.popular ? 'border-greenyp-500 md:scale-105 z-10' : ''
+              className={`pricing-card relative rounded-lg border border-gray-200 p-6 ${
+                plan.popular ? 'border-greenyp-500 md:scale-105 z-10 shadow-lg' : ''
               }`}
             >
               {plan.popular && (
@@ -144,6 +160,7 @@ const PricingSection = () => {
                     ? 'bg-greenyp-600 hover:bg-greenyp-700 text-white'
                     : 'bg-white border-2 border-greenyp-600 text-greenyp-700 hover:bg-greenyp-50'
                 }`}
+                onClick={() => handleSubscriptionClick(plan.planId)}
               >
                 {plan.cta}
               </Button>

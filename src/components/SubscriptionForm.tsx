@@ -1,12 +1,27 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/sonner";
+import { useLocation } from 'react-router-dom';
 
 const SubscriptionForm = () => {
   const [email, setEmail] = useState('');
+  const [businessName, setBusinessName] = useState('');
   const [loading, setLoading] = useState(false);
+  const location = useLocation();
+
+  // Extract plan and billing period from URL if available
+  const queryParams = new URLSearchParams(location.search);
+  const selectedPlan = queryParams.get('plan') || '';
+  const billingPeriod = queryParams.get('billing') || 'monthly';
+
+  useEffect(() => {
+    // If plan was selected, show a message
+    if (selectedPlan) {
+      toast.info(`${selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1)} plan selected with ${billingPeriod} billing`);
+    }
+  }, [selectedPlan, billingPeriod]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,29 +35,53 @@ const SubscriptionForm = () => {
     
     // Simulate API call
     setTimeout(() => {
-      toast.success("Thank you for your interest! Check your email for listing information.");
+      // Include plan information in success message if available
+      let successMessage = "Thank you for your interest! Check your email for listing information.";
+      if (selectedPlan) {
+        successMessage = `Thank you for choosing the ${selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1)} plan! Check your email to complete registration.`;
+      }
+      
+      toast.success(successMessage);
       setEmail('');
+      setBusinessName('');
       setLoading(false);
     }, 1500);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md w-full">
-      <Input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Enter your business email"
-        className="flex-grow bg-white border border-gray-300 focus:border-greenyp-500 focus:ring focus:ring-greenyp-200 transition-all"
-        required
-      />
-      <Button 
-        type="submit" 
-        className="bg-greenyp-600 hover:bg-greenyp-700 text-white font-medium px-6"
-        disabled={loading}
-      >
-        {loading ? "Processing..." : "List Your Business"}
-      </Button>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3 max-w-md mx-auto w-full">
+      {selectedPlan && (
+        <Input
+          type="text"
+          value={businessName}
+          onChange={(e) => setBusinessName(e.target.value)}
+          placeholder="Your Business Name"
+          className="flex-grow bg-white border border-gray-300 focus:border-greenyp-500 focus:ring focus:ring-greenyp-200 transition-all"
+          required
+        />
+      )}
+      
+      <div className="flex flex-col sm:flex-row gap-3">
+        <Input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Enter your business email"
+          className="flex-grow bg-white border border-gray-300 focus:border-greenyp-500 focus:ring focus:ring-greenyp-200 transition-all"
+          required
+        />
+        <Button 
+          type="submit" 
+          className="bg-greenyp-600 hover:bg-greenyp-700 text-white font-medium px-6 whitespace-nowrap"
+          disabled={loading}
+        >
+          {loading ? "Processing..." : selectedPlan ? "Start Your Listing" : "List Your Business"}
+        </Button>
+      </div>
+      
+      <p className="text-xs text-gray-500 mt-2 text-center">
+        By submitting, you agree to our <a href="/terms" className="underline hover:text-greenyp-600">Terms of Service</a> and <a href="/privacy" className="underline hover:text-greenyp-600">Privacy Policy</a>
+      </p>
     </form>
   );
 };

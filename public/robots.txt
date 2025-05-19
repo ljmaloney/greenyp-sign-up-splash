@@ -1,14 +1,7 @@
-User-agent: Googlebot
-Allow: /
 
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
+# Allow all crawlers
 User-agent: *
 Allow: /
+
+# Sitemap location (add when you have one)
+# Sitemap: https://www.greenyp.com/sitemap.xml
