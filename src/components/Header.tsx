@@ -21,7 +21,7 @@ const Header = () => {
         {!isMobile && (
           <nav className="hidden md:flex items-center space-x-6 mr-4">
             <a href="#features" className="text-gray-700 hover:text-greenyp-600 transition-colors">Features</a>
-            <Link to="/subscribe" className="text-gray-700 hover:text-greenyp-600 transition-colors">Pricing</a>
+            <Link to="/subscribe" className="text-gray-700 hover:text-greenyp-600 transition-colors">Pricing</Link>
             <a href="#contact" className="text-gray-700 hover:text-greenyp-600 transition-colors">Contact</a>
           </nav>
         )}
