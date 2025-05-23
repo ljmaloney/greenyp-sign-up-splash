@@ -1,3 +1,4 @@
+
 import { Category, CategoryWithIcon } from '../types/category';
 import * as LucideIcons from 'lucide-react';
 
@@ -29,7 +30,7 @@ export const fetchCategories = async (): Promise<CategoryWithIcon[]> => {
 export const mapIconsToCategories = (categories: Category[]): CategoryWithIcon[] => {
   return categories.map(category => {
     // Get the icon component from lucide-react based on the icon name
-    const IconComponent = LucideIcons[category.icon as keyof typeof LucideIcons] || LucideIcons.HelpCircle;
+    const IconComponent = LucideIcons[category.icon as keyof typeof LucideIcons] as LucideIcons.LucideIcon || LucideIcons.HelpCircle;
     
     return {
       ...category,

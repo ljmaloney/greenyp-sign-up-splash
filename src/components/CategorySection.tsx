@@ -1,31 +1,16 @@
-import React, { useState } from 'react';
+
+import React from 'react';
 import { ChevronRight } from 'lucide-react';
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useNavigate } from 'react-router-dom';
 import { useCategories } from '@/hooks/useCategories';
 import { CategoryWithIcon } from '@/types/category';
 
 const CategorySection = () => {
   const { data: categories, isLoading, error } = useCategories();
-  const [selectedCategory, setSelectedCategory] = useState<CategoryWithIcon | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const navigate = useNavigate();
   
-  const openCategoryDetails = (category: CategoryWithIcon) => {
-    setSelectedCategory(category);
-    setIsDialogOpen(true);
-    
-    // Update the URL without page refresh for SEO benefits
-    window.history.pushState(
-      {}, 
-      category.title, 
-      `#category/${category.slug}`
-    );
-  };
-  
-  const closeDialog = () => {
-    setIsDialogOpen(false);
-    // Remove the hash from URL when closing
-    window.history.pushState({}, '', window.location.pathname);
+  const handleCategoryClick = (category: CategoryWithIcon) => {
+    navigate(`/categories/${category.slug}`);
   };
 
   if (isLoading) {
@@ -69,12 +54,12 @@ const CategorySection = () => {
             <p className="text-xl text-red-600">
               Error loading categories. Please try again later.
             </p>
-            <Button 
+            <button 
               onClick={() => window.location.reload()}
-              className="mt-4 bg-greenyp-600 hover:bg-greenyp-700 text-white"
+              className="mt-4 bg-greenyp-600 hover:bg-greenyp-700 text-white px-4 py-2 rounded"
             >
               Retry
-            </Button>
+            </button>
           </div>
         </div>
       </section>
@@ -103,13 +88,13 @@ const CategorySection = () => {
           {categories?.map((category, index) => (
             <div 
               key={index}
-              className="bg-gray-50 rounded-xl p-8 text-center transition-all hover:shadow-md hover:bg-gray-100 border border-greenyp-100"
+              className="bg-gray-50 rounded-xl p-8 text-center transition-all hover:shadow-md hover:bg-gray-100 border border-greenyp-100 cursor-pointer"
+              onClick={() => handleCategoryClick(category)}
             >
               {renderIcon(category)}
               <h3 className="text-xl font-semibold mb-2 text-gray-800">{category.title}</h3>
               <p className="text-gray-600">{category.description}</p>
               <button 
-                onClick={() => openCategoryDetails(category)}
                 className="mt-6 inline-flex items-center text-greenyp-600 hover:text-greenyp-800 font-medium"
                 aria-label={`Find ${category.title} Providers`}
               >
@@ -120,57 +105,6 @@ const CategorySection = () => {
           ))}
         </div>
       </div>
-      
-      {/* Category Details Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="text-2xl flex items-center gap-2">
-              {selectedCategory && renderIcon(selectedCategory)}
-              {selectedCategory?.title}
-            </DialogTitle>
-            <DialogDescription className="text-base">{selectedCategory?.description}</DialogDescription>
-          </DialogHeader>
-          
-          <div className="mt-4">
-            <p className="text-gray-700 mb-6">{selectedCategory?.details}</p>
-            
-            <h4 className="font-semibold text-lg mb-3">Top Providers</h4>
-            <div className="space-y-3 mb-6">
-              <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                <div className="font-medium">Green Thumb Experts</div>
-                <div className="text-sm text-gray-600">⭐⭐⭐⭐⭐ (48 reviews)</div>
-              </div>
-              <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                <div className="font-medium">Nature's Best</div>
-                <div className="text-sm text-gray-600">⭐⭐⭐⭐ (36 reviews)</div>
-              </div>
-              <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                <div className="font-medium">Leaf & Lawn Professional</div>
-                <div className="text-sm text-gray-600">⭐⭐⭐⭐⭐ (29 reviews)</div>
-              </div>
-            </div>
-            
-            <div className="flex justify-between items-center">
-              <Button
-                onClick={closeDialog}
-                variant="outline"
-                className="border-gray-300"
-              >
-                Close
-              </Button>
-              <Button 
-                className="bg-greenyp-600 hover:bg-greenyp-700 text-white"
-                onClick={() => {
-                  window.location.href = `/categories/${selectedCategory?.slug}`;
-                }}
-              >
-                View All Providers
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
     </section>
   );
 };
