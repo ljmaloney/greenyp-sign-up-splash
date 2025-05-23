@@ -9,7 +9,6 @@ export interface Category {
   slug: string;
 }
 
-// Change the interface to store the icon component reference instead of JSX
 export interface CategoryWithIcon extends Category {
-  iconComponent: LucideIcon; // This will store the icon component reference
+  iconComponent: React.ReactNode;
 }

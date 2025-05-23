@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useCategories } from '@/hooks/useCategories';
@@ -81,12 +82,6 @@ const CategorySection = () => {
     );
   }
 
-  // Render the IconComponent for each category
-  const renderIcon = (category: CategoryWithIcon) => {
-    const IconComponent = category.iconComponent;
-    return <IconComponent className="w-12 h-12 text-greenyp-500 mx-auto mb-4" />;
-  };
-
   return (
     <section id="categories" className="py-16 bg-white">
       <div className="container mx-auto px-4 md:px-8">
@@ -105,7 +100,7 @@ const CategorySection = () => {
               key={index}
               className="bg-gray-50 rounded-xl p-8 text-center transition-all hover:shadow-md hover:bg-gray-100 border border-greenyp-100"
             >
-              {renderIcon(category)}
+              {category.iconComponent}
               <h3 className="text-xl font-semibold mb-2 text-gray-800">{category.title}</h3>
               <p className="text-gray-600">{category.description}</p>
               <button 
@@ -126,7 +121,8 @@ const CategorySection = () => {
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle className="text-2xl flex items-center gap-2">
-              {selectedCategory && renderIcon(selectedCategory)}
+              {selectedCategory?.iconComponent && 
+                React.cloneElement(selectedCategory.iconComponent as React.ReactElement, { className: "w-6 h-6" })}
               {selectedCategory?.title}
             </DialogTitle>
             <DialogDescription className="text-base">{selectedCategory?.description}</DialogDescription>
