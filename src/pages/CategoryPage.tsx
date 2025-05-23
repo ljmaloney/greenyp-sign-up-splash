@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -6,7 +5,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from "@/components/ui/button";
 import { MapPin, Phone, Star } from 'lucide-react';
-import { fetchCategories, mockCategoriesResponse } from '@/services/categoryService';
+import { fetchCategories } from '@/services/categoryService';
 import { CategoryWithIcon } from '@/types/category';
 
 interface Provider {
@@ -123,6 +122,12 @@ const CategoryPage = () => {
     );
   }
 
+  // Render the icon component
+  const renderIcon = (category: CategoryWithIcon) => {
+    const IconComponent = category.iconComponent;
+    return <IconComponent className="w-12 h-12 text-greenyp-500" />;
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -131,7 +136,7 @@ const CategoryPage = () => {
         <section className="bg-greenyp-50 py-12">
           <div className="container mx-auto px-4">
             <div className="flex items-center mb-4">
-              {category.iconComponent}
+              {renderIcon(category)}
               <h1 className="text-3xl md:text-4xl font-bold ml-2 text-gray-900">{category.title}</h1>
             </div>
             <p className="text-xl text-gray-700 max-w-3xl">{category.description}</p>
