@@ -1,11 +1,12 @@
+
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from "@/components/ui/button";
 import { MapPin, Phone, Star } from 'lucide-react';
-import { fetchCategories } from '@/services/categoryService';
+import { useCategories } from '@/hooks/useCategories';
+import { useCategoryServices } from '@/hooks/useCategoryServices';
 import { CategoryWithIcon } from '@/types/category';
 
 interface Provider {
@@ -17,71 +18,35 @@ interface Provider {
 }
 
 // Mock provider data - in a real app, this would come from an API
-const mockProvidersByCategory: Record<string, Provider[]> = {
-  "landscaping": [
-    { name: "Green Thumb Landscaping", rating: 4.8, reviews: 124, location: "Phoenix, AZ", phone: "(602) 555-1234" },
-    { name: "Nature's Design", rating: 4.7, reviews: 98, location: "Scottsdale, AZ", phone: "(480) 555-5678" },
-    { name: "Outdoor Creations", rating: 4.9, reviews: 156, location: "Mesa, AZ", phone: "(480) 555-9012" },
-    { name: "Pacific Garden Services", rating: 4.6, reviews: 87, location: "Tempe, AZ", phone: "(480) 555-3456" },
-    { name: "Professional Yard Solutions", rating: 4.5, reviews: 65, location: "Gilbert, AZ", phone: "(480) 555-7890" },
-    { name: "Desert Oasis Landscapes", rating: 4.8, reviews: 112, location: "Chandler, AZ", phone: "(480) 555-4321" }
-  ],
-  "lawn-care": [
-    { name: "Perfect Lawns Inc", rating: 4.9, reviews: 148, location: "Phoenix, AZ", phone: "(602) 555-2345" },
-    { name: "Green Grass Experts", rating: 4.7, reviews: 89, location: "Scottsdale, AZ", phone: "(480) 555-6789" },
-    { name: "Premier Lawn Services", rating: 4.8, reviews: 116, location: "Mesa, AZ", phone: "(480) 555-0123" },
-    { name: "Turf Masters", rating: 4.6, reviews: 75, location: "Tempe, AZ", phone: "(480) 555-4567" },
-    { name: "Healthy Lawn Company", rating: 4.7, reviews: 93, location: "Gilbert, AZ", phone: "(480) 555-8901" }
-  ],
-  "hardscaping": [
-    { name: "Stone & Patio Experts", rating: 4.9, reviews: 132, location: "Phoenix, AZ", phone: "(602) 555-3456" },
-    { name: "Custom Hardscapes", rating: 4.8, reviews: 108, location: "Scottsdale, AZ", phone: "(480) 555-7890" },
-    { name: "Outdoor Living Construction", rating: 4.7, reviews: 94, location: "Mesa, AZ", phone: "(480) 555-1234" },
-    { name: "Paver Professionals", rating: 4.8, reviews: 127, location: "Tempe, AZ", phone: "(480) 555-5678" }
-  ],
-  "nurseries": [
-    { name: "Desert Garden Center", rating: 4.8, reviews: 165, location: "Phoenix, AZ", phone: "(602) 555-4567" },
-    { name: "Green Valley Nursery", rating: 4.9, reviews: 187, location: "Scottsdale, AZ", phone: "(480) 555-8901" },
-    { name: "Sunshine Plants & Trees", rating: 4.7, reviews: 134, location: "Mesa, AZ", phone: "(480) 555-2345" },
-    { name: "Native Plants Nursery", rating: 4.8, reviews: 152, location: "Tempe, AZ", phone: "(480) 555-6789" }
-  ],
-  "plant-suppliers": [
-    { name: "Specialty Seeds Co", rating: 4.8, reviews: 118, location: "Phoenix, AZ", phone: "(602) 555-5678" },
-    { name: "Rare Plant Emporium", rating: 4.9, reviews: 142, location: "Scottsdale, AZ", phone: "(480) 555-9012" },
-    { name: "Organic Garden Supply", rating: 4.7, reviews: 96, location: "Mesa, AZ", phone: "(480) 555-3456" },
-    { name: "Desert Adapted Plants", rating: 4.8, reviews: 129, location: "Tempe, AZ", phone: "(480) 555-7890" }
-  ],
-  "water-features": [
-    { name: "Water Garden Experts", rating: 4.9, reviews: 138, location: "Phoenix, AZ", phone: "(602) 555-6789" },
-    { name: "Fountain & Pond Co", rating: 4.8, reviews: 105, location: "Scottsdale, AZ", phone: "(480) 555-0123" },
-    { name: "Irrigation Specialists", rating: 4.7, reviews: 91, location: "Mesa, AZ", phone: "(480) 555-4567" },
-    { name: "Waterfall Designs", rating: 4.8, reviews: 124, location: "Tempe, AZ", phone: "(480) 555-8901" }
-  ]
-};
+const mockProviders: Provider[] = [
+  { name: "Green Thumb Landscaping", rating: 4.8, reviews: 124, location: "Phoenix, AZ", phone: "(602) 555-1234" },
+  { name: "Nature's Design", rating: 4.7, reviews: 98, location: "Scottsdale, AZ", phone: "(480) 555-5678" },
+  { name: "Outdoor Creations", rating: 4.9, reviews: 156, location: "Mesa, AZ", phone: "(480) 555-9012" },
+  { name: "Pacific Garden Services", rating: 4.6, reviews: 87, location: "Tempe, AZ", phone: "(480) 555-3456" },
+  { name: "Professional Yard Solutions", rating: 4.5, reviews: 65, location: "Gilbert, AZ", phone: "(480) 555-7890" },
+  { name: "Desert Oasis Landscapes", rating: 4.8, reviews: 112, location: "Chandler, AZ", phone: "(480) 555-4321" }
+];
 
 const CategoryPage = () => {
   const { slug } = useParams<{ slug: string }>();
   
   // Fetch all categories using the same service as the CategorySection
-  const { data: categories, isLoading, error } = useQuery<CategoryWithIcon[], Error>({
-    queryKey: ['categories'],
-    queryFn: fetchCategories,
-  });
+  const { data: categories, isLoading: categoriesLoading, error: categoriesError } = useCategories();
   
-  // Find the specific category based on the slug
-  const category = categories?.find(cat => cat.slug === slug);
+  // Find the specific category based on the lineOfBusinessId (slug)
+  const category = categories?.find(cat => cat.lineOfBusinessId === slug);
   
-  // Get the providers for this category
-  const providers = slug ? mockProvidersByCategory[slug] || [] : [];
+  // Fetch services for this category
+  const { data: services, isLoading: servicesLoading, error: servicesError } = useCategoryServices(slug || '');
   
   useEffect(() => {
     // Update document title for SEO
     if (category) {
-      document.title = `${category.title} - GreenYP`;
+      document.title = `${category.lineOfBusinessName} - GreenYP`;
       
       // Create meta description
       const metaDescription = document.querySelector('meta[name="description"]');
-      const metaDesc = `Connect with top-rated ${category.title.toLowerCase()} professionals. Browse reviews, see portfolios, and request quotes.`;
+      const metaDesc = `Connect with top-rated ${category.lineOfBusinessName.toLowerCase()} professionals. Browse reviews, see portfolios, and request quotes.`;
       
       if (metaDescription) {
         metaDescription.setAttribute('content', metaDesc);
@@ -94,7 +59,7 @@ const CategoryPage = () => {
     }
   }, [category]);
   
-  if (isLoading) {
+  if (categoriesLoading) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
@@ -106,7 +71,7 @@ const CategoryPage = () => {
     );
   }
   
-  if (error || !category) {
+  if (categoriesError || !category) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
@@ -137,9 +102,16 @@ const CategoryPage = () => {
           <div className="container mx-auto px-4">
             <div className="flex items-center mb-4">
               {renderIcon(category)}
-              <h1 className="text-3xl md:text-4xl font-bold ml-2 text-gray-900">{category.title}</h1>
+              <h1 className="text-3xl md:text-4xl font-bold ml-2 text-gray-900">{category.lineOfBusinessName}</h1>
             </div>
-            <p className="text-xl text-gray-700 max-w-3xl">{category.description}</p>
+            <p className="text-xl text-gray-700 max-w-3xl">{category.shortDescription}</p>
+            
+            {category.description && (
+              <div className="mt-6 p-6 bg-white rounded-lg border border-greenyp-200">
+                <h2 className="text-lg font-semibold mb-3 text-gray-900">About This Category</h2>
+                <p className="text-gray-700">{category.description}</p>
+              </div>
+            )}
             
             <div className="mt-8 flex flex-wrap gap-3">
               <Button className="bg-greenyp-600 hover:bg-greenyp-700 text-white">
@@ -152,13 +124,37 @@ const CategoryPage = () => {
           </div>
         </section>
         
+        {/* Services Section */}
+        {services && services.length > 0 && (
+          <section className="py-12 bg-gray-50">
+            <div className="container mx-auto px-4">
+              <h2 className="text-2xl font-bold mb-6 text-gray-900">Available Services</h2>
+              {servicesLoading ? (
+                <div className="text-center">Loading services...</div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {services.map((service, index) => (
+                    <div key={index} className="bg-white p-4 rounded-lg border border-gray-200">
+                      <h3 className="font-semibold text-lg mb-2">{service.serviceName}</h3>
+                      <p className="text-gray-600 text-sm">{service.serviceDescription}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {servicesError && (
+                <div className="text-center text-red-600">Error loading services. Please try again later.</div>
+              )}
+            </div>
+          </section>
+        )}
+        
         {/* Provider Listings */}
         <section className="py-12">
           <div className="container mx-auto px-4">
-            <h2 className="text-2xl font-bold mb-6 text-gray-900">Top {category.title} Providers</h2>
+            <h2 className="text-2xl font-bold mb-6 text-gray-900">Top {category.lineOfBusinessName} Providers</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {providers.map((provider, index) => (
+              {mockProviders.map((provider, index) => (
                 <div key={index} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
                   <h3 className="font-bold text-xl mb-2">{provider.name}</h3>
                   
@@ -193,7 +189,7 @@ const CategoryPage = () => {
         <section className="bg-greenyp-100 py-12">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900">
-              Are you a {category.title} professional?
+              Are you a {category.lineOfBusinessName} professional?
             </h2>
             <p className="text-lg text-gray-700 mb-6 max-w-2xl mx-auto">
               List your business in our directory and connect with customers looking for your services

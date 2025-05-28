@@ -10,7 +10,7 @@ const CategorySection = () => {
   const navigate = useNavigate();
   
   const handleCategoryClick = (category: CategoryWithIcon) => {
-    navigate(`/categories/${category.slug}`);
+    navigate(`/categories/${category.lineOfBusinessId}`);
   };
 
   if (isLoading) {
@@ -92,11 +92,11 @@ const CategorySection = () => {
               onClick={() => handleCategoryClick(category)}
             >
               {renderIcon(category)}
-              <h3 className="text-xl font-semibold mb-2 text-gray-800">{category.title}</h3>
-              <p className="text-gray-600">{category.description}</p>
+              <h3 className="text-xl font-semibold mb-2 text-gray-800">{category.lineOfBusinessName}</h3>
+              <p className="text-gray-600">{category.shortDescription}</p>
               <button 
                 className="mt-6 inline-flex items-center text-greenyp-600 hover:text-greenyp-800 font-medium"
-                aria-label={`Find ${category.title} Providers`}
+                aria-label={`Find ${category.lineOfBusinessName} Providers`}
               >
                 Find Providers
                 <ChevronRight className="w-4 h-4 ml-2" />

@@ -1,24 +1,21 @@
 
-import { Category, CategoryWithIcon } from '../types/category';
+import { APICategory, CategoryWithIcon, CategoryService } from '../types/category';
 import * as LucideIcons from 'lucide-react';
 
-// This function fetches categories from the API
+// Fetch categories from the real API
 export const fetchCategories = async (): Promise<CategoryWithIcon[]> => {
   try {
-    // In a real app, this would be an environment variable or configuration
-    const apiUrl = 'https://api.example.com/categories';
+    console.log('Fetching categories from API...');
+    const response = await fetch('http://services.greenyp.com/reference/lob');
     
-    // For demo purposes, we're using a mock response instead of a real API call
-    // Remove this and uncomment the fetch code below in a real application
-    return mockCategoriesResponse();
+    if (!response.ok) {
+      throw new Error(`API request failed with status ${response.status}`);
+    }
     
-    // Real implementation would be:
-    // const response = await fetch(apiUrl);
-    // if (!response.ok) {
-    //   throw new Error(`API request failed with status ${response.status}`);
-    // }
-    // const data: Category[] = await response.json();
-    // return mapIconsToCategories(data);
+    const data: APICategory[] = await response.json();
+    console.log('API response:', data);
+    
+    return mapIconsToCategories(data);
   } catch (error) {
     console.error('Error fetching categories:', error);
     // Fall back to mock data if the API fails
@@ -26,63 +23,85 @@ export const fetchCategories = async (): Promise<CategoryWithIcon[]> => {
   }
 };
 
+// Fetch services for a specific category
+export const fetchCategoryServices = async (lineOfBusinessId: string): Promise<CategoryService[]> => {
+  try {
+    console.log(`Fetching services for category ${lineOfBusinessId}...`);
+    const response = await fetch(`http://services.greenyp.com/reference/lob/${lineOfBusinessId}/service`);
+    
+    if (!response.ok) {
+      throw new Error(`API request failed with status ${response.status}`);
+    }
+    
+    const data: CategoryService[] = await response.json();
+    console.log('Services response:', data);
+    
+    return data;
+  } catch (error) {
+    console.error('Error fetching category services:', error);
+    // Return empty array if API fails
+    return [];
+  }
+};
+
 // Maps icon strings from the API to Lucide icon components
-export const mapIconsToCategories = (categories: Category[]): CategoryWithIcon[] => {
+export const mapIconsToCategories = (categories: APICategory[]): CategoryWithIcon[] => {
   return categories.map(category => {
     // Get the icon component from lucide-react based on the icon name
-    const IconComponent = LucideIcons[category.icon as keyof typeof LucideIcons] as LucideIcons.LucideIcon || LucideIcons.HelpCircle;
+    const IconComponent = LucideIcons[category.iconName as keyof typeof LucideIcons] as LucideIcons.LucideIcon || LucideIcons.HelpCircle;
     
     return {
       ...category,
-      iconComponent: IconComponent
+      iconComponent: IconComponent,
+      slug: category.lineOfBusinessId // Use the ID as slug for routing
     };
   });
 };
 
 // Mock data for development and fallback
 export const mockCategoriesResponse = (): CategoryWithIcon[] => {
-  const mockData: Category[] = [
+  const mockData: APICategory[] = [
     {
-      title: "Landscaping",
-      description: "Professional landscape design and installation services",
-      icon: "Tractor",
-      details: "Find experts in residential and commercial landscaping, garden design, outdoor living spaces, native plant installations, and sustainable landscape solutions. Landscape professionals can help transform your property with custom designs tailored to your climate and preferences.",
-      slug: "landscaping",
+      lineOfBusinessId: "landscaping-001",
+      lineOfBusinessName: "Landscaping",
+      shortDescription: "Professional landscape design and installation services",
+      description: "Find experts in residential and commercial landscaping, garden design, outdoor living spaces, native plant installations, and sustainable landscape solutions. Landscape professionals can help transform your property with custom designs tailored to your climate and preferences.",
+      iconName: "Tractor",
     },
     {
-      title: "Lawn Care",
-      description: "Regular maintenance, mowing, and lawn treatment specialists",
-      icon: "LeafyGreen",
-      details: "Connect with lawn care providers offering services like regular mowing, fertilization, weed control, aeration, overseeding, pest management, and seasonal cleanup. Keep your lawn healthy year-round with professional care and maintenance.",
-      slug: "lawn-care",
+      lineOfBusinessId: "lawn-care-001",
+      lineOfBusinessName: "Lawn Care",
+      shortDescription: "Regular maintenance, mowing, and lawn treatment specialists",
+      description: "Connect with lawn care providers offering services like regular mowing, fertilization, weed control, aeration, overseeding, pest management, and seasonal cleanup. Keep your lawn healthy year-round with professional care and maintenance.",
+      iconName: "LeafyGreen",
     },
     {
-      title: "Hardscaping",
-      description: "Patios, walkways, retaining walls, and outdoor structures",
-      icon: "Shovel",
-      details: "Discover professionals who create durable and beautiful hardscape elements including patios, walkways, driveways, retaining walls, fire pits, outdoor kitchens, and decorative stone features that enhance your outdoor living spaces.",
-      slug: "hardscaping",
+      lineOfBusinessId: "hardscaping-001",
+      lineOfBusinessName: "Hardscaping",
+      shortDescription: "Patios, walkways, retaining walls, and outdoor structures",
+      description: "Discover professionals who create durable and beautiful hardscape elements including patios, walkways, driveways, retaining walls, fire pits, outdoor kitchens, and decorative stone features that enhance your outdoor living spaces.",
+      iconName: "Shovel",
     },
     {
-      title: "Nurseries",
-      description: "Plant nurseries offering trees, shrubs, and garden plants",
-      icon: "TreeDeciduous",
-      details: "Browse local nurseries with wide selections of trees, shrubs, perennials, annuals, and specialty plants. Many nurseries offer expert advice, garden planning assistance, and delivery options for your plant purchases.",
-      slug: "nurseries",
+      lineOfBusinessId: "nurseries-001",
+      lineOfBusinessName: "Nurseries",
+      shortDescription: "Plant nurseries offering trees, shrubs, and garden plants",
+      description: "Browse local nurseries with wide selections of trees, shrubs, perennials, annuals, and specialty plants. Many nurseries offer expert advice, garden planning assistance, and delivery options for your plant purchases.",
+      iconName: "TreeDeciduous",
     },
     {
-      title: "Plant Suppliers",
-      description: "Seeds, bulbs, and specialty plant retailers",
-      icon: "Shrub",
-      details: "Find suppliers specializing in seeds, bulbs, rare plants, native species, organic gardening supplies, and specialty growing media. These businesses often provide educational resources and growing guidance for gardeners of all levels.",
-      slug: "plant-suppliers",
+      lineOfBusinessId: "plant-suppliers-001",
+      lineOfBusinessName: "Plant Suppliers",
+      shortDescription: "Seeds, bulbs, and specialty plant retailers",
+      description: "Find suppliers specializing in seeds, bulbs, rare plants, native species, organic gardening supplies, and specialty growing media. These businesses often provide educational resources and growing guidance for gardeners of all levels.",
+      iconName: "Shrub",
     },
     {
-      title: "Pond & Water Features",
-      description: "Installation and maintenance of ponds, fountains, and irrigation",
-      icon: "Droplets",
-      details: "Connect with specialists in water feature design, installation, and maintenance including ponds, fountains, waterfalls, irrigation systems, rain gardens, and drainage solutions to enhance your landscape with the beauty of water.",
-      slug: "water-features",
+      lineOfBusinessId: "water-features-001",
+      lineOfBusinessName: "Pond & Water Features",
+      shortDescription: "Installation and maintenance of ponds, fountains, and irrigation",
+      description: "Connect with specialists in water feature design, installation, and maintenance including ponds, fountains, waterfalls, irrigation systems, rain gardens, and drainage solutions to enhance your landscape with the beauty of water.",
+      iconName: "Droplets",
     },
   ];
 
