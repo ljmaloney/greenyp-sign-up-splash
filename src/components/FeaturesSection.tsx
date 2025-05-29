@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Check, MapPin, Leaf, TreeDeciduous } from 'lucide-react';
+import { Check, MapPin, TreeDeciduous } from 'lucide-react';
 
 const features = [
   {
@@ -15,22 +15,6 @@ const features = [
     description: "Connect with customers looking for landscaping, lawn care, hardscaping, nurseries, plant suppliers, pond maintenance, and more.",
     icon: (
       <TreeDeciduous className="w-10 h-10 text-greenyp-500" />
-    ),
-  },
-  {
-    title: "Customer Reviews & Ratings",
-    description: "Build your reputation with verified customer reviews and showcase your quality service to potential clients in your area.",
-    icon: (
-      <svg className="w-10 h-10 text-greenyp-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    ),
-  },
-  {
-    title: "Professional Service Badges",
-    description: "Showcase your professional credentials, certifications, and specializations to stand out from competitors in the green industry.",
-    icon: (
-      <Leaf className="w-10 h-10 text-greenyp-500" />
     ),
   },
 ];
@@ -77,40 +61,6 @@ const FeatureList = () => {
                   <Check className="h-5 w-5 text-greenyp-500 mr-2" />
                   <span className="text-sm text-gray-600">
                     Multiple service listings
-                  </span>
-                </li>
-              </>
-            )}
-            
-            {index === 2 && (
-              <>
-                <li className="flex items-center">
-                  <Check className="h-5 w-5 text-greenyp-500 mr-2" />
-                  <span className="text-sm text-gray-600">
-                    Review management tools
-                  </span>
-                </li>
-                <li className="flex items-center">
-                  <Check className="h-5 w-5 text-greenyp-500 mr-2" />
-                  <span className="text-sm text-gray-600">
-                    Response capabilities
-                  </span>
-                </li>
-              </>
-            )}
-            
-            {index === 3 && (
-              <>
-                <li className="flex items-center">
-                  <Check className="h-5 w-5 text-greenyp-500 mr-2" />
-                  <span className="text-sm text-gray-600">
-                    Verified credentials
-                  </span>
-                </li>
-                <li className="flex items-center">
-                  <Check className="h-5 w-5 text-greenyp-500 mr-2" />
-                  <span className="text-sm text-gray-600">
-                    Service specialization highlights
                   </span>
                 </li>
               </>
