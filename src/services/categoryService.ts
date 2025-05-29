@@ -1,4 +1,3 @@
-
 import { APICategory, CategoryWithIcon, CategoryService } from '../types/category';
 import * as LucideIcons from 'lucide-react';
 import { API_CONFIG, getApiUrl } from '../config/api';
@@ -18,11 +17,17 @@ export const fetchCategories = async (): Promise<CategoryWithIcon[]> => {
     const data: APICategory[] = await response.json();
     console.log('API response:', data);
     
+    // Ensure data is an array before processing
+    if (!Array.isArray(data)) {
+      console.warn('API response is not an array, falling back to mock data');
+      return getMockCategoriesData();
+    }
+    
     return mapIconsToCategories(data);
   } catch (error) {
     console.error('Error fetching categories:', error);
     // Fall back to mock data if the API fails
-    return mockCategoriesResponse();
+    return getMockCategoriesData();
   }
 };
 
@@ -41,6 +46,12 @@ export const fetchCategoryServices = async (lineOfBusinessId: string): Promise<C
     const data: CategoryService[] = await response.json();
     console.log('Services response:', data);
     
+    // Ensure data is an array
+    if (!Array.isArray(data)) {
+      console.warn('Services API response is not an array');
+      return [];
+    }
+    
     return data;
   } catch (error) {
     console.error('Error fetching category services:', error);
@@ -51,6 +62,12 @@ export const fetchCategoryServices = async (lineOfBusinessId: string): Promise<C
 
 // Maps icon strings from the API to Lucide icon components
 export const mapIconsToCategories = (categories: APICategory[]): CategoryWithIcon[] => {
+  // Add safety check to ensure categories is an array
+  if (!Array.isArray(categories)) {
+    console.error('mapIconsToCategories received non-array data:', categories);
+    return getMockCategoriesData();
+  }
+
   return categories.map(category => {
     // Get the icon component from lucide-react based on the icon name
     const IconComponent = LucideIcons[category.iconName as keyof typeof LucideIcons] as LucideIcons.LucideIcon || LucideIcons.HelpCircle;
@@ -63,8 +80,8 @@ export const mapIconsToCategories = (categories: APICategory[]): CategoryWithIco
   });
 };
 
-// Mock data for development and fallback
-export const mockCategoriesResponse = (): CategoryWithIcon[] => {
+// Get mock categories data as a separate function
+const getMockCategoriesData = (): CategoryWithIcon[] => {
   const mockData: APICategory[] = [
     {
       lineOfBusinessId: "landscaping-001",
@@ -111,4 +128,9 @@ export const mockCategoriesResponse = (): CategoryWithIcon[] => {
   ];
 
   return mapIconsToCategories(mockData);
+};
+
+// Mock data for development and fallback (keeping for backward compatibility)
+export const mockCategoriesResponse = (): CategoryWithIcon[] => {
+  return getMockCategoriesData();
 };
