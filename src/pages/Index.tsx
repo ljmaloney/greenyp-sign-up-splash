@@ -6,6 +6,7 @@ import CategorySection from '@/components/CategorySection';
 import FeaturesSection from '@/components/FeaturesSection';
 import PricingSection from '@/components/PricingSection';
 import Footer from '@/components/Footer';
+import DevApiConfig from '@/components/DevApiConfig';
 
 const Index = () => {
   return (
@@ -18,6 +19,7 @@ const Index = () => {
         <PricingSection />
       </main>
       <Footer />
+      <DevApiConfig />
     </div>
   );
 };

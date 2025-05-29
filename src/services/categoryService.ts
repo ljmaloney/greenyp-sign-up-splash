@@ -1,12 +1,15 @@
 
 import { APICategory, CategoryWithIcon, CategoryService } from '../types/category';
 import * as LucideIcons from 'lucide-react';
+import { API_CONFIG, getApiUrl } from '../config/api';
 
 // Fetch categories from the real API
 export const fetchCategories = async (): Promise<CategoryWithIcon[]> => {
   try {
     console.log('Fetching categories from API...');
-    const response = await fetch('http://services.greenyp.com/reference/lob');
+    const url = getApiUrl(API_CONFIG.ENDPOINTS.CATEGORIES);
+    console.log('API URL:', url);
+    const response = await fetch(url);
     
     if (!response.ok) {
       throw new Error(`API request failed with status ${response.status}`);
@@ -27,7 +30,9 @@ export const fetchCategories = async (): Promise<CategoryWithIcon[]> => {
 export const fetchCategoryServices = async (lineOfBusinessId: string): Promise<CategoryService[]> => {
   try {
     console.log(`Fetching services for category ${lineOfBusinessId}...`);
-    const response = await fetch(`http://services.greenyp.com/reference/lob/${lineOfBusinessId}/service`);
+    const url = getApiUrl(API_CONFIG.ENDPOINTS.CATEGORY_SERVICES(lineOfBusinessId));
+    console.log('Services API URL:', url);
+    const response = await fetch(url);
     
     if (!response.ok) {
       throw new Error(`API request failed with status ${response.status}`);
