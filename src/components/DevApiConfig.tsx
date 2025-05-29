@@ -63,13 +63,12 @@ const DevApiConfig = () => {
                 placeholder="http://localhost:3000"
                 value={customHost}
                 onChange={(e) => setCustomHost(e.target.value)}
-                className="text-xs"
-                size="sm"
+                className="text-xs h-8"
               />
               <Button 
                 onClick={handleSetCustomHost}
                 size="sm"
-                className="text-xs px-2"
+                className="text-xs px-2 h-8"
               >
                 Set
               </Button>
@@ -79,7 +78,7 @@ const DevApiConfig = () => {
               onClick={handleResetHost}
               variant="outline"
               size="sm" 
-              className="w-full text-xs"
+              className="w-full text-xs h-8"
             >
               Reset to Default
             </Button>
