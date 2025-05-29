@@ -15,6 +15,7 @@ export const API_CONFIG = {
   ENDPOINTS: {
     CATEGORIES: '/reference/lob',
     CATEGORY_SERVICES: (lineOfBusinessId: string) => `/reference/lob/${lineOfBusinessId}/service`,
+    SUBSCRIPTIONS: '/reference/subscription',
   }
 };
 
