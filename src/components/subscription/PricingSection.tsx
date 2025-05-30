@@ -8,6 +8,10 @@ const PricingSectionSubscribe = () => {
   const navigate = useNavigate();
   const { data: subscriptions, isLoading, error } = useSubscriptions();
 
+  console.log('PricingSection - subscriptions:', subscriptions);
+  console.log('PricingSection - isLoading:', isLoading);
+  console.log('PricingSection - error:', error);
+
   const handlePlanSelect = (subscriptionId: string) => {
     if (subscriptionId.includes('premium')) {
       window.location.href = "mailto:sales@greenyp.com?subject=Premium Plan Inquiry";
@@ -50,19 +54,22 @@ const PricingSectionSubscribe = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {subscriptions?.map((subscription, index) => (
-            <SubscriptionPlan
-              key={subscription.subscriptionId}
-              name={subscription.displayName}
-              price={subscription.comingSoon ? "" : subscription.formattedMonthlyPrice}
-              period={subscription.comingSoon ? "" : subscription.monthlyAutopayAmount === 0 ? "forever" : "per month"}
-              features={subscription.formattedFeatures.map(f => f.name)}
-              cta={subscription.comingSoon ? 'Coming Soon' : subscription.monthlyAutopayAmount === 0 ? 'Get Started' : 'Start Premium'}
-              popular={subscription.popular || false}
-              comingSoon={subscription.comingSoon}
-              onSelect={() => !subscription.comingSoon && handlePlanSelect(subscription.subscriptionId)}
-            />
-          ))}
+          {subscriptions?.map((subscription, index) => {
+            console.log(`Rendering subscription ${index}:`, subscription);
+            return (
+              <SubscriptionPlan
+                key={subscription.subscriptionId}
+                name={subscription.displayName}
+                price={subscription.comingSoon ? "" : subscription.formattedMonthlyPrice}
+                period={subscription.comingSoon ? "" : subscription.monthlyAutopayAmount === 0 ? "forever" : "per month"}
+                features={subscription.formattedFeatures.map(f => f.name)}
+                cta={subscription.comingSoon ? 'Coming Soon' : subscription.monthlyAutopayAmount === 0 ? 'Get Started' : 'Start Premium'}
+                popular={subscription.popular || false}
+                comingSoon={subscription.comingSoon}
+                onSelect={() => !subscription.comingSoon && handlePlanSelect(subscription.subscriptionId)}
+              />
+            );
+          })}
         </div>
       </div>
     </section>

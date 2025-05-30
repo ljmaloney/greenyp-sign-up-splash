@@ -31,7 +31,7 @@ export const fetchSubscriptions = async (): Promise<SubscriptionWithFormatting[]
 
 // Format subscription data for display
 export const formatSubscriptionData = (subscriptions: APISubscription[]): SubscriptionWithFormatting[] => {
-  return subscriptions.map((subscription, index) => ({
+  const formatted = subscriptions.map((subscription, index) => ({
     ...subscription,
     formattedMonthlyPrice: subscription.comingSoon ? '' : 
       subscription.monthlyAutopayAmount === 0 ? '$0' : `$${subscription.monthlyAutopayAmount}`,
@@ -43,6 +43,9 @@ export const formatSubscriptionData = (subscriptions: APISubscription[]): Subscr
     })),
     popular: index === 1 && !subscription.comingSoon // Mark the second subscription as popular if not coming soon
   }));
+  
+  console.log('Formatted subscription data:', formatted);
+  return formatted;
 };
 
 // Mock data for development and fallback
@@ -96,8 +99,34 @@ export const mockSubscriptionsResponse = (): SubscriptionWithFormatting[] => {
         "Photo gallery (up to 15 images)",
         "Priority placement in searches"
       ]
+    },
+    {
+      subscriptionId: "premium-enterprise-001",
+      version: 0,
+      createDate: "2025-05-29T20:00:00Z",
+      lastUpdateDate: "2025-05-29T20:00:00Z",
+      displayName: "Premium Enterprise",
+      endDate: "9999-12-31",
+      lineOfBusinessId: null,
+      monthlyAutopayAmount: 99.99,
+      quarterlyAutopayAmount: 299.99,
+      annualBillAmount: 1199,
+      shortDescription: "For large landscaping companies and franchises",
+      htmlDescription: "",
+      startDate: "2025-04-30",
+      subscriptionType: "TOP_LEVEL",
+      comingSoon: true,
+      sortOrder: 2,
+      features: [
+        "Unlimited Location Listings",
+        "Advanced analytics dashboard",
+        "Custom branding options",
+        "Priority customer support",
+        "API access for integrations"
+      ]
     }
   ];
 
+  console.log('Using mock subscription data with coming soon plan');
   return formatSubscriptionData(mockData);
 };
