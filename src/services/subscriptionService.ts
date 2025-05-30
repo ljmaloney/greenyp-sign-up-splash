@@ -31,10 +31,17 @@ export const fetchSubscriptions = async (): Promise<SubscriptionWithFormatting[]
 
 // Format subscription data for display
 export const formatSubscriptionData = (subscriptions: APISubscription[]): SubscriptionWithFormatting[] => {
-  return subscriptions.map(subscription => ({
+  return subscriptions.map((subscription, index) => ({
     ...subscription,
-    formattedMonthlyPrice: subscription.monthlyAutopayAmount === 0 ? '$0' : `$${subscription.monthlyAutopayAmount}`,
-    formattedYearlyPrice: subscription.yearlyAutopayAmount ? `$${subscription.yearlyAutopayAmount}` : undefined
+    formattedMonthlyPrice: subscription.comingSoon ? '' : 
+      subscription.monthlyAutopayAmount === 0 ? '$0' : `$${subscription.monthlyAutopayAmount}`,
+    formattedYearlyPrice: subscription.comingSoon ? undefined :
+      subscription.annualBillAmount ? `$${subscription.annualBillAmount}` : undefined,
+    formattedFeatures: subscription.features.map((feature, featureIndex) => ({
+      id: `${subscription.subscriptionId}-feature-${featureIndex}`,
+      name: feature
+    })),
+    popular: index === 1 && !subscription.comingSoon // Mark the second subscription as popular if not coming soon
   }));
 };
 
@@ -43,53 +50,52 @@ export const mockSubscriptionsResponse = (): SubscriptionWithFormatting[] => {
   const mockData: APISubscription[] = [
     {
       subscriptionId: "basic-listing-001",
+      version: 0,
+      createDate: "2025-05-29T17:40:15Z",
+      lastUpdateDate: "2025-05-29T17:40:15Z",
       displayName: "Basic Listing",
+      endDate: "9999-12-31",
+      lineOfBusinessId: null,
+      monthlyAutopayAmount: 5,
+      quarterlyAutopayAmount: 15,
+      annualBillAmount: 60,
       shortDescription: "Perfect for small local landscaping or gardening businesses",
-      monthlyAutopayAmount: 0,
-      features: [
-        { id: "1", name: "Basic business listing" },
-        { id: "2", name: "Contact information" },
-        { id: "3", name: "Business hours" },
-        { id: "4", name: "Single category listing" },
-        { id: "5", name: "Map location" }
-      ],
+      htmlDescription: "",
+      startDate: "2025-04-30",
+      subscriptionType: "TOP_LEVEL",
       comingSoon: false,
-      popular: false
+      sortOrder: 0,
+      features: [
+        "Business Hours",
+        "Basic business listing",
+        "Single category listing",
+        "Map Location",
+        "Contact Information"
+      ]
     },
     {
       subscriptionId: "featured-business-001",
-      displayName: "Featured Business",
+      version: 0,
+      createDate: "2025-05-29T19:15:18Z",
+      lastUpdateDate: "2025-05-29T19:15:18Z",
+      displayName: "Featured Business Listing",
+      endDate: "9999-12-31",
+      lineOfBusinessId: null,
+      monthlyAutopayAmount: 29.99,
+      quarterlyAutopayAmount: 89.99,
+      annualBillAmount: 359,
       shortDescription: "Ideal for established landscaping and garden businesses",
-      monthlyAutopayAmount: 29,
-      yearlyAutopayAmount: 290,
-      features: [
-        { id: "1", name: "Priority placement in searches" },
-        { id: "2", name: "Enhanced business profile" },
-        { id: "3", name: "Photo gallery (up to 15 images)" },
-        { id: "4", name: "Customer reviews & ratings" },
-        { id: "5", name: "Multiple category listings" },
-        { id: "6", name: "Business verification badge" }
-      ],
+      htmlDescription: "",
+      startDate: "2025-04-30",
+      subscriptionType: "TOP_LEVEL",
       comingSoon: false,
-      popular: true
-    },
-    {
-      subscriptionId: "premium-partner-001",
-      displayName: "Premium Partner",
-      shortDescription: "For multi-location nurseries and landscaping companies",
-      monthlyAutopayAmount: 79,
-      yearlyAutopayAmount: 790,
+      sortOrder: 1,
       features: [
-        { id: "1", name: "Top search placement" },
-        { id: "2", name: "Multiple location management" },
-        { id: "3", name: "Seasonal promotional features" },
-        { id: "4", name: "Eco-certification badges" },
-        { id: "5", name: "Extended photo gallery (50+ images)" },
-        { id: "6", name: "Video showcase option" },
-        { id: "7", name: "Featured in 'Recommended' section" }
-      ],
-      comingSoon: true,
-      popular: false
+        "Multiple Location Listings (up to 5)",
+        "Enhanced business profile",
+        "Photo gallery (up to 15 images)",
+        "Priority placement in searches"
+      ]
     }
   ];
 

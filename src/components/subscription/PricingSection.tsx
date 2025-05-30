@@ -54,9 +54,9 @@ const PricingSectionSubscribe = () => {
             <SubscriptionPlan
               key={subscription.subscriptionId}
               name={subscription.displayName}
-              price={subscription.formattedMonthlyPrice}
-              period={subscription.monthlyAutopayAmount === 0 ? "forever" : "per month"}
-              features={subscription.features.map(f => f.name)}
+              price={subscription.comingSoon ? "" : subscription.formattedMonthlyPrice}
+              period={subscription.comingSoon ? "" : subscription.monthlyAutopayAmount === 0 ? "forever" : "per month"}
+              features={subscription.formattedFeatures.map(f => f.name)}
               cta={subscription.comingSoon ? 'Coming Soon' : subscription.monthlyAutopayAmount === 0 ? 'Get Started' : 'Start Premium'}
               popular={subscription.popular || false}
               comingSoon={subscription.comingSoon}

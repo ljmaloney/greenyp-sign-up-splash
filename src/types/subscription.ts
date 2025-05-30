@@ -7,16 +7,27 @@ export interface SubscriptionFeature {
 
 export interface APISubscription {
   subscriptionId: string;
+  version: number;
+  createDate: string;
+  lastUpdateDate: string;
   displayName: string;
-  shortDescription: string;
+  endDate: string;
+  lineOfBusinessId: string | null;
   monthlyAutopayAmount: number;
-  yearlyAutopayAmount?: number;
-  features: SubscriptionFeature[];
+  quarterlyAutopayAmount: number;
+  annualBillAmount: number;
+  shortDescription: string;
+  htmlDescription: string;
+  startDate: string;
+  subscriptionType: string;
   comingSoon: boolean;
-  popular?: boolean;
+  sortOrder: number;
+  features: string[];
 }
 
 export interface SubscriptionWithFormatting extends APISubscription {
   formattedMonthlyPrice: string;
   formattedYearlyPrice?: string;
+  formattedFeatures: SubscriptionFeature[];
+  popular?: boolean;
 }

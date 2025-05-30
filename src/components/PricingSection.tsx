@@ -22,23 +22,31 @@ const PricingSection = () => {
   };
 
   const getDisplayPrice = (subscription: any) => {
+    if (subscription.comingSoon) {
+      return "";
+    }
+    
     if (subscription.monthlyAutopayAmount === 0) {
       return "Free";
     }
     
-    if (billingPeriod === 'yearly' && subscription.yearlyAutopayAmount) {
-      return `$${subscription.yearlyAutopayAmount}`;
+    if (billingPeriod === 'yearly' && subscription.annualBillAmount) {
+      return `$${subscription.annualBillAmount}`;
     }
     
     return subscription.formattedMonthlyPrice;
   };
 
   const getDisplayPeriod = (subscription: any) => {
+    if (subscription.comingSoon) {
+      return "";
+    }
+    
     if (subscription.monthlyAutopayAmount === 0) {
       return "forever";
     }
     
-    if (billingPeriod === 'yearly' && subscription.yearlyAutopayAmount) {
+    if (billingPeriod === 'yearly' && subscription.annualBillAmount) {
       return "/year";
     }
     
@@ -46,9 +54,13 @@ const PricingSection = () => {
   };
 
   const getSavingsText = (subscription: any) => {
-    if (billingPeriod === 'yearly' && subscription.yearlyAutopayAmount && subscription.monthlyAutopayAmount > 0) {
+    if (subscription.comingSoon) {
+      return null;
+    }
+    
+    if (billingPeriod === 'yearly' && subscription.annualBillAmount && subscription.monthlyAutopayAmount > 0) {
       const yearlyTotal = subscription.monthlyAutopayAmount * 12;
-      const savings = yearlyTotal - subscription.yearlyAutopayAmount;
+      const savings = yearlyTotal - subscription.annualBillAmount;
       const savingsPercent = Math.round((savings / yearlyTotal) * 100);
       return `Save ${savingsPercent}% with annual billing`;
     }
@@ -138,22 +150,24 @@ const PricingSection = () => {
                 <p className="text-gray-600 text-sm">{subscription.shortDescription}</p>
               </div>
               
-              <div className="mb-6">
-                <div className="flex items-end">
-                  <span className="text-4xl font-bold text-gray-900">
-                    {getDisplayPrice(subscription)}
-                  </span>
-                  <span className="text-gray-500 ml-1">
-                    {getDisplayPeriod(subscription)}
-                  </span>
+              {!subscription.comingSoon && (
+                <div className="mb-6">
+                  <div className="flex items-end">
+                    <span className="text-4xl font-bold text-gray-900">
+                      {getDisplayPrice(subscription)}
+                    </span>
+                    <span className="text-gray-500 ml-1">
+                      {getDisplayPeriod(subscription)}
+                    </span>
+                  </div>
+                  {getSavingsText(subscription) && (
+                    <p className="text-greenyp-600 text-sm mt-1">{getSavingsText(subscription)}</p>
+                  )}
                 </div>
-                {getSavingsText(subscription) && (
-                  <p className="text-greenyp-600 text-sm mt-1">{getSavingsText(subscription)}</p>
-                )}
-              </div>
+              )}
               
               <ul className="space-y-3 mb-8 flex-grow">
-                {subscription.features.map((feature) => (
+                {subscription.formattedFeatures.map((feature) => (
                   <li key={feature.id} className="flex items-start">
                     <Check className="h-5 w-5 text-greenyp-500 mr-2 flex-shrink-0 mt-0.5" />
                     <span className="text-gray-700">{feature.name}</span>
