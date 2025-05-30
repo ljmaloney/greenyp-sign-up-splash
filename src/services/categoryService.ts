@@ -1,4 +1,6 @@
+
 import { APICategory, CategoryWithIcon, CategoryService } from '../types/category';
+import { APIResponse } from '../types/responseBody';
 import * as LucideIcons from 'lucide-react';
 import { API_CONFIG, getApiUrl } from '../config/api';
 
@@ -14,16 +16,19 @@ export const fetchCategories = async (): Promise<CategoryWithIcon[]> => {
       throw new Error(`API request failed with status ${response.status}`);
     }
     
-    const data: APICategory[] = await response.json();
+    const data: APIResponse<APICategory[]> = await response.json();
     console.log('API response:', data);
     
+    // Access the response data from the generic container
+    const categories = data.response;
+    
     // Ensure data is an array before processing
-    if (!Array.isArray(data)) {
-      console.warn('API response is not an array, falling back to mock data');
+    if (!Array.isArray(categories)) {
+      console.warn('API response data is not an array, falling back to mock data');
       return getMockCategoriesData();
     }
     
-    return mapIconsToCategories(data);
+    return mapIconsToCategories(categories);
   } catch (error) {
     console.error('Error fetching categories:', error);
     // Fall back to mock data if the API fails
@@ -43,16 +48,19 @@ export const fetchCategoryServices = async (lineOfBusinessId: string): Promise<C
       throw new Error(`API request failed with status ${response.status}`);
     }
     
-    const data: CategoryService[] = await response.json();
+    const data: APIResponse<CategoryService[]> = await response.json();
     console.log('Services response:', data);
     
+    // Access the response data from the generic container
+    const services = data.response;
+    
     // Ensure data is an array
-    if (!Array.isArray(data)) {
-      console.warn('Services API response is not an array');
+    if (!Array.isArray(services)) {
+      console.warn('Services API response data is not an array');
       return [];
     }
     
-    return data;
+    return services;
   } catch (error) {
     console.error('Error fetching category services:', error);
     // Return empty array if API fails

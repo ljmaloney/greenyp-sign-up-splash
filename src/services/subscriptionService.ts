@@ -1,5 +1,6 @@
 
 import { APISubscription, SubscriptionWithFormatting } from '../types/subscription';
+import { APIResponse } from '../types/responseBody';
 import { API_CONFIG, getApiUrl } from '../config/api';
 
 // Fetch subscriptions from the real API
@@ -14,10 +15,13 @@ export const fetchSubscriptions = async (): Promise<SubscriptionWithFormatting[]
       throw new Error(`API request failed with status ${response.status}`);
     }
     
-    const data: APISubscription[] = await response.json();
+    const data: APIResponse<APISubscription[]> = await response.json();
     console.log('Subscription API response:', data);
     
-    return formatSubscriptionData(data);
+    // Access the response data from the generic container
+    const subscriptions = data.response;
+    
+    return formatSubscriptionData(subscriptions);
   } catch (error) {
     console.error('Error fetching subscriptions:', error);
     // Fall back to mock data if the API fails
