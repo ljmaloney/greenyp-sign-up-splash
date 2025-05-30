@@ -45,10 +45,12 @@ const SubscriptionPlan = ({
           <span className="text-yellow-600 text-sm font-normal ml-2">Coming Soon</span>
         )}
       </h3>
-      <div className="mb-4">
-        <span className="text-3xl font-bold text-gray-900">{price}</span>
-        <span className="text-gray-500 ml-1">{period}</span>
-      </div>
+      {!comingSoon && (
+        <div className="mb-4">
+          <span className="text-3xl font-bold text-gray-900">{price}</span>
+          <span className="text-gray-500 ml-1">{period}</span>
+        </div>
+      )}
       <ul className="mb-6 flex-grow space-y-3">
         {features.map((feature, featureIndex) => (
           <li key={featureIndex} className="flex items-start">
