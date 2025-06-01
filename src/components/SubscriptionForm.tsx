@@ -3,13 +3,14 @@ import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/sonner";
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const SubscriptionForm = () => {
   const [email, setEmail] = useState('');
   const [businessName, setBusinessName] = useState('');
   const [loading, setLoading] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Extract plan and billing period from URL if available
   const queryParams = new URLSearchParams(location.search);
@@ -31,21 +32,16 @@ const SubscriptionForm = () => {
       return;
     }
     
-    setLoading(true);
+    // Redirect to sign-up page with plan information
+    const params = new URLSearchParams();
+    if (selectedPlan) params.set('plan', selectedPlan);
+    if (billingPeriod) params.set('billing', billingPeriod);
     
-    // Simulate API call
-    setTimeout(() => {
-      // Include plan information in success message if available
-      let successMessage = "Thank you for your interest! Check your email for listing information.";
-      if (selectedPlan) {
-        successMessage = `Thank you for choosing the ${selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1)} plan! Check your email to complete registration.`;
-      }
-      
-      toast.success(successMessage);
-      setEmail('');
-      setBusinessName('');
-      setLoading(false);
-    }, 1500);
+    navigate(`/signup?${params.toString()}`);
+  };
+
+  const handleStartFreeTrialClick = () => {
+    navigate('/signup');
   };
 
   return (

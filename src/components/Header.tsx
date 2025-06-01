@@ -26,7 +26,9 @@ const Header = () => {
           </nav>
         )}
         <Button variant="outline" className="border-greenyp-500 text-greenyp-700 hover:bg-greenyp-50">Log In</Button>
-        <Button className="bg-greenyp-600 hover:bg-greenyp-700 text-white">Sign Up</Button>
+        <Link to="/signup">
+          <Button className="bg-greenyp-600 hover:bg-greenyp-700 text-white">Sign Up</Button>
+        </Link>
       </div>
     </header>
   );
