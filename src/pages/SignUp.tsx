@@ -216,7 +216,7 @@ const SignUp = () => {
                             <SelectContent>
                               {categories?.map((category) => (
                                 <SelectItem key={category.lineOfBusinessId} value={category.lineOfBusinessId}>
-                                  {category.displayName}
+                                  {category.lineOfBusinessName}
                                 </SelectItem>
                               ))}
                             </SelectContent>
