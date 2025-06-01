@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/components/ui/sonner";
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -181,334 +182,338 @@ const SignUp = () => {
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 {/* Business Information */}
-                <div className="space-y-6">
-                  <h2 className="text-xl font-semibold text-gray-900 border-b pb-2">
-                    Business Information
-                  </h2>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-xl text-greenyp-800">Business Information</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <FormField
+                        control={form.control}
+                        name="businessName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Business Name *</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Enter your business name" {...field} required />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="lineOfBusinessId"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Line of Business *</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select your business type" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {categories?.map((category) => (
+                                  <SelectItem key={category.lineOfBusinessId} value={category.lineOfBusinessId}>
+                                    {category.lineOfBusinessName}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="subscriptionId"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Subscription Plan *</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select subscription plan" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {subscriptions?.filter(sub => !sub.comingSoon).map((subscription) => (
+                                  <SelectItem key={subscription.subscriptionId} value={subscription.subscriptionId}>
+                                    {subscription.displayName} - {subscription.formattedMonthlyPrice}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="websiteUrl"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Website URL</FormLabel>
+                            <FormControl>
+                              <Input placeholder="https://www.yourbusiness.com" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
                     <FormField
                       control={form.control}
-                      name="businessName"
+                      name="narrative"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Business Name *</FormLabel>
+                          <FormLabel>Business Description</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter your business name" {...field} required />
+                            <Textarea 
+                              placeholder="Tell us about your business, services, and what makes you unique..."
+                              className="min-h-[100px]"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-
-                    <FormField
-                      control={form.control}
-                      name="lineOfBusinessId"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Line of Business *</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select your business type" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {categories?.map((category) => (
-                                <SelectItem key={category.lineOfBusinessId} value={category.lineOfBusinessId}>
-                                  {category.lineOfBusinessName}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="subscriptionId"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Subscription Plan *</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select subscription plan" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {subscriptions?.filter(sub => !sub.comingSoon).map((subscription) => (
-                                <SelectItem key={subscription.subscriptionId} value={subscription.subscriptionId}>
-                                  {subscription.displayName} - {subscription.formattedMonthlyPrice}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="websiteUrl"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Website URL</FormLabel>
-                          <FormControl>
-                            <Input placeholder="https://www.yourbusiness.com" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <FormField
-                    control={form.control}
-                    name="narrative"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Business Description</FormLabel>
-                        <FormControl>
-                          <Textarea 
-                            placeholder="Tell us about your business, services, and what makes you unique..."
-                            className="min-h-[100px]"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                  </CardContent>
+                </Card>
 
                 {/* Personal Information */}
-                <div className="space-y-6">
-                  <h2 className="text-xl font-semibold text-gray-900 border-b pb-2">
-                    Contact Information
-                  </h2>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="firstName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>First Name *</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Enter your first name" {...field} required />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-xl text-greenyp-800">Contact Information</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <FormField
+                        control={form.control}
+                        name="firstName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>First Name *</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Enter your first name" {...field} required />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    <FormField
-                      control={form.control}
-                      name="lastName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Last Name *</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Enter your last name" {...field} required />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                      <FormField
+                        control={form.control}
+                        name="lastName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Last Name *</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Enter your last name" {...field} required />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    <FormField
-                      control={form.control}
-                      name="emailAddress"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email Address *</FormLabel>
-                          <FormControl>
-                            <Input type="email" placeholder="Enter your email" {...field} required />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                      <FormField
+                        control={form.control}
+                        name="emailAddress"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Email Address *</FormLabel>
+                            <FormControl>
+                              <Input type="email" placeholder="Enter your email" {...field} required />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    <FormField
-                      control={form.control}
-                      name="phoneNumber"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Business Phone *</FormLabel>
-                          <FormControl>
-                            <Input placeholder="(555) 123-4567" {...field} required />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                      <FormField
+                        control={form.control}
+                        name="phoneNumber"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Business Phone *</FormLabel>
+                            <FormControl>
+                              <Input placeholder="(555) 123-4567" {...field} required />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    <FormField
-                      control={form.control}
-                      name="cellPhoneNumber"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Cell Phone</FormLabel>
-                          <FormControl>
-                            <Input placeholder="(555) 123-4567" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
+                      <FormField
+                        control={form.control}
+                        name="cellPhoneNumber"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Cell Phone</FormLabel>
+                            <FormControl>
+                              <Input placeholder="(555) 123-4567" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
 
                 {/* Location Information */}
-                <div className="space-y-6">
-                  <h2 className="text-xl font-semibold text-gray-900 border-b pb-2">
-                    Business Location
-                  </h2>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="locationName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Location Name *</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Main Office, Headquarters, etc." {...field} required />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-xl text-greenyp-800">Business Location</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <FormField
+                        control={form.control}
+                        name="locationName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Location Name *</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Main Office, Headquarters, etc." {...field} required />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    <FormField
-                      control={form.control}
-                      name="addressLine1"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Address Line 1 *</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Street address" {...field} required />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                      <FormField
+                        control={form.control}
+                        name="addressLine1"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Address Line 1 *</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Street address" {...field} required />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    <FormField
-                      control={form.control}
-                      name="addressLine2"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Address Line 2</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Suite, unit, building, floor, etc." {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                      <FormField
+                        control={form.control}
+                        name="addressLine2"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Address Line 2</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Suite, unit, building, floor, etc." {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    <FormField
-                      control={form.control}
-                      name="city"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>City *</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Enter city" {...field} required />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                      <FormField
+                        control={form.control}
+                        name="city"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>City *</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Enter city" {...field} required />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    <FormField
-                      control={form.control}
-                      name="state"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>State *</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Enter state" {...field} required />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                      <FormField
+                        control={form.control}
+                        name="state"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>State *</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Enter state" {...field} required />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    <FormField
-                      control={form.control}
-                      name="postalCode"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Postal Code *</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Enter postal code" {...field} required />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
+                      <FormField
+                        control={form.control}
+                        name="postalCode"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Postal Code *</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Enter postal code" {...field} required />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
 
                 {/* Account Credentials */}
-                <div className="space-y-6">
-                  <h2 className="text-xl font-semibold text-gray-900 border-b pb-2">
-                    Account Credentials
-                  </h2>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="userName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Username *</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Choose a username" {...field} required />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-xl text-greenyp-800">Account Credentials</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <FormField
+                        control={form.control}
+                        name="userName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Username *</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Choose a username" {...field} required />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    <div></div>
+                      <div></div>
 
-                    <FormField
-                      control={form.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Password *</FormLabel>
-                          <FormControl>
-                            <Input type="password" placeholder="Enter password" {...field} required />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                      <FormField
+                        control={form.control}
+                        name="password"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Password *</FormLabel>
+                            <FormControl>
+                              <Input type="password" placeholder="Enter password" {...field} required />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    <FormField
-                      control={form.control}
-                      name="confirmPassword"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Confirm Password *</FormLabel>
-                          <FormControl>
-                            <Input type="password" placeholder="Confirm password" {...field} required />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
+                      <FormField
+                        control={form.control}
+                        name="confirmPassword"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Confirm Password *</FormLabel>
+                            <FormControl>
+                              <Input type="password" placeholder="Confirm password" {...field} required />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
 
                 <div className="flex justify-center pt-6">
                   <Button 
