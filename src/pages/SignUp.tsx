@@ -27,6 +27,7 @@ interface SignUpFormData {
   cellPhoneNumber: string;
   emailAddress: string;
   locationName: string;
+  locationDisplayType: string;
   addressLine1: string;
   addressLine2: string;
   city: string;
@@ -59,6 +60,7 @@ const SignUp = () => {
       cellPhoneNumber: '',
       emailAddress: '',
       locationName: '',
+      locationDisplayType: 'CITY_STATE_ZIP',
       addressLine1: '',
       addressLine2: '',
       city: '',
@@ -107,7 +109,7 @@ const SignUp = () => {
           locationId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
           locationName: data.locationName,
           locationType: "HOME_OFFICE_PRIMARY",
-          locationDisplayType: "NO_DISPLAY",
+          locationDisplayType: data.locationDisplayType,
           active: true,
           addressLine1: data.addressLine1,
           addressLine2: data.addressLine2,
@@ -383,6 +385,32 @@ const SignUp = () => {
                             <FormControl>
                               <Input placeholder="Main Office, Headquarters, etc." {...field} required />
                             </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="locationDisplayType"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Location Display Type *</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select display type" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="CITY_STATE_ZIP">
+                                  Display only the city, state, and zip code in search results
+                                </SelectItem>
+                                <SelectItem value="FULL_ADDRESS">
+                                  Display the full address in the search results
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
                             <FormMessage />
                           </FormItem>
                         )}
