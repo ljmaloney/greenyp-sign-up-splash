@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/subscribers/Index";
 import Subscribe from "./pages/subscribers/Subscribe";
-import SignUp from "./pages/SignUp";
+import SignUp from "./pages/subscribers/SignUp";
 import Contact from "./pages/subscribers/Contact";
 import Categories from "./pages/subscribers/Categories";
 import CategoryPage from "./pages/subscribers/CategoryPage";
@@ -24,7 +24,7 @@ const App = () => (
         <Routes>
           <Route path="/subscriber" element={<Index />} />
           <Route path="/subscriber/subscribe" element={<Subscribe />} />
-          <Route path="/signup" element={<SignUp />} />
+          <Route path="/subscriber/signup" element={<SignUp />} />
           <Route path="/subscriber/contact" element={<Contact />} />
           <Route path="/subscriber/categories" element={<Categories />} />
           <Route path="/subscriber/subscription-features" element={<SubscriptionFeatures />} />

@@ -140,7 +140,7 @@ const SignUp = () => {
 
       if (response.ok) {
         toast.success("Account created successfully! Welcome to GreenYP!");
-        navigate('/');
+        navigate('/subscriber');
       } else {
         const errorData = await response.text();
         console.error('Sign-up error:', errorData);
