@@ -123,10 +123,10 @@ const SearchForm = () => {
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Categories</SelectItem>
+                  <SelectItem value="all">All Categories</SelectItem>
                   {categories?.map((category) => (
-                    <SelectItem key={category.id} value={category.id}>
-                      {category.name}
+                    <SelectItem key={category.lineOfBusinessId} value={category.lineOfBusinessId}>
+                      {category.lineOfBusinessName}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -145,10 +145,10 @@ const SearchForm = () => {
                   <SelectValue placeholder={selectedCategory ? "Select service" : "Select category first"} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Services</SelectItem>
+                  <SelectItem value="all">All Services</SelectItem>
                   {services?.map((service) => (
-                    <SelectItem key={service.id} value={service.id}>
-                      {service.name}
+                    <SelectItem key={service.serviceId} value={service.serviceId}>
+                      {service.serviceName}
                     </SelectItem>
                   ))}
                 </SelectContent>

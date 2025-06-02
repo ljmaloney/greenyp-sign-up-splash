@@ -210,8 +210,12 @@ const SearchResults = () => {
                                 className="w-full h-full object-cover rounded-lg"
                                 onError={(e) => {
                                   // Fallback when Google Maps API key is not available
-                                  e.currentTarget.style.display = 'none';
-                                  e.currentTarget.nextElementSibling!.style.display = 'flex';
+                                  const target = e.currentTarget as HTMLImageElement;
+                                  target.style.display = 'none';
+                                  const fallback = target.nextElementSibling as HTMLElement;
+                                  if (fallback) {
+                                    fallback.style.display = 'flex';
+                                  }
                                 }}
                               />
                             ) : null}
