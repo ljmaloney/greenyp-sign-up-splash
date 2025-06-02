@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -26,6 +27,24 @@ interface Location {
   address: string;
   phone: string;
   isPrimary: boolean;
+}
+
+// Interface for the form data returned by dialogs
+interface LocationFormData {
+  locationId?: string;
+  locationName: string;
+  locationType: string;
+  locationDisplayType: string;
+  active: boolean;
+  addressLine1: string;
+  addressLine2?: string;
+  addressLine3?: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  latitude: string;
+  longitude: string;
+  websiteUrl?: string;
 }
 
 const LocationsList = () => {
@@ -150,7 +169,7 @@ const LocationsList = () => {
       <AddLocationDialog 
         isOpen={isAddDialogOpen}
         onClose={() => setIsAddDialogOpen(false)}
-        onLocationAdded={(newLocation) => {
+        onLocationAdded={(newLocation: LocationFormData) => {
           const locationWithDefaults = {
             ...newLocation,
             id: Date.now().toString(),
@@ -169,7 +188,7 @@ const LocationsList = () => {
           isOpen={!!editingLocation}
           onClose={() => setEditingLocation(null)}
           location={editingLocation}
-          onLocationUpdated={(updatedLocation) => {
+          onLocationUpdated={(updatedLocation: LocationFormData) => {
             const locationWithDefaults = {
               ...updatedLocation,
               id: updatedLocation.locationId ? updatedLocation.locationId : editingLocation.id,
