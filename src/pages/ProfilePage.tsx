@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Header from '@/components/PublicHeader';
@@ -7,9 +8,12 @@ import ContactInformation from '@/components/profile/ContactInformation';
 import LocationCard from '@/components/profile/LocationCard';
 import BusinessHours from '@/components/profile/BusinessHours';
 import ActionButtons from '@/components/profile/ActionButtons';
+import ProductsList from '@/components/profile/ProductsList';
+import ServicesList from '@/components/profile/ServicesList';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from 'lucide-react';
 import { useProfile } from '@/hooks/useProfile';
+import { useSubscriptions } from '@/hooks/useSubscriptions';
 import { ProfileData } from '@/types/profile';
 
 // Mock profile data based on the providers from CategoryPage
@@ -35,6 +39,8 @@ const getMockProfileData = (producerId: string): ProfileData => {
       contactName: 'John Smith',
       phoneNumber: '(602) 555-1234',
       cellPhoneNumber: '(602) 555-5678',
+      subscriptionId: 'featured-business-001',
+      locationId: 'location-001',
       locationHours: [
         { dayOfWeek: 'MONDAY', openTime: '7:00 AM', closeTime: '6:00 PM' },
         { dayOfWeek: 'TUESDAY', openTime: '7:00 AM', closeTime: '6:00 PM' },
@@ -65,6 +71,8 @@ const getMockProfileData = (producerId: string): ProfileData => {
       contactName: 'Sarah Johnson',
       phoneNumber: '(480) 555-5678',
       cellPhoneNumber: '(480) 555-9012',
+      subscriptionId: 'basic-listing-001',
+      locationId: 'location-002',
       locationHours: [
         { dayOfWeek: 'MONDAY', openTime: '8:00 AM', closeTime: '5:00 PM' },
         { dayOfWeek: 'TUESDAY', openTime: '8:00 AM', closeTime: '5:00 PM' },
@@ -95,6 +103,8 @@ const getMockProfileData = (producerId: string): ProfileData => {
       contactName: 'Mike Rodriguez',
       phoneNumber: '(480) 555-9012',
       cellPhoneNumber: '(480) 555-3456',
+      subscriptionId: 'premium-enterprise-001',
+      locationId: 'location-003',
       locationHours: [
         { dayOfWeek: 'MONDAY', openTime: '6:00 AM', closeTime: '7:00 PM' },
         { dayOfWeek: 'TUESDAY', openTime: '6:00 AM', closeTime: '7:00 PM' },
@@ -114,9 +124,19 @@ const ProfilePage = () => {
   const { producerId } = useParams<{ producerId: string }>();
   
   const { data: profileResponse, isLoading, error } = useProfile(producerId || '');
+  const { data: subscriptions } = useSubscriptions();
   
   // Use mock data if API fails or for testing
   const profile = profileResponse?.response || getMockProfileData(producerId || 'producer-001');
+  
+  // Find the subscription details
+  const currentSubscription = subscriptions?.find(sub => sub.subscriptionId === profile.subscriptionId);
+  
+  // Check if subscription includes Products or Services features
+  const hasProductsFeature = currentSubscription?.features.some(feature => 
+    feature.toLowerCase().includes('product')) || false;
+  const hasServicesFeature = currentSubscription?.features.some(feature => 
+    feature.toLowerCase().includes('service')) || false;
   
   if (isLoading) {
     return (
@@ -176,7 +196,21 @@ const ProfilePage = () => {
               </div>
 
               {/* Business Hours */}
-              <BusinessHours profile={profile} />
+              <div className="mb-8">
+                <BusinessHours profile={profile} />
+              </div>
+
+              {/* Products and Services */}
+              {(hasProductsFeature || hasServicesFeature) && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                  {hasProductsFeature && profile.locationId && (
+                    <ProductsList locationId={profile.locationId} />
+                  )}
+                  {hasServicesFeature && profile.locationId && (
+                    <ServicesList producerId={profile.producerId} locationId={profile.locationId} />
+                  )}
+                </div>
+              )}
 
               {/* Action Buttons */}
               <ActionButtons profile={profile} />

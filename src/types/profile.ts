@@ -26,9 +26,64 @@ export interface ProfileData {
   phoneNumber: string;
   cellPhoneNumber: string;
   locationHours: LocationHours[];
+  subscriptionId?: string;
+  locationId?: string;
 }
 
 export interface ProfileResponse {
   response: ProfileData;
   errorMessageApi: string | null;
+}
+
+// Product types
+export interface Product {
+  productId: string;
+  createDate: string;
+  lastUpdateDate: string;
+  producerId: string;
+  producerLocationId: string;
+  productType: "BAGGED_MATERIAL" | string;
+  botanicalGroup: string;
+  name: string;
+  price: number;
+  availableQuantity: number;
+  containerSize: string;
+  description: string;
+  discontinued: boolean;
+  discontinueDate: string;
+  lastOrderDate: string;
+  attributes: Record<string, any>;
+}
+
+export interface ProductsResponse {
+  response: Product[];
+  errorMessageApi: {
+    errorCode: string;
+    displayMessage: string;
+    errorDetails: string;
+  } | null;
+}
+
+// Service types
+export interface ProducerService {
+  producerServiceId: string;
+  createDate: string;
+  lastUpdateDate: string;
+  producerId: string;
+  producerLocationId: string;
+  minServicePrice: number;
+  maxServicePrice: number;
+  priceUnitsType: "LOT_SIZE" | string;
+  shortDescription: string;
+  description: string;
+  serviceTerms: string;
+}
+
+export interface ServicesResponse {
+  response: ProducerService[];
+  errorMessageApi: {
+    errorCode: string;
+    displayMessage: string;
+    errorDetails: string;
+  } | null;
 }

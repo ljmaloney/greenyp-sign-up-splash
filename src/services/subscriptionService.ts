@@ -97,7 +97,9 @@ export const mockSubscriptionsResponse = (): SubscriptionWithFormatting[] => {
         "Multiple Location Listings (up to 5)",
         "Enhanced business profile",
         "Photo gallery (up to 15 images)",
-        "Priority placement in searches"
+        "Priority placement in searches",
+        "Products listing",
+        "Services catalog"
       ]
     },
     {
@@ -122,11 +124,13 @@ export const mockSubscriptionsResponse = (): SubscriptionWithFormatting[] => {
         "Advanced analytics dashboard",
         "Custom branding options",
         "Priority customer support",
-        "API access for integrations"
+        "API access for integrations",
+        "Products management",
+        "Services portfolio"
       ]
     }
   ];
 
-  console.log('Using mock subscription data with coming soon plan');
+  console.log('Using mock subscription data with Products and Services features');
   return formatSubscriptionData(mockData);
 };
