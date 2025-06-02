@@ -1,10 +1,19 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Wrench, Plus, Edit } from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Wrench, Plus, Edit, Trash } from 'lucide-react';
+import { useToast } from "@/hooks/use-toast";
+import { deleteService } from '@/services/serviceService';
+import EditServiceDialog from './EditServiceDialog';
 
 const DashboardServicesList = () => {
+  const [editingService, setEditingService] = useState(null);
+  const [deletingServiceId, setDeletingServiceId] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { toast } = useToast();
+
   // Mock services data
   const services = [
     {
@@ -25,6 +34,41 @@ const DashboardServicesList = () => {
     }
   ];
 
+  const handleEdit = (service) => {
+    setEditingService(service);
+  };
+
+  const handleDelete = async (serviceId) => {
+    setIsDeleting(true);
+    
+    try {
+      console.log('Deleting service:', serviceId);
+      await deleteService(serviceId);
+      
+      toast({
+        title: "Service Deleted",
+        description: "The service has been successfully deleted.",
+      });
+      
+      // In a real app, you would refetch the services list here
+      setDeletingServiceId(null);
+    } catch (error) {
+      console.error('Error deleting service:', error);
+      toast({
+        title: "Delete Failed",
+        description: "Failed to delete service. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleServiceUpdated = () => {
+    // In a real app, you would refetch the services list here
+    console.log('Service updated, refreshing list...');
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -44,10 +88,25 @@ const DashboardServicesList = () => {
                   <Wrench className="w-5 h-5 mr-2 text-greenyp-600" />
                   {service.name}
                 </div>
-                <Button variant="outline" size="sm">
-                  <Edit className="w-4 h-4 mr-2" />
-                  Edit
-                </Button>
+                <div className="flex space-x-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleEdit(service)}
+                  >
+                    <Edit className="w-4 h-4 mr-2" />
+                    Edit
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setDeletingServiceId(service.id)}
+                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                  >
+                    <Trash className="w-4 h-4 mr-2" />
+                    Delete
+                  </Button>
+                </div>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -66,6 +125,34 @@ const DashboardServicesList = () => {
           </Card>
         ))}
       </div>
+
+      <EditServiceDialog
+        isOpen={!!editingService}
+        onClose={() => setEditingService(null)}
+        service={editingService}
+        onServiceUpdated={handleServiceUpdated}
+      />
+
+      <AlertDialog open={!!deletingServiceId} onOpenChange={() => setDeletingServiceId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Service</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this service? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => handleDelete(deletingServiceId)}
+              disabled={isDeleting}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {isDeleting ? 'Deleting...' : 'Delete'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
