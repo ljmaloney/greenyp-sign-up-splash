@@ -91,9 +91,9 @@ const CategorySection = () => {
               <Link 
                 to={`/subscriber/categories/${category.lineOfBusinessId}`}
                 className="mt-6 inline-flex items-center text-greenyp-600 hover:text-greenyp-800 font-medium"
-                aria-label={`Find ${category.lineOfBusinessName} Providers`}
+                aria-label={`Show more information about ${category.lineOfBusinessName}`}
               >
-                Find Providers
+                Show more information
                 <ChevronRight className="w-4 h-4 ml-2" />
               </Link>
             </div>
