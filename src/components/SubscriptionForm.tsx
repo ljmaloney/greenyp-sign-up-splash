@@ -34,6 +34,8 @@ const SubscriptionForm = () => {
     
     // Redirect to sign-up page with plan information
     const params = new URLSearchParams();
+    params.set('email', email);
+    if (businessName) params.set('businessName', businessName);
     if (selectedPlan) params.set('plan', selectedPlan);
     if (billingPeriod) params.set('billing', billingPeriod);
     

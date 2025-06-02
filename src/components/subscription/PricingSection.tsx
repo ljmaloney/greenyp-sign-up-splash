@@ -1,4 +1,3 @@
-
 import React from 'react';
 import SubscriptionPlan from './SubscriptionPlan';
 import { useNavigate } from 'react-router-dom';
@@ -18,7 +17,7 @@ const PricingSectionSubscribe = () => {
       return;
     }
     
-    navigate(`/signup?plan=${subscriptionId}&billing=monthly`);
+    navigate(`/subscriber/signup?plan=${subscriptionId}&billing=monthly`);
   };
 
   if (isLoading) {
