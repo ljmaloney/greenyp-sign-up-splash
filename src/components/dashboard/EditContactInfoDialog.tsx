@@ -10,12 +10,12 @@ interface ContactInfoData {
   email: string;
   phone: string;
   address: string;
-  website: string;
   producerId?: string;
   lineOfBusinessId?: string;
   subscriptionId?: string;
   businessName?: string;
   description?: string;
+  websiteUrl?: string;
   contactId?: string;
   producerLocationId?: string;
   firstName?: string;
@@ -49,7 +49,7 @@ const EditContactInfoDialog = ({ isOpen, onClose, contactData }: EditContactInfo
           subscriptionId: formData.subscriptionId || "3fa85f64-5717-4562-b3fc-2c963f66afa6",
           subscriptionType: "ADMIN",
           invoiceCycleType: "MONTHLY",
-          websiteUrl: formData.website,
+          websiteUrl: formData.websiteUrl || "",
           narrative: formData.description || "Professional landscaping services"
         },
         primaryContact: {
@@ -130,17 +130,6 @@ const EditContactInfoDialog = ({ isOpen, onClose, contactData }: EditContactInfo
               value={formData.address}
               onChange={(e) => handleChange('address', e.target.value)}
               required
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Website
-            </label>
-            <Input
-              value={formData.website}
-              onChange={(e) => handleChange('website', e.target.value)}
-              placeholder="www.example.com"
             />
           </div>
           

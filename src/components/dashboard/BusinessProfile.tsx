@@ -91,6 +91,13 @@ const BusinessProfile = () => {
               <p className="text-gray-900">{businessData.contactName}</p>
             </div>
             <div>
+              <label className="text-sm font-medium text-gray-600">Website</label>
+              <div className="flex items-center space-x-3">
+                <Globe className="w-4 h-4 text-gray-500" />
+                <span>{businessData.website}</span>
+              </div>
+            </div>
+            <div>
               <label className="text-sm font-medium text-gray-600">Description</label>
               <p className="text-gray-900">{businessData.description}</p>
             </div>
@@ -144,10 +151,6 @@ const BusinessProfile = () => {
               <MapPin className="w-4 h-4 text-gray-500" />
               <span>{businessData.address}</span>
             </div>
-            <div className="flex items-center space-x-3">
-              <Globe className="w-4 h-4 text-gray-500" />
-              <span>{businessData.website}</span>
-            </div>
           </CardContent>
         </Card>
       </div>
@@ -193,7 +196,8 @@ const BusinessProfile = () => {
         businessData={{
           businessName: businessData.businessName,
           contactName: businessData.contactName,
-          description: businessData.description
+          description: businessData.description,
+          websiteUrl: businessData.website
         }}
       />
 
@@ -203,8 +207,7 @@ const BusinessProfile = () => {
         contactData={{
           email: businessData.email,
           phone: businessData.phone,
-          address: businessData.address,
-          website: businessData.website
+          address: businessData.address
         }}
       />
     </div>

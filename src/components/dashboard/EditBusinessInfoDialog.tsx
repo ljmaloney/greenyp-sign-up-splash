@@ -10,10 +10,10 @@ interface BusinessInfoData {
   businessName: string;
   contactName: string;
   description: string;
+  websiteUrl?: string;
   producerId?: string;
   lineOfBusinessId?: string;
   subscriptionId?: string;
-  websiteUrl?: string;
 }
 
 interface EditBusinessInfoDialogProps {
@@ -99,6 +99,17 @@ const EditBusinessInfoDialog = ({ isOpen, onClose, businessData }: EditBusinessI
               value={formData.contactName}
               onChange={(e) => handleChange('contactName', e.target.value)}
               required
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Website URL
+            </label>
+            <Input
+              value={formData.websiteUrl || ''}
+              onChange={(e) => handleChange('websiteUrl', e.target.value)}
+              placeholder="https://www.example.com"
             />
           </div>
           
