@@ -172,13 +172,14 @@ const LocationsList = () => {
           onLocationUpdated={(updatedLocation) => {
             const locationWithDefaults = {
               ...updatedLocation,
+              id: updatedLocation.locationId || editingLocation.id,
               name: updatedLocation.locationName,
               address: `${updatedLocation.addressLine1}, ${updatedLocation.city}, ${updatedLocation.state} ${updatedLocation.postalCode}`,
               phone: editingLocation.phone, // Keep existing phone
               isPrimary: updatedLocation.locationType === 'HOME_OFFICE_PRIMARY'
             };
             setLocations(prev => prev.map(loc => 
-              loc.id === updatedLocation.locationId ? locationWithDefaults : loc
+              loc.id === (updatedLocation.locationId || editingLocation.id) ? locationWithDefaults : loc
             ));
             setEditingLocation(null);
           }}
