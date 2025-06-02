@@ -1,7 +1,8 @@
+
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { User, Phone, Mail, MapPin, Globe, Edit, Upload, Images } from 'lucide-react';
+import { User, Phone, Mail, MapPin, Globe, Edit, Upload, Images, Star } from 'lucide-react';
 import EditBusinessProfileDialog from './EditBusinessProfileDialog';
 import EditBusinessInfoDialog from './EditBusinessInfoDialog';
 import EditContactInfoDialog from './EditContactInfoDialog';
@@ -22,7 +23,8 @@ const BusinessProfile = () => {
     address: '123 Garden Street, San Francisco, CA 94102',
     website: 'www.greenlandscaping.com',
     description: 'Professional landscaping services specializing in sustainable garden design and maintenance.',
-    subscriptionId: 'featured-business-001' // Mock subscription ID
+    subscriptionId: 'featured-business-001', // Mock subscription ID
+    subscriptionType: 'ADMIN' // Mock subscription type
   };
 
   // Check if current subscription has logo feature
@@ -37,6 +39,9 @@ const BusinessProfile = () => {
     feature.toLowerCase().includes('image') || 
     feature.toLowerCase().includes('gallery')
   ) || false;
+
+  // Check if subscription type is ADMIN
+  const isAdminSubscription = businessData.subscriptionType === 'ADMIN';
 
   const handleLogoUpload = () => {
     if (hasLogoFeature) {
@@ -69,10 +74,18 @@ const BusinessProfile = () => {
         {/* Business Information */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="flex items-center">
-              <User className="w-5 h-5 mr-2 text-greenyp-600" />
-              Business Information
-            </CardTitle>
+            <div className="flex flex-col">
+              <CardTitle className="flex items-center">
+                <User className="w-5 h-5 mr-2 text-greenyp-600" />
+                Business Information
+                {isAdminSubscription && (
+                  <Star className="w-4 h-4 ml-2 text-yellow-500 fill-yellow-500" />
+                )}
+              </CardTitle>
+              {isAdminSubscription && (
+                <p className="text-sm text-green-600 font-medium mt-1">free subscription</p>
+              )}
+            </div>
             <Button
               variant="outline"
               size="sm"
