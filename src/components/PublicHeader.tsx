@@ -15,7 +15,7 @@ const PublicHeader = () => {
           <Leaf className="mr-2 h-8 w-8" />
           <span>GreenYP</span>
         </Link>
-        <p className="text-xs text-gray-600 mt-1 ml-10">
+        <p className="text-xs text-gray-600 mt-1">
           Your go-to directory for landscapers, gardeners, nurseries, and green industry professionals near you.
         </p>
       </div>
