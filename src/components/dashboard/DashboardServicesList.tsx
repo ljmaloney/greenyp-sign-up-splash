@@ -51,11 +51,11 @@ const DashboardServicesList = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-2">
+              <div className="flex justify-between items-start">
+                <div className="flex-1">
                   <p className="text-gray-600">{service.description}</p>
                 </div>
-                <div className="space-y-2">
+                <div className="text-right ml-4">
                   <p className="text-2xl font-bold text-greenyp-600">
                     ${service.minPrice} - ${service.maxPrice}
                   </p>
