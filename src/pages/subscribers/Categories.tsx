@@ -95,7 +95,7 @@ const Categories = () => {
                 {renderIcon(category)}
                 <h3 className="text-xl font-semibold mb-2 text-gray-800">{category.lineOfBusinessName}</h3>
                 <p className="text-gray-600 mb-6">{category.shortDescription}</p>
-                <Link to={`/categories/${category.lineOfBusinessId}`}>
+                <Link to={`/subscriber/categories/${category.lineOfBusinessId}`}>
                   <Button 
                     className="bg-greenyp-600 hover:bg-greenyp-700 text-white inline-flex items-center"
                   >

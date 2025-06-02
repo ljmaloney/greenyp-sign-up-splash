@@ -22,13 +22,13 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/subscribe" element={<Subscribe />} />
+          <Route path="/subscriber" element={<Index />} />
+          <Route path="/subscriber/subscribe" element={<Subscribe />} />
           <Route path="/signup" element={<SignUp />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/categories" element={<Categories />} />
-          <Route path="/subscription-features" element={<SubscriptionFeatures />} />
-          <Route path="/categories/:slug" element={<CategoryPage />} />
+          <Route path="/subscriber/contact" element={<Contact />} />
+          <Route path="/subscriber/categories" element={<Categories />} />
+          <Route path="/subscriber/subscription-features" element={<SubscriptionFeatures />} />
+          <Route path="/subscriber/categories/:slug" element={<CategoryPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

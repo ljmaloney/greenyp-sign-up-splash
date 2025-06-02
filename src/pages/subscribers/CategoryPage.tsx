@@ -78,7 +78,7 @@ const CategoryPage = () => {
         <main className="flex-grow container mx-auto px-4 py-16 text-center">
           <h1 className="text-3xl font-bold mb-4">Category Not Found</h1>
           <p className="mb-8">We couldn't find the category you're looking for.</p>
-          <Link to="/">
+          <Link to="/subscriber">
             <Button>Return to Home</Button>
           </Link>
         </main>
