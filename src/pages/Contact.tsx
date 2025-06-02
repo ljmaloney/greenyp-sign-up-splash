@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/components/ui/sonner";
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Mail, Phone, MapPin, Clock } from 'lucide-react';
+import { Mail, Clock } from 'lucide-react';
 
 interface ContactFormData {
   name: string;
@@ -30,15 +30,60 @@ const Contact = () => {
     }
   });
 
+  const validateName = (name: string): boolean => {
+    return /^[A-Za-z\s]+$/.test(name);
+  };
+
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validateSubject = (subject: string): boolean => {
+    return /^[A-Za-z\s]+$/.test(subject);
+  };
+
   const onSubmit = async (data: ContactFormData) => {
+    // Validate fields
+    if (!validateName(data.name)) {
+      toast.error("Contact name should only contain letters and spaces.");
+      return;
+    }
+
+    if (!validateEmail(data.email)) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
+    if (!validateSubject(data.subject)) {
+      toast.error("Subject should only contain letters and spaces.");
+      return;
+    }
+
     setLoading(true);
     
     try {
-      // Simulate form submission - replace with actual implementation
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      toast.success("Message sent successfully! We'll get back to you soon.");
-      form.reset();
+      const payload = {
+        contactName: data.name,
+        emailAddress: data.email,
+        subject: data.subject,
+        message: data.message
+      };
+
+      const response = await fetch('http://services.greenyp.com/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        toast.success("Message sent successfully! We'll get back to you soon.");
+        form.reset();
+      } else {
+        toast.error("Failed to send message. Please try again.");
+      }
     } catch (error) {
       toast.error("Failed to send message. Please try again.");
     } finally {
@@ -76,31 +121,6 @@ const Contact = () => {
                       <h3 className="text-lg font-semibold text-gray-900">Email</h3>
                       <p className="text-gray-600">info@greenyp.com</p>
                       <p className="text-gray-600">sales@greenyp.com</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start space-x-4">
-                    <div className="bg-greenyp-100 p-3 rounded-full">
-                      <Phone className="h-6 w-6 text-greenyp-600" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">Phone</h3>
-                      <p className="text-gray-600">1-800-GREEN-YP</p>
-                      <p className="text-gray-600">(1-800-473-3697)</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start space-x-4">
-                    <div className="bg-greenyp-100 p-3 rounded-full">
-                      <MapPin className="h-6 w-6 text-greenyp-600" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">Address</h3>
-                      <p className="text-gray-600">
-                        123 Green Business Lane<br />
-                        Eco City, EC 12345<br />
-                        United States
-                      </p>
                     </div>
                   </div>
 

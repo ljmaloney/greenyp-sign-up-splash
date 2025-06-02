@@ -1,18 +1,13 @@
 
 import React from 'react';
 import { ChevronRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useCategories } from '@/hooks/useCategories';
 import { CategoryWithIcon } from '@/types/category';
 
 const CategorySection = () => {
   const { data: categories, isLoading, error } = useCategories();
-  const navigate = useNavigate();
   
-  const handleCategoryClick = (category: CategoryWithIcon) => {
-    navigate(`/categories/${category.lineOfBusinessId}`);
-  };
-
   if (isLoading) {
     return (
       <section id="categories" className="py-16 bg-white">
@@ -85,24 +80,33 @@ const CategorySection = () => {
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
-          {categories?.map((category, index) => (
+          {categories?.slice(0, 6).map((category, index) => (
             <div 
               key={index}
-              className="bg-gray-50 rounded-xl p-8 text-center transition-all hover:shadow-md hover:bg-gray-100 border border-greenyp-100 cursor-pointer"
-              onClick={() => handleCategoryClick(category)}
+              className="bg-gray-50 rounded-xl p-8 text-center transition-all hover:shadow-md hover:bg-gray-100 border border-greenyp-100"
             >
               {renderIcon(category)}
               <h3 className="text-xl font-semibold mb-2 text-gray-800">{category.lineOfBusinessName}</h3>
               <p className="text-gray-600">{category.shortDescription}</p>
-              <button 
+              <Link 
+                to={`/categories/${category.lineOfBusinessId}`}
                 className="mt-6 inline-flex items-center text-greenyp-600 hover:text-greenyp-800 font-medium"
                 aria-label={`Find ${category.lineOfBusinessName} Providers`}
               >
                 Find Providers
                 <ChevronRight className="w-4 h-4 ml-2" />
-              </button>
+              </Link>
             </div>
           ))}
+        </div>
+        
+        <div className="text-center mt-12">
+          <Link to="/categories">
+            <button className="bg-greenyp-600 hover:bg-greenyp-700 text-white px-8 py-3 rounded-lg font-medium inline-flex items-center">
+              View All Categories
+              <ChevronRight className="w-4 h-4 ml-2" />
+            </button>
+          </Link>
         </div>
       </div>
     </section>

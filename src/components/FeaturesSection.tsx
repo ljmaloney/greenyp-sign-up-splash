@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Check, MapPin, TreeDeciduous } from 'lucide-react';
+import { Check, MapPin, TreeDeciduous, Settings, Calendar } from 'lucide-react';
 
 const features = [
   {
@@ -9,6 +9,10 @@ const features = [
     icon: (
       <MapPin className="w-10 h-10 text-greenyp-500" />
     ),
+    items: [
+      { text: "Featured in search results", color: "text-greenyp-500" },
+      { text: "Enhanced business profile", color: "text-greenyp-500" }
+    ]
   },
   {
     title: "Industry-Specific Categories",
@@ -16,7 +20,35 @@ const features = [
     icon: (
       <TreeDeciduous className="w-10 h-10 text-greenyp-500" />
     ),
+    items: [
+      { text: "Custom service categorization", color: "text-greenyp-500" },
+      { text: "Multiple service listings", color: "text-greenyp-500" }
+    ]
   },
+  {
+    title: "Business Profile Management",
+    description: "Customize the products and services you offer, update your business location and contact information, and ensure your listing accurately reflects what customers can expect. Please note that some features are only enabled for specific subscription tiers.",
+    icon: (
+      <Settings className="w-10 h-10 text-greenyp-500" />
+    ),
+    items: [
+      { text: "Profile customization", color: "text-greenyp-500" },
+      { text: "Service listings management", color: "text-greenyp-500" },
+      { text: "List products and services including prices - Featured Listing", color: "text-yellow-500" },
+      { text: "Upload business logo and images - Featured Listing", color: "text-yellow-500" }
+    ]
+  },
+  {
+    title: "Future Business Tools",
+    description: "This section will grow with your needs—future enhancements will unlock tools tailored to your line of business and subscription tier, helping you maximize your visibility.",
+    icon: (
+      <Calendar className="w-10 h-10 text-greenyp-500" />
+    ),
+    items: [
+      { text: "Advanced analytics", color: "text-greenyp-500" },
+      { text: "Customer management tools", color: "text-greenyp-500" }
+    ]
+  }
 ];
 
 const FeatureList = () => {
@@ -32,39 +64,14 @@ const FeatureList = () => {
           <p className="text-gray-600">{feature.description}</p>
           
           <ul className="mt-4 space-y-2">
-            {index === 0 && (
-              <>
-                <li className="flex items-center">
-                  <Check className="h-5 w-5 text-greenyp-500 mr-2" />
-                  <span className="text-sm text-gray-600">
-                    Featured in search results
-                  </span>
-                </li>
-                <li className="flex items-center">
-                  <Check className="h-5 w-5 text-greenyp-500 mr-2" />
-                  <span className="text-sm text-gray-600">
-                    Enhanced business profile
-                  </span>
-                </li>
-              </>
-            )}
-            
-            {index === 1 && (
-              <>
-                <li className="flex items-center">
-                  <Check className="h-5 w-5 text-greenyp-500 mr-2" />
-                  <span className="text-sm text-gray-600">
-                    Custom service categorization
-                  </span>
-                </li>
-                <li className="flex items-center">
-                  <Check className="h-5 w-5 text-greenyp-500 mr-2" />
-                  <span className="text-sm text-gray-600">
-                    Multiple service listings
-                  </span>
-                </li>
-              </>
-            )}
+            {feature.items.map((item, itemIndex) => (
+              <li key={itemIndex} className="flex items-center">
+                <Check className={`h-5 w-5 ${item.color} mr-2`} />
+                <span className="text-sm text-gray-600">
+                  {item.text}
+                </span>
+              </li>
+            ))}
           </ul>
         </div>
       ))}
