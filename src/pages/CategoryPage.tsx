@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Header from '@/components/PublicHeader';
@@ -14,6 +15,7 @@ interface Provider {
   reviews: number;
   location: string;
   phone: string;
+  producerId: string;
 }
 
 // Mock provider data - in a real app, this would come from an API
