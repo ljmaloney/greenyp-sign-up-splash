@@ -1,6 +1,6 @@
 
 import React from 'react';
-import Header from '@/components/Header';
+import PublicHeader from '@/components/PublicHeader';
 import CategorySection from '@/components/CategorySection';
 import FeaturesSection from '@/components/FeaturesSection';
 import Footer from '@/components/Footer';
@@ -9,7 +9,7 @@ import DevApiConfig from '@/components/DevApiConfig';
 const PublicIndex = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <PublicHeader />
       <main className="flex-grow">
         {/* Hero Section without business dashboard */}
         <section className="relative hero-pattern py-16 md:py-24">
