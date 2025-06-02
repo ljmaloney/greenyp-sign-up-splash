@@ -1,7 +1,7 @@
 
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import Header from '@/components/Header';
+import Header from '@/components/PublicHeader';
 import Footer from '@/components/Footer';
 import { Button } from "@/components/ui/button";
 import { MapPin, Phone, Star } from 'lucide-react';
