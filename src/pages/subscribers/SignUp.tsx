@@ -145,7 +145,18 @@ const SignUp = () => {
 
       if (response.ok) {
         toast.success("Account created successfully! Welcome to GreenYP!");
-        navigate('/subscriber');
+        
+        // Redirect to confirmation page with account data
+        const confirmationParams = new URLSearchParams({
+          businessName: data.businessName,
+          plan: selectedSubscription?.displayName || data.subscriptionId,
+          email: data.emailAddress,
+          phone: data.phoneNumber,
+          location: `${data.city}, ${data.state}`,
+          website: data.websiteUrl || ''
+        });
+        
+        navigate(`/subscriber/signup/confirmation?${confirmationParams.toString()}`);
       } else {
         const errorData = await response.text();
         console.error('Sign-up error:', errorData);

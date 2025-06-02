@@ -12,6 +12,7 @@ import ProfilePage from "./pages/ProfilePage";
 import Index from "./pages/subscribers/Index";
 import Subscribe from "./pages/subscribers/Subscribe";
 import SignUp from "./pages/subscribers/SignUp";
+import SignUpConfirmation from "./pages/subscribers/SignUpConfirmation";
 import Contact from "./pages/subscribers/Contact";
 import SubscriberCategories from "./pages/subscribers/SubscriberCategories";
 import SubscriberCategoryPage from "./pages/subscribers/CategoryPage";
@@ -36,6 +37,7 @@ const App = () => (
           <Route path="/subscriber/subscribe" element={<Subscribe />} />
           <Route path="/subscribe" element={<Subscribe />} />
           <Route path="/subscriber/signup" element={<SignUp />} />
+          <Route path="/subscriber/signup/confirmation" element={<SignUpConfirmation />} />
           <Route path="/subscriber/contact" element={<Contact />} />
           <Route path="/subscriber/categories" element={<SubscriberCategories />} />
           <Route path="/subscriber/subscription-features" element={<SubscriptionFeatures />} />
