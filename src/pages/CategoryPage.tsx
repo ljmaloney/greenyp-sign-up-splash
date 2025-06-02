@@ -1,10 +1,9 @@
-
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Header from '@/components/PublicHeader';
 import Footer from '@/components/Footer';
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, Star } from 'lucide-react';
+import { MapPin, Phone, Star, Search } from 'lucide-react';
 import { useCategories } from '@/hooks/useCategories';
 import { useCategoryServices } from '@/hooks/useCategoryServices';
 import { CategoryWithIcon } from '@/types/category';
@@ -176,9 +175,10 @@ const CategoryPage = () => {
                     <span className="text-gray-600">{provider.phone}</span>
                   </div>
                   
-                  <Link to={`/profile/${provider.producerId}`}>
+                  <Link to={`/search?category=${category.lineOfBusinessId}`}>
                     <Button className="w-full bg-greenyp-600 hover:bg-greenyp-700 text-white mt-2">
-                      View Profile
+                      <Search className="w-4 h-4 mr-2" />
+                      Search Providers
                     </Button>
                   </Link>
                 </div>
