@@ -53,7 +53,7 @@ export const fetchCategoryServices = async (lineOfBusinessId: string): Promise<C
     console.log('Services response:', data);
     
     // Check if there's an error in the API response
-    if (data.errorMessageApi && typeof data.errorMessageApi === 'object' && 'errorCode' in data.errorMessageApi) {
+    if (data.errorMessageApi !== null && typeof data.errorMessageApi === 'object' && 'errorCode' in data.errorMessageApi) {
       console.warn('API returned error:', data.errorMessageApi);
       return getMockServicesData();
     }
