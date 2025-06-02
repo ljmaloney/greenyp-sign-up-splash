@@ -18,6 +18,14 @@ import SubscriberCategories from "./pages/subscribers/SubscriberCategories";
 import SubscriberCategoryPage from "./pages/subscribers/CategoryPage";
 import SubscriptionFeatures from "./pages/subscribers/SubscriptionFeatures";
 import NotFound from "./pages/subscribers/NotFound";
+import DashboardIndex from "./pages/dashboard/Index";
+import DashboardLocations from "./pages/dashboard/Locations";
+import DashboardContacts from "./pages/dashboard/Contacts";
+import DashboardProducts from "./pages/dashboard/Products";
+import DashboardServices from "./pages/dashboard/Services";
+import DashboardUpgrade from "./pages/dashboard/Upgrade";
+import DashboardSubscription from "./pages/dashboard/Subscription";
+import DashboardPayment from "./pages/dashboard/Payment";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +50,14 @@ const App = () => (
           <Route path="/subscriber/categories" element={<SubscriberCategories />} />
           <Route path="/subscriber/subscription-features" element={<SubscriptionFeatures />} />
           <Route path="/subscriber/categories/:slug" element={<SubscriberCategoryPage />} />
+          <Route path="/dashboard" element={<DashboardIndex />} />
+          <Route path="/dashboard/locations" element={<DashboardLocations />} />
+          <Route path="/dashboard/contacts" element={<DashboardContacts />} />
+          <Route path="/dashboard/products" element={<DashboardProducts />} />
+          <Route path="/dashboard/services" element={<DashboardServices />} />
+          <Route path="/dashboard/upgrade" element={<DashboardUpgrade />} />
+          <Route path="/dashboard/subscription" element={<DashboardSubscription />} />
+          <Route path="/dashboard/payment" element={<DashboardPayment />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

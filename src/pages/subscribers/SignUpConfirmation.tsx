@@ -130,7 +130,7 @@ const SignUpConfirmation = () => {
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
             <Button asChild className="bg-green-600 hover:bg-green-700">
-              <Link to="/subscriber" className="flex items-center">
+              <Link to="/dashboard" className="flex items-center">
                 Access Your Dashboard
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>

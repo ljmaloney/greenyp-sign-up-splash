@@ -25,7 +25,9 @@ const Header = () => {
             <Link to="/subscriber/contact" className="text-gray-700 hover:text-greenyp-600 transition-colors">Contact</Link>
           </nav>
         )}
-        <Button variant="outline" className="border-greenyp-500 text-greenyp-700 hover:bg-greenyp-50">Log In</Button>
+        <Link to="/dashboard">
+          <Button variant="outline" className="border-greenyp-500 text-greenyp-700 hover:bg-greenyp-50">Log In</Button>
+        </Link>
         <Link to="/subscriber/signup">
           <Button className="bg-greenyp-600 hover:bg-greenyp-700 text-white">Sign Up</Button>
         </Link>
