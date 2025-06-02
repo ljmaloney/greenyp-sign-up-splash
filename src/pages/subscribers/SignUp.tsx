@@ -13,6 +13,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useCategories } from '@/hooks/useCategories';
 import { useSubscriptions } from '@/hooks/useSubscriptions';
+import { getApiUrl } from '@/config/api';
 
 interface SignUpFormData {
   businessName: string;
@@ -130,7 +131,7 @@ const SignUp = () => {
 
       console.log('Submitting sign-up data:', payload);
 
-      const response = await fetch('http://services.greenyp.com/account', {
+      const response = await fetch(getApiUrl('/account'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -168,8 +169,8 @@ const SignUp = () => {
                 Join thousands of green industry professionals growing their business
               </p>
               {selectedPlan && (
-                <div className="mt-4 p-3 bg-greenyp-100 rounded-lg">
-                  <p className="text-greenyp-800 font-medium">
+                <div className="mt-4 p-3 bg-green-100 rounded-lg">
+                  <p className="text-green-800 font-medium">
                     Selected Plan: {selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1)}
                   </p>
                 </div>
@@ -181,7 +182,7 @@ const SignUp = () => {
                 {/* Business Information */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-xl text-greenyp-800">Business Information</CardTitle>
+                    <CardTitle className="text-xl text-green-800">Business Information</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -284,10 +285,10 @@ const SignUp = () => {
                   </CardContent>
                 </Card>
 
-                {/* Personal Information */}
+                {/* Contact Information */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-xl text-greenyp-800">Contact Information</CardTitle>
+                    <CardTitle className="text-xl text-green-800">Contact Information</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -396,7 +397,7 @@ const SignUp = () => {
                 {/* Location Information */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-xl text-greenyp-800">Business Location</CardTitle>
+                    <CardTitle className="text-xl text-green-800">Business Location</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -516,7 +517,7 @@ const SignUp = () => {
                 {/* Account Credentials */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-xl text-greenyp-800">Account Credentials</CardTitle>
+                    <CardTitle className="text-xl text-green-800">Account Credentials</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -570,7 +571,7 @@ const SignUp = () => {
                 <div className="flex justify-center pt-6">
                   <Button 
                     type="submit" 
-                    className="bg-greenyp-600 hover:bg-greenyp-700 text-white px-8 py-3 text-lg"
+                    className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 text-lg"
                     disabled={loading}
                   >
                     {loading ? "Creating Account..." : "Create Account"}
@@ -579,9 +580,9 @@ const SignUp = () => {
 
                 <p className="text-xs text-gray-500 text-center">
                   By creating an account, you agree to our{' '}
-                  <a href="/terms" className="underline hover:text-greenyp-600">Terms of Service</a>{' '}
+                  <a href="/terms" className="underline hover:text-green-600">Terms of Service</a>{' '}
                   and{' '}
-                  <a href="/privacy" className="underline hover:text-greenyp-600">Privacy Policy</a>
+                  <a href="/privacy" className="underline hover:text-green-600">Privacy Policy</a>
                 </p>
               </form>
             </Form>

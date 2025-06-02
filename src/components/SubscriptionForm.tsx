@@ -52,7 +52,7 @@ const SubscriptionForm = () => {
           value={businessName}
           onChange={(e) => setBusinessName(e.target.value)}
           placeholder="Your Business Name"
-          className="flex-grow bg-white border border-gray-300 focus:border-greenyp-500 focus:ring focus:ring-greenyp-200 transition-all"
+          className="flex-grow bg-white border border-gray-300 focus:border-green-500 focus:ring focus:ring-green-200 transition-all"
           required
         />
       )}
@@ -63,12 +63,12 @@ const SubscriptionForm = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Enter your business email"
-          className="flex-grow bg-white border border-gray-300 focus:border-greenyp-500 focus:ring focus:ring-greenyp-200 transition-all"
+          className="flex-grow bg-white border border-gray-300 focus:border-green-500 focus:ring focus:ring-green-200 transition-all"
           required
         />
         <Button 
           type="submit" 
-          className="bg-greenyp-600 hover:bg-greenyp-700 text-white font-medium px-6 whitespace-nowrap"
+          className="bg-green-600 hover:bg-green-700 text-white font-medium px-6 whitespace-nowrap"
           disabled={loading}
         >
           {loading ? "Processing..." : selectedPlan ? "Start Your Listing" : "List Your Business"}
@@ -76,7 +76,7 @@ const SubscriptionForm = () => {
       </div>
       
       <p className="text-xs text-gray-500 mt-2 text-center">
-        By submitting, you agree to our <a href="/terms" className="underline hover:text-greenyp-600">Terms of Service</a> and <a href="/privacy" className="underline hover:text-greenyp-600">Privacy Policy</a>
+        By submitting, you agree to our <a href="/terms" className="underline hover:text-green-600">Terms of Service</a> and <a href="/privacy" className="underline hover:text-green-600">Privacy Policy</a>
       </p>
     </form>
   );

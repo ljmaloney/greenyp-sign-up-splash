@@ -30,12 +30,12 @@ const SubscriptionPlan = ({
         comingSoon 
           ? 'border-yellow-400 border-2' 
           : popular 
-            ? 'border-greenyp-500 shadow-lg' 
+            ? 'border-green-500 shadow-lg' 
             : 'border-gray-200'
       } p-6 flex flex-col`}
     >
       {popular && !comingSoon && (
-        <div className="absolute top-0 right-0 -mt-3 -mr-3 bg-greenyp-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+        <div className="absolute top-0 right-0 -mt-3 -mr-3 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full">
           Most Popular
         </div>
       )}
@@ -54,8 +54,8 @@ const SubscriptionPlan = ({
       <ul className="mb-6 flex-grow space-y-3">
         {features.map((feature, featureIndex) => (
           <li key={featureIndex} className="flex items-start">
-            <span className="bg-greenyp-100 rounded-full p-1 mr-2 flex-shrink-0">
-              <CheckIcon className="h-4 w-4 text-greenyp-600" />
+            <span className="bg-green-100 rounded-full p-1 mr-2 flex-shrink-0">
+              <CheckIcon className="h-4 w-4 text-green-600" />
             </span>
             <span className="text-gray-600">{feature}</span>
           </li>
@@ -66,8 +66,8 @@ const SubscriptionPlan = ({
           comingSoon
             ? 'bg-gray-400 cursor-not-allowed'
             : popular 
-              ? 'bg-greenyp-600 hover:bg-greenyp-700 text-white' 
-              : 'bg-white border border-greenyp-600 text-greenyp-700 hover:bg-greenyp-50'
+              ? 'bg-green-600 hover:bg-green-700 text-white' 
+              : 'bg-white border border-green-600 text-green-700 hover:bg-green-50'
         }`}
         onClick={onSelect}
         disabled={comingSoon}

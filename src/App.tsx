@@ -34,6 +34,7 @@ const App = () => (
           <Route path="/profile/:producerId" element={<ProfilePage />} />
           <Route path="/subscriber" element={<Index />} />
           <Route path="/subscriber/subscribe" element={<Subscribe />} />
+          <Route path="/subscribe" element={<Subscribe />} />
           <Route path="/subscriber/signup" element={<SignUp />} />
           <Route path="/subscriber/contact" element={<Contact />} />
           <Route path="/subscriber/categories" element={<SubscriberCategories />} />
