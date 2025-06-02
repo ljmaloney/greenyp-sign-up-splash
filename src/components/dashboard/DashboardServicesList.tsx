@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Wrench, Plus, Edit, Trash } from 'lucide-react';
+import { Wrench, Plus, Edit, Trash, MapPin } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { deleteService } from '@/services/serviceService';
 import EditServiceDialog from './EditServiceDialog';
@@ -16,7 +15,13 @@ const DashboardServicesList = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const { toast } = useToast();
 
-  // Mock services data
+  // Mock locations data
+  const locations = [
+    { id: '1', name: 'Main Office', address: '123 Garden Street, San Francisco, CA 94102' },
+    { id: '2', name: 'Warehouse', address: '456 Industrial Blvd, San Francisco, CA 94103' }
+  ];
+
+  // Mock services data with location associations
   const services = [
     {
       id: '1',
@@ -24,7 +29,8 @@ const DashboardServicesList = () => {
       minPrice: 50,
       maxPrice: 100,
       priceUnit: 'per visit',
-      description: 'Complete lawn care including mowing, edging, and cleanup'
+      description: 'Complete lawn care including mowing, edging, and cleanup',
+      locationId: '1'
     },
     {
       id: '2',
@@ -32,9 +38,15 @@ const DashboardServicesList = () => {
       minPrice: 500,
       maxPrice: 2000,
       priceUnit: 'per project',
-      description: 'Professional garden design and installation services'
+      description: 'Professional garden design and installation services',
+      locationId: '2'
     }
   ];
+
+  const getLocationName = (locationId: string) => {
+    const location = locations.find(loc => loc.id === locationId);
+    return location ? location.name : 'Unknown Location';
+  };
 
   const handleEdit = (service) => {
     setEditingService(service);
@@ -96,7 +108,13 @@ const DashboardServicesList = () => {
               <CardTitle className="flex items-center justify-between">
                 <div className="flex items-center">
                   <Wrench className="w-5 h-5 mr-2 text-greenyp-600" />
-                  {service.name}
+                  <div>
+                    <div>{service.name}</div>
+                    <div className="flex items-center text-sm text-gray-500 font-normal">
+                      <MapPin className="w-3 h-3 mr-1" />
+                      {getLocationName(service.locationId)}
+                    </div>
+                  </div>
                 </div>
                 <div className="flex space-x-2">
                   <Button

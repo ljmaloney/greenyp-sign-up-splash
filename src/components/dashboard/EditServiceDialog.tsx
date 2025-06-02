@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { updateService, ServiceUpdateRequest } from '@/services/serviceService';
 
@@ -30,10 +31,17 @@ const EditServiceDialog = ({ isOpen, onClose, service, onServiceUpdated }: EditS
     minServicePrice: service?.minPrice || 0,
     maxServicePrice: service?.maxPrice || 0,
     priceUnitsType: 'PER_VISIT',
-    serviceTerms: ''
+    serviceTerms: '',
+    producerLocationId: '1' // Default to first location
   });
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+
+  // Mock locations data - in a real app, this would come from an API
+  const locations = [
+    { id: '1', name: 'Main Office', address: '123 Garden Street, San Francisco, CA 94102' },
+    { id: '2', name: 'Warehouse', address: '456 Industrial Blvd, San Francisco, CA 94103' }
+  ];
 
   React.useEffect(() => {
     if (service) {
@@ -43,7 +51,8 @@ const EditServiceDialog = ({ isOpen, onClose, service, onServiceUpdated }: EditS
         minServicePrice: service.minPrice,
         maxServicePrice: service.maxPrice,
         priceUnitsType: 'PER_VISIT',
-        serviceTerms: ''
+        serviceTerms: '',
+        producerLocationId: '1' // Default to first location
       });
     }
   }, [service]);
@@ -52,12 +61,21 @@ const EditServiceDialog = ({ isOpen, onClose, service, onServiceUpdated }: EditS
     e.preventDefault();
     if (!service) return;
     
+    if (!formData.producerLocationId) {
+      toast({
+        title: "Location Required",
+        description: "Please select a location for this service.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsLoading(true);
     
     try {
       const updateRequest: ServiceUpdateRequest = {
         producerId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-        producerLocationId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        producerLocationId: formData.producerLocationId,
         minServicePrice: formData.minServicePrice,
         maxServicePrice: formData.maxServicePrice,
         priceUnitsType: formData.priceUnitsType,
@@ -100,6 +118,27 @@ const EditServiceDialog = ({ isOpen, onClose, service, onServiceUpdated }: EditS
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Location
+            </label>
+            <Select value={formData.producerLocationId} onValueChange={(value) => handleChange('producerLocationId', value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a location" />
+              </SelectTrigger>
+              <SelectContent>
+                {locations.map((location) => (
+                  <SelectItem key={location.id} value={location.id}>
+                    <div>
+                      <div className="font-medium">{location.name}</div>
+                      <div className="text-sm text-gray-500">{location.address}</div>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Service Name
