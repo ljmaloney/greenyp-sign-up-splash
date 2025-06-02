@@ -15,7 +15,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       <DashboardHeader onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
       <div className="flex">
         <DashboardSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-        <main className="flex-1 p-6 lg:ml-64 text-left">
+        <main className="flex-1 p-6 text-left">
           {children}
         </main>
       </div>

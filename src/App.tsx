@@ -26,6 +26,7 @@ import DashboardServices from "./pages/dashboard/Services";
 import DashboardUpgrade from "./pages/dashboard/Upgrade";
 import DashboardSubscription from "./pages/dashboard/Subscription";
 import DashboardPayment from "./pages/dashboard/Payment";
+import AuthorizedUsers from "./pages/dashboard/AuthorizedUsers";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +54,7 @@ const App = () => (
           <Route path="/dashboard" element={<DashboardIndex />} />
           <Route path="/dashboard/locations" element={<DashboardLocations />} />
           <Route path="/dashboard/contacts" element={<DashboardContacts />} />
+          <Route path="/dashboard/authorized-users" element={<AuthorizedUsers />} />
           <Route path="/dashboard/products" element={<DashboardProducts />} />
           <Route path="/dashboard/services" element={<DashboardServices />} />
           <Route path="/dashboard/upgrade" element={<DashboardUpgrade />} />

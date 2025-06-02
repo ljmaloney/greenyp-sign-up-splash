@@ -10,6 +10,7 @@ import {
   Wrench, 
   CreditCard, 
   Crown,
+  UserPlus,
   X 
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -50,6 +51,12 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
       label: 'Contacts',
       icon: Users,
       href: '/dashboard/contacts',
+      enabled: true
+    },
+    {
+      label: 'Authorized Users',
+      icon: UserPlus,
+      href: '/dashboard/authorized-users',
       enabled: true
     },
     {
