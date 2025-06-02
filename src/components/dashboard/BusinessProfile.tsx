@@ -2,11 +2,13 @@
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { User, Phone, Mail, MapPin, Globe, Edit } from 'lucide-react';
+import { User, Phone, Mail, MapPin, Globe, Edit, Upload } from 'lucide-react';
 import EditBusinessProfileDialog from './EditBusinessProfileDialog';
+import { useSubscriptions } from '@/hooks/useSubscriptions';
 
 const BusinessProfile = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const { data: subscriptions } = useSubscriptions();
   
   // Mock business data - in real app this would come from API
   const businessData = {
@@ -16,7 +18,21 @@ const BusinessProfile = () => {
     phone: '(555) 123-4567',
     address: '123 Garden Street, San Francisco, CA 94102',
     website: 'www.greenlandscaping.com',
-    description: 'Professional landscaping services specializing in sustainable garden design and maintenance.'
+    description: 'Professional landscaping services specializing in sustainable garden design and maintenance.',
+    subscriptionId: 'featured-business-001' // Mock subscription ID
+  };
+
+  // Check if current subscription has logo feature
+  const currentSubscription = subscriptions?.find(sub => sub.subscriptionId === businessData.subscriptionId);
+  const hasLogoFeature = currentSubscription?.features.some(feature => 
+    feature.toLowerCase().includes('logo') || feature.toLowerCase().includes('branding')
+  ) || false;
+
+  const handleLogoUpload = () => {
+    if (hasLogoFeature) {
+      // In real app, this would open file picker and handle upload
+      console.log('Opening logo upload...');
+    }
   };
 
   return (
@@ -53,6 +69,25 @@ const BusinessProfile = () => {
             <div>
               <label className="text-sm font-medium text-gray-600">Description</label>
               <p className="text-gray-900">{businessData.description}</p>
+            </div>
+            
+            {/* Logo Upload Section */}
+            <div>
+              <label className="text-sm font-medium text-gray-600 mb-2 block">Business Logo</label>
+              <Button
+                variant="outline"
+                onClick={handleLogoUpload}
+                disabled={!hasLogoFeature}
+                className={`w-full ${!hasLogoFeature ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                {hasLogoFeature ? 'Upload Logo' : 'Upload Logo (Upgrade Required)'}
+              </Button>
+              {!hasLogoFeature && (
+                <p className="text-xs text-gray-500 mt-1">
+                  Logo upload is available with premium subscriptions
+                </p>
+              )}
             </div>
           </CardContent>
         </Card>
