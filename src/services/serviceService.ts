@@ -12,6 +12,31 @@ export interface ServiceUpdateRequest {
   serviceTerms: string;
 }
 
+export interface ServiceCreateRequest {
+  producerId: string;
+  producerLocationId: string;
+  minServicePrice: number;
+  maxServicePrice: number;
+  priceUnitsType: string;
+  shortDescription: string;
+  description: string;
+  serviceTerms: string;
+}
+
+export const createService = async (data: ServiceCreateRequest): Promise<void> => {
+  const response = await fetch(getApiUrl('/producer/location/service'), {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  
+  if (!response.ok) {
+    throw new Error(`Failed to create service: ${response.status}`);
+  }
+};
+
 export const updateService = async (serviceId: string, data: ServiceUpdateRequest): Promise<void> => {
   const response = await fetch(getApiUrl(`/producer/location/service/${serviceId}`), {
     method: 'PUT',

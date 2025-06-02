@@ -7,9 +7,11 @@ import { Wrench, Plus, Edit, Trash } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { deleteService } from '@/services/serviceService';
 import EditServiceDialog from './EditServiceDialog';
+import AddServiceDialog from './AddServiceDialog';
 
 const DashboardServicesList = () => {
   const [editingService, setEditingService] = useState(null);
+  const [isAddingService, setIsAddingService] = useState(false);
   const [deletingServiceId, setDeletingServiceId] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const { toast } = useToast();
@@ -69,11 +71,19 @@ const DashboardServicesList = () => {
     console.log('Service updated, refreshing list...');
   };
 
+  const handleServiceCreated = () => {
+    // In a real app, you would refetch the services list here
+    console.log('Service created, refreshing list...');
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-900">Services</h1>
-        <Button className="bg-greenyp-600 hover:bg-greenyp-700">
+        <Button 
+          className="bg-greenyp-600 hover:bg-greenyp-700"
+          onClick={() => setIsAddingService(true)}
+        >
           <Plus className="w-4 h-4 mr-2" />
           Add Service
         </Button>
@@ -125,6 +135,12 @@ const DashboardServicesList = () => {
           </Card>
         ))}
       </div>
+
+      <AddServiceDialog
+        isOpen={isAddingService}
+        onClose={() => setIsAddingService(false)}
+        onServiceCreated={handleServiceCreated}
+      />
 
       <EditServiceDialog
         isOpen={!!editingService}
