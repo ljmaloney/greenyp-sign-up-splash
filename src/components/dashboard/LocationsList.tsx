@@ -9,10 +9,7 @@ import LocationHoursSection from './LocationHoursSection';
 
 interface Location {
   id: string;
-  name: string;
-  address: string;
-  phone: string;
-  isPrimary: boolean;
+  locationName: string;
   locationType: string;
   locationDisplayType: string;
   active: boolean;
@@ -25,6 +22,11 @@ interface Location {
   latitude: string;
   longitude: string;
   websiteUrl?: string;
+  // Computed properties for backward compatibility
+  name: string;
+  address: string;
+  phone: string;
+  isPrimary: boolean;
 }
 
 const LocationsList = () => {
@@ -35,6 +37,7 @@ const LocationsList = () => {
   const [locations, setLocations] = useState<Location[]>([
     {
       id: '1',
+      locationName: 'Main Office',
       name: 'Main Office',
       address: '123 Garden Street, San Francisco, CA 94102',
       phone: '(555) 123-4567',
@@ -54,6 +57,7 @@ const LocationsList = () => {
     },
     {
       id: '2',
+      locationName: 'Warehouse',
       name: 'Warehouse',
       address: '456 Industrial Blvd, San Francisco, CA 94103',
       phone: '(555) 123-4568',
@@ -71,6 +75,17 @@ const LocationsList = () => {
       longitude: '-122.4094'
     }
   ]);
+
+  // Helper function to create full address from address components
+  const getFullAddress = (location: Location) => {
+    const parts = [
+      location.addressLine1,
+      location.addressLine2,
+      location.addressLine3
+    ].filter(Boolean);
+    
+    return `${parts.join(', ')}, ${location.city}, ${location.state} ${location.postalCode}`;
+  };
 
   return (
     <div className="space-y-6 text-left">
@@ -92,8 +107,8 @@ const LocationsList = () => {
               <CardTitle className="flex items-center justify-between">
                 <div className="flex items-center">
                   <MapPin className="w-5 h-5 mr-2 text-greenyp-600" />
-                  {location.name}
-                  {location.isPrimary && (
+                  {location.locationName}
+                  {location.locationType === 'HOME_OFFICE_PRIMARY' && (
                     <span className="ml-2 px-2 py-1 bg-greenyp-100 text-greenyp-700 text-xs rounded-full">
                       Primary
                     </span>
@@ -112,8 +127,8 @@ const LocationsList = () => {
             <CardContent>
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <p className="text-gray-600">{location.address}</p>
-                  <p className="text-gray-600">{location.phone}</p>
+                  <p className="text-gray-600">{getFullAddress(location)}</p>
+                  {location.phone && <p className="text-gray-600">{location.phone}</p>}
                   {location.websiteUrl && (
                     <p className="text-gray-600">{location.websiteUrl}</p>
                   )}
@@ -137,7 +152,15 @@ const LocationsList = () => {
         isOpen={isAddDialogOpen}
         onClose={() => setIsAddDialogOpen(false)}
         onLocationAdded={(newLocation) => {
-          setLocations(prev => [...prev, { ...newLocation, id: Date.now().toString() }]);
+          const locationWithDefaults = {
+            ...newLocation,
+            id: Date.now().toString(),
+            name: newLocation.locationName,
+            address: `${newLocation.addressLine1}, ${newLocation.city}, ${newLocation.state} ${newLocation.postalCode}`,
+            phone: '(555) 123-4567', // Default phone for now
+            isPrimary: newLocation.locationType === 'HOME_OFFICE_PRIMARY'
+          };
+          setLocations(prev => [...prev, locationWithDefaults]);
         }}
       />
 
@@ -147,8 +170,15 @@ const LocationsList = () => {
           onClose={() => setEditingLocation(null)}
           location={editingLocation}
           onLocationUpdated={(updatedLocation) => {
+            const locationWithDefaults = {
+              ...updatedLocation,
+              name: updatedLocation.locationName,
+              address: `${updatedLocation.addressLine1}, ${updatedLocation.city}, ${updatedLocation.state} ${updatedLocation.postalCode}`,
+              phone: editingLocation.phone, // Keep existing phone
+              isPrimary: updatedLocation.locationType === 'HOME_OFFICE_PRIMARY'
+            };
             setLocations(prev => prev.map(loc => 
-              loc.id === updatedLocation.id ? updatedLocation : loc
+              loc.id === updatedLocation.locationId ? locationWithDefaults : loc
             ));
             setEditingLocation(null);
           }}
