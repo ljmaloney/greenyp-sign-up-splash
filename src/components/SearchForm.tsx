@@ -1,27 +1,44 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useCategories } from "@/hooks/useCategories";
 import { useCategoryServices } from "@/hooks/useCategoryServices";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Search } from 'lucide-react';
 
 const SearchForm = () => {
-  const [zipCode, setZipCode] = useState('');
-  const [distance, setDistance] = useState('25');
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  
+  // Get initial values from URL parameters
+  const initialZipCode = searchParams.get('zipCode') || '';
+  const initialDistance = searchParams.get('distance') || '25';
+  const initialCategory = searchParams.get('category') || '';
+  const initialService = searchParams.get('service') || '';
+  
+  const [zipCode, setZipCode] = useState(initialZipCode);
+  const [distance, setDistance] = useState(initialDistance);
   const [customDistance, setCustomDistance] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedService, setSelectedService] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState(initialCategory);
+  const [selectedService, setSelectedService] = useState(initialService);
   const [isCustomDistance, setIsCustomDistance] = useState(false);
   
-  const navigate = useNavigate();
   const { data: categories } = useCategories();
   const { data: services } = useCategoryServices(selectedCategory);
 
+  // Check if the initial distance is a custom value (not in predefined options)
   const distanceOptions = ['15', '25', '50', '75', '100', '150'];
+  
+  useEffect(() => {
+    if (initialDistance && !distanceOptions.includes(initialDistance)) {
+      setIsCustomDistance(true);
+      setCustomDistance(initialDistance);
+      setDistance('');
+    }
+  }, [initialDistance]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
