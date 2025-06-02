@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { User, Phone, Mail, MapPin, Globe, Edit, Upload } from 'lucide-react';
+import { User, Phone, Mail, MapPin, Globe, Edit, Upload, Images } from 'lucide-react';
 import EditBusinessProfileDialog from './EditBusinessProfileDialog';
 import { useSubscriptions } from '@/hooks/useSubscriptions';
 
@@ -28,10 +27,24 @@ const BusinessProfile = () => {
     feature.toLowerCase().includes('logo') || feature.toLowerCase().includes('branding')
   ) || false;
 
+  // Check if current subscription has image gallery feature
+  const hasImageFeature = currentSubscription?.features.some(feature => 
+    feature.toLowerCase().includes('photo') || 
+    feature.toLowerCase().includes('image') || 
+    feature.toLowerCase().includes('gallery')
+  ) || false;
+
   const handleLogoUpload = () => {
     if (hasLogoFeature) {
       // In real app, this would open file picker and handle upload
       console.log('Opening logo upload...');
+    }
+  };
+
+  const handleImageUpload = () => {
+    if (hasImageFeature) {
+      // In real app, this would open file picker and handle upload
+      console.log('Opening image gallery upload...');
     }
   };
 
@@ -120,6 +133,35 @@ const BusinessProfile = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Image Gallery Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <Images className="w-5 h-5 mr-2 text-greenyp-600" />
+            Image Gallery
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div>
+            <label className="text-sm font-medium text-gray-600 mb-2 block">Business Images</label>
+            <Button
+              variant="outline"
+              onClick={handleImageUpload}
+              disabled={!hasImageFeature}
+              className={`w-full ${!hasImageFeature ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              {hasImageFeature ? 'Upload Images' : 'Upload Images (Upgrade Required)'}
+            </Button>
+            {!hasImageFeature && (
+              <p className="text-xs text-gray-500 mt-1">
+                Image gallery is available with featured business subscriptions
+              </p>
+            )}
+          </div>
+        </CardContent>
+      </Card>
 
       <EditBusinessProfileDialog 
         isOpen={isEditDialogOpen}
