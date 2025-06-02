@@ -225,7 +225,8 @@ const SearchResults = () => {
               </div>
               <Button 
                 onClick={() => setShowSearchForm(!showSearchForm)}
-                className="bg-greenyp-600 hover:bg-yellow-500 transition-colors duration-200"
+                variant="outline"
+                className="border-greenyp-600 text-greenyp-600 hover:border-yellow-500 hover:text-yellow-600 transition-colors duration-200"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 New Search
