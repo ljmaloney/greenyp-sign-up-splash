@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -6,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Phone, Globe, ArrowLeft } from 'lucide-react';
 import PublicHeader from '@/components/PublicHeader';
 import Footer from '@/components/Footer';
+import SearchForm from '@/components/SearchForm';
 import { useCategories } from '@/hooks/useCategories';
 
 interface SearchResult {
@@ -100,6 +102,7 @@ const SearchResults = () => {
   const [results, setResults] = useState<SearchResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showSearchForm, setShowSearchForm] = useState(false);
 
   const zipCode = searchParams.get('zipCode') || '';
   const distance = searchParams.get('distance') || '25';
@@ -220,14 +223,22 @@ const SearchResults = () => {
                   {results?.totalCount || 0} providers found within {distance} miles of {zipCode}
                 </p>
               </div>
-              <Link to="/">
-                <Button variant="outline">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  New Search
-                </Button>
-              </Link>
+              <Button 
+                onClick={() => setShowSearchForm(!showSearchForm)}
+                className="bg-greenyp-600 hover:bg-yellow-500 transition-colors duration-200"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                New Search
+              </Button>
             </div>
           </div>
+
+          {/* Search Form - Show when button is clicked */}
+          {showSearchForm && (
+            <div className="mb-8">
+              <SearchForm />
+            </div>
+          )}
 
           {/* Results */}
           {results && results.results.length > 0 ? (
