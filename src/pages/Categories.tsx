@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Header from '@/components/Header';
+import PublicHeader from '@/components/PublicHeader';
 import Footer from '@/components/Footer';
 import { Button } from "@/components/ui/button";
 import { ChevronRight } from 'lucide-react';
@@ -14,7 +14,7 @@ const Categories = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+        <PublicHeader />
         <main className="flex-grow bg-gray-50 py-16">
           <div className="container mx-auto px-4 md:px-8 text-center">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
@@ -45,7 +45,7 @@ const Categories = () => {
   if (error) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+        <PublicHeader />
         <main className="flex-grow bg-gray-50 py-16">
           <div className="container mx-auto px-4 md:px-8 text-center">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
@@ -74,7 +74,7 @@ const Categories = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <PublicHeader />
       <main className="flex-grow bg-gray-50 py-16">
         <div className="container mx-auto px-4 md:px-8">
           <div className="text-center max-w-3xl mx-auto mb-12">
@@ -95,7 +95,7 @@ const Categories = () => {
                 {renderIcon(category)}
                 <h3 className="text-xl font-semibold mb-2 text-gray-800">{category.lineOfBusinessName}</h3>
                 <p className="text-gray-600 mb-6">{category.shortDescription}</p>
-                <Link to={`/subscriber/categories/${category.lineOfBusinessId}`}>
+                <Link to={`/categories/${category.lineOfBusinessId}`}>
                   <Button 
                     className="bg-greenyp-600 hover:bg-greenyp-700 text-white inline-flex items-center"
                   >
