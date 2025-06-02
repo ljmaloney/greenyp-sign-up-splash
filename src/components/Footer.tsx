@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 const Footer = () => {
@@ -19,7 +18,7 @@ const Footer = () => {
               </svg>
               <span className="text-xl font-bold text-white">GreenYP</span>
             </div>
-            <p className="mb-4">Connecting eco-conscious customers with sustainable businesses.</p>
+            <p className="mb-4">Explore the green marketplace, your source for all your lawn and garden needs</p>
             <div className="flex space-x-4">
               <a href="#" className="text-gray-400 hover:text-white transition-colors">
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">

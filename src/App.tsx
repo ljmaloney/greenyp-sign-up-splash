@@ -9,6 +9,7 @@ import Subscribe from "./pages/Subscribe";
 import SignUp from "./pages/SignUp";
 import Contact from "./pages/Contact";
 import CategoryPage from "./pages/CategoryPage";
+import SubscriptionFeatures from "./pages/SubscriptionFeatures";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/subscribe" element={<Subscribe />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/subscription-features" element={<SubscriptionFeatures />} />
           <Route path="/categories/:slug" element={<CategoryPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
