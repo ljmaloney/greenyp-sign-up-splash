@@ -128,8 +128,8 @@ const CategoryPage = () => {
                 <div className="text-center">Loading services...</div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {services.map((service, index) => (
-                    <div key={index} className="bg-white p-4 rounded-lg border border-gray-200">
+                  {services.map((service) => (
+                    <div key={service.lobServiceId} className="bg-white p-4 rounded-lg border border-gray-200">
                       <h3 className="font-semibold text-lg mb-2">{service.serviceName}</h3>
                       <p className="text-gray-600 text-sm">{service.serviceDescription}</p>
                     </div>

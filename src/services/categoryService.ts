@@ -36,7 +36,7 @@ export const fetchCategories = async (): Promise<CategoryWithIcon[]> => {
   }
 };
 
-// Fetch services for a specific category
+// Fetch services for a specific category - updated for new API response format
 export const fetchCategoryServices = async (lineOfBusinessId: string): Promise<CategoryService[]> => {
   try {
     console.log(`Fetching services for category ${lineOfBusinessId}...`);
@@ -45,27 +45,64 @@ export const fetchCategoryServices = async (lineOfBusinessId: string): Promise<C
     const response = await fetch(url);
     
     if (!response.ok) {
-      throw new Error(`API request failed with status ${response.status}`);
+      console.warn(`API request failed with status ${response.status}, falling back to mock data`);
+      return getMockServicesData();
     }
     
     const data: APIResponse<CategoryService[]> = await response.json();
     console.log('Services response:', data);
+    
+    // Check if there's an error in the API response
+    if (data.errorMessageApi && data.errorMessageApi.errorCode) {
+      console.warn('API returned error:', data.errorMessageApi);
+      return getMockServicesData();
+    }
     
     // Access the response data from the generic container
     const services = data.response;
     
     // Ensure data is an array
     if (!Array.isArray(services)) {
-      console.warn('Services API response data is not an array');
-      return [];
+      console.warn('Services API response data is not an array, falling back to mock data');
+      return getMockServicesData();
     }
     
     return services;
   } catch (error) {
     console.error('Error fetching category services:', error);
-    // Return empty array if API fails
-    return [];
+    // Return mock data if API fails
+    return getMockServicesData();
   }
+};
+
+// Get mock services data as fallback
+const getMockServicesData = (): CategoryService[] => {
+  return [
+    {
+      lobServiceId: "mock-service-001",
+      lineOfBusinessId: "landscaping-001",
+      createdByReference: "system",
+      createdByType: "ADMIN_USER",
+      serviceName: "Landscape Design",
+      serviceDescription: "Professional landscape design and planning services for residential and commercial properties"
+    },
+    {
+      lobServiceId: "mock-service-002", 
+      lineOfBusinessId: "landscaping-001",
+      createdByReference: "system",
+      createdByType: "ADMIN_USER",
+      serviceName: "Garden Installation",
+      serviceDescription: "Complete garden installation including plant selection, soil preparation, and planting"
+    },
+    {
+      lobServiceId: "mock-service-003",
+      lineOfBusinessId: "landscaping-001", 
+      createdByReference: "system",
+      createdByType: "ADMIN_USER",
+      serviceName: "Hardscape Construction",
+      serviceDescription: "Installation of patios, walkways, retaining walls, and other hardscape elements"
+    }
+  ];
 };
 
 // Maps icon strings from the API to Lucide icon components

@@ -16,9 +16,12 @@ export interface CategoryWithIcon extends APICategory {
   slug: string; // Generated from lineOfBusinessId for URL routing
 }
 
-// Service structure for category pages
+// Service structure for category pages - updated to match API response
 export interface CategoryService {
-  serviceId: string;
+  lobServiceId: string;
+  lineOfBusinessId: string;
+  createdByReference: string;
+  createdByType: string;
   serviceName: string;
   serviceDescription: string;
 }

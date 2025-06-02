@@ -1,6 +1,6 @@
 
 // API configuration with customizable host
-const DEFAULT_API_HOST = 'http://services.greenyp.com';
+const DEFAULT_API_HOST = 'https://services.greenyp.com';
 
 // Get API host from environment or use default
 const getApiHost = (): string => {
