@@ -193,8 +193,7 @@ const CategoryPage = () => {
             </div>
           </div>
         </section>
-        <span>Explore a curated list of green service providers including landscapers, gardeners, nurseries, and more.</span>
-      </main>
+        </main>
       <Footer />
     </div>
   );
