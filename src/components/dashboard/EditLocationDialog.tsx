@@ -24,11 +24,29 @@ interface Location {
   websiteUrl?: string;
 }
 
+// Interface for the form data returned by dialogs
+interface LocationFormData {
+  locationId?: string;
+  locationName: string;
+  locationType: string;
+  locationDisplayType: string;
+  active: boolean;
+  addressLine1: string;
+  addressLine2?: string;
+  addressLine3?: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  latitude: string;
+  longitude: string;
+  websiteUrl?: string;
+}
+
 interface EditLocationDialogProps {
   isOpen: boolean;
   onClose: () => void;
   location: Location;
-  onLocationUpdated: (location: Location) => void;
+  onLocationUpdated: (location: LocationFormData) => void;
 }
 
 const EditLocationDialog = ({ isOpen, onClose, location, onLocationUpdated }: EditLocationDialogProps) => {
@@ -76,7 +94,7 @@ const EditLocationDialog = ({ isOpen, onClose, location, onLocationUpdated }: Ed
         description: "Location has been successfully updated.",
       });
       
-      onLocationUpdated({ ...location, ...formData });
+      onLocationUpdated(formData);
       onClose();
     } catch (error) {
       console.error('Error updating location:', error);
