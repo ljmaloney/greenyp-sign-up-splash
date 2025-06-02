@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -194,6 +193,7 @@ const CategoryPage = () => {
             </div>
           </div>
         </section>
+        <span>Explore a curated list of green service providers including landscapers, gardeners, nurseries, and more.</span>
       </main>
       <Footer />
     </div>
