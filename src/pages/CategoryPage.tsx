@@ -176,9 +176,11 @@ const CategoryPage = () => {
                     <span className="text-gray-600">{provider.phone}</span>
                   </div>
                   
-                  <Button className="w-full bg-greenyp-600 hover:bg-greenyp-700 text-white mt-2">
-                    View Profile
-                  </Button>
+                  <Link to={`/profile/${provider.producerId}`}>
+                    <Button className="w-full bg-greenyp-600 hover:bg-greenyp-700 text-white mt-2">
+                      View Profile
+                    </Button>
+                  </Link>
                 </div>
               ))}
             </div>
