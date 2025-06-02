@@ -20,8 +20,7 @@ const Header = () => {
       <div className="flex items-center space-x-4">
         {!isMobile && (
           <nav className="hidden md:flex items-center space-x-6 mr-4">
-            <a href="#features" className="text-gray-700 hover:text-greenyp-600 transition-colors">Features</a>
-            <Link to="/subscription-features" className="text-gray-700 hover:text-greenyp-600 transition-colors">Subscription Features</Link>
+            <Link to="/subscription-features" className="text-gray-700 hover:text-greenyp-600 transition-colors">Features</Link>
             <Link to="/subscribe" className="text-gray-700 hover:text-greenyp-600 transition-colors">Pricing</Link>
             <Link to="/contact" className="text-gray-700 hover:text-greenyp-600 transition-colors">Contact</Link>
           </nav>
