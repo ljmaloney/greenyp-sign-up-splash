@@ -3,6 +3,7 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Header from '@/components/PublicHeader';
 import Footer from '@/components/Footer';
+import Map from '@/components/Map';
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { MapPin, Phone, Globe, Clock, ArrowLeft } from 'lucide-react';
@@ -157,7 +158,8 @@ const ProfilePage = () => {
   };
 
   const formatHours = () => {
-    const dayOrder = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+    // Reorder to start with Monday after Sunday
+    const dayOrder = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
     const dayNames = {
       'SUNDAY': 'Sunday',
       'MONDAY': 'Monday', 
@@ -262,9 +264,14 @@ const ProfilePage = () => {
                         <span className="text-gray-600">{profile.locationName}</span>
                       </div>
                     )}
-                    <div className="text-gray-600">
+                    <div className="text-gray-600 mb-4">
                       {formatAddress()}
                     </div>
+                    <Map 
+                      latitude={profile.latitude}
+                      longitude={profile.longitude}
+                      businessName={profile.businessName}
+                    />
                   </CardContent>
                 </Card>
               </div>
