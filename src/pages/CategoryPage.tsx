@@ -5,7 +5,7 @@ import Header from '@/components/PublicHeader';
 import Footer from '@/components/Footer';
 import SearchForm from '@/components/SearchForm';
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, Star, Search } from 'lucide-react';
+import { MapPin, Phone, Star, User, Check } from 'lucide-react';
 import { useCategories } from '@/hooks/useCategories';
 import { useCategoryServices } from '@/hooks/useCategoryServices';
 import { CategoryWithIcon } from '@/types/category';
@@ -115,14 +115,17 @@ const CategoryPage = () => {
               <div className="mt-4 p-4 bg-white rounded-lg border border-greenyp-200">
                 <p className="text-gray-700 mb-3">{category.description}</p>
                 
-                {/* Services as bullet points */}
+                {/* Services with green checkmarks */}
                 {services && services.length > 0 && !servicesLoading && (
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-2">Available Services:</h3>
-                    <ul className="list-disc list-inside space-y-1 text-gray-700">
+                    <ul className="space-y-1 text-gray-700">
                       {services.map((service) => (
-                        <li key={service.lobServiceId} className="text-sm">
-                          <span className="font-medium">{service.serviceName}</span> - {service.serviceDescription}
+                        <li key={service.lobServiceId} className="text-sm flex items-start">
+                          <Check className="w-4 h-4 text-greenyp-600 mr-2 mt-0.5 flex-shrink-0" />
+                          <span>
+                            <span className="font-medium">{service.serviceName}</span> - {service.serviceDescription}
+                          </span>
                         </li>
                       ))}
                     </ul>
@@ -172,10 +175,10 @@ const CategoryPage = () => {
                     <span className="text-gray-600">{provider.phone}</span>
                   </div>
                   
-                  <Link to={`/search?category=${category.lineOfBusinessId}`}>
+                  <Link to={`/profile/${provider.producerId}`}>
                     <Button className="w-full bg-greenyp-600 hover:bg-greenyp-700 text-white mt-2">
-                      <Search className="w-4 h-4 mr-2" />
-                      Search Providers
+                      <User className="w-4 h-4 mr-2" />
+                      View Profile
                     </Button>
                   </Link>
                 </div>
