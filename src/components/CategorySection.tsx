@@ -93,7 +93,7 @@ const CategorySection = () => {
                 className="mt-6 inline-flex items-center text-greenyp-600 hover:text-greenyp-800 font-medium"
                 aria-label={`Show more information about ${category.lineOfBusinessName}`}
               >
-                Show more information
+                Find Providers
                 <ChevronRight className="w-4 h-4 ml-2" />
               </Link>
             </div>
