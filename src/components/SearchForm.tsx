@@ -179,7 +179,7 @@ const SearchForm = ({ showHeading = true }: SearchFormProps) => {
                 <SelectContent>
                   <SelectItem value="all">All Services</SelectItem>
                   {services?.map((service) => (
-                    <SelectItem key={service.serviceId} value={service.serviceId}>
+                    <SelectItem key={service.lobServiceId} value={service.lobServiceId}>
                       {service.serviceName}
                     </SelectItem>
                   ))}

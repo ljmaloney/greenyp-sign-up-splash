@@ -103,7 +103,7 @@ const CategoryPage = () => {
       <Header />
       <main className="flex-grow">
         {/* Hero Section */}
-        <section className="bg-greenyp-50 py-12">
+        <section className="bg-greenyp-50 py-8">
           <div className="container mx-auto px-4">
             <div className="flex items-center mb-4">
               {renderIcon(category)}
@@ -112,42 +112,40 @@ const CategoryPage = () => {
             <p className="text-xl text-gray-700 max-w-3xl">{category.shortDescription}</p>
             
             {category.description && (
-              <div className="mt-6 p-6 bg-white rounded-lg border border-greenyp-200">
-                <p className="text-gray-700">{category.description}</p>
+              <div className="mt-4 p-4 bg-white rounded-lg border border-greenyp-200">
+                <p className="text-gray-700 mb-3">{category.description}</p>
+                
+                {/* Services as bullet points */}
+                {services && services.length > 0 && !servicesLoading && (
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">Available Services:</h3>
+                    <ul className="list-disc list-inside space-y-1 text-gray-700">
+                      {services.map((service) => (
+                        <li key={service.lobServiceId} className="text-sm">
+                          <span className="font-medium">{service.serviceName}</span> - {service.serviceDescription}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                
+                {servicesLoading && (
+                  <div className="text-sm text-gray-600">Loading services...</div>
+                )}
+                
+                {servicesError && (
+                  <div className="text-sm text-red-600">Error loading services. Please try again later.</div>
+                )}
               </div>
             )}
           </div>
         </section>
         
-        {/* Services Section */}
-        {services && services.length > 0 && (
-          <section className="py-12 bg-gray-50">
-            <div className="container mx-auto px-4">
-              <h2 className="text-2xl font-bold mb-6 text-gray-900">Available Services</h2>
-              {servicesLoading ? (
-                <div className="text-center">Loading services...</div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {services.map((service) => (
-                    <div key={service.lobServiceId} className="bg-white p-4 rounded-lg border border-gray-200">
-                      <h3 className="font-semibold text-lg mb-2">{service.serviceName}</h3>
-                      <p className="text-gray-600 text-sm">{service.serviceDescription}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-              {servicesError && (
-                <div className="text-center text-red-600">Error loading services. Please try again later.</div>
-              )}
-            </div>
-          </section>
-        )}
-        
         {/* Search Form Section with category preselected */}
         <SearchForm showHeading={false} />
         
         {/* Provider Listings */}
-        <section className="py-12">
+        <section className="py-8">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl font-bold mb-6 text-gray-900">Recent {category.lineOfBusinessName} Listings</h2>
             
@@ -187,7 +185,7 @@ const CategoryPage = () => {
         </section>
         
         {/* CTA Section */}
-        <section className="bg-greenyp-100 py-12">
+        <section className="bg-greenyp-100 py-8">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900">
               Are you a {category.lineOfBusinessName} professional?
