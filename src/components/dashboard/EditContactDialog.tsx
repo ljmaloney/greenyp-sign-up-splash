@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -14,6 +13,7 @@ interface Contact {
   email: string;
   phone: string;
   isPrimary: boolean;
+  locationId?: string;
   producerLocationId?: string;
   producerContactType?: "PRIMARY" | "SECONDARY";
   displayContactType?: "NO_DISPLAY" | "DISPLAY_WITH_MAP" | "DISPLAY_ONLY";
@@ -25,7 +25,13 @@ interface Contact {
   emailAddress?: string;
 }
 
+interface Location {
+  id: string;
+  locationName: string;
+}
+
 interface ContactFormData {
+  producerLocationId: string;
   producerContactType: "PRIMARY" | "SECONDARY";
   displayContactType: "NO_DISPLAY" | "DISPLAY_WITH_MAP" | "DISPLAY_ONLY";
   genericContactName: string;
@@ -40,11 +46,13 @@ interface EditContactDialogProps {
   isOpen: boolean;
   onClose: () => void;
   contact: Contact;
+  locations: Location[];
   onContactUpdated: (contact: ContactFormData) => void;
 }
 
-const EditContactDialog = ({ isOpen, onClose, contact, onContactUpdated }: EditContactDialogProps) => {
+const EditContactDialog = ({ isOpen, onClose, contact, locations, onContactUpdated }: EditContactDialogProps) => {
   const [formData, setFormData] = useState<ContactFormData>({
+    producerLocationId: contact.producerLocationId || contact.locationId || '',
     producerContactType: contact.producerContactType || (contact.isPrimary ? 'PRIMARY' : 'SECONDARY'),
     displayContactType: contact.displayContactType || 'NO_DISPLAY',
     genericContactName: contact.genericContactName || '',
@@ -59,6 +67,15 @@ const EditContactDialog = ({ isOpen, onClose, contact, onContactUpdated }: EditC
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!formData.producerLocationId) {
+      toast({
+        title: "Location Required",
+        description: "Please select a location for this contact.",
+        variant: "destructive",
+      });
+      return;
+    }
     
     try {
       console.log('Updating contact:', formData);
@@ -110,6 +127,24 @@ const EditContactDialog = ({ isOpen, onClose, contact, onContactUpdated }: EditC
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Location *
+              </label>
+              <Select value={formData.producerLocationId} onValueChange={(value) => handleChange('producerLocationId', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a location" />
+                </SelectTrigger>
+                <SelectContent>
+                  {locations.map((location) => (
+                    <SelectItem key={location.id} value={location.id}>
+                      {location.locationName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Contact Type
