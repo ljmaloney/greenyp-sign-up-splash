@@ -3,10 +3,14 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { User, Phone, Mail, MapPin, Globe, Edit, Upload, Images } from 'lucide-react';
 import EditBusinessProfileDialog from './EditBusinessProfileDialog';
+import EditBusinessInfoDialog from './EditBusinessInfoDialog';
+import EditContactInfoDialog from './EditContactInfoDialog';
 import { useSubscriptions } from '@/hooks/useSubscriptions';
 
 const BusinessProfile = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isBusinessInfoDialogOpen, setIsBusinessInfoDialogOpen] = useState(false);
+  const [isContactInfoDialogOpen, setIsContactInfoDialogOpen] = useState(false);
   const { data: subscriptions } = useSubscriptions();
   
   // Mock business data - in real app this would come from API
@@ -64,11 +68,18 @@ const BusinessProfile = () => {
       <div className="grid gap-6 md:grid-cols-2">
         {/* Business Information */}
         <Card>
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="flex items-center">
               <User className="w-5 h-5 mr-2 text-greenyp-600" />
               Business Information
             </CardTitle>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsBusinessInfoDialogOpen(true)}
+            >
+              <Edit className="w-4 h-4" />
+            </Button>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
@@ -107,11 +118,18 @@ const BusinessProfile = () => {
 
         {/* Contact Information */}
         <Card>
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="flex items-center">
               <Phone className="w-5 h-5 mr-2 text-greenyp-600" />
               Contact Information
             </CardTitle>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsContactInfoDialogOpen(true)}
+            >
+              <Edit className="w-4 h-4" />
+            </Button>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center space-x-3">
@@ -167,6 +185,27 @@ const BusinessProfile = () => {
         isOpen={isEditDialogOpen}
         onClose={() => setIsEditDialogOpen(false)}
         businessData={businessData}
+      />
+
+      <EditBusinessInfoDialog 
+        isOpen={isBusinessInfoDialogOpen}
+        onClose={() => setIsBusinessInfoDialogOpen(false)}
+        businessData={{
+          businessName: businessData.businessName,
+          contactName: businessData.contactName,
+          description: businessData.description
+        }}
+      />
+
+      <EditContactInfoDialog 
+        isOpen={isContactInfoDialogOpen}
+        onClose={() => setIsContactInfoDialogOpen(false)}
+        contactData={{
+          email: businessData.email,
+          phone: businessData.phone,
+          address: businessData.address,
+          website: businessData.website
+        }}
       />
     </div>
   );
