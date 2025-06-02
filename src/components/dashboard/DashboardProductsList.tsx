@@ -144,7 +144,7 @@ const DashboardProductsList = () => {
                   <p className="text-gray-600">{product.description}</p>
                   <p className="text-sm text-gray-500">Category: {product.category}</p>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-2 text-right">
                   <p className="text-2xl font-bold text-greenyp-600">${product.price}</p>
                   <p className="text-sm text-gray-500">In Stock: {product.quantity}</p>
                 </div>
