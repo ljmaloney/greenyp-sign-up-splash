@@ -43,7 +43,7 @@ const PricingSection = () => {
     }
     
     if (subscription.monthlyAutopayAmount === 0) {
-      return "forever";
+      return "for first month";
     }
     
     if (billingPeriod === 'yearly' && subscription.annualBillAmount) {
@@ -95,7 +95,7 @@ const PricingSection = () => {
             Directory Listing Options
           </h2>
           <p className="text-xl text-gray-700 mb-8">
-            Choose the perfect visibility package for your lawn care, landscaping, or garden business
+            The basic listing is free for the first month and takes only a few minutes to set up. For enhanced visibility, consider our premium options.
           </p>
           
           <div className="inline-flex p-1 rounded-lg bg-gray-100 mb-8">
@@ -186,7 +186,7 @@ const PricingSection = () => {
                 onClick={() => !subscription.comingSoon && handleSubscriptionClick(subscription.subscriptionId)}
                 disabled={subscription.comingSoon}
               >
-                {subscription.comingSoon ? 'Coming Soon' : subscription.monthlyAutopayAmount === 0 ? 'Get Started Free' : 'Start Free Trial'}
+                {subscription.comingSoon ? 'Coming Soon' : 'Start Your Listing'}
               </Button>
             </div>
           ))}

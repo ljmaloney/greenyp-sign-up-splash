@@ -18,7 +18,7 @@ const PricingSectionSubscribe = () => {
       return;
     }
     
-    navigate(`/subscribe?plan=${subscriptionId}&billing=monthly`);
+    navigate(`/signup?plan=${subscriptionId}&billing=monthly`);
   };
 
   if (isLoading) {
@@ -49,7 +49,7 @@ const PricingSectionSubscribe = () => {
             Choose Your Subscription Plan
           </h2>
           <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-            Select the plan that's right for your business size and goals. Upgrade or downgrade anytime.
+            The basic listing is free for the first month and takes only a few minutes to set up. For enhanced visibility, consider our premium options.
           </p>
         </div>
 
@@ -63,7 +63,7 @@ const PricingSectionSubscribe = () => {
                 price={subscription.comingSoon ? "" : subscription.formattedMonthlyPrice}
                 period={subscription.comingSoon ? "" : subscription.monthlyAutopayAmount === 0 ? "forever" : "per month"}
                 features={subscription.formattedFeatures.map(f => f.name)}
-                cta={subscription.comingSoon ? 'Coming Soon' : subscription.monthlyAutopayAmount === 0 ? 'Get Started' : 'Start Premium'}
+                cta={subscription.comingSoon ? 'Coming Soon' : 'Start Your Listing'}
                 popular={subscription.popular || false}
                 comingSoon={subscription.comingSoon}
                 onSelect={() => !subscription.comingSoon && handlePlanSelect(subscription.subscriptionId)}

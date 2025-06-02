@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from "@/components/ui/button";
@@ -84,9 +83,7 @@ const SignUp = () => {
     
     try {
       const payload = {
-        producerId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
         producerRequest: {
-          producerId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
           businessName: data.businessName,
           lineOfBusinessId: data.lineOfBusinessId,
           subscriptionId: data.subscriptionId,
@@ -96,8 +93,6 @@ const SignUp = () => {
           narrative: data.narrative
         },
         primaryContact: {
-          contactId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-          producerLocationId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
           producerContactType: "PRIMARY",
           displayContactType: data.displayContactType,
           genericContactName: `${data.firstName} ${data.lastName}`,
@@ -108,7 +103,6 @@ const SignUp = () => {
           emailAddress: data.emailAddress
         },
         primaryLocation: {
-          locationId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
           locationName: data.locationName,
           locationType: "HOME_OFFICE_PRIMARY",
           locationDisplayType: data.locationDisplayType,
@@ -124,7 +118,6 @@ const SignUp = () => {
           websiteUrl: data.websiteUrl
         },
         masterUserCredentials: {
-          producerContactId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
           firstName: data.firstName,
           lastName: data.lastName,
           businessPhone: data.phoneNumber,
