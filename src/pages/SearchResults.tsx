@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -7,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Phone, Globe, ArrowLeft } from 'lucide-react';
 import PublicHeader from '@/components/PublicHeader';
 import Footer from '@/components/Footer';
+import { useCategories } from '@/hooks/useCategories';
 
 interface SearchResult {
   id: string;
@@ -106,6 +106,12 @@ const SearchResults = () => {
   const category = searchParams.get('category') || '';
   const service = searchParams.get('service') || '';
   const page = parseInt(searchParams.get('page') || '1');
+
+  const { data: categories } = useCategories();
+
+  // Find the selected category name
+  const selectedCategory = categories?.find(cat => cat.lineOfBusinessId === category);
+  const categoryName = selectedCategory?.lineOfBusinessName || '';
 
   useEffect(() => {
     const fetchResults = async () => {
@@ -208,7 +214,7 @@ const SearchResults = () => {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                  Green Industry Providers
+                  {categoryName || 'Green Industry Providers'}
                 </h1>
                 <p className="text-gray-600">
                   {results?.totalCount || 0} providers found within {distance} miles of {zipCode}
