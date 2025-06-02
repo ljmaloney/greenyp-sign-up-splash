@@ -89,7 +89,7 @@ const CategorySection = () => {
               <h3 className="text-xl font-semibold mb-2 text-gray-800">{category.lineOfBusinessName}</h3>
               <p className="text-gray-600">{category.shortDescription}</p>
               <Link 
-                to={`/subscriber/categories/${category.lineOfBusinessId}`}
+                to={`/categories/${category.lineOfBusinessId}`}
                 className="mt-6 inline-flex items-center text-greenyp-600 hover:text-greenyp-800 font-medium"
                 aria-label={`Show more information about ${category.lineOfBusinessName}`}
               >

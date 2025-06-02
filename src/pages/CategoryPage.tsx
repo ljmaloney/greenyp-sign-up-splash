@@ -112,6 +112,15 @@ const CategoryPage = () => {
                 <p className="text-gray-700">{category.description}</p>
               </div>
             )}
+            
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Button className="bg-greenyp-600 hover:bg-greenyp-700 text-white">
+                Find by Location
+              </Button>
+              <Button variant="outline" className="border-greenyp-500 text-greenyp-700">
+                Filter Results
+              </Button>
+            </div>
           </div>
         </section>
         
