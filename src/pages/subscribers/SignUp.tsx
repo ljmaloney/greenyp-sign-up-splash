@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from "@/components/ui/button";
@@ -47,6 +48,9 @@ const SignUp = () => {
   
   const { data: categories } = useCategories();
   const { data: subscriptions } = useSubscriptions();
+
+  // Find the selected subscription to display its name
+  const selectedSubscription = subscriptions?.find(sub => sub.subscriptionId === selectedPlan);
   
   const form = useForm<SignUpFormData>({
     defaultValues: {
@@ -168,10 +172,10 @@ const SignUp = () => {
               <p className="text-lg text-gray-600">
                 Join thousands of green industry professionals growing their business
               </p>
-              {selectedPlan && (
+              {selectedSubscription && (
                 <div className="mt-4 p-3 bg-green-100 rounded-lg">
                   <p className="text-green-800 font-medium">
-                    Selected Plan: {selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1)}
+                    Selected Plan: {selectedSubscription.displayName}
                   </p>
                 </div>
               )}
