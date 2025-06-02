@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -5,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useCategories } from "@/hooks/useCategories";
 import { useCategoryServices } from "@/hooks/useCategoryServices";
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useParams } from 'react-router-dom';
 import { Search } from 'lucide-react';
 
 interface SearchFormProps {
@@ -14,12 +15,13 @@ interface SearchFormProps {
 
 const SearchForm = ({ showHeading = true }: SearchFormProps) => {
   const [searchParams] = useSearchParams();
+  const { slug } = useParams<{ slug?: string }>();
   const navigate = useNavigate();
   
-  // Get initial values from URL parameters
+  // Get initial values from URL parameters or slug
   const initialZipCode = searchParams.get('zipCode') || '';
   const initialDistance = searchParams.get('distance') || '25';
-  const initialCategory = searchParams.get('category') || '';
+  const initialCategory = searchParams.get('category') || slug || '';
   const initialService = searchParams.get('service') || '';
   
   const [zipCode, setZipCode] = useState(initialZipCode);
@@ -42,6 +44,14 @@ const SearchForm = ({ showHeading = true }: SearchFormProps) => {
       setDistance('');
     }
   }, [initialDistance]);
+
+  // Update selected category when slug changes (for category pages)
+  useEffect(() => {
+    if (slug && slug !== selectedCategory) {
+      setSelectedCategory(slug);
+      setSelectedService(''); // Reset service when category changes
+    }
+  }, [slug, selectedCategory]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

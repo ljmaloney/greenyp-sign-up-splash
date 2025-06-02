@@ -1,7 +1,9 @@
+
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Header from '@/components/PublicHeader';
 import Footer from '@/components/Footer';
+import SearchForm from '@/components/SearchForm';
 import { Button } from "@/components/ui/button";
 import { MapPin, Phone, Star, Search } from 'lucide-react';
 import { useCategories } from '@/hooks/useCategories';
@@ -40,6 +42,9 @@ const CategoryPage = () => {
   const { data: services, isLoading: servicesLoading, error: servicesError } = useCategoryServices(slug || '');
   
   useEffect(() => {
+    // Scroll to top when page loads
+    window.scrollTo(0, 0);
+    
     // Update document title for SEO
     if (category) {
       document.title = `${category.lineOfBusinessName} - GreenYP`;
@@ -111,15 +116,6 @@ const CategoryPage = () => {
                 <p className="text-gray-700">{category.description}</p>
               </div>
             )}
-            
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Button className="bg-greenyp-600 hover:bg-greenyp-700 text-white">
-                Find by Location
-              </Button>
-              <Button variant="outline" className="border-greenyp-500 text-greenyp-700">
-                Filter Results
-              </Button>
-            </div>
           </div>
         </section>
         
@@ -146,6 +142,9 @@ const CategoryPage = () => {
             </div>
           </section>
         )}
+        
+        {/* Search Form Section with category preselected */}
+        <SearchForm showHeading={false} />
         
         {/* Provider Listings */}
         <section className="py-12">
