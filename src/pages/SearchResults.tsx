@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -237,7 +236,7 @@ const SearchResults = () => {
           {/* Search Form - Show when button is clicked */}
           {showSearchForm && (
             <div className="mb-8">
-              <SearchForm />
+              <SearchForm showHeading={false} />
             </div>
           )}
 
