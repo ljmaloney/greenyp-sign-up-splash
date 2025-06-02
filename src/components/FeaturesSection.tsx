@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Check, MapPin, TreeDeciduous, Settings, Calendar } from 'lucide-react';
 
@@ -26,14 +25,14 @@ const features = [
     ]
   },
   {
-    title: "Business Profile Management",
-    description: "Customize the products and services you offer, update your business location and contact information, and ensure your listing accurately reflects what customers can expect. Please note that some features are only enabled for specific subscription tiers.",
+    title: "Business Dashboard",
+    description: "Easily manage your business details to keep your listing up to date and appealing to potential customers. Access to features may vary based on your subscription tier.",
     icon: (
       <Settings className="w-10 h-10 text-greenyp-500" />
     ),
     items: [
-      { text: "Profile customization", color: "text-greenyp-500" },
-      { text: "Service listings management", color: "text-greenyp-500" },
+      { text: "Update business address and contact details", color: "text-greenyp-500" },
+      { text: "Make changes to your business profile", color: "text-greenyp-500" },
       { text: "List products and services including prices - Featured Listing", color: "text-yellow-500" },
       { text: "Upload business logo and images - Featured Listing", color: "text-yellow-500" }
     ]
