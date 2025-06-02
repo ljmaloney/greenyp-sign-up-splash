@@ -89,7 +89,7 @@ const CategorySection = () => {
               <h3 className="text-xl font-semibold mb-2 text-gray-800">{category.lineOfBusinessName}</h3>
               <p className="text-gray-600">{category.shortDescription}</p>
               <Link 
-                to={`/categories/${category.lineOfBusinessId}`}
+                to={`/subscriber/categories/${category.lineOfBusinessId}`}
                 className="mt-6 inline-flex items-center text-greenyp-600 hover:text-greenyp-800 font-medium"
                 aria-label={`Find ${category.lineOfBusinessName} Providers`}
               >
@@ -101,7 +101,7 @@ const CategorySection = () => {
         </div>
         
         <div className="text-center mt-12">
-          <Link to="/categories">
+          <Link to="/subscriber/categories">
             <button className="bg-greenyp-600 hover:bg-greenyp-700 text-white px-8 py-3 rounded-lg font-medium inline-flex items-center">
               View All Categories
               <ChevronRight className="w-4 h-4 ml-2" />
