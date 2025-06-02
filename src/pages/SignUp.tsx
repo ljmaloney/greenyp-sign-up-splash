@@ -26,6 +26,7 @@ interface SignUpFormData {
   phoneNumber: string;
   cellPhoneNumber: string;
   emailAddress: string;
+  displayContactType: string;
   locationName: string;
   locationDisplayType: string;
   addressLine1: string;
@@ -59,6 +60,7 @@ const SignUp = () => {
       phoneNumber: '',
       cellPhoneNumber: '',
       emailAddress: '',
+      displayContactType: 'FULL_NAME_PHONE_EMAIL',
       locationName: '',
       locationDisplayType: 'CITY_STATE_ZIP',
       addressLine1: '',
@@ -97,7 +99,7 @@ const SignUp = () => {
           contactId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
           producerLocationId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
           producerContactType: "PRIMARY",
-          displayContactType: "NO_DISPLAY",
+          displayContactType: data.displayContactType,
           genericContactName: `${data.firstName} ${data.lastName}`,
           firstName: data.firstName,
           lastName: data.lastName,
@@ -361,6 +363,35 @@ const SignUp = () => {
                             <FormControl>
                               <Input placeholder="(555) 123-4567" {...field} />
                             </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="displayContactType"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Contact Display Type *</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select display type" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="FULL_NAME_PHONE_EMAIL">
+                                  Display all details in search results
+                                </SelectItem>
+                                <SelectItem value="GENERIC_NAME_PHONE_EMAIL">
+                                  Display only generic name, phone and email in search results
+                                </SelectItem>
+                                <SelectItem value="PHONE_EMAIL_ONLY">
+                                  Display only the phone and email in search results
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
                             <FormMessage />
                           </FormItem>
                         )}
