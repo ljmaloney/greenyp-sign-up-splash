@@ -108,7 +108,6 @@ const CategoryPage = () => {
             
             {category.description && (
               <div className="mt-6 p-6 bg-white rounded-lg border border-greenyp-200">
-                <h2 className="text-lg font-semibold mb-3 text-gray-900">About This Category</h2>
                 <p className="text-gray-700">{category.description}</p>
               </div>
             )}
