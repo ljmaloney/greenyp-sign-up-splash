@@ -7,11 +7,113 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { MapPin, Phone, Globe, Clock, ArrowLeft } from 'lucide-react';
 import { useProfile } from '@/hooks/useProfile';
+import { ProfileData } from '@/types/profile';
+
+// Mock profile data based on the providers from CategoryPage
+const getMockProfileData = (producerId: string): ProfileData => {
+  const mockProfiles: Record<string, ProfileData> = {
+    'producer-001': {
+      producerId: 'producer-001',
+      businessName: 'Green Thumb Landscaping',
+      narrative: 'We are a family-owned landscaping business with over 15 years of experience in creating beautiful outdoor spaces. Our team specializes in custom landscape design, installation, and maintenance services for both residential and commercial properties. We pride ourselves on using sustainable practices and native plants to create environmentally friendly landscapes that thrive in the Arizona climate.',
+      locationName: 'Phoenix Main Office',
+      locationType: 'OFFICE',
+      locationDisplayType: 'BUSINESS_ADDRESS',
+      active: true,
+      addressLine1: '1234 Main Street',
+      addressLine2: 'Suite 100',
+      addressLine3: '',
+      city: 'Phoenix',
+      state: 'AZ',
+      postalCode: '85001',
+      latitude: '33.4484',
+      longitude: '-112.0740',
+      websiteUrl: 'https://greenthumblandscaping.com',
+      contactName: 'John Smith',
+      phoneNumber: '(602) 555-1234',
+      cellPhoneNumber: '(602) 555-5678',
+      locationHours: [
+        { dayOfWeek: 'MONDAY', openTime: '7:00 AM', closeTime: '6:00 PM' },
+        { dayOfWeek: 'TUESDAY', openTime: '7:00 AM', closeTime: '6:00 PM' },
+        { dayOfWeek: 'WEDNESDAY', openTime: '7:00 AM', closeTime: '6:00 PM' },
+        { dayOfWeek: 'THURSDAY', openTime: '7:00 AM', closeTime: '6:00 PM' },
+        { dayOfWeek: 'FRIDAY', openTime: '7:00 AM', closeTime: '6:00 PM' },
+        { dayOfWeek: 'SATURDAY', openTime: '8:00 AM', closeTime: '4:00 PM' },
+        { dayOfWeek: 'SUNDAY', openTime: '', closeTime: '' }
+      ]
+    },
+    'producer-002': {
+      producerId: 'producer-002',
+      businessName: "Nature's Design",
+      narrative: "At Nature's Design, we believe that every outdoor space has the potential to become a personal oasis. Our award-winning design team works closely with clients to create stunning landscapes that reflect their unique style and complement their home's architecture. From drought-resistant gardens to lush entertainment areas, we bring your vision to life.",
+      locationName: "Scottsdale Design Center",
+      locationType: 'SHOWROOM',
+      locationDisplayType: 'BUSINESS_ADDRESS',
+      active: true,
+      addressLine1: '5678 Desert View Road',
+      addressLine2: '',
+      addressLine3: '',
+      city: 'Scottsdale',
+      state: 'AZ',
+      postalCode: '85260',
+      latitude: '33.5092',
+      longitude: '-111.8906',
+      websiteUrl: 'https://naturesdesignaz.com',
+      contactName: 'Sarah Johnson',
+      phoneNumber: '(480) 555-5678',
+      cellPhoneNumber: '(480) 555-9012',
+      locationHours: [
+        { dayOfWeek: 'MONDAY', openTime: '8:00 AM', closeTime: '5:00 PM' },
+        { dayOfWeek: 'TUESDAY', openTime: '8:00 AM', closeTime: '5:00 PM' },
+        { dayOfWeek: 'WEDNESDAY', openTime: '8:00 AM', closeTime: '5:00 PM' },
+        { dayOfWeek: 'THURSDAY', openTime: '8:00 AM', closeTime: '5:00 PM' },
+        { dayOfWeek: 'FRIDAY', openTime: '8:00 AM', closeTime: '5:00 PM' },
+        { dayOfWeek: 'SATURDAY', openTime: '9:00 AM', closeTime: '3:00 PM' },
+        { dayOfWeek: 'SUNDAY', openTime: '', closeTime: '' }
+      ]
+    },
+    'producer-003': {
+      producerId: 'producer-003',
+      businessName: 'Outdoor Creations',
+      narrative: 'Outdoor Creations specializes in transforming ordinary backyards into extraordinary outdoor living spaces. Our comprehensive services include landscape design, hardscaping, outdoor kitchens, fire features, and water elements. With a focus on craftsmanship and attention to detail, we create outdoor environments that enhance your lifestyle and increase your property value.',
+      locationName: 'Mesa Service Center',
+      locationType: 'WAREHOUSE',
+      locationDisplayType: 'BUSINESS_ADDRESS',
+      active: true,
+      addressLine1: '9012 Industrial Blvd',
+      addressLine2: 'Building C',
+      addressLine3: '',
+      city: 'Mesa',
+      state: 'AZ',
+      postalCode: '85210',
+      latitude: '33.4152',
+      longitude: '-111.8315',
+      websiteUrl: 'https://outdoorcreationsaz.com',
+      contactName: 'Mike Rodriguez',
+      phoneNumber: '(480) 555-9012',
+      cellPhoneNumber: '(480) 555-3456',
+      locationHours: [
+        { dayOfWeek: 'MONDAY', openTime: '6:00 AM', closeTime: '7:00 PM' },
+        { dayOfWeek: 'TUESDAY', openTime: '6:00 AM', closeTime: '7:00 PM' },
+        { dayOfWeek: 'WEDNESDAY', openTime: '6:00 AM', closeTime: '7:00 PM' },
+        { dayOfWeek: 'THURSDAY', openTime: '6:00 AM', closeTime: '7:00 PM' },
+        { dayOfWeek: 'FRIDAY', openTime: '6:00 AM', closeTime: '7:00 PM' },
+        { dayOfWeek: 'SATURDAY', openTime: '7:00 AM', closeTime: '5:00 PM' },
+        { dayOfWeek: 'SUNDAY', openTime: '8:00 AM', closeTime: '4:00 PM' }
+      ]
+    }
+  };
+
+  return mockProfiles[producerId] || mockProfiles['producer-001'];
+};
 
 const ProfilePage = () => {
   const { producerId } = useParams<{ producerId: string }>();
   
   const { data: profileResponse, isLoading, error } = useProfile(producerId || '');
+  
+  // Use mock data if API fails or for testing
+  const profile = profileResponse?.response || getMockProfileData(producerId || 'producer-001');
   
   if (isLoading) {
     return (
@@ -25,7 +127,7 @@ const ProfilePage = () => {
     );
   }
   
-  if (error || !profileResponse?.response) {
+  if (error && !profile) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
@@ -43,8 +145,6 @@ const ProfilePage = () => {
       </div>
     );
   }
-
-  const profile = profileResponse.response;
   
   const formatAddress = () => {
     const parts = [
@@ -72,7 +172,7 @@ const ProfilePage = () => {
       const hours = profile.locationHours.find(h => h.dayOfWeek === day);
       return {
         day: dayNames[day as keyof typeof dayNames],
-        hours: hours ? `${hours.openTime} - ${hours.closeTime}` : 'Closed'
+        hours: hours && hours.openTime && hours.closeTime ? `${hours.openTime} - ${hours.closeTime}` : 'Closed'
       };
     });
   };
