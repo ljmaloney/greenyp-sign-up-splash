@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -155,6 +154,7 @@ const LocationsList = () => {
           const locationWithDefaults = {
             ...newLocation,
             id: Date.now().toString(),
+            locationName: newLocation.locationName,
             name: newLocation.locationName,
             address: `${newLocation.addressLine1}, ${newLocation.city}, ${newLocation.state} ${newLocation.postalCode}`,
             phone: '(555) 123-4567', // Default phone for now
@@ -173,6 +173,7 @@ const LocationsList = () => {
             const locationWithDefaults = {
               ...updatedLocation,
               id: updatedLocation.locationId || editingLocation.id,
+              locationName: updatedLocation.locationName,
               name: updatedLocation.locationName,
               address: `${updatedLocation.addressLine1}, ${updatedLocation.city}, ${updatedLocation.state} ${updatedLocation.postalCode}`,
               phone: editingLocation.phone, // Keep existing phone
