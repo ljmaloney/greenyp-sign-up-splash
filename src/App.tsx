@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import PublicIndex from "./pages/PublicIndex";
 import Categories from "./pages/Categories";
 import CategoryPage from "./pages/CategoryPage";
+import SearchResults from "./pages/SearchResults";
 import Index from "./pages/subscribers/Index";
 import Subscribe from "./pages/subscribers/Subscribe";
 import SignUp from "./pages/subscribers/SignUp";
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/" element={<PublicIndex />} />
           <Route path="/categories" element={<Categories />} />
           <Route path="/categories/:slug" element={<CategoryPage />} />
+          <Route path="/search" element={<SearchResults />} />
           <Route path="/subscriber" element={<Index />} />
           <Route path="/subscriber/subscribe" element={<Subscribe />} />
           <Route path="/subscriber/signup" element={<SignUp />} />

@@ -1,6 +1,7 @@
 
 import React from 'react';
 import PublicHeader from '@/components/PublicHeader';
+import SearchForm from '@/components/SearchForm';
 import CategorySection from '@/components/CategorySection';
 import FeaturesSection from '@/components/FeaturesSection';
 import Footer from '@/components/Footer';
@@ -32,6 +33,7 @@ const PublicIndex = () => {
           </div>
         </section>
         
+        <SearchForm />
         <CategorySection />
         <FeaturesSection />
       </main>
