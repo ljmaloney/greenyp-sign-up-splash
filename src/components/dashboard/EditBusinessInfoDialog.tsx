@@ -4,11 +4,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { updateBusinessInformation } from '@/services/businessProfileService';
 
 interface BusinessInfoData {
   businessName: string;
   contactName: string;
   description: string;
+  producerId?: string;
+  lineOfBusinessId?: string;
+  subscriptionId?: string;
+  websiteUrl?: string;
 }
 
 interface EditBusinessInfoDialogProps {
@@ -19,20 +24,48 @@ interface EditBusinessInfoDialogProps {
 
 const EditBusinessInfoDialog = ({ isOpen, onClose, businessData }: EditBusinessInfoDialogProps) => {
   const [formData, setFormData] = useState(businessData);
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     
-    // In a real app, this would call an API to update the business information
-    console.log('Updating business information:', formData);
-    
-    toast({
-      title: "Business Information Updated",
-      description: "Your business information has been successfully updated.",
-    });
-    
-    onClose();
+    try {
+      // Prepare the API request payload
+      const updateRequest = {
+        producerId: formData.producerId || "3fa85f64-5717-4562-b3fc-2c963f66afa6", // Mock ID for now
+        producerRequest: {
+          producerId: formData.producerId || "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          businessName: formData.businessName,
+          lineOfBusinessId: formData.lineOfBusinessId || "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          subscriptionId: formData.subscriptionId || "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          subscriptionType: "ADMIN",
+          invoiceCycleType: "MONTHLY",
+          websiteUrl: formData.websiteUrl || "",
+          narrative: formData.description
+        }
+      };
+
+      console.log('Updating business information:', updateRequest);
+      await updateBusinessInformation(updateRequest);
+      
+      toast({
+        title: "Business Information Updated",
+        description: "Your business information has been successfully updated.",
+      });
+      
+      onClose();
+    } catch (error) {
+      console.error('Error updating business information:', error);
+      toast({
+        title: "Update Failed",
+        description: "Failed to update business information. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleChange = (field: keyof BusinessInfoData, value: string) => {
@@ -83,11 +116,11 @@ const EditBusinessInfoDialog = ({ isOpen, onClose, businessData }: EditBusinessI
           </div>
           
           <div className="flex justify-end space-x-2 pt-4">
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button type="button" variant="outline" onClick={onClose} disabled={isLoading}>
               Cancel
             </Button>
-            <Button type="submit" className="bg-greenyp-600 hover:bg-greenyp-700">
-              Save Changes
+            <Button type="submit" className="bg-greenyp-600 hover:bg-greenyp-700" disabled={isLoading}>
+              {isLoading ? 'Saving...' : 'Save Changes'}
             </Button>
           </div>
         </form>

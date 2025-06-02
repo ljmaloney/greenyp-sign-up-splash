@@ -16,6 +16,7 @@ export const API_CONFIG = {
     CATEGORIES: '/reference/lob',
     CATEGORY_SERVICES: (lineOfBusinessId: string) => `/reference/lob/${lineOfBusinessId}/service`,
     SUBSCRIPTIONS: '/reference/subscription',
+    ACCOUNT: '/account',
   }
 };
 
