@@ -12,6 +12,19 @@ interface ServicesListProps {
   locationId: string;
 }
 
+// Service pricing unit mappings for better display
+const getPriceUnitsDisplay = (priceUnitsType: string): string => {
+  const mappings: Record<string, string> = {
+    'LOT_SIZE': 'per lot size',
+    'PER_HOUR': 'per hour',
+    'PER_MILE': 'distance (per mile)',
+    'PER_VISIT': 'per visit',
+    'FIXED_ESTIMATE': 'per project'
+  };
+  
+  return mappings[priceUnitsType] || priceUnitsType.toLowerCase().replace('_', ' ');
+};
+
 // Mock services data for validation
 const mockServices: ProducerService[] = [
   {
@@ -48,7 +61,7 @@ const mockServices: ProducerService[] = [
     producerLocationId: 'location-001',
     minServicePrice: 200,
     maxServicePrice: 800,
-    priceUnitsType: 'PER_PROJECT',
+    priceUnitsType: 'FIXED_ESTIMATE',
     shortDescription: 'Tree Trimming & Removal',
     description: 'Professional tree services including pruning, trimming, and safe tree removal. Certified arborists on staff. All debris removal included.',
     serviceTerms: 'Free estimates provided. Licensed and insured. Emergency services available 24/7 with additional charges.'
@@ -61,7 +74,7 @@ const mockServices: ProducerService[] = [
     producerLocationId: 'location-001',
     minServicePrice: 500,
     maxServicePrice: 2500,
-    priceUnitsType: 'PER_PROJECT',
+    priceUnitsType: 'FIXED_ESTIMATE',
     shortDescription: 'Irrigation System Installation',
     description: 'Design and installation of efficient drip and spray irrigation systems. Smart controller installation available. Water-wise design to minimize usage while maintaining healthy landscapes.',
     serviceTerms: 'Includes 2-year warranty on installation. Seasonal maintenance plans available. Permit assistance provided.'
@@ -74,7 +87,7 @@ const mockServices: ProducerService[] = [
     producerLocationId: 'location-001',
     minServicePrice: 300,
     maxServicePrice: 1200,
-    priceUnitsType: 'PER_PROJECT',
+    priceUnitsType: 'FIXED_ESTIMATE',
     shortDescription: 'Hardscape Installation',
     description: 'Custom hardscape features including patios, walkways, retaining walls, and outdoor living spaces. Specializing in natural stone and decorative concrete.',
     serviceTerms: 'Design consultation included. Materials and labor warranty. Permits handled by contractor when required.'
@@ -96,7 +109,7 @@ const ServiceCard = ({ service }: { service: ProducerService }) => (
           </span>
         )}
         <div className="text-xs text-gray-500 mt-1">
-          per {service.priceUnitsType?.toLowerCase().replace('_', ' ')}
+          {getPriceUnitsDisplay(service.priceUnitsType)}
         </div>
       </div>
     </div>

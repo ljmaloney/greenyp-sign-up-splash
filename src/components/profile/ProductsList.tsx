@@ -11,6 +11,23 @@ interface ProductsListProps {
   locationId: string;
 }
 
+// Product type mappings for better display
+const getProductTypeDisplay = (productType: string): string => {
+  const mappings: Record<string, string> = {
+    'BAGGED_MATERIAL': 'Bagged Material',
+    'BOTANICAL': 'Plants, Trees & Bushes',
+    'BULK_MATERIAL': 'Bulk Material',
+    'CONTAINERS': 'Pots & Containers',
+    'DECORATIVE_STONE': 'Decorative Stone',
+    'HARDWARE': 'Hardware',
+    'LANDSCAPE_PRODUCTS': 'Landscape Products',
+    'LANDSCAPE_TOOLS': 'Landscaping Tools',
+    'POND_MAINTENANCE': 'Pond Maintenance'
+  };
+  
+  return mappings[productType] || productType;
+};
+
 // Mock products data for validation
 const mockProducts: Product[] = [
   {
@@ -117,6 +134,7 @@ const ProductCard = ({ product }: { product: Product }) => (
       <p className="text-gray-600 text-sm mb-2">{product.description}</p>
     )}
     <div className="flex flex-wrap gap-4 text-xs text-gray-500">
+      <span>Type: {getProductTypeDisplay(product.productType)}</span>
       {product.containerSize && (
         <span>Size: {product.containerSize}</span>
       )}
