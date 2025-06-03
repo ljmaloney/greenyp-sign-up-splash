@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -9,7 +8,6 @@ import PublicHeader from '@/components/PublicHeader';
 import Footer from '@/components/Footer';
 import SearchForm from '@/components/SearchForm';
 import { useCategories } from '@/hooks/useCategories';
-import { getApiUrl } from '@/config/api';
 import type { SearchResult, SearchResponse } from '../types/search'
 
 // Dummy data for testing UI
@@ -143,11 +141,10 @@ const SearchResults = () => {
           ...(service && { service }),
         });
 
-        const searchUrl = getApiUrl(`/search?${searchQuery.toString()}`);
         console.log('Fetching search results from API...');
-        console.log('Search URL:', searchUrl);
+        console.log('Search URL:', `http://services.greenyp.com/search?${searchQuery.toString()}`);
 
-        const response = await fetch(searchUrl);
+        const response = await fetch(`http://services.greenyp.com/search?${searchQuery.toString()}`);
         
         if (!response.ok) {
           throw new Error(`Search failed: ${response.status} ${response.statusText}`);
