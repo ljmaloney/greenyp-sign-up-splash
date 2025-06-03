@@ -1,4 +1,3 @@
-
 export interface LocationHours {
   dayOfWeek: "SUNDAY" | "MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY";
   openTime: string;
@@ -76,7 +75,7 @@ export interface ProducerService {
   producerLocationId: string;
   minServicePrice: number;
   maxServicePrice: number;
-  priceUnitsType: "LOT_SIZE" | string;
+  priceUnitsType: "LOT_SIZE" | "PER_HOUR" | "PER_MILE" | "FIXED_ESTIMATE";
   shortDescription: string;
   description: string;
   serviceTerms: string;
