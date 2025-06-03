@@ -137,6 +137,31 @@ const ProfilePage = () => {
     feature.toLowerCase().includes('product')) || false;
   const hasServicesFeature = currentSubscription?.features.some(feature => 
     feature.toLowerCase().includes('service')) || false;
+
+  // Determine the back navigation based on referrer
+  const getBackNavigation = () => {
+    const referrer = document.referrer;
+    
+    if (referrer.includes('/search')) {
+      return {
+        url: referrer,
+        text: 'Back to Search Results'
+      };
+    } else if (referrer.includes('/categories/')) {
+      return {
+        url: referrer,
+        text: 'Back to Categories'
+      };
+    } else {
+      // Default fallback
+      return {
+        url: '/categories',
+        text: 'Back to Categories'
+      };
+    }
+  };
+
+  const backNavigation = getBackNavigation();
   
   if (isLoading) {
     return (
@@ -176,10 +201,13 @@ const ProfilePage = () => {
         {/* Navigation */}
         <section className="bg-gray-50 py-4">
           <div className="container mx-auto px-4">
-            <Link to="/categories" className="inline-flex items-center text-greenyp-600 hover:text-greenyp-700">
+            <a 
+              href={backNavigation.url} 
+              className="inline-flex items-center text-greenyp-600 hover:text-greenyp-700"
+            >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Categories
-            </Link>
+              {backNavigation.text}
+            </a>
           </div>
         </section>
 
