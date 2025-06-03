@@ -1,3 +1,4 @@
+
 export interface LocationHours {
   dayOfWeek: "SUNDAY" | "MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY";
   openTime: string;
@@ -28,6 +29,9 @@ export interface SubscriberProfile {
   subscriptionId?: string;
   locationId?: string;
 }
+
+// Type alias for ProfileData to match component expectations
+export type ProfileData = SubscriberProfile;
 
 export interface ProfileResponse {
   response: SubscriberProfile;
