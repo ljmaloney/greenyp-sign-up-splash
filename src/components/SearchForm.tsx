@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useCategories } from "@/hooks/useCategories";
-import { useCategoryServices } from "@/hooks/useCategoryServices";
 import { useNavigate, useSearchParams, useParams } from 'react-router-dom';
 import { Search } from 'lucide-react';
 
@@ -22,17 +21,16 @@ const SearchForm = ({ showHeading = true }: SearchFormProps) => {
   const initialZipCode = searchParams.get('zipCode') || '';
   const initialDistance = searchParams.get('distance') || '25';
   const initialCategory = searchParams.get('category') || slug || '';
-  const initialService = searchParams.get('service') || '';
+  const initialSearchText = searchParams.get('searchText') || '';
   
   const [zipCode, setZipCode] = useState(initialZipCode);
   const [distance, setDistance] = useState(initialDistance);
   const [customDistance, setCustomDistance] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
-  const [selectedService, setSelectedService] = useState(initialService);
+  const [searchText, setSearchText] = useState(initialSearchText);
   const [isCustomDistance, setIsCustomDistance] = useState(false);
   
   const { data: categories } = useCategories();
-  const { data: services } = useCategoryServices(selectedCategory);
 
   // Check if the initial distance is a custom value (not in predefined options)
   const distanceOptions = ['15', '25', '50', '75', '100', '150'];
@@ -49,7 +47,6 @@ const SearchForm = ({ showHeading = true }: SearchFormProps) => {
   useEffect(() => {
     if (slug && slug !== selectedCategory) {
       setSelectedCategory(slug);
-      setSelectedService(''); // Reset service when category changes
     }
   }, [slug, selectedCategory]);
 
@@ -61,7 +58,7 @@ const SearchForm = ({ showHeading = true }: SearchFormProps) => {
       zipCode: zipCode.trim(),
       distance: isCustomDistance && customDistance ? customDistance : distance,
       ...(selectedCategory && { category: selectedCategory }),
-      ...(selectedService && { service: selectedService }),
+      ...(searchText.trim() && { searchText: searchText.trim() }),
     });
 
     navigate(`/search?${searchParams.toString()}`);
@@ -89,7 +86,7 @@ const SearchForm = ({ showHeading = true }: SearchFormProps) => {
         )}
         
         <form onSubmit={handleSearch} className="bg-white rounded-lg shadow-lg p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             {/* Zip Code */}
             <div className="space-y-2">
               <Label htmlFor="zipCode">Zip Code *</Label>
@@ -147,10 +144,7 @@ const SearchForm = ({ showHeading = true }: SearchFormProps) => {
             {/* Category */}
             <div className="space-y-2">
               <Label htmlFor="category">Category (Optional)</Label>
-              <Select value={selectedCategory} onValueChange={(value) => {
-                setSelectedCategory(value);
-                setSelectedService(''); // Reset service when category changes
-              }}>
+              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
@@ -164,28 +158,19 @@ const SearchForm = ({ showHeading = true }: SearchFormProps) => {
                 </SelectContent>
               </Select>
             </div>
+          </div>
 
-            {/* Services */}
-            <div className="space-y-2">
-              <Label htmlFor="service">Services (Optional)</Label>
-              <Select 
-                value={selectedService} 
-                onValueChange={setSelectedService}
-                disabled={!selectedCategory}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={selectedCategory ? "Select service" : "Select category first"} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Services</SelectItem>
-                  {services?.map((service) => (
-                    <SelectItem key={service.lobServiceId} value={service.lobServiceId}>
-                      {service.serviceName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+          {/* Free-form text search */}
+          <div className="mb-6">
+            <Label htmlFor="searchText">Search Keywords (Optional)</Label>
+            <Input
+              id="searchText"
+              type="text"
+              placeholder="Enter keywords to search for specific services, business names, or specialties..."
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              className="mt-2"
+            />
           </div>
 
           <div className="text-center">

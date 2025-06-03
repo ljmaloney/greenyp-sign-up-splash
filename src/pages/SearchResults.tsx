@@ -8,6 +8,7 @@ import PublicHeader from '@/components/PublicHeader';
 import Footer from '@/components/Footer';
 import SearchForm from '@/components/SearchForm';
 import { useCategories } from '@/hooks/useCategories';
+import { getApiUrl } from '@/config/api';
 import type { SearchResult, SearchResponse } from '../types/search'
 
 // Dummy data for testing UI
@@ -102,7 +103,7 @@ const SearchResults = () => {
   const zipCode = searchParams.get('zipCode') || '';
   const distance = searchParams.get('distance') || '25';
   const category = searchParams.get('category') || '';
-  const service = searchParams.get('service') || '';
+  const searchText = searchParams.get('searchText') || '';
   const page = parseInt(searchParams.get('page') || '1');
 
   const { data: categories } = useCategories();
@@ -138,13 +139,14 @@ const SearchResults = () => {
           page: page.toString(),
           limit: '15',
           ...(category && { category }),
-          ...(service && { service }),
+          ...(searchText && { searchText }),
         });
 
         console.log('Fetching search results from API...');
-        console.log('Search URL:', `http://services.greenyp.com/search?${searchQuery.toString()}`);
+        const searchUrl = getApiUrl(`/search?${searchQuery.toString()}`);
+        console.log('Search URL:', searchUrl);
 
-        const response = await fetch(`http://services.greenyp.com/search?${searchQuery.toString()}`);
+        const response = await fetch(searchUrl);
         
         if (!response.ok) {
           throw new Error(`Search failed: ${response.status} ${response.statusText}`);
@@ -167,7 +169,7 @@ const SearchResults = () => {
     if (zipCode) {
       fetchResults();
     }
-  }, [zipCode, distance, category, service, page]);
+  }, [zipCode, distance, category, searchText, page]);
 
   const generateMapUrl = (latitude: number, longitude: number, businessName: string) => {
     // Using Google Maps static API for small map images
@@ -231,6 +233,11 @@ const SearchResults = () => {
                 </h1>
                 <p className="text-gray-600">
                   {results?.totalCount || 0} providers found within {distance} miles of {zipCode}
+                  {searchText && (
+                    <span className="block mt-1">
+                      Searching for: "<span className="font-medium">{searchText}</span>"
+                    </span>
+                  )}
                 </p>
               </div>
               <Button 

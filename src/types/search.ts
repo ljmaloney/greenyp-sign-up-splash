@@ -1,3 +1,4 @@
+
 export interface SearchResult {
     producerId: string;
     businessName: string;
@@ -16,4 +17,13 @@ export interface SearchResponse {
     totalCount: number;
     currentPage: number;
     totalPages: number;
+}
+
+export interface SearchParams {
+    zipCode: string;
+    distance: string;
+    category?: string;
+    searchText?: string;
+    page?: number;
+    limit?: number;
 }
