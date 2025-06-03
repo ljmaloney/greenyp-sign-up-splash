@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -9,32 +8,13 @@ import PublicHeader from '@/components/PublicHeader';
 import Footer from '@/components/Footer';
 import SearchForm from '@/components/SearchForm';
 import { useCategories } from '@/hooks/useCategories';
-
-interface SearchResult {
-  id: string;
-  businessName: string;
-  phone: string;
-  address: string;
-  websiteUrl: string;
-  latitude: number;
-  longitude: number;
-  distance: number;
-  businessNarrative?: string;
-  iconLink?: string;
-}
-
-interface SearchResponse {
-  results: SearchResult[];
-  totalCount: number;
-  currentPage: number;
-  totalPages: number;
-}
+import type { SearchResult, SearchResponse } from '../types/search'
 
 // Dummy data for testing UI
 const dummyResults: SearchResponse = {
   results: [
     {
-      id: '1',
+      producerId: '1',
       businessName: 'Green Thumb Landscaping',
       phone: '(404) 555-0123',
       address: '123 Peachtree St, Atlanta, GA 30309',
@@ -46,7 +26,7 @@ const dummyResults: SearchResponse = {
       iconLink: 'https://via.placeholder.com/32x32/22c55e/ffffff?text=GT'
     },
     {
-      id: '2',
+      producerId: '2',
       businessName: 'Atlanta Garden Center',
       phone: '(404) 555-0456',
       address: '456 Buckhead Ave, Atlanta, GA 30305',
@@ -58,7 +38,7 @@ const dummyResults: SearchResponse = {
       iconLink: null
     },
     {
-      id: '3',
+      producerId: '3',
       businessName: 'Southern Lawn Care',
       phone: '(404) 555-0789',
       address: '789 Midtown Blvd, Atlanta, GA 30308',
@@ -70,7 +50,7 @@ const dummyResults: SearchResponse = {
       iconLink: 'https://via.placeholder.com/32x32/16a34a/ffffff?text=SL'
     },
     {
-      id: '4',
+      producerId: '4',
       businessName: 'Eco-Friendly Gardens LLC',
       phone: '(678) 555-0101',
       address: '321 Virginia Highland, Atlanta, GA 30306',
@@ -82,7 +62,7 @@ const dummyResults: SearchResponse = {
       iconLink: null
     },
     {
-      id: '5',
+      producerId: '5',
       businessName: 'Premier Tree Services',
       phone: '(770) 555-0202',
       address: '654 Decatur St, Atlanta, GA 30312',
@@ -94,7 +74,7 @@ const dummyResults: SearchResponse = {
       iconLink: 'https://via.placeholder.com/32x32/059669/ffffff?text=PT'
     },
     {
-      id: '6',
+      producerId: '6',
       businessName: 'Urban Oasis Landscaping',
       phone: '(404) 555-0303',
       address: '987 Inman Park Dr, Atlanta, GA 30307',
@@ -276,7 +256,7 @@ const SearchResults = () => {
             <>
               <div className="grid gap-6 mb-8">
                 {results.results.map((result) => (
-                  <Card key={result.id} className="overflow-hidden">
+                  <Card key={result.producerId} className="overflow-hidden">
                     <CardContent className="p-6">
                       <div className="flex flex-col lg:flex-row gap-6">
                         {/* Business Info */}
@@ -299,7 +279,7 @@ const SearchResults = () => {
                               </h3>
                             </div>
                             <Link 
-                              to={`/profile/${result.id}`}
+                              to={`/profile/${result.producerId}`}
                               className="flex items-center text-greenyp-600 hover:text-greenyp-700 text-sm font-medium"
                             >
                               <Eye className="w-4 h-4 mr-1" />
@@ -339,17 +319,17 @@ const SearchResults = () => {
                             {result.businessNarrative && (
                               <div className="text-gray-600">
                                 <p className="mb-1">
-                                  {expandedNarratives.has(result.id) 
+                                  {expandedNarratives.has(result.producerId) 
                                     ? result.businessNarrative 
                                     : truncateNarrative(result.businessNarrative)
                                   }
                                 </p>
                                 {result.businessNarrative.length > 150 && (
                                   <button
-                                    onClick={() => toggleNarrative(result.id)}
+                                    onClick={() => toggleNarrative(result.producerId)}
                                     className="text-greenyp-600 hover:text-greenyp-700 text-sm font-medium flex items-center"
                                   >
-                                    {expandedNarratives.has(result.id) ? (
+                                    {expandedNarratives.has(result.producerId) ? (
                                       <>
                                         <ChevronUp className="w-3 h-3 mr-1" />
                                         Show Less
