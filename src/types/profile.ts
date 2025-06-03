@@ -75,7 +75,7 @@ export interface ProducerService {
   producerLocationId: string;
   minServicePrice: number;
   maxServicePrice: number;
-  priceUnitsType: "LOT_SIZE" | "PER_HOUR" | "PER_MILE" | "FIXED_ESTIMATE";
+  priceUnitsType: "LOT_SIZE" | "PER_HOUR" | "PER_MILE" | "PER_VISIT" | "FIXED_ESTIMATE";
   shortDescription: string;
   description: string;
   serviceTerms: string;
