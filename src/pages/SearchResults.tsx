@@ -1,9 +1,10 @@
+
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, Phone, Globe, ArrowLeft } from 'lucide-react';
+import { MapPin, Phone, Globe, ArrowLeft, ExternalLink, Eye, ChevronDown, ChevronUp } from 'lucide-react';
 import PublicHeader from '@/components/PublicHeader';
 import Footer from '@/components/Footer';
 import SearchForm from '@/components/SearchForm';
@@ -18,6 +19,8 @@ interface SearchResult {
   latitude: number;
   longitude: number;
   distance: number;
+  businessNarrative?: string;
+  iconLink?: string;
 }
 
 interface SearchResponse {
@@ -38,7 +41,9 @@ const dummyResults: SearchResponse = {
       websiteUrl: 'https://greenthumblandscaping.com',
       latitude: 33.7490,
       longitude: -84.3880,
-      distance: 2.5
+      distance: 2.5,
+      businessNarrative: 'We are a full-service landscaping company specializing in sustainable garden design, lawn maintenance, and eco-friendly landscaping solutions. Our team of certified professionals brings over 20 years of experience to every project, ensuring beautiful and environmentally responsible outdoor spaces.',
+      iconLink: 'https://via.placeholder.com/32x32/22c55e/ffffff?text=GT'
     },
     {
       id: '2',
@@ -48,7 +53,9 @@ const dummyResults: SearchResponse = {
       websiteUrl: 'https://atlantagardencenter.com',
       latitude: 33.8484,
       longitude: -84.3781,
-      distance: 5.8
+      distance: 5.8,
+      businessNarrative: 'Your premier destination for plants, garden supplies, and expert horticultural advice. We offer a wide selection of native plants, specialty tools, and organic fertilizers to help you create the garden of your dreams.',
+      iconLink: null
     },
     {
       id: '3',
@@ -58,7 +65,9 @@ const dummyResults: SearchResponse = {
       websiteUrl: '',
       latitude: 33.7701,
       longitude: -84.3870,
-      distance: 3.2
+      distance: 3.2,
+      businessNarrative: 'Professional lawn care services including mowing, fertilization, pest control, and seasonal cleanup. We serve residential and commercial properties throughout the Atlanta metro area with reliable, affordable service.',
+      iconLink: 'https://via.placeholder.com/32x32/16a34a/ffffff?text=SL'
     },
     {
       id: '4',
@@ -68,7 +77,9 @@ const dummyResults: SearchResponse = {
       websiteUrl: 'https://ecofriendlygardens.net',
       latitude: 33.7775,
       longitude: -84.3533,
-      distance: 4.7
+      distance: 4.7,
+      businessNarrative: 'Committed to creating beautiful outdoor spaces using sustainable practices and native plant species. Our designs focus on water conservation, wildlife habitat creation, and low-maintenance gardening solutions.',
+      iconLink: null
     },
     {
       id: '5',
@@ -78,7 +89,9 @@ const dummyResults: SearchResponse = {
       websiteUrl: 'https://premiertreeservices.com',
       latitude: 33.7376,
       longitude: -84.3963,
-      distance: 6.1
+      distance: 6.1,
+      businessNarrative: 'Expert tree care services including pruning, removal, emergency storm cleanup, and tree health assessments. Our certified arborists ensure the safety and beauty of your trees with professional, insured service.',
+      iconLink: 'https://via.placeholder.com/32x32/059669/ffffff?text=PT'
     },
     {
       id: '6',
@@ -88,7 +101,9 @@ const dummyResults: SearchResponse = {
       websiteUrl: '',
       latitude: 33.7566,
       longitude: -84.3532,
-      distance: 4.3
+      distance: 4.3,
+      businessNarrative: 'Transforming urban spaces into beautiful, functional outdoor environments. We specialize in small space gardens, rooftop installations, and creative landscaping solutions for city properties.',
+      iconLink: null
     }
   ],
   totalCount: 42,
@@ -102,6 +117,7 @@ const SearchResults = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showSearchForm, setShowSearchForm] = useState(false);
+  const [expandedNarratives, setExpandedNarratives] = useState<Set<string>>(new Set());
 
   const zipCode = searchParams.get('zipCode') || '';
   const distance = searchParams.get('distance') || '25';
@@ -114,6 +130,21 @@ const SearchResults = () => {
   // Find the selected category name
   const selectedCategory = categories?.find(cat => cat.lineOfBusinessId === category);
   const categoryName = selectedCategory?.lineOfBusinessName || '';
+
+  const toggleNarrative = (resultId: string) => {
+    const newExpanded = new Set(expandedNarratives);
+    if (newExpanded.has(resultId)) {
+      newExpanded.delete(resultId);
+    } else {
+      newExpanded.add(resultId);
+    }
+    setExpandedNarratives(newExpanded);
+  };
+
+  const truncateNarrative = (narrative: string, maxLength: number = 150) => {
+    if (narrative.length <= maxLength) return narrative;
+    return narrative.substring(0, maxLength) + '...';
+  };
 
   useEffect(() => {
     const fetchResults = async () => {
@@ -250,24 +281,45 @@ const SearchResults = () => {
                       <div className="flex flex-col lg:flex-row gap-6">
                         {/* Business Info */}
                         <div className="flex-grow">
-                          <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                            {result.businessName}
-                          </h3>
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center">
+                              {result.iconLink && (
+                                <img 
+                                  src={result.iconLink} 
+                                  alt={`${result.businessName} icon`}
+                                  className="w-8 h-8 mr-3 rounded"
+                                  onError={(e) => {
+                                    const target = e.currentTarget as HTMLImageElement;
+                                    target.style.display = 'none';
+                                  }}
+                                />
+                              )}
+                              <h3 className="text-xl font-semibold text-gray-900">
+                                {result.businessName}
+                              </h3>
+                            </div>
+                            <Link 
+                              to={`/profile/${result.id}`}
+                              className="flex items-center text-greenyp-600 hover:text-greenyp-700 text-sm font-medium"
+                            >
+                              <Eye className="w-4 h-4 mr-1" />
+                              View Profile
+                            </Link>
+                          </div>
                           
                           <div className="space-y-2 mb-4">
-                            <div className="flex items-center text-gray-600">
+                            <div className="flex items-center text-gray-600 flex-wrap">
                               <MapPin className="w-4 h-4 mr-2 flex-shrink-0" />
-                              <span>{result.address}</span>
+                              <span className="mr-4">{result.address}</span>
+                              {result.phone && (
+                                <div className="flex items-center">
+                                  <Phone className="w-4 h-4 mr-2 flex-shrink-0" />
+                                  <a href={`tel:${result.phone}`} className="hover:text-greenyp-600">
+                                    {result.phone}
+                                  </a>
+                                </div>
+                              )}
                             </div>
-                            
-                            {result.phone && (
-                              <div className="flex items-center text-gray-600">
-                                <Phone className="w-4 h-4 mr-2 flex-shrink-0" />
-                                <a href={`tel:${result.phone}`} className="hover:text-greenyp-600">
-                                  {result.phone}
-                                </a>
-                              </div>
-                            )}
                             
                             {result.websiteUrl && (
                               <div className="flex items-center text-gray-600">
@@ -276,10 +328,40 @@ const SearchResults = () => {
                                   href={result.websiteUrl} 
                                   target="_blank" 
                                   rel="noopener noreferrer"
-                                  className="hover:text-greenyp-600 truncate"
+                                  className="hover:text-greenyp-600 truncate flex items-center"
                                 >
                                   {result.websiteUrl}
+                                  <ExternalLink className="w-3 h-3 ml-1 flex-shrink-0" />
                                 </a>
+                              </div>
+                            )}
+
+                            {result.businessNarrative && (
+                              <div className="text-gray-600">
+                                <p className="mb-1">
+                                  {expandedNarratives.has(result.id) 
+                                    ? result.businessNarrative 
+                                    : truncateNarrative(result.businessNarrative)
+                                  }
+                                </p>
+                                {result.businessNarrative.length > 150 && (
+                                  <button
+                                    onClick={() => toggleNarrative(result.id)}
+                                    className="text-greenyp-600 hover:text-greenyp-700 text-sm font-medium flex items-center"
+                                  >
+                                    {expandedNarratives.has(result.id) ? (
+                                      <>
+                                        <ChevronUp className="w-3 h-3 mr-1" />
+                                        Show Less
+                                      </>
+                                    ) : (
+                                      <>
+                                        <ChevronDown className="w-3 h-3 mr-1" />
+                                        Read More
+                                      </>
+                                    )}
+                                  </button>
+                                )}
                               </div>
                             )}
                           </div>
