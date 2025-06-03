@@ -1,11 +1,10 @@
-
 export interface LocationHours {
   dayOfWeek: "SUNDAY" | "MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY";
   openTime: string;
   closeTime: string;
 }
 
-export interface ProfileData {
+export interface SubscriberProfile {
   producerId: string;
   businessName: string;
   narrative: string;
@@ -31,7 +30,7 @@ export interface ProfileData {
 }
 
 export interface ProfileResponse {
-  response: ProfileData;
+  response: SubscriberProfile;
   errorMessageApi: string | null;
 }
 
@@ -42,7 +41,7 @@ export interface Product {
   lastUpdateDate: string;
   producerId: string;
   producerLocationId: string;
-  productType: "BAGGED_MATERIAL" | string;
+  productType: "BAGGED_MATERIAL" | "BOTANICAL" | "BULK_MATERIAL" | "CONTAINERS" | "DECORATIVE_STONE" | "HARDWARE" | "LANDSCAPE_PRODUCTS" | "LANDSCAPE_TOOLS" | "POND_MAINTENANCE";
   botanicalGroup: string;
   name: string;
   price: number;
