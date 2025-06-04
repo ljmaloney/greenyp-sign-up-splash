@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from 'lucide-react';
 import { useProfile, useProducerProfile } from '@/hooks/useProfile';
 import { useSubscriptions } from '@/hooks/useSubscriptions';
-import { ProfileData, ProducerProfile } from '@/types/profile';
+import { ProfileData, ProducerProfile, LocationHours } from '@/types/profile';
 
 // Helper function to convert ProducerProfile to ProfileData format
 const convertProducerProfileToProfileData = (producerProfile: ProducerProfile, businessName?: string): ProfileData => {
@@ -37,13 +37,31 @@ const convertProducerProfileToProfileData = (producerProfile: ProducerProfile, b
     contactName: '', // Not available in producer profile
     phoneNumber: '', // Not available in producer profile
     cellPhoneNumber: '', // Not available in producer profile
-    locationHours: producerProfile.locationHours.map(hours => ({
-      dayOfWeek: hours.dayOfWeek,
-      openTime: hours.openTime,
-      closeTime: hours.closeTime
-    })),
+    locationHours: producerProfile.locationHours,
     locationId: producerProfile.locationId
   };
+};
+
+// Helper function to create mock location hours
+const createMockLocationHours = (producerId: string, locationId: string): LocationHours[] => {
+  const baseHours = [
+    { dayOfWeek: 'MONDAY' as const, openTime: '7:00 AM', closeTime: '6:00 PM' },
+    { dayOfWeek: 'TUESDAY' as const, openTime: '7:00 AM', closeTime: '6:00 PM' },
+    { dayOfWeek: 'WEDNESDAY' as const, openTime: '7:00 AM', closeTime: '6:00 PM' },
+    { dayOfWeek: 'THURSDAY' as const, openTime: '7:00 AM', closeTime: '6:00 PM' },
+    { dayOfWeek: 'FRIDAY' as const, openTime: '7:00 AM', closeTime: '6:00 PM' },
+    { dayOfWeek: 'SATURDAY' as const, openTime: '8:00 AM', closeTime: '4:00 PM' },
+    { dayOfWeek: 'SUNDAY' as const, openTime: '', closeTime: '' }
+  ];
+
+  return baseHours.map((hours, index) => ({
+    locationHoursId: `hours-${producerId}-${index}`,
+    createDate: '2023-01-01T00:00:00Z',
+    lastUpdateDate: '2023-01-01T00:00:00Z',
+    producerId,
+    producerLocationId: locationId,
+    ...hours
+  }));
 };
 
 // Mock profile data based on the providers from CategoryPage
@@ -71,15 +89,7 @@ const getMockProfileData = (producerId: string): ProfileData => {
       cellPhoneNumber: '(602) 555-5678',
       subscriptionId: 'featured-business-001',
       locationId: 'location-001',
-      locationHours: [
-        { dayOfWeek: 'MONDAY', openTime: '7:00 AM', closeTime: '6:00 PM' },
-        { dayOfWeek: 'TUESDAY', openTime: '7:00 AM', closeTime: '6:00 PM' },
-        { dayOfWeek: 'WEDNESDAY', openTime: '7:00 AM', closeTime: '6:00 PM' },
-        { dayOfWeek: 'THURSDAY', openTime: '7:00 AM', closeTime: '6:00 PM' },
-        { dayOfWeek: 'FRIDAY', openTime: '7:00 AM', closeTime: '6:00 PM' },
-        { dayOfWeek: 'SATURDAY', openTime: '8:00 AM', closeTime: '4:00 PM' },
-        { dayOfWeek: 'SUNDAY', openTime: '', closeTime: '' }
-      ]
+      locationHours: createMockLocationHours('producer-001', 'location-001')
     },
     'producer-002': {
       producerId: 'producer-002',
@@ -104,13 +114,76 @@ const getMockProfileData = (producerId: string): ProfileData => {
       subscriptionId: 'basic-listing-001',
       locationId: 'location-002',
       locationHours: [
-        { dayOfWeek: 'MONDAY', openTime: '8:00 AM', closeTime: '5:00 PM' },
-        { dayOfWeek: 'TUESDAY', openTime: '8:00 AM', closeTime: '5:00 PM' },
-        { dayOfWeek: 'WEDNESDAY', openTime: '8:00 AM', closeTime: '5:00 PM' },
-        { dayOfWeek: 'THURSDAY', openTime: '8:00 AM', closeTime: '5:00 PM' },
-        { dayOfWeek: 'FRIDAY', openTime: '8:00 AM', closeTime: '5:00 PM' },
-        { dayOfWeek: 'SATURDAY', openTime: '9:00 AM', closeTime: '3:00 PM' },
-        { dayOfWeek: 'SUNDAY', openTime: '', closeTime: '' }
+        {
+          locationHoursId: 'hours-producer-002-0',
+          createDate: '2023-01-01T00:00:00Z',
+          lastUpdateDate: '2023-01-01T00:00:00Z',
+          producerId: 'producer-002',
+          producerLocationId: 'location-002',
+          dayOfWeek: 'MONDAY',
+          openTime: '8:00 AM',
+          closeTime: '5:00 PM'
+        },
+        {
+          locationHoursId: 'hours-producer-002-1',
+          createDate: '2023-01-01T00:00:00Z',
+          lastUpdateDate: '2023-01-01T00:00:00Z',
+          producerId: 'producer-002',
+          producerLocationId: 'location-002',
+          dayOfWeek: 'TUESDAY',
+          openTime: '8:00 AM',
+          closeTime: '5:00 PM'
+        },
+        {
+          locationHoursId: 'hours-producer-002-2',
+          createDate: '2023-01-01T00:00:00Z',
+          lastUpdateDate: '2023-01-01T00:00:00Z',
+          producerId: 'producer-002',
+          producerLocationId: 'location-002',
+          dayOfWeek: 'WEDNESDAY',
+          openTime: '8:00 AM',
+          closeTime: '5:00 PM'
+        },
+        {
+          locationHoursId: 'hours-producer-002-3',
+          createDate: '2023-01-01T00:00:00Z',
+          lastUpdateDate: '2023-01-01T00:00:00Z',
+          producerId: 'producer-002',
+          producerLocationId: 'location-002',
+          dayOfWeek: 'THURSDAY',
+          openTime: '8:00 AM',
+          closeTime: '5:00 PM'
+        },
+        {
+          locationHoursId: 'hours-producer-002-4',
+          createDate: '2023-01-01T00:00:00Z',
+          lastUpdateDate: '2023-01-01T00:00:00Z',
+          producerId: 'producer-002',
+          producerLocationId: 'location-002',
+          dayOfWeek: 'FRIDAY',
+          openTime: '8:00 AM',
+          closeTime: '5:00 PM'
+        },
+        {
+          locationHoursId: 'hours-producer-002-5',
+          createDate: '2023-01-01T00:00:00Z',
+          lastUpdateDate: '2023-01-01T00:00:00Z',
+          producerId: 'producer-002',
+          producerLocationId: 'location-002',
+          dayOfWeek: 'SATURDAY',
+          openTime: '9:00 AM',
+          closeTime: '3:00 PM'
+        },
+        {
+          locationHoursId: 'hours-producer-002-6',
+          createDate: '2023-01-01T00:00:00Z',
+          lastUpdateDate: '2023-01-01T00:00:00Z',
+          producerId: 'producer-002',
+          producerLocationId: 'location-002',
+          dayOfWeek: 'SUNDAY',
+          openTime: '',
+          closeTime: ''
+        }
       ]
     },
     'producer-003': {
@@ -136,13 +209,76 @@ const getMockProfileData = (producerId: string): ProfileData => {
       subscriptionId: 'premium-enterprise-001',
       locationId: 'location-003',
       locationHours: [
-        { dayOfWeek: 'MONDAY', openTime: '6:00 AM', closeTime: '7:00 PM' },
-        { dayOfWeek: 'TUESDAY', openTime: '6:00 AM', closeTime: '7:00 PM' },
-        { dayOfWeek: 'WEDNESDAY', openTime: '6:00 AM', closeTime: '7:00 PM' },
-        { dayOfWeek: 'THURSDAY', openTime: '6:00 AM', closeTime: '7:00 PM' },
-        { dayOfWeek: 'FRIDAY', openTime: '6:00 AM', closeTime: '7:00 PM' },
-        { dayOfWeek: 'SATURDAY', openTime: '7:00 AM', closeTime: '5:00 PM' },
-        { dayOfWeek: 'SUNDAY', openTime: '8:00 AM', closeTime: '4:00 PM' }
+        {
+          locationHoursId: 'hours-producer-003-0',
+          createDate: '2023-01-01T00:00:00Z',
+          lastUpdateDate: '2023-01-01T00:00:00Z',
+          producerId: 'producer-003',
+          producerLocationId: 'location-003',
+          dayOfWeek: 'MONDAY',
+          openTime: '6:00 AM',
+          closeTime: '7:00 PM'
+        },
+        {
+          locationHoursId: 'hours-producer-003-1',
+          createDate: '2023-01-01T00:00:00Z',
+          lastUpdateDate: '2023-01-01T00:00:00Z',
+          producerId: 'producer-003',
+          producerLocationId: 'location-003',
+          dayOfWeek: 'TUESDAY',
+          openTime: '6:00 AM',
+          closeTime: '7:00 PM'
+        },
+        {
+          locationHoursId: 'hours-producer-003-2',
+          createDate: '2023-01-01T00:00:00Z',
+          lastUpdateDate: '2023-01-01T00:00:00Z',
+          producerId: 'producer-003',
+          producerLocationId: 'location-003',
+          dayOfWeek: 'WEDNESDAY',
+          openTime: '6:00 AM',
+          closeTime: '7:00 PM'
+        },
+        {
+          locationHoursId: 'hours-producer-003-3',
+          createDate: '2023-01-01T00:00:00Z',
+          lastUpdateDate: '2023-01-01T00:00:00Z',
+          producerId: 'producer-003',
+          producerLocationId: 'location-003',
+          dayOfWeek: 'THURSDAY',
+          openTime: '6:00 AM',
+          closeTime: '7:00 PM'
+        },
+        {
+          locationHoursId: 'hours-producer-003-4',
+          createDate: '2023-01-01T00:00:00Z',
+          lastUpdateDate: '2023-01-01T00:00:00Z',
+          producerId: 'producer-003',
+          producerLocationId: 'location-003',
+          dayOfWeek: 'FRIDAY',
+          openTime: '6:00 AM',
+          closeTime: '7:00 PM'
+        },
+        {
+          locationHoursId: 'hours-producer-003-5',
+          createDate: '2023-01-01T00:00:00Z',
+          lastUpdateDate: '2023-01-01T00:00:00Z',
+          producerId: 'producer-003',
+          producerLocationId: 'location-003',
+          dayOfWeek: 'SATURDAY',
+          openTime: '7:00 AM',
+          closeTime: '5:00 PM'
+        },
+        {
+          locationHoursId: 'hours-producer-003-6',
+          createDate: '2023-01-01T00:00:00Z',
+          lastUpdateDate: '2023-01-01T00:00:00Z',
+          producerId: 'producer-003',
+          producerLocationId: 'location-003',
+          dayOfWeek: 'SUNDAY',
+          openTime: '8:00 AM',
+          closeTime: '4:00 PM'
+        }
       ]
     }
   };
