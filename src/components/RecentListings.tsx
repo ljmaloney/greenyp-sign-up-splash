@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Phone, Globe, ExternalLink } from 'lucide-react';
+import { MapPin, Phone, Globe, ExternalLink, Building2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useProducerProfiles } from '@/hooks/useProducerProfiles';
@@ -90,16 +90,26 @@ const RecentListings = ({ lineOfBusinessId, categoryName }: RecentListingsProps)
             <Card key={listing.producerId} className="hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-center mb-3">
-                  {listing.iconLink && (
+                  {listing.iconLink ? (
                     <img 
                       src={listing.iconLink} 
                       alt={`${listing.businessName} icon`}
-                      className="w-8 h-8 mr-3 rounded"
+                      className="w-8 h-8 mr-3 rounded object-cover flex-shrink-0"
                       onError={(e) => {
                         const target = e.currentTarget as HTMLImageElement;
                         target.style.display = 'none';
+                        // Show fallback icon when image fails to load
+                        const fallback = target.nextElementSibling as HTMLElement;
+                        if (fallback) {
+                          fallback.style.display = 'block';
+                        }
                       }}
                     />
+                  ) : (
+                    <Building2 className="w-8 h-8 mr-3 text-greenyp-600 flex-shrink-0" />
+                  )}
+                  {listing.iconLink && (
+                    <Building2 className="w-8 h-8 mr-3 text-greenyp-600 flex-shrink-0 hidden" />
                   )}
                   <h3 className="text-lg font-semibold text-gray-900 truncate">
                     {listing.businessName}
