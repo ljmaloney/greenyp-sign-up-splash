@@ -1,9 +1,16 @@
 
 export interface SearchResult {
     producerId: string;
+    producerLocationId: string;
     businessName: string;
     phone: string;
-    address: string;
+    cellPhone: string;
+    addressLine1: string;
+    addressLine2: string;
+    addressLine3: string;
+    city: string;
+    state: string;
+    postalCode: string;
     websiteUrl: string;
     latitude: number;
     longitude: number;
