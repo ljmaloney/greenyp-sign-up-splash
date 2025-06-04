@@ -11,14 +11,35 @@ import { useCategories } from '@/hooks/useCategories';
 import { getApiUrl } from '@/config/api';
 import type { SearchResult, SearchResponse } from '../types/search'
 
+// Helper function to construct full address from separate fields
+const constructAddress = (result: SearchResult): string => {
+  const addressParts = [
+    result.addressLine1,
+    result.addressLine2,
+    result.addressLine3
+  ].filter(Boolean); // Remove empty/null values
+  
+  const addressLine = addressParts.join(' ');
+  const cityStateZip = [result.city, result.state, result.postalCode].filter(Boolean).join(', ');
+  
+  return [addressLine, cityStateZip].filter(Boolean).join(', ');
+};
+
 // Dummy data for testing UI
 const dummyResults: SearchResponse = {
   results: [
     {
       producerId: '1',
+      producerLocationId: '1',
       businessName: 'Green Thumb Landscaping',
       phone: '(404) 555-0123',
-      address: '123 Peachtree St, Atlanta, GA 30309',
+      cellPhone: '(404) 555-0124',
+      addressLine1: '123 Peachtree St',
+      addressLine2: '',
+      addressLine3: '',
+      city: 'Atlanta',
+      state: 'GA',
+      postalCode: '30309',
       websiteUrl: 'https://greenthumblandscaping.com',
       latitude: 33.7490,
       longitude: -84.3880,
@@ -28,21 +49,35 @@ const dummyResults: SearchResponse = {
     },
     {
       producerId: '2',
+      producerLocationId: '2',
       businessName: 'Atlanta Garden Center',
       phone: '(404) 555-0456',
-      address: '456 Buckhead Ave, Atlanta, GA 30305',
+      cellPhone: '',
+      addressLine1: '456 Buckhead Ave',
+      addressLine2: 'Suite 200',
+      addressLine3: '',
+      city: 'Atlanta',
+      state: 'GA',
+      postalCode: '30305',
       websiteUrl: 'https://atlantagardencenter.com',
       latitude: 33.8484,
       longitude: -84.3781,
       distance: 5.8,
       businessNarrative: 'Your premier destination for plants, garden supplies, and expert horticultural advice. We offer a wide selection of native plants, specialty tools, and organic fertilizers to help you create the garden of your dreams.',
-      iconLink: null
+      iconLink: ''
     },
     {
       producerId: '3',
+      producerLocationId: '3',
       businessName: 'Southern Lawn Care',
       phone: '(404) 555-0789',
-      address: '789 Midtown Blvd, Atlanta, GA 30308',
+      cellPhone: '(770) 555-0790',
+      addressLine1: '789 Midtown Blvd',
+      addressLine2: '',
+      addressLine3: 'Building C',
+      city: 'Atlanta',
+      state: 'GA',
+      postalCode: '30308',
       websiteUrl: '',
       latitude: 33.7701,
       longitude: -84.3870,
@@ -52,21 +87,35 @@ const dummyResults: SearchResponse = {
     },
     {
       producerId: '4',
+      producerLocationId: '4',
       businessName: 'Eco-Friendly Gardens LLC',
       phone: '(678) 555-0101',
-      address: '321 Virginia Highland, Atlanta, GA 30306',
+      cellPhone: '',
+      addressLine1: '321 Virginia Highland',
+      addressLine2: '',
+      addressLine3: '',
+      city: 'Atlanta',
+      state: 'GA',
+      postalCode: '30306',
       websiteUrl: 'https://ecofriendlygardens.net',
       latitude: 33.7775,
       longitude: -84.3533,
       distance: 4.7,
       businessNarrative: 'Committed to creating beautiful outdoor spaces using sustainable practices and native plant species. Our designs focus on water conservation, wildlife habitat creation, and low-maintenance gardening solutions.',
-      iconLink: null
+      iconLink: ''
     },
     {
       producerId: '5',
+      producerLocationId: '5',
       businessName: 'Premier Tree Services',
       phone: '(770) 555-0202',
-      address: '654 Decatur St, Atlanta, GA 30312',
+      cellPhone: '(770) 555-0203',
+      addressLine1: '654 Decatur St',
+      addressLine2: 'Unit 15',
+      addressLine3: '',
+      city: 'Atlanta',
+      state: 'GA',
+      postalCode: '30312',
       websiteUrl: 'https://premiertreeservices.com',
       latitude: 33.7376,
       longitude: -84.3963,
@@ -76,15 +125,22 @@ const dummyResults: SearchResponse = {
     },
     {
       producerId: '6',
+      producerLocationId: '6',
       businessName: 'Urban Oasis Landscaping',
       phone: '(404) 555-0303',
-      address: '987 Inman Park Dr, Atlanta, GA 30307',
+      cellPhone: '',
+      addressLine1: '987 Inman Park Dr',
+      addressLine2: '',
+      addressLine3: '',
+      city: 'Atlanta',
+      state: 'GA',
+      postalCode: '30307',
       websiteUrl: '',
       latitude: 33.7566,
       longitude: -84.3532,
       distance: 4.3,
       businessNarrative: 'Transforming urban spaces into beautiful, functional outdoor environments. We specialize in small space gardens, rooftop installations, and creative landscaping solutions for city properties.',
-      iconLink: null
+      iconLink: ''
     }
   ],
   totalCount: 42,
@@ -297,7 +353,7 @@ const SearchResults = () => {
                           <div className="space-y-2 mb-4">
                             <div className="flex items-center text-gray-600 flex-wrap">
                               <MapPin className="w-4 h-4 mr-2 flex-shrink-0" />
-                              <span className="mr-4">{result.address}</span>
+                              <span className="mr-4">{constructAddress(result)}</span>
                               {result.phone && (
                                 <div className="flex items-center">
                                   <Phone className="w-4 h-4 mr-2 flex-shrink-0" />
