@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import RecentListings from '@/components/RecentListings';
 import { Button } from "@/components/ui/button";
 import { MapPin, Phone, Star } from 'lucide-react';
 import { useCategories } from '@/hooks/useCategories';
@@ -112,6 +113,12 @@ const CategoryPage = () => {
             )}
           </div>
         </section>
+        
+        {/* Recent Listings Section */}
+        <RecentListings 
+          lineOfBusinessId={slug || ''} 
+          categoryName={category.lineOfBusinessName} 
+        />
         
         {/* Services Section */}
         {services && services.length > 0 && (
