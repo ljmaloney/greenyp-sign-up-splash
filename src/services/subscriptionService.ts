@@ -31,7 +31,12 @@ export const fetchSubscriptions = async (): Promise<SubscriptionWithFormatting[]
 
 // Format subscription data for display
 export const formatSubscriptionData = (subscriptions: APISubscription[]): SubscriptionWithFormatting[] => {
-  const formatted = subscriptions.map((subscription, index) => ({
+  // Filter out subscriptions with subscriptionType of DATA_IMPORT_NO_DISPLAY
+  const displayableSubscriptions = subscriptions.filter(
+    subscription => subscription.subscriptionType !== 'DATA_IMPORT_NO_DISPLAY'
+  );
+  
+  const formatted = displayableSubscriptions.map((subscription, index) => ({
     ...subscription,
     formattedMonthlyPrice: subscription.comingSoon ? '' : 
       subscription.monthlyAutopayAmount === 0 ? '$0' : `$${subscription.monthlyAutopayAmount}`,
