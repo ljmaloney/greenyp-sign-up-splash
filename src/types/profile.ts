@@ -1,9 +1,49 @@
+
 export interface LocationHours {
+  locationHoursId: string;
+  createDate: string;
+  lastUpdateDate: string;
+  producerId: string;
+  producerLocationId: string;
   dayOfWeek: "SUNDAY" | "MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY";
   openTime: string;
   closeTime: string;
 }
 
+export interface ProducerProfile {
+  locationId: string;
+  producerId: string;
+  createDate: string;
+  lastUpdateDate: string;
+  locationName: string;
+  locationType: string;
+  locationDisplayType: string;
+  active: boolean;
+  hasImagesUploaded: boolean;
+  addressLine1: string;
+  addressLine2: string;
+  addressLine3: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  latitude: string;
+  longitude: string;
+  websiteUrl: string;
+  businessNarrative: string;
+  iconLink: string;
+  locationHours: LocationHours[];
+}
+
+export interface ProducerProfileResponse {
+  response: ProducerProfile;
+  errorMessageApi: {
+    errorCode: string;
+    displayMessage: string;
+    errorDetails: string;
+  } | null;
+}
+
+// Legacy types for backward compatibility
 export interface SubscriberProfile {
   producerId: string;
   businessName: string;

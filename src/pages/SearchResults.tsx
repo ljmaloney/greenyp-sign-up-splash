@@ -183,6 +183,15 @@ const SearchResults = () => {
     return narrative.substring(0, maxLength) + '...';
   };
 
+  // Helper function to create profile URL with location ID and business name
+  const createProfileUrl = (result: SearchResult) => {
+    const params = new URLSearchParams({
+      locationId: result.producerLocationId,
+      businessName: result.businessName
+    });
+    return `/profile/${result.producerId}?${params.toString()}`;
+  };
+
   useEffect(() => {
     const fetchResults = async () => {
       setLoading(true);
@@ -342,7 +351,7 @@ const SearchResults = () => {
                               </h3>
                             </div>
                             <Link 
-                              to={`/profile/${result.producerId}`}
+                              to={createProfileUrl(result)}
                               className="flex items-center text-greenyp-600 hover:text-greenyp-700 text-sm font-medium"
                             >
                               <Eye className="w-4 h-4 mr-1" />

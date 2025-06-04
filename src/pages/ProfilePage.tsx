@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useSearchParams } from 'react-router-dom';
 import Header from '@/components/PublicHeader';
 import Footer from '@/components/Footer';
 import ProfileHeader from '@/components/profile/ProfileHeader';
@@ -12,9 +11,40 @@ import ProductsList from '@/components/profile/ProductsList';
 import ServicesList from '@/components/profile/ServicesList';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from 'lucide-react';
-import { useProfile } from '@/hooks/useProfile';
+import { useProfile, useProducerProfile } from '@/hooks/useProfile';
 import { useSubscriptions } from '@/hooks/useSubscriptions';
-import { ProfileData } from '@/types/profile';
+import { ProfileData, ProducerProfile } from '@/types/profile';
+
+// Helper function to convert ProducerProfile to ProfileData format
+const convertProducerProfileToProfileData = (producerProfile: ProducerProfile, businessName?: string): ProfileData => {
+  return {
+    producerId: producerProfile.producerId,
+    businessName: businessName || 'Business Name', // Use business name from search results or fallback
+    narrative: producerProfile.businessNarrative,
+    locationName: producerProfile.locationName,
+    locationType: producerProfile.locationType,
+    locationDisplayType: producerProfile.locationDisplayType,
+    active: producerProfile.active,
+    addressLine1: producerProfile.addressLine1,
+    addressLine2: producerProfile.addressLine2,
+    addressLine3: producerProfile.addressLine3,
+    city: producerProfile.city,
+    state: producerProfile.state,
+    postalCode: producerProfile.postalCode,
+    latitude: producerProfile.latitude,
+    longitude: producerProfile.longitude,
+    websiteUrl: producerProfile.websiteUrl,
+    contactName: '', // Not available in producer profile
+    phoneNumber: '', // Not available in producer profile
+    cellPhoneNumber: '', // Not available in producer profile
+    locationHours: producerProfile.locationHours.map(hours => ({
+      dayOfWeek: hours.dayOfWeek,
+      openTime: hours.openTime,
+      closeTime: hours.closeTime
+    })),
+    locationId: producerProfile.locationId
+  };
+};
 
 // Mock profile data based on the providers from CategoryPage
 const getMockProfileData = (producerId: string): ProfileData => {
@@ -122,15 +152,35 @@ const getMockProfileData = (producerId: string): ProfileData => {
 
 const ProfilePage = () => {
   const { producerId } = useParams<{ producerId: string }>();
+  const [searchParams] = useSearchParams();
   
-  const { data: profileResponse, isLoading, error } = useProfile(producerId || '');
+  // Get producer location ID and business name from URL params (passed from search results)
+  const producerLocationId = searchParams.get('locationId');
+  const businessName = searchParams.get('businessName');
+  
+  // Use the new producer profile hook if we have a locationId, otherwise use the old profile hook
+  const { data: profileResponse, isLoading: isProfileLoading, error: profileError } = useProfile(producerId || '');
+  const { data: producerProfileResponse, isLoading: isProducerProfileLoading, error: producerProfileError } = useProducerProfile(producerLocationId || '');
+  
   const { data: subscriptions } = useSubscriptions();
   
-  // Use mock data if API fails or for testing
-  const profile = profileResponse?.response || getMockProfileData(producerId || 'producer-001');
+  // Determine which data to use
+  const isLoading = producerLocationId ? isProducerProfileLoading : isProfileLoading;
+  const error = producerLocationId ? producerProfileError : profileError;
+  
+  // Convert producer profile to profile data format if available
+  let profile: ProfileData | null = null;
+  if (producerLocationId && producerProfileResponse?.response) {
+    profile = convertProducerProfileToProfileData(producerProfileResponse.response, businessName || undefined);
+  } else if (profileResponse?.response) {
+    profile = profileResponse.response;
+  } else {
+    // Use mock data as fallback
+    profile = getMockProfileData(producerId || 'producer-001');
+  }
   
   // Find the subscription details
-  const currentSubscription = subscriptions?.find(sub => sub.subscriptionId === profile.subscriptionId);
+  const currentSubscription = subscriptions?.find(sub => sub.subscriptionId === profile?.subscriptionId);
   
   // Check if subscription includes Products or Services features
   const hasProductsFeature = currentSubscription?.features.some(feature => 
