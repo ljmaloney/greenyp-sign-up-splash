@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -155,6 +156,7 @@ const SearchResults = () => {
   const [error, setError] = useState<string | null>(null);
   const [showSearchForm, setShowSearchForm] = useState(false);
   const [expandedNarratives, setExpandedNarratives] = useState<Set<string>>(new Set());
+  const [isApiSuccess, setIsApiSuccess] = useState(false);
 
   const zipCode = searchParams.get('zipCode') || '';
   const distance = searchParams.get('distance') || '25';
@@ -196,6 +198,7 @@ const SearchResults = () => {
     const fetchResults = async () => {
       setLoading(true);
       setError(null);
+      setIsApiSuccess(false);
 
       try {
         const searchQuery = new URLSearchParams({
@@ -220,12 +223,14 @@ const SearchResults = () => {
         const data: SearchResponse = await response.json();
         console.log('Search results received:', data);
         setResults(data);
+        setIsApiSuccess(true);
       } catch (err) {
         console.error('Error fetching search results:', err);
         console.log('Using dummy data for UI testing');
         // Use dummy data when API fails
         setResults(dummyResults);
         setError(null); // Clear error to show dummy data
+        setIsApiSuccess(false);
       } finally {
         setLoading(false);
       }
@@ -488,9 +493,14 @@ const SearchResults = () => {
             </>
           ) : (
             <div className="text-center py-12">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">No providers found</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                {isApiSuccess ? 'No providers found' : 'No providers found'}
+              </h3>
               <p className="text-gray-600 mb-6">
-                Try expanding your search distance or removing some filters.
+                {isApiSuccess 
+                  ? 'Your search criteria returned no results. Please update your search parameters and try again.'
+                  : 'Try expanding your search distance or removing some filters.'
+                }
               </p>
               <Link to="/">
                 <Button className="bg-greenyp-600 hover:bg-greenyp-700">
