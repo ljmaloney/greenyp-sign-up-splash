@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -26,9 +25,9 @@ const constructAddress = (result: SearchResult): string => {
   return [addressLine, cityStateZip].filter(Boolean).join(', ');
 };
 
-// Dummy data for testing UI
+// Dummy data for testing UI - updated to match new API structure
 const dummyResults: SearchResponse = {
-  results: [
+  producerSearchResults: [
     {
       producerId: '1',
       producerLocationId: '1',
@@ -42,8 +41,8 @@ const dummyResults: SearchResponse = {
       state: 'GA',
       postalCode: '30309',
       websiteUrl: 'https://greenthumblandscaping.com',
-      latitude: 33.7490,
-      longitude: -84.3880,
+      latitude: '33.7490',
+      longitude: '-84.3880',
       distance: 2.5,
       businessNarrative: 'We are a full-service landscaping company specializing in sustainable garden design, lawn maintenance, and eco-friendly landscaping solutions. Our team of certified professionals brings over 20 years of experience to every project, ensuring beautiful and environmentally responsible outdoor spaces.',
       iconLink: 'https://via.placeholder.com/32x32/22c55e/ffffff?text=GT'
@@ -61,8 +60,8 @@ const dummyResults: SearchResponse = {
       state: 'GA',
       postalCode: '30305',
       websiteUrl: 'https://atlantagardencenter.com',
-      latitude: 33.8484,
-      longitude: -84.3781,
+      latitude: '33.8484',
+      longitude: '-84.3781',
       distance: 5.8,
       businessNarrative: 'Your premier destination for plants, garden supplies, and expert horticultural advice. We offer a wide selection of native plants, specialty tools, and organic fertilizers to help you create the garden of your dreams.',
       iconLink: ''
@@ -80,8 +79,8 @@ const dummyResults: SearchResponse = {
       state: 'GA',
       postalCode: '30308',
       websiteUrl: '',
-      latitude: 33.7701,
-      longitude: -84.3870,
+      latitude: '33.7701',
+      longitude: '-84.3870',
       distance: 3.2,
       businessNarrative: 'Professional lawn care services including mowing, fertilization, pest control, and seasonal cleanup. We serve residential and commercial properties throughout the Atlanta metro area with reliable, affordable service.',
       iconLink: 'https://via.placeholder.com/32x32/16a34a/ffffff?text=SL'
@@ -99,8 +98,8 @@ const dummyResults: SearchResponse = {
       state: 'GA',
       postalCode: '30306',
       websiteUrl: 'https://ecofriendlygardens.net',
-      latitude: 33.7775,
-      longitude: -84.3533,
+      latitude: '33.7775',
+      longitude: '-84.3533',
       distance: 4.7,
       businessNarrative: 'Committed to creating beautiful outdoor spaces using sustainable practices and native plant species. Our designs focus on water conservation, wildlife habitat creation, and low-maintenance gardening solutions.',
       iconLink: ''
@@ -118,8 +117,8 @@ const dummyResults: SearchResponse = {
       state: 'GA',
       postalCode: '30312',
       websiteUrl: 'https://premiertreeservices.com',
-      latitude: 33.7376,
-      longitude: -84.3963,
+      latitude: '33.7376',
+      longitude: '-84.3963',
       distance: 6.1,
       businessNarrative: 'Expert tree care services including pruning, removal, emergency storm cleanup, and tree health assessments. Our certified arborists ensure the safety and beauty of your trees with professional, insured service.',
       iconLink: 'https://via.placeholder.com/32x32/059669/ffffff?text=PT'
@@ -137,8 +136,8 @@ const dummyResults: SearchResponse = {
       state: 'GA',
       postalCode: '30307',
       websiteUrl: '',
-      latitude: 33.7566,
-      longitude: -84.3532,
+      latitude: '33.7566',
+      longitude: '-84.3532',
       distance: 4.3,
       businessNarrative: 'Transforming urban spaces into beautiful, functional outdoor environments. We specialize in small space gardens, rooftop installations, and creative landscaping solutions for city properties.',
       iconLink: ''
@@ -241,7 +240,7 @@ const SearchResults = () => {
     }
   }, [zipCode, distance, category, searchText, page]);
 
-  const generateMapUrl = (latitude: number, longitude: number, businessName: string) => {
+  const generateMapUrl = (latitude: string, longitude: string, businessName: string) => {
     // Using Google Maps static API for small map images
     const encodedName = encodeURIComponent(businessName);
     return `https://maps.googleapis.com/maps/api/staticmap?center=${latitude},${longitude}&zoom=15&size=200x150&markers=color:red%7C${latitude},${longitude}&key=YOUR_GOOGLE_MAPS_API_KEY`;
@@ -329,10 +328,10 @@ const SearchResults = () => {
           )}
 
           {/* Results */}
-          {results && results.results.length > 0 ? (
+          {results && results.producerSearchResults.length > 0 ? (
             <>
               <div className="grid gap-6 mb-8">
-                {results.results.map((result) => (
+                {results.producerSearchResults.map((result) => (
                   <Card key={result.producerId} className="overflow-hidden">
                     <CardContent className="p-6">
                       <div className="flex flex-col lg:flex-row gap-6">

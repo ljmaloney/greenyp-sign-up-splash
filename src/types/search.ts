@@ -12,15 +12,15 @@ export interface SearchResult {
     state: string;
     postalCode: string;
     websiteUrl: string;
-    latitude: number;
-    longitude: number;
+    latitude: string;  // Changed from number to string to match API
+    longitude: string; // Changed from number to string to match API
     distance: number;
     businessNarrative?: string;
     iconLink?: string;
 }
 
 export interface SearchResponse {
-    results: SearchResult[];
+    producerSearchResults: SearchResult[]; // Changed from 'results' to 'producerSearchResults'
     totalCount: number;
     currentPage: number;
     totalPages: number;
