@@ -15,10 +15,10 @@ export interface ProducerProfile {
   producerId: string;
   createDate: string;
   lastUpdateDate: string;
+  businessName: string;
   locationName: string;
   locationType: string;
   locationDisplayType: string;
-  active: boolean;
   hasImagesUploaded: boolean;
   addressLine1: string;
   addressLine2: string;
@@ -26,6 +26,8 @@ export interface ProducerProfile {
   city: string;
   state: string;
   postalCode: string;
+  phone: string;
+  cellPhone: string;
   latitude: string;
   longitude: string;
   websiteUrl: string;

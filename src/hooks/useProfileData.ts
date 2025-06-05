@@ -4,15 +4,15 @@ import { useProducerProfile } from './useProfile';
 import { ProfileData, ProducerProfile, LocationHours } from '@/types/profile';
 
 // Helper function to convert ProducerProfile to ProfileData format
-const convertProducerProfileToProfileData = (producerProfile: ProducerProfile, businessName?: string): ProfileData => {
+const convertProducerProfileToProfileData = (producerProfile: ProducerProfile): ProfileData => {
   return {
     producerId: producerProfile.producerId,
-    businessName: businessName || 'Business Name', // Use business name from search results or fallback
+    businessName: producerProfile.businessName,
     narrative: producerProfile.businessNarrative,
     locationName: producerProfile.locationName,
     locationType: producerProfile.locationType,
     locationDisplayType: producerProfile.locationDisplayType,
-    active: producerProfile.active,
+    active: true, // Assume active if we got the profile
     addressLine1: producerProfile.addressLine1,
     addressLine2: producerProfile.addressLine2,
     addressLine3: producerProfile.addressLine3,
@@ -22,9 +22,9 @@ const convertProducerProfileToProfileData = (producerProfile: ProducerProfile, b
     latitude: producerProfile.latitude,
     longitude: producerProfile.longitude,
     websiteUrl: producerProfile.websiteUrl,
-    contactName: '', // Not available in producer profile
-    phoneNumber: '', // Not available in producer profile
-    cellPhoneNumber: '', // Not available in producer profile
+    contactName: '', // Not available in the API response
+    phoneNumber: producerProfile.phone,
+    cellPhoneNumber: producerProfile.cellPhone,
     locationHours: producerProfile.locationHours,
     locationId: producerProfile.locationId
   };
@@ -101,78 +101,7 @@ const getMockProfileData = (producerId: string): ProfileData => {
       cellPhoneNumber: '(480) 555-9012',
       subscriptionId: 'basic-listing-001',
       locationId: 'location-002',
-      locationHours: [
-        {
-          locationHoursId: 'hours-producer-002-0',
-          createDate: '2023-01-01T00:00:00Z',
-          lastUpdateDate: '2023-01-01T00:00:00Z',
-          producerId: 'producer-002',
-          producerLocationId: 'location-002',
-          dayOfWeek: 'MONDAY',
-          openTime: '8:00 AM',
-          closeTime: '5:00 PM'
-        },
-        {
-          locationHoursId: 'hours-producer-002-1',
-          createDate: '2023-01-01T00:00:00Z',
-          lastUpdateDate: '2023-01-01T00:00:00Z',
-          producerId: 'producer-002',
-          producerLocationId: 'location-002',
-          dayOfWeek: 'TUESDAY',
-          openTime: '8:00 AM',
-          closeTime: '5:00 PM'
-        },
-        {
-          locationHoursId: 'hours-producer-002-2',
-          createDate: '2023-01-01T00:00:00Z',
-          lastUpdateDate: '2023-01-01T00:00:00Z',
-          producerId: 'producer-002',
-          producerLocationId: 'location-002',
-          dayOfWeek: 'WEDNESDAY',
-          openTime: '8:00 AM',
-          closeTime: '5:00 PM'
-        },
-        {
-          locationHoursId: 'hours-producer-002-3',
-          createDate: '2023-01-01T00:00:00Z',
-          lastUpdateDate: '2023-01-01T00:00:00Z',
-          producerId: 'producer-002',
-          producerLocationId: 'location-002',
-          dayOfWeek: 'THURSDAY',
-          openTime: '8:00 AM',
-          closeTime: '5:00 PM'
-        },
-        {
-          locationHoursId: 'hours-producer-002-4',
-          createDate: '2023-01-01T00:00:00Z',
-          lastUpdateDate: '2023-01-01T00:00:00Z',
-          producerId: 'producer-002',
-          producerLocationId: 'location-002',
-          dayOfWeek: 'FRIDAY',
-          openTime: '8:00 AM',
-          closeTime: '5:00 PM'
-        },
-        {
-          locationHoursId: 'hours-producer-002-5',
-          createDate: '2023-01-01T00:00:00Z',
-          lastUpdateDate: '2023-01-01T00:00:00Z',
-          producerId: 'producer-002',
-          producerLocationId: 'location-002',
-          dayOfWeek: 'SATURDAY',
-          openTime: '9:00 AM',
-          closeTime: '3:00 PM'
-        },
-        {
-          locationHoursId: 'hours-producer-002-6',
-          createDate: '2023-01-01T00:00:00Z',
-          lastUpdateDate: '2023-01-01T00:00:00Z',
-          producerId: 'producer-002',
-          producerLocationId: 'location-002',
-          dayOfWeek: 'SUNDAY',
-          openTime: '',
-          closeTime: ''
-        }
-      ]
+      locationHours: createMockLocationHours('producer-002', 'location-002')
     },
     'producer-003': {
       producerId: 'producer-003',
@@ -196,78 +125,7 @@ const getMockProfileData = (producerId: string): ProfileData => {
       cellPhoneNumber: '(480) 555-3456',
       subscriptionId: 'premium-enterprise-001',
       locationId: 'location-003',
-      locationHours: [
-        {
-          locationHoursId: 'hours-producer-003-0',
-          createDate: '2023-01-01T00:00:00Z',
-          lastUpdateDate: '2023-01-01T00:00:00Z',
-          producerId: 'producer-003',
-          producerLocationId: 'location-003',
-          dayOfWeek: 'MONDAY',
-          openTime: '6:00 AM',
-          closeTime: '7:00 PM'
-        },
-        {
-          locationHoursId: 'hours-producer-003-1',
-          createDate: '2023-01-01T00:00:00Z',
-          lastUpdateDate: '2023-01-01T00:00:00Z',
-          producerId: 'producer-003',
-          producerLocationId: 'location-003',
-          dayOfWeek: 'TUESDAY',
-          openTime: '6:00 AM',
-          closeTime: '7:00 PM'
-        },
-        {
-          locationHoursId: 'hours-producer-003-2',
-          createDate: '2023-01-01T00:00:00Z',
-          lastUpdateDate: '2023-01-01T00:00:00Z',
-          producerId: 'producer-003',
-          producerLocationId: 'location-003',
-          dayOfWeek: 'WEDNESDAY',
-          openTime: '6:00 AM',
-          closeTime: '7:00 PM'
-        },
-        {
-          locationHoursId: 'hours-producer-003-3',
-          createDate: '2023-01-01T00:00:00Z',
-          lastUpdateDate: '2023-01-01T00:00:00Z',
-          producerId: 'producer-003',
-          producerLocationId: 'location-003',
-          dayOfWeek: 'THURSDAY',
-          openTime: '6:00 AM',
-          closeTime: '7:00 PM'
-        },
-        {
-          locationHoursId: 'hours-producer-003-4',
-          createDate: '2023-01-01T00:00:00Z',
-          lastUpdateDate: '2023-01-01T00:00:00Z',
-          producerId: 'producer-003',
-          producerLocationId: 'location-003',
-          dayOfWeek: 'FRIDAY',
-          openTime: '6:00 AM',
-          closeTime: '7:00 PM'
-        },
-        {
-          locationHoursId: 'hours-producer-003-5',
-          createDate: '2023-01-01T00:00:00Z',
-          lastUpdateDate: '2023-01-01T00:00:00Z',
-          producerId: 'producer-003',
-          producerLocationId: 'location-003',
-          dayOfWeek: 'SATURDAY',
-          openTime: '7:00 AM',
-          closeTime: '5:00 PM'
-        },
-        {
-          locationHoursId: 'hours-producer-003-6',
-          createDate: '2023-01-01T00:00:00Z',
-          lastUpdateDate: '2023-01-01T00:00:00Z',
-          producerId: 'producer-003',
-          producerLocationId: 'location-003',
-          dayOfWeek: 'SUNDAY',
-          openTime: '8:00 AM',
-          closeTime: '4:00 PM'
-        }
-      ]
+      locationHours: createMockLocationHours('producer-003', 'location-003')
     }
   };
 
@@ -278,21 +136,22 @@ export const useProfileData = () => {
   const { producerId } = useParams<{ producerId: string }>();
   const [searchParams] = useSearchParams();
   
-  // Get producer location ID and business name from URL params (passed from search results)
+  // Get producer location ID from URL params (passed from search results)
   const producerLocationId = searchParams.get('locationId');
-  const businessName = searchParams.get('businessName');
   
-  // Use only the producer profile hook
+  // Use the producer profile hook
   const { data: producerProfileResponse, isLoading, error } = useProducerProfile(producerLocationId || '');
   
   // Convert producer profile to profile data format if available
   let profile: ProfileData | null = null;
-  if (producerLocationId && producerProfileResponse?.response) {
-    profile = convertProducerProfileToProfileData(producerProfileResponse.response, businessName || undefined);
-  } else {
+  if (producerProfileResponse?.response && !producerProfileResponse.errorMessageApi) {
+    profile = convertProducerProfileToProfileData(producerProfileResponse.response);
+  } else if (producerId) {
     // Use mock data as fallback
-    profile = getMockProfileData(producerId || 'producer-001');
+    profile = getMockProfileData(producerId);
   }
+
+  console.log('Profile data:', { producerLocationId, profile, isLoading, error });
 
   return {
     profile,
