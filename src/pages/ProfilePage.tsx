@@ -11,7 +11,7 @@ import ProductsList from '@/components/profile/ProductsList';
 import ServicesList from '@/components/profile/ServicesList';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from 'lucide-react';
-import { useProfile, useProducerProfile } from '@/hooks/useProfile';
+import { useProducerProfile } from '@/hooks/useProfile';
 import { useSubscriptions } from '@/hooks/useSubscriptions';
 import { ProfileData, ProducerProfile, LocationHours } from '@/types/profile';
 
@@ -294,22 +294,15 @@ const ProfilePage = () => {
   const producerLocationId = searchParams.get('locationId');
   const businessName = searchParams.get('businessName');
   
-  // Use the new producer profile hook if we have a locationId, otherwise use the old profile hook
-  const { data: profileResponse, isLoading: isProfileLoading, error: profileError } = useProfile(producerId || '');
-  const { data: producerProfileResponse, isLoading: isProducerProfileLoading, error: producerProfileError } = useProducerProfile(producerLocationId || '');
+  // Use only the producer profile hook
+  const { data: producerProfileResponse, isLoading, error } = useProducerProfile(producerLocationId || '');
   
   const { data: subscriptions } = useSubscriptions();
-  
-  // Determine which data to use
-  const isLoading = producerLocationId ? isProducerProfileLoading : isProfileLoading;
-  const error = producerLocationId ? producerProfileError : profileError;
   
   // Convert producer profile to profile data format if available
   let profile: ProfileData | null = null;
   if (producerLocationId && producerProfileResponse?.response) {
     profile = convertProducerProfileToProfileData(producerProfileResponse.response, businessName || undefined);
-  } else if (profileResponse?.response) {
-    profile = profileResponse.response;
   } else {
     // Use mock data as fallback
     profile = getMockProfileData(producerId || 'producer-001');
