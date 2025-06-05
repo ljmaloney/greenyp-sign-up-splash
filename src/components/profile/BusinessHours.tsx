@@ -31,9 +31,9 @@ const BusinessHours = ({ profile }: BusinessHoursProps) => {
     });
   };
 
-  if (profile.locationHours.length === 0) {
-    return null;
-  }
+  // Check if business hours are missing or empty
+  const hasValidHours = profile.locationHours && profile.locationHours.length > 0 && 
+    profile.locationHours.some(hour => hour.openTime && hour.closeTime);
 
   return (
     <Card>
@@ -44,14 +44,20 @@ const BusinessHours = ({ profile }: BusinessHoursProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {formatHours().map((dayHours, index) => (
-            <div key={index} className="flex justify-between">
-              <span className="font-medium text-gray-700">{dayHours.day}:</span>
-              <span className="text-gray-600">{dayHours.hours}</span>
-            </div>
-          ))}
-        </div>
+        {hasValidHours ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {formatHours().map((dayHours, index) => (
+              <div key={index} className="flex justify-between">
+                <span className="font-medium text-gray-700">{dayHours.day}:</span>
+                <span className="text-gray-600">{dayHours.hours}</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-600">
+            No business hours provided, please contact the business via phone or email.
+          </p>
+        )}
       </CardContent>
     </Card>
   );
