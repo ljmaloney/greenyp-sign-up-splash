@@ -1,10 +1,11 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { MapPin, Plus, Edit, Clock, ChevronDown, ChevronRight } from 'lucide-react';
+import { useToast } from "@/hooks/use-toast";
 import AddLocationDialog from './AddLocationDialog';
 import EditLocationDialog from './EditLocationDialog';
 import LocationHoursSection from './LocationHoursSection';
@@ -54,6 +55,7 @@ const LocationsList = () => {
   const [editingLocation, setEditingLocation] = useState<Location | null>(null);
   const [openHours, setOpenHours] = useState<{ [key: string]: boolean }>({});
   const [showInactiveLocations, setShowInactiveLocations] = useState(false);
+  const { toast } = useToast();
   
   // Mock locations data
   const [locations, setLocations] = useState<Location[]>([
@@ -98,6 +100,37 @@ const LocationsList = () => {
     }
   ]);
 
+  // Update primary location logic when locations change
+  useEffect(() => {
+    setLocations(prevLocations => {
+      const activeLocations = prevLocations.filter(loc => loc.active);
+      
+      // If there's only one active location, it must be primary
+      if (activeLocations.length === 1) {
+        return prevLocations.map(loc => ({
+          ...loc,
+          isPrimary: loc.active,
+          locationType: loc.active ? 'HOME_OFFICE_PRIMARY' : loc.locationType
+        }));
+      }
+      
+      // If there are multiple active locations, ensure exactly one is primary
+      const primaryLocations = activeLocations.filter(loc => loc.isPrimary);
+      if (primaryLocations.length === 0 && activeLocations.length > 0) {
+        // Make the first active location primary if none exists
+        const firstActiveId = activeLocations[0].id;
+        return prevLocations.map(loc => ({
+          ...loc,
+          isPrimary: loc.id === firstActiveId && loc.active,
+          locationType: loc.id === firstActiveId && loc.active ? 'HOME_OFFICE_PRIMARY' : 
+                       (loc.locationType === 'HOME_OFFICE_PRIMARY' ? 'OFFICE' : loc.locationType)
+        }));
+      }
+      
+      return prevLocations;
+    });
+  }, []);
+
   // Helper function to create full address from address components
   const getFullAddress = (location: Location) => {
     const parts = [
@@ -117,9 +150,53 @@ const LocationsList = () => {
   };
 
   const toggleLocationStatus = (locationId: string) => {
-    setLocations(prev => prev.map(loc => 
-      loc.id === locationId ? { ...loc, active: !loc.active } : loc
-    ));
+    const location = locations.find(loc => loc.id === locationId);
+    
+    // Prevent deactivating the primary location
+    if (location?.isPrimary && location.active) {
+      toast({
+        title: "Cannot Deactivate Primary Location",
+        description: "The primary location cannot be made inactive. Please set another location as primary first.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check if this would be the last active location
+    const activeLocations = locations.filter(loc => loc.active);
+    if (activeLocations.length === 1 && location?.active) {
+      toast({
+        title: "Cannot Deactivate Last Location",
+        description: "You must have at least one active location.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLocations(prev => {
+      const updated = prev.map(loc => 
+        loc.id === locationId ? { ...loc, active: !loc.active } : loc
+      );
+      
+      // If we're deactivating a primary location, make another active location primary
+      const deactivatedLocation = updated.find(loc => loc.id === locationId);
+      if (deactivatedLocation && !deactivatedLocation.active && deactivatedLocation.isPrimary) {
+        const otherActiveLocation = updated.find(loc => loc.active && loc.id !== locationId);
+        if (otherActiveLocation) {
+          return updated.map(loc => {
+            if (loc.id === locationId) {
+              return { ...loc, isPrimary: false, locationType: loc.locationType === 'HOME_OFFICE_PRIMARY' ? 'OFFICE' : loc.locationType };
+            }
+            if (loc.id === otherActiveLocation.id) {
+              return { ...loc, isPrimary: true, locationType: 'HOME_OFFICE_PRIMARY' };
+            }
+            return loc;
+          });
+        }
+      }
+      
+      return updated;
+    });
   };
 
   // Filter locations based on active status
@@ -129,6 +206,15 @@ const LocationsList = () => {
 
   const hasMultipleLocations = filteredLocations.length > 1;
   const inactiveLocationCount = locations.filter(loc => !loc.active).length;
+
+  // Check if a location can be deactivated
+  const canDeactivateLocation = (location: Location) => {
+    if (!location.active) return false; // Already inactive
+    if (location.isPrimary) return false; // Primary locations cannot be deactivated
+    
+    const activeLocations = locations.filter(loc => loc.active);
+    return activeLocations.length > 1; // Must have at least one active location
+  };
 
   return (
     <div className="space-y-6 text-left">
@@ -176,7 +262,7 @@ const LocationsList = () => {
                     {location.websiteUrl && (
                       <span className="text-sm text-gray-500">{location.websiteUrl}</span>
                     )}
-                    {location.locationType === 'HOME_OFFICE_PRIMARY' && (
+                    {location.isPrimary && (
                       <span className="ml-2 px-2 py-1 bg-greenyp-100 text-greenyp-700 text-xs rounded-full">
                         Primary
                       </span>
@@ -194,6 +280,7 @@ const LocationsList = () => {
                     <Switch
                       checked={location.active}
                       onCheckedChange={() => toggleLocationStatus(location.id)}
+                      disabled={!canDeactivateLocation(location)}
                     />
                   </div>
                   <Button 
@@ -261,6 +348,7 @@ const LocationsList = () => {
         isOpen={isAddDialogOpen}
         onClose={() => setIsAddDialogOpen(false)}
         onLocationAdded={(newLocation: LocationFormData) => {
+          const isFirstLocation = locations.length === 0;
           const locationWithDefaults = {
             ...newLocation,
             id: Date.now().toString(),
@@ -268,7 +356,8 @@ const LocationsList = () => {
             name: newLocation.locationName,
             address: `${newLocation.addressLine1}, ${newLocation.city}, ${newLocation.state} ${newLocation.postalCode}`,
             phone: '(555) 123-4567', // Default phone for now
-            isPrimary: newLocation.locationType === 'HOME_OFFICE_PRIMARY'
+            isPrimary: isFirstLocation || newLocation.locationType === 'HOME_OFFICE_PRIMARY',
+            locationType: isFirstLocation ? 'HOME_OFFICE_PRIMARY' : newLocation.locationType
           };
           setLocations(prev => [...prev, locationWithDefaults]);
         }}
