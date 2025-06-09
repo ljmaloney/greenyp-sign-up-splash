@@ -18,16 +18,16 @@ const CategoryCTASection = ({ categoryName }: CategoryCTASectionProps) => {
           List your business in our directory and connect with customers looking for your services
         </p>
         <div className="flex flex-wrap justify-center gap-4">
-          <Link to="/subscriber/signup">
-            <Button className="bg-greenyp-600 hover:bg-greenyp-700 text-white">
+          <Button asChild className="bg-greenyp-600 hover:bg-greenyp-700 text-white">
+            <Link to="/subscriber/signup">
               List Your Business
-            </Button>
-          </Link>
-          <Link to="/subscriber">
-            <Button variant="outline" className="border-greenyp-600 text-greenyp-700">
+            </Link>
+          </Button>
+          <Button asChild variant="outline" className="border-greenyp-600 text-greenyp-700">
+            <Link to="/subscriber">
               Learn More
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </div>
       </div>
     </section>
