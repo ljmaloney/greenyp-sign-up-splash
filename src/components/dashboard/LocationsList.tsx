@@ -2,7 +2,8 @@
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin, Plus, Edit, Clock } from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { MapPin, Plus, Edit, Clock, ChevronDown, ChevronRight } from 'lucide-react';
 import AddLocationDialog from './AddLocationDialog';
 import EditLocationDialog from './EditLocationDialog';
 import LocationHoursSection from './LocationHoursSection';
@@ -50,6 +51,7 @@ interface LocationFormData {
 const LocationsList = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingLocation, setEditingLocation] = useState<Location | null>(null);
+  const [openHours, setOpenHours] = useState<{ [key: string]: boolean }>({});
   
   // Mock locations data
   const [locations, setLocations] = useState<Location[]>([
@@ -105,6 +107,15 @@ const LocationsList = () => {
     return `${parts.join(', ')}, ${location.city}, ${location.state} ${location.postalCode}`;
   };
 
+  const toggleHours = (locationId: string) => {
+    setOpenHours(prev => ({
+      ...prev,
+      [locationId]: !prev[locationId]
+    }));
+  };
+
+  const hasMultipleLocations = locations.length > 1;
+
   return (
     <div className="space-y-6 text-left">
       <div className="flex justify-between items-center">
@@ -123,14 +134,19 @@ const LocationsList = () => {
           <Card key={location.id}>
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
-                <div className="flex items-center">
+                <div className="flex items-center flex-1">
                   <MapPin className="w-5 h-5 mr-2 text-greenyp-600" />
-                  {location.locationName}
-                  {location.locationType === 'HOME_OFFICE_PRIMARY' && (
-                    <span className="ml-2 px-2 py-1 bg-greenyp-100 text-greenyp-700 text-xs rounded-full">
-                      Primary
-                    </span>
-                  )}
+                  <div className="flex items-center space-x-3 flex-1">
+                    <span>{location.locationName}</span>
+                    {location.websiteUrl && (
+                      <span className="text-sm text-gray-500">{location.websiteUrl}</span>
+                    )}
+                    {location.locationType === 'HOME_OFFICE_PRIMARY' && (
+                      <span className="ml-2 px-2 py-1 bg-greenyp-100 text-greenyp-700 text-xs rounded-full">
+                        Primary
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <Button 
                   variant="outline" 
@@ -145,20 +161,42 @@ const LocationsList = () => {
             <CardContent>
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <p className="text-gray-600">{getFullAddress(location)}</p>
-                  {location.phone && <p className="text-gray-600">{location.phone}</p>}
-                  {location.websiteUrl && (
-                    <p className="text-gray-600">{location.websiteUrl}</p>
-                  )}
+                  <div className="flex items-center space-x-2">
+                    <p className="text-gray-600">{getFullAddress(location)}</p>
+                    {location.phone && (
+                      <span className="text-gray-600">• {location.phone}</span>
+                    )}
+                  </div>
                 </div>
                 
                 {/* Business Hours Section */}
                 <div className="border-t pt-4">
-                  <div className="flex items-center mb-3">
-                    <Clock className="w-4 h-4 mr-2 text-greenyp-600" />
-                    <h4 className="font-medium">Business Hours</h4>
-                  </div>
-                  <LocationHoursSection locationId={location.id} />
+                  {hasMultipleLocations ? (
+                    <Collapsible open={openHours[location.id]} onOpenChange={() => toggleHours(location.id)}>
+                      <CollapsibleTrigger asChild>
+                        <Button variant="ghost" className="flex items-center p-0 h-auto text-left">
+                          {openHours[location.id] ? (
+                            <ChevronDown className="w-4 h-4 mr-2 text-greenyp-600" />
+                          ) : (
+                            <ChevronRight className="w-4 h-4 mr-2 text-greenyp-600" />
+                          )}
+                          <Clock className="w-4 h-4 mr-2 text-greenyp-600" />
+                          <h4 className="font-medium">Business Hours</h4>
+                        </Button>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="mt-3">
+                        <LocationHoursSection locationId={location.id} />
+                      </CollapsibleContent>
+                    </Collapsible>
+                  ) : (
+                    <div>
+                      <div className="flex items-center mb-3">
+                        <Clock className="w-4 h-4 mr-2 text-greenyp-600" />
+                        <h4 className="font-medium">Business Hours</h4>
+                      </div>
+                      <LocationHoursSection locationId={location.id} />
+                    </div>
+                  )}
                 </div>
               </div>
             </CardContent>
