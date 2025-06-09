@@ -3,7 +3,6 @@ import React from 'react';
 import { useProducerProfiles } from '@/hooks/useProducerProfiles';
 import RecentListingsHeader from './listings/RecentListingsHeader';
 import ListingLoadingState from './listings/ListingLoadingState';
-import ListingErrorState from './listings/ListingErrorState';
 import ListingEmptyState from './listings/ListingEmptyState';
 import ListingsList from './listings/ListingsList';
 
@@ -33,23 +32,13 @@ const RecentListings = ({ lineOfBusinessId, categoryName }: RecentListingsProps)
     );
   }
 
-  if (error) {
-    console.log('RecentListings: Rendering error state, error:', error);
-    return (
-      <section className="py-12">
-        <div className="container mx-auto px-4">
-          <RecentListingsHeader categoryName={categoryName} />
-          <ListingErrorState error={error} />
-        </div>
-      </section>
-    );
-  }
-
+  // Treat both errors and empty results as "no listings available"
+  // This will show the "No providers" box instead of error messages
   const listings = profilesData?.response || [];
   console.log('RecentListings: listings:', listings);
 
-  if (listings.length === 0) {
-    console.log('RecentListings: No listings found, rendering empty state');
+  if (error || listings.length === 0) {
+    console.log('RecentListings: No listings found or API error, rendering empty state');
     return (
       <section className="py-12">
         <div className="container mx-auto px-4">
