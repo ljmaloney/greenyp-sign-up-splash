@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Phone, Globe, ExternalLink, Building2 } from 'lucide-react';
@@ -12,7 +13,13 @@ interface RecentListingsProps {
 }
 
 const RecentListings = ({ lineOfBusinessId, categoryName }: RecentListingsProps) => {
+  console.log('RecentListings: Loading with lineOfBusinessId:', lineOfBusinessId);
+  
   const { data: profilesData, isLoading, error } = useProducerProfiles(lineOfBusinessId);
+
+  console.log('RecentListings: profilesData:', profilesData);
+  console.log('RecentListings: isLoading:', isLoading);
+  console.log('RecentListings: error:', error);
 
   // Helper function to create profile URL
   const createProfileUrl = (listing: ProducerListing) => {
@@ -24,6 +31,7 @@ const RecentListings = ({ lineOfBusinessId, categoryName }: RecentListingsProps)
   };
 
   if (isLoading) {
+    console.log('RecentListings: Rendering loading state');
     return (
       <section className="py-12">
         <div className="container mx-auto px-4">
@@ -46,12 +54,18 @@ const RecentListings = ({ lineOfBusinessId, categoryName }: RecentListingsProps)
   }
 
   if (error) {
+    console.log('RecentListings: Rendering error state, error:', error);
     return (
       <section className="py-12">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl font-bold mb-6 text-gray-900">Recent {categoryName} Listings</h2>
           <div className="text-center py-8">
-            <p className="text-red-600 mb-4">Error loading recent listings. Please try again later.</p>
+            <p className="text-red-600 mb-4">
+              Unable to load recent listings. This might be due to network connectivity issues.
+            </p>
+            <p className="text-gray-600 mb-4 text-sm">
+              Error details: {error.message}
+            </p>
             <button 
               onClick={() => window.location.reload()}
               className="bg-greenyp-600 hover:bg-greenyp-700 text-white px-4 py-2 rounded"
@@ -65,8 +79,10 @@ const RecentListings = ({ lineOfBusinessId, categoryName }: RecentListingsProps)
   }
 
   const listings = profilesData?.response || [];
+  console.log('RecentListings: listings:', listings);
 
   if (listings.length === 0) {
+    console.log('RecentListings: No listings found, rendering empty state');
     return (
       <section className="py-12">
         <div className="container mx-auto px-4">
@@ -125,6 +141,7 @@ const RecentListings = ({ lineOfBusinessId, categoryName }: RecentListingsProps)
     );
   }
 
+  console.log('RecentListings: Rendering listings, count:', listings.length);
   return (
     <section className="py-12">
       <div className="container mx-auto px-4">
