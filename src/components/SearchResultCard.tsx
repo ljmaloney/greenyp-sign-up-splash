@@ -66,9 +66,12 @@ const SearchResultCard = ({ result, isNarrativeExpanded, onToggleNarrative }: Se
                     }}
                   />
                 )}
-                <h3 className="text-xl font-semibold text-gray-900">
+                <Link 
+                  to={createProfileUrl(result)}
+                  className="text-xl font-semibold text-gray-900 hover:text-greenyp-600 transition-colors"
+                >
                   {result.businessName}
-                </h3>
+                </Link>
               </div>
               <Link 
                 to={createProfileUrl(result)}
