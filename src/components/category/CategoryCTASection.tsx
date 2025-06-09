@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 
 interface CategoryCTASectionProps {
@@ -17,12 +18,16 @@ const CategoryCTASection = ({ categoryName }: CategoryCTASectionProps) => {
           List your business in our directory and connect with customers looking for your services
         </p>
         <div className="flex flex-wrap justify-center gap-4">
-          <Button className="bg-greenyp-600 hover:bg-greenyp-700 text-white">
-            List Your Business
-          </Button>
-          <Button variant="outline" className="border-greenyp-600 text-greenyp-700">
-            Learn More
-          </Button>
+          <Link to="/subscriber/signup">
+            <Button className="bg-greenyp-600 hover:bg-greenyp-700 text-white">
+              List Your Business
+            </Button>
+          </Link>
+          <Link to="/subscriber">
+            <Button variant="outline" className="border-greenyp-600 text-greenyp-700">
+              Learn More
+            </Button>
+          </Link>
         </div>
       </div>
     </section>
