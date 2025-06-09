@@ -8,6 +8,14 @@ interface CategoryCTASectionProps {
 }
 
 const CategoryCTASection = ({ categoryName }: CategoryCTASectionProps) => {
+  const handleListBusinessClick = () => {
+    console.log('List Your Business button clicked - navigating to /subscriber/signup');
+  };
+
+  const handleLearnMoreClick = () => {
+    console.log('Learn More button clicked - navigating to /subscriber');
+  };
+
   return (
     <section className="bg-greenyp-100 py-12">
       <div className="container mx-auto px-4 text-center">
@@ -19,12 +27,12 @@ const CategoryCTASection = ({ categoryName }: CategoryCTASectionProps) => {
         </p>
         <div className="flex flex-wrap justify-center gap-4">
           <Button asChild className="bg-greenyp-600 hover:bg-greenyp-700 text-white">
-            <Link to="/subscriber/signup">
+            <Link to="/subscriber/signup" onClick={handleListBusinessClick}>
               List Your Business
             </Link>
           </Button>
           <Button asChild variant="outline" className="border-greenyp-600 text-greenyp-700">
-            <Link to="/subscriber">
+            <Link to="/subscriber" onClick={handleLearnMoreClick}>
               Learn More
             </Link>
           </Button>
