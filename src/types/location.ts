@@ -31,4 +31,5 @@ export interface Location {
   latitude: string;
   longitude: string;
   websiteUrl?: string;
+  isPrimary: boolean;
 }
