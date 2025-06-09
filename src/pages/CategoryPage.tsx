@@ -45,6 +45,14 @@ const CategoryPage = () => {
       }
     }
   }, [category]);
+
+  const handleListBusinessClick = () => {
+    console.log('List Your Business button clicked - navigating to /subscriber/signup');
+  };
+
+  const handleLearnMoreClick = () => {
+    console.log('Learn More button clicked - navigating to /subscriber');
+  };
   
   if (categoriesLoading) {
     return (
@@ -145,11 +153,15 @@ const CategoryPage = () => {
               List your business in our directory and connect with customers looking for your services
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Button className="bg-greenyp-600 hover:bg-greenyp-700 text-white">
-                List Your Business
+              <Button asChild className="bg-greenyp-600 hover:bg-greenyp-700 text-white">
+                <Link to="/subscriber/signup" onClick={handleListBusinessClick}>
+                  List Your Business
+                </Link>
               </Button>
-              <Button variant="outline" className="border-greenyp-600 text-greenyp-700">
-                Learn More
+              <Button asChild variant="outline" className="border-greenyp-600 text-greenyp-700">
+                <Link to="/subscriber" onClick={handleLearnMoreClick}>
+                  Learn More
+                </Link>
               </Button>
             </div>
           </div>
