@@ -57,7 +57,7 @@ const SearchForm = ({ showHeading = true }: SearchFormProps) => {
     const searchParams = new URLSearchParams({
       zipCode: zipCode.trim(),
       distance: isCustomDistance && customDistance ? customDistance : distance,
-      ...(selectedCategory && { category: selectedCategory }),
+      ...(selectedCategory && { category: selectedCategory }), // Keep as 'category' for URL consistency
       ...(searchText.trim() && { searchText: searchText.trim() }),
     });
 

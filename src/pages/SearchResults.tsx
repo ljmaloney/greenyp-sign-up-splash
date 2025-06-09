@@ -165,10 +165,21 @@ const SearchResults = () => {
 
   const { data: categories } = useCategories();
 
-  // Find the selected category name
+  // Find the selected category name and ID
   const selectedCategory = categories?.find(cat => cat.lineOfBusinessId === category);
   const categoryName = selectedCategory?.lineOfBusinessName || '';
+  const categoryId = selectedCategory?.lineOfBusinessId || '';
 
+  // Helper function to create profile URL with location ID and business name
+  const createProfileUrl = (result: SearchResult) => {
+    const params = new URLSearchParams({
+      locationId: result.producerLocationId,
+      businessName: result.businessName
+    });
+    return `/profile/${result.producerId}?${params.toString()}`;
+  };
+
+  // Helper function to toggle narrative expansion
   const toggleNarrative = (resultId: string) => {
     const newExpanded = new Set(expandedNarratives);
     if (newExpanded.has(resultId)) {
@@ -179,18 +190,10 @@ const SearchResults = () => {
     setExpandedNarratives(newExpanded);
   };
 
+  // Helper function to truncate narrative text
   const truncateNarrative = (narrative: string, maxLength: number = 150) => {
     if (narrative.length <= maxLength) return narrative;
     return narrative.substring(0, maxLength) + '...';
-  };
-
-  // Helper function to create profile URL with location ID and business name
-  const createProfileUrl = (result: SearchResult) => {
-    const params = new URLSearchParams({
-      locationId: result.producerLocationId,
-      businessName: result.businessName
-    });
-    return `/profile/${result.producerId}?${params.toString()}`;
   };
 
   useEffect(() => {
@@ -203,9 +206,9 @@ const SearchResults = () => {
         const searchQuery = new URLSearchParams({
           zipCode,
           distance,
-          page: page.toString(),
+          page: (page - 1).toString(), // Convert to 0-based indexing
           limit: '15',
-          ...(category && { category }),
+          ...(categoryId && { categoryId }), // Use categoryId instead of category
           ...(searchText && { searchText }),
         });
 
@@ -238,7 +241,7 @@ const SearchResults = () => {
     if (zipCode) {
       fetchResults();
     }
-  }, [zipCode, distance, category, searchText, page]);
+  }, [zipCode, distance, categoryId, searchText, page]); // Use categoryId instead of category
 
   const generateMapUrl = (latitude: string, longitude: string, businessName: string) => {
     // Using Google Maps static API for small map images
