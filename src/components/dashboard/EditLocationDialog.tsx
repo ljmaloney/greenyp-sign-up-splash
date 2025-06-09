@@ -1,46 +1,12 @@
-import React, { useState } from 'react';
+
+import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { getApiUrl } from "@/config/api";
-
-interface Location {
-  id: string;
-  name: string;
-  locationType: string;
-  locationDisplayType: string;
-  active: boolean;
-  addressLine1: string;
-  addressLine2?: string;
-  addressLine3?: string;
-  city: string;
-  state: string;
-  postalCode: string;
-  latitude: string;
-  longitude: string;
-  websiteUrl?: string;
-}
-
-// Interface for the form data returned by dialogs
-interface LocationFormData {
-  locationId?: string;
-  locationName: string;
-  locationType: string;
-  locationDisplayType: string;
-  active: boolean;
-  addressLine1: string;
-  addressLine2?: string;
-  addressLine3?: string;
-  city: string;
-  state: string;
-  postalCode: string;
-  latitude: string;
-  longitude: string;
-  websiteUrl?: string;
-}
+import { useLocationForm } from "@/hooks/useLocationForm";
+import LocationFormFields from "./LocationFormFields";
+import { Location, LocationFormData } from "@/types/location";
 
 interface EditLocationDialogProps {
   isOpen: boolean;
@@ -50,7 +16,7 @@ interface EditLocationDialogProps {
 }
 
 const EditLocationDialog = ({ isOpen, onClose, location, onLocationUpdated }: EditLocationDialogProps) => {
-  const [formData, setFormData] = useState({
+  const { formData, handleChange } = useLocationForm({
     locationId: location.id,
     locationName: location.name,
     locationType: location.locationType,
@@ -106,10 +72,6 @@ const EditLocationDialog = ({ isOpen, onClose, location, onLocationUpdated }: Ed
     }
   };
 
-  const handleChange = (field: string, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
@@ -118,157 +80,11 @@ const EditLocationDialog = ({ isOpen, onClose, location, onLocationUpdated }: Ed
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Location Name *
-              </label>
-              <Input
-                value={formData.locationName}
-                onChange={(e) => handleChange('locationName', e.target.value)}
-                required
-              />
-            </div>
-            
-            <div className="flex items-center space-x-2">
-              <label className="text-sm font-medium text-gray-700">
-                Active Location
-              </label>
-              <Switch
-                checked={formData.active}
-                onCheckedChange={(checked) => handleChange('active', checked)}
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Location Type
-              </label>
-              <Select value={formData.locationType} onValueChange={(value) => handleChange('locationType', value)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="HOME_OFFICE_PRIMARY">Primary</SelectItem>
-                  <SelectItem value="RETAIL_SALES_SERVICE">Retail Sales & Service</SelectItem>
-                  <SelectItem value="WHOLESALE_SALES">Wholesale</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Display Type
-              </label>
-              <Select value={formData.locationDisplayType} onValueChange={(value) => handleChange('locationDisplayType', value)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="NO_DISPLAY">No Display</SelectItem>
-                  <SelectItem value="DISPLAY_WITH_MAP">Display with Map</SelectItem>
-                  <SelectItem value="DISPLAY_ONLY">Display Only</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Address Line 1 *
-              </label>
-              <Input
-                value={formData.addressLine1}
-                onChange={(e) => handleChange('addressLine1', e.target.value)}
-                required
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Address Line 2
-              </label>
-              <Input
-                value={formData.addressLine2}
-                onChange={(e) => handleChange('addressLine2', e.target.value)}
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Address Line 3
-              </label>
-              <Input
-                value={formData.addressLine3}
-                onChange={(e) => handleChange('addressLine3', e.target.value)}
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                City *
-              </label>
-              <Input
-                value={formData.city}
-                onChange={(e) => handleChange('city', e.target.value)}
-                required
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                State *
-              </label>
-              <Input
-                value={formData.state}
-                onChange={(e) => handleChange('state', e.target.value)}
-                required
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Postal Code *
-              </label>
-              <Input
-                value={formData.postalCode}
-                onChange={(e) => handleChange('postalCode', e.target.value)}
-                required
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Latitude
-              </label>
-              <Input
-                value={formData.latitude}
-                onChange={(e) => handleChange('latitude', e.target.value)}
-                placeholder="37.7749"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Longitude
-              </label>
-              <Input
-                value={formData.longitude}
-                onChange={(e) => handleChange('longitude', e.target.value)}
-                placeholder="-122.4194"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Website URL
-              </label>
-              <Input
-                value={formData.websiteUrl}
-                onChange={(e) => handleChange('websiteUrl', e.target.value)}
-                placeholder="www.example.com"
-              />
-            </div>
-          </div>
+          <LocationFormFields
+            formData={formData}
+            onFieldChange={handleChange}
+            showActiveToggle={true}
+          />
           
           <div className="flex justify-end space-x-2 pt-4">
             <Button type="button" variant="outline" onClick={onClose}>
