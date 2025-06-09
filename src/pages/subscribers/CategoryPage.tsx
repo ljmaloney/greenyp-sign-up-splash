@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -114,12 +115,6 @@ const CategoryPage = () => {
           </div>
         </section>
         
-        {/* Recent Listings Section */}
-        <RecentListings 
-          lineOfBusinessId={slug || ''} 
-          categoryName={category.lineOfBusinessName} 
-        />
-        
         {/* Services Section */}
         {services && services.length > 0 && (
           <section className="py-12 bg-gray-50">
@@ -143,6 +138,12 @@ const CategoryPage = () => {
             </div>
           </section>
         )}
+        
+        {/* Recent Listings Section */}
+        <RecentListings 
+          lineOfBusinessId={slug || ''} 
+          categoryName={category.lineOfBusinessName} 
+        />
         
         {/* Provider Listings */}
         <section className="py-12">
