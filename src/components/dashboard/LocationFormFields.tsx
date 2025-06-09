@@ -165,26 +165,26 @@ const LocationFormFields = ({ formData, onFieldChange, showActiveToggle = false 
         />
       </div>
       
-      <div>
+      <div className="md:col-span-2">
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Latitude
+          Coordinates
         </label>
-        <Input
-          value={formData.latitude}
-          onChange={(e) => onFieldChange('latitude', e.target.value)}
-          placeholder="37.7749"
-        />
-      </div>
-      
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Longitude
-        </label>
-        <Input
-          value={formData.longitude}
-          onChange={(e) => onFieldChange('longitude', e.target.value)}
-          placeholder="-122.4194"
-        />
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Input
+              value={formData.latitude}
+              onChange={(e) => onFieldChange('latitude', e.target.value)}
+              placeholder="Latitude (37.7749)"
+            />
+          </div>
+          <div>
+            <Input
+              value={formData.longitude}
+              onChange={(e) => onFieldChange('longitude', e.target.value)}
+              placeholder="Longitude (-122.4194)"
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
