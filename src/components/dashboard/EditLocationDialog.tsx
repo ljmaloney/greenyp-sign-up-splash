@@ -149,10 +149,9 @@ const EditLocationDialog = ({ isOpen, onClose, location, onLocationUpdated }: Ed
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="HOME_OFFICE_PRIMARY">Home Office Primary</SelectItem>
-                  <SelectItem value="WAREHOUSE">Warehouse</SelectItem>
-                  <SelectItem value="RETAIL">Retail</SelectItem>
-                  <SelectItem value="OFFICE">Office</SelectItem>
+                  <SelectItem value="HOME_OFFICE_PRIMARY">Primary</SelectItem>
+                  <SelectItem value="RETAIL_SALES_SERVICE">Retail Sales & Service</SelectItem>
+                  <SelectItem value="WHOLESALE_SALES">Wholesale</SelectItem>
                 </SelectContent>
               </Select>
             </div>
