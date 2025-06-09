@@ -1,29 +1,18 @@
+
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
-import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, Phone, Globe, ArrowLeft, ExternalLink, Eye, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import PublicHeader from '@/components/PublicHeader';
 import Footer from '@/components/Footer';
 import SearchForm from '@/components/SearchForm';
+import SearchSummary from '@/components/SearchSummary';
+import SearchResultsList from '@/components/SearchResultsList';
+import SearchPagination from '@/components/SearchPagination';
+import EmptySearchState from '@/components/EmptySearchState';
 import { useCategories } from '@/hooks/useCategories';
 import { getApiUrl } from '@/config/api';
-import type { SearchResult, SearchResponse } from '../types/search'
-
-// Helper function to construct full address from separate fields
-const constructAddress = (result: SearchResult): string => {
-  const addressParts = [
-    result.addressLine1,
-    result.addressLine2,
-    result.addressLine3
-  ].filter(Boolean); // Remove empty/null values
-  
-  const addressLine = addressParts.join(' ');
-  const cityStateZip = [result.city, result.state, result.postalCode].filter(Boolean).join(', ');
-  
-  return [addressLine, cityStateZip].filter(Boolean).join(', ');
-};
+import type { SearchResponse } from '../types/search';
 
 // Dummy data for testing UI - updated to match new API structure
 const dummyResults: SearchResponse = {
@@ -170,15 +159,6 @@ const SearchResults = () => {
   const categoryName = selectedCategory?.lineOfBusinessName || '';
   const categoryId = selectedCategory?.lineOfBusinessId || '';
 
-  // Helper function to create profile URL with location ID and business name
-  const createProfileUrl = (result: SearchResult) => {
-    const params = new URLSearchParams({
-      locationId: result.producerLocationId,
-      businessName: result.businessName
-    });
-    return `/profile/${result.producerId}?${params.toString()}`;
-  };
-
   // Helper function to toggle narrative expansion
   const toggleNarrative = (resultId: string) => {
     const newExpanded = new Set(expandedNarratives);
@@ -188,12 +168,6 @@ const SearchResults = () => {
       newExpanded.add(resultId);
     }
     setExpandedNarratives(newExpanded);
-  };
-
-  // Helper function to truncate narrative text
-  const truncateNarrative = (narrative: string, maxLength: number = 150) => {
-    if (narrative.length <= maxLength) return narrative;
-    return narrative.substring(0, maxLength) + '...';
   };
 
   useEffect(() => {
@@ -243,18 +217,6 @@ const SearchResults = () => {
     }
   }, [zipCode, distance, categoryId, searchText, page]); // Use categoryId instead of category
 
-  const generateMapUrl = (latitude: string, longitude: string, businessName: string) => {
-    // Using Google Maps static API for small map images
-    const encodedName = encodeURIComponent(businessName);
-    return `https://maps.googleapis.com/maps/api/staticmap?center=${latitude},${longitude}&zoom=15&size=200x150&markers=color:red%7C${latitude},${longitude}&key=YOUR_GOOGLE_MAPS_API_KEY`;
-  };
-
-  const createPageUrl = (pageNum: number) => {
-    const newParams = new URLSearchParams(searchParams);
-    newParams.set('page', pageNum.toString());
-    return `/search?${newParams.toString()}`;
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -297,31 +259,14 @@ const SearchResults = () => {
       <main className="flex-grow py-8 px-4 md:px-8">
         <div className="container mx-auto max-w-6xl">
           {/* Search Summary */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                  {categoryName || 'Green Industry Providers'}
-                </h1>
-                <p className="text-gray-600">
-                  {results?.totalCount || 0} providers found within {distance} miles of {zipCode}
-                  {searchText && (
-                    <span className="block mt-1">
-                      Searching for: "<span className="font-medium">{searchText}</span>"
-                    </span>
-                  )}
-                </p>
-              </div>
-              <Button 
-                onClick={() => setShowSearchForm(!showSearchForm)}
-                variant="outline"
-                className="border-greenyp-600 text-greenyp-600 hover:border-yellow-500 hover:text-yellow-600 transition-colors duration-200"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                New Search
-              </Button>
-            </div>
-          </div>
+          <SearchSummary
+            categoryName={categoryName}
+            totalCount={results?.totalCount || 0}
+            distance={distance}
+            zipCode={zipCode}
+            searchText={searchText}
+            onNewSearch={() => setShowSearchForm(!showSearchForm)}
+          />
 
           {/* Search Form - Show when button is clicked */}
           {showSearchForm && (
@@ -333,183 +278,20 @@ const SearchResults = () => {
           {/* Results */}
           {results && results.producerSearchResults.length > 0 ? (
             <>
-              <div className="grid gap-6 mb-8">
-                {results.producerSearchResults.map((result) => (
-                  <Card key={result.producerId} className="overflow-hidden">
-                    <CardContent className="p-6">
-                      <div className="flex flex-col lg:flex-row gap-6">
-                        {/* Business Info */}
-                        <div className="flex-grow">
-                          <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center">
-                              {result.iconLink && (
-                                <img 
-                                  src={result.iconLink} 
-                                  alt={`${result.businessName} icon`}
-                                  className="w-8 h-8 mr-3 rounded"
-                                  onError={(e) => {
-                                    const target = e.currentTarget as HTMLImageElement;
-                                    target.style.display = 'none';
-                                  }}
-                                />
-                              )}
-                              <h3 className="text-xl font-semibold text-gray-900">
-                                {result.businessName}
-                              </h3>
-                            </div>
-                            <Link 
-                              to={createProfileUrl(result)}
-                              className="flex items-center text-greenyp-600 hover:text-greenyp-700 text-sm font-medium"
-                            >
-                              <Eye className="w-4 h-4 mr-1" />
-                              View Profile
-                            </Link>
-                          </div>
-                          
-                          <div className="space-y-2 mb-4">
-                            <div className="flex items-center text-gray-600 flex-wrap">
-                              <MapPin className="w-4 h-4 mr-2 flex-shrink-0" />
-                              <span className="mr-4">{constructAddress(result)}</span>
-                              {result.phone && (
-                                <div className="flex items-center">
-                                  <Phone className="w-4 h-4 mr-2 flex-shrink-0" />
-                                  <a href={`tel:${result.phone}`} className="hover:text-greenyp-600">
-                                    {result.phone}
-                                  </a>
-                                </div>
-                              )}
-                            </div>
-                            
-                            {result.websiteUrl && (
-                              <div className="flex items-center text-gray-600">
-                                <Globe className="w-4 h-4 mr-2 flex-shrink-0" />
-                                <a 
-                                  href={result.websiteUrl} 
-                                  target="_blank" 
-                                  rel="noopener noreferrer"
-                                  className="hover:text-greenyp-600 truncate flex items-center"
-                                >
-                                  {result.websiteUrl}
-                                  <ExternalLink className="w-3 h-3 ml-1 flex-shrink-0" />
-                                </a>
-                              </div>
-                            )}
-
-                            {result.businessNarrative && (
-                              <div className="text-gray-600">
-                                <p className="mb-1">
-                                  {expandedNarratives.has(result.producerId) 
-                                    ? result.businessNarrative 
-                                    : truncateNarrative(result.businessNarrative)
-                                  }
-                                </p>
-                                {result.businessNarrative.length > 150 && (
-                                  <button
-                                    onClick={() => toggleNarrative(result.producerId)}
-                                    className="text-greenyp-600 hover:text-greenyp-700 text-sm font-medium flex items-center"
-                                  >
-                                    {expandedNarratives.has(result.producerId) ? (
-                                      <>
-                                        <ChevronUp className="w-3 h-3 mr-1" />
-                                        Show Less
-                                      </>
-                                    ) : (
-                                      <>
-                                        <ChevronDown className="w-3 h-3 mr-1" />
-                                        Read More
-                                      </>
-                                    )}
-                                  </button>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                          
-                          <div className="text-sm text-gray-500">
-                            Distance: {result.distance.toFixed(1)} miles
-                          </div>
-                        </div>
-
-                        {/* Map */}
-                        <div className="flex-shrink-0">
-                          <div className="w-48 h-32 bg-gray-200 rounded-lg flex items-center justify-center">
-                            {result.latitude && result.longitude ? (
-                              <img
-                                src={generateMapUrl(result.latitude, result.longitude, result.businessName)}
-                                alt={`Map location for ${result.businessName}`}
-                                className="w-full h-full object-cover rounded-lg"
-                                onError={(e) => {
-                                  // Fallback when Google Maps API key is not available
-                                  const target = e.currentTarget as HTMLImageElement;
-                                  target.style.display = 'none';
-                                  const fallback = target.nextElementSibling as HTMLElement;
-                                  if (fallback) {
-                                    fallback.style.display = 'flex';
-                                  }
-                                }}
-                              />
-                            ) : null}
-                            <div className="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center text-gray-500">
-                              <MapPin className="w-8 h-8" />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+              <SearchResultsList
+                results={results.producerSearchResults}
+                expandedNarratives={expandedNarratives}
+                onToggleNarrative={toggleNarrative}
+              />
 
               {/* Pagination */}
-              {results.totalPages > 1 && (
-                <Pagination>
-                  <PaginationContent>
-                    {page > 1 && (
-                      <PaginationItem>
-                        <PaginationPrevious href={createPageUrl(page - 1)} />
-                      </PaginationItem>
-                    )}
-                    
-                    {Array.from({ length: Math.min(5, results.totalPages) }, (_, i) => {
-                      const pageNum = Math.max(1, Math.min(results.totalPages - 4, page - 2)) + i;
-                      return (
-                        <PaginationItem key={pageNum}>
-                          <PaginationLink 
-                            href={createPageUrl(pageNum)}
-                            isActive={pageNum === page}
-                          >
-                            {pageNum}
-                          </PaginationLink>
-                        </PaginationItem>
-                      );
-                    })}
-                    
-                    {page < results.totalPages && (
-                      <PaginationItem>
-                        <PaginationNext href={createPageUrl(page + 1)} />
-                      </PaginationItem>
-                    )}
-                  </PaginationContent>
-                </Pagination>
-              )}
+              <SearchPagination
+                currentPage={page}
+                totalPages={results.totalPages}
+              />
             </>
           ) : (
-            <div className="text-center py-12">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                {isApiSuccess ? 'No providers found' : 'No providers found'}
-              </h3>
-              <p className="text-gray-600 mb-6">
-                {isApiSuccess 
-                  ? 'Your search criteria returned no results. Please update your search parameters and try again.'
-                  : 'Try expanding your search distance or removing some filters.'
-                }
-              </p>
-              <Link to="/">
-                <Button className="bg-greenyp-600 hover:bg-greenyp-700">
-                  Start New Search
-                </Button>
-              </Link>
-            </div>
+            <EmptySearchState isApiSuccess={isApiSuccess} />
           )}
         </div>
       </main>
