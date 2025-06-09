@@ -11,6 +11,18 @@ interface LocationFormFieldsProps {
   showActiveToggle?: boolean;
 }
 
+const US_STATES_AND_TERRITORIES = [
+  'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware',
+  'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky',
+  'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi',
+  'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico',
+  'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania',
+  'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont',
+  'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming',
+  'American Samoa', 'District of Columbia', 'Guam', 'Northern Mariana Islands', 'Puerto Rico',
+  'U.S. Virgin Islands'
+];
+
 const LocationFormFields = ({ formData, onFieldChange, showActiveToggle = false }: LocationFormFieldsProps) => {
   return (
     <div className="grid gap-4 md:grid-cols-2">
@@ -115,11 +127,18 @@ const LocationFormFields = ({ formData, onFieldChange, showActiveToggle = false 
         <label className="block text-sm font-medium text-gray-700 mb-1">
           State *
         </label>
-        <Input
-          value={formData.state}
-          onChange={(e) => onFieldChange('state', e.target.value)}
-          required
-        />
+        <Select value={formData.state} onValueChange={(value) => onFieldChange('state', value)}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select a state" />
+          </SelectTrigger>
+          <SelectContent>
+            {US_STATES_AND_TERRITORIES.map((state) => (
+              <SelectItem key={state} value={state}>
+                {state}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
       
       <div>
@@ -129,7 +148,20 @@ const LocationFormFields = ({ formData, onFieldChange, showActiveToggle = false 
         <Input
           value={formData.postalCode}
           onChange={(e) => onFieldChange('postalCode', e.target.value)}
+          pattern="^\d{5}(-\d{4})?$"
+          placeholder="12345 or 12345-6789"
           required
+        />
+      </div>
+      
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Website URL
+        </label>
+        <Input
+          value={formData.websiteUrl}
+          onChange={(e) => onFieldChange('websiteUrl', e.target.value)}
+          placeholder="www.example.com"
         />
       </div>
       
@@ -152,17 +184,6 @@ const LocationFormFields = ({ formData, onFieldChange, showActiveToggle = false 
           value={formData.longitude}
           onChange={(e) => onFieldChange('longitude', e.target.value)}
           placeholder="-122.4194"
-        />
-      </div>
-      
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Website URL
-        </label>
-        <Input
-          value={formData.websiteUrl}
-          onChange={(e) => onFieldChange('websiteUrl', e.target.value)}
-          placeholder="www.example.com"
         />
       </div>
     </div>
