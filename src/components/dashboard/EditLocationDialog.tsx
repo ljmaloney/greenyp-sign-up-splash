@@ -1,8 +1,8 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { getApiUrl } from "@/config/api";
@@ -127,6 +127,16 @@ const EditLocationDialog = ({ isOpen, onClose, location, onLocationUpdated }: Ed
                 value={formData.locationName}
                 onChange={(e) => handleChange('locationName', e.target.value)}
                 required
+              />
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <label className="text-sm font-medium text-gray-700">
+                Active Location
+              </label>
+              <Switch
+                checked={formData.active}
+                onCheckedChange={(checked) => handleChange('active', checked)}
               />
             </div>
             

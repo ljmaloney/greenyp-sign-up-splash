@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { MapPin, Plus, Edit, Clock, ChevronDown, ChevronRight } from 'lucide-react';
 import AddLocationDialog from './AddLocationDialog';
@@ -52,6 +53,7 @@ const LocationsList = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingLocation, setEditingLocation] = useState<Location | null>(null);
   const [openHours, setOpenHours] = useState<{ [key: string]: boolean }>({});
+  const [showInactiveLocations, setShowInactiveLocations] = useState(false);
   
   // Mock locations data
   const [locations, setLocations] = useState<Location[]>([
@@ -114,7 +116,19 @@ const LocationsList = () => {
     }));
   };
 
-  const hasMultipleLocations = locations.length > 1;
+  const toggleLocationStatus = (locationId: string) => {
+    setLocations(prev => prev.map(loc => 
+      loc.id === locationId ? { ...loc, active: !loc.active } : loc
+    ));
+  };
+
+  // Filter locations based on active status
+  const filteredLocations = showInactiveLocations 
+    ? locations 
+    : locations.filter(location => location.active);
+
+  const hasMultipleLocations = filteredLocations.length > 1;
+  const inactiveLocationCount = locations.filter(loc => !loc.active).length;
 
   return (
     <div className="space-y-6 text-left">
@@ -129,15 +143,36 @@ const LocationsList = () => {
         </Button>
       </div>
 
+      {/* Filter Controls */}
+      <div className="flex items-center justify-between bg-gray-50 p-4 rounded-lg">
+        <div className="flex items-center space-x-3">
+          <span className="text-sm font-medium text-gray-700">
+            Show inactive locations
+          </span>
+          <Switch
+            checked={showInactiveLocations}
+            onCheckedChange={setShowInactiveLocations}
+          />
+        </div>
+        <div className="text-sm text-gray-600">
+          Showing {filteredLocations.length} of {locations.length} locations
+          {inactiveLocationCount > 0 && !showInactiveLocations && (
+            <span className="ml-2 text-gray-500">
+              ({inactiveLocationCount} inactive)
+            </span>
+          )}
+        </div>
+      </div>
+
       <div className="grid gap-6">
-        {locations.map((location) => (
-          <Card key={location.id}>
+        {filteredLocations.map((location) => (
+          <Card key={location.id} className={!location.active ? 'opacity-60 border-gray-300' : ''}>
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <div className="flex items-center flex-1">
                   <MapPin className="w-5 h-5 mr-2 text-greenyp-600" />
                   <div className="flex items-center space-x-3 flex-1">
-                    <span>{location.locationName}</span>
+                    <span className={!location.active ? 'text-gray-500' : ''}>{location.locationName}</span>
                     {location.websiteUrl && (
                       <span className="text-sm text-gray-500">{location.websiteUrl}</span>
                     )}
@@ -146,25 +181,43 @@ const LocationsList = () => {
                         Primary
                       </span>
                     )}
+                    {!location.active && (
+                      <span className="ml-2 px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
+                        Inactive
+                      </span>
+                    )}
                   </div>
                 </div>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => setEditingLocation(location)}
-                >
-                  <Edit className="w-4 h-4 mr-2" />
-                  Edit
-                </Button>
+                <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-gray-600">Active</span>
+                    <Switch
+                      checked={location.active}
+                      onCheckedChange={() => toggleLocationStatus(location.id)}
+                    />
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setEditingLocation(location)}
+                  >
+                    <Edit className="w-4 h-4 mr-2" />
+                    Edit
+                  </Button>
+                </div>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2">
-                    <p className="text-gray-600">{getFullAddress(location)}</p>
+                    <p className={`text-gray-600 ${!location.active ? 'text-gray-500' : ''}`}>
+                      {getFullAddress(location)}
+                    </p>
                     {location.phone && (
-                      <span className="text-gray-600">• {location.phone}</span>
+                      <span className={`text-gray-600 ${!location.active ? 'text-gray-500' : ''}`}>
+                        • {location.phone}
+                      </span>
                     )}
                   </div>
                 </div>
