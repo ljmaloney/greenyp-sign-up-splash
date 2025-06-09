@@ -2,7 +2,6 @@
 import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
 import { LocationFormData } from "@/types/location";
 
 interface LocationFormFieldsProps {
@@ -36,18 +35,6 @@ const LocationFormFields = ({ formData, onFieldChange, showActiveToggle = false 
           required
         />
       </div>
-      
-      {showActiveToggle && (
-        <div className="flex items-center space-x-2">
-          <label className="text-sm font-medium text-gray-700">
-            Active Location
-          </label>
-          <Switch
-            checked={formData.active}
-            onCheckedChange={(checked) => onFieldChange('active', checked)}
-          />
-        </div>
-      )}
       
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">

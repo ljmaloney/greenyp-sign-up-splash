@@ -1,6 +1,7 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { getApiUrl } from "@/config/api";
@@ -16,6 +17,7 @@ interface EditLocationDialogProps {
 }
 
 const EditLocationDialog = ({ isOpen, onClose, location, onLocationUpdated }: EditLocationDialogProps) => {
+  const [isDisableDialogOpen, setIsDisableDialogOpen] = useState(false);
   const { formData, handleChange } = useLocationForm({
     locationId: location.id,
     locationName: location.name,
@@ -72,31 +74,105 @@ const EditLocationDialog = ({ isOpen, onClose, location, onLocationUpdated }: Ed
     }
   };
 
+  const handleDisableLocation = async () => {
+    try {
+      const updatedFormData = { ...formData, active: false };
+      
+      console.log('Disabling location:', updatedFormData);
+      
+      const response = await fetch(getApiUrl('/producer/location'), {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedFormData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to disable location: ${response.status}`);
+      }
+
+      const result = await response.json();
+      
+      toast({
+        title: "Location Disabled",
+        description: "Location has been successfully disabled.",
+      });
+      
+      onLocationUpdated(updatedFormData);
+      setIsDisableDialogOpen(false);
+      onClose();
+    } catch (error) {
+      console.error('Error disabling location:', error);
+      toast({
+        title: "Error",
+        description: "Failed to disable location. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const canDisableLocation = location.active && !location.isPrimary;
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Edit Location</DialogTitle>
-        </DialogHeader>
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <LocationFormFields
-            formData={formData}
-            onFieldChange={handleChange}
-            showActiveToggle={true}
-          />
+    <>
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Location</DialogTitle>
+          </DialogHeader>
           
-          <div className="flex justify-end space-x-2 pt-4">
-            <Button type="button" variant="outline" onClick={onClose}>
-              Cancel
-            </Button>
-            <Button type="submit" className="bg-greenyp-600 hover:bg-greenyp-700">
-              Update Location
-            </Button>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <LocationFormFields
+              formData={formData}
+              onFieldChange={handleChange}
+            />
+            
+            <div className="flex justify-between items-center pt-4 border-t">
+              <div>
+                {canDisableLocation && (
+                  <Button 
+                    type="button" 
+                    variant="destructive" 
+                    onClick={() => setIsDisableDialogOpen(true)}
+                  >
+                    Disable Location
+                  </Button>
+                )}
+              </div>
+              <div className="flex space-x-2">
+                <Button type="button" variant="outline" onClick={onClose}>
+                  Cancel
+                </Button>
+                <Button type="submit" className="bg-greenyp-600 hover:bg-greenyp-700">
+                  Update Location
+                </Button>
+              </div>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <AlertDialog open={isDisableDialogOpen} onOpenChange={setIsDisableDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Disable Location</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to disable "{location.name}"? This will make the location inactive and it will no longer be visible to customers. You can re-enable it later if needed.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDisableLocation}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Disable Location
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 };
 
