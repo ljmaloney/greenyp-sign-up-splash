@@ -5,28 +5,9 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RecentListings from '@/components/RecentListings';
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, Star } from 'lucide-react';
 import { useCategories } from '@/hooks/useCategories';
 import { useCategoryServices } from '@/hooks/useCategoryServices';
 import { CategoryWithIcon } from '@/types/category';
-
-interface Provider {
-  name: string;
-  rating: number;
-  reviews: number;
-  location: string;
-  phone: string;
-}
-
-// Mock provider data - in a real app, this would come from an API
-const mockProviders: Provider[] = [
-  { name: "Green Thumb Landscaping", rating: 4.8, reviews: 124, location: "Phoenix, AZ", phone: "(602) 555-1234" },
-  { name: "Nature's Design", rating: 4.7, reviews: 98, location: "Scottsdale, AZ", phone: "(480) 555-5678" },
-  { name: "Outdoor Creations", rating: 4.9, reviews: 156, location: "Mesa, AZ", phone: "(480) 555-9012" },
-  { name: "Pacific Garden Services", rating: 4.6, reviews: 87, location: "Tempe, AZ", phone: "(480) 555-3456" },
-  { name: "Professional Yard Solutions", rating: 4.5, reviews: 65, location: "Gilbert, AZ", phone: "(480) 555-7890" },
-  { name: "Desert Oasis Landscapes", rating: 4.8, reviews: 112, location: "Chandler, AZ", phone: "(480) 555-4321" }
-];
 
 const CategoryPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -139,48 +120,11 @@ const CategoryPage = () => {
           </section>
         )}
         
-        {/* Recent Listings Section */}
+        {/* Recent Listings Section - This will show empty state if API fails */}
         <RecentListings 
           lineOfBusinessId={slug || ''} 
           categoryName={category.lineOfBusinessName} 
         />
-        
-        {/* Provider Listings */}
-        <section className="py-12">
-          <div className="container mx-auto px-4">
-            <h2 className="text-2xl font-bold mb-6 text-gray-900">Top {category.lineOfBusinessName} Providers</h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {mockProviders.map((provider, index) => (
-                <div key={index} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-                  <h3 className="font-bold text-xl mb-2">{provider.name}</h3>
-                  
-                  <div className="flex items-center mb-3">
-                    <div className="flex items-center">
-                      <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
-                      <span className="ml-1 font-medium">{provider.rating}</span>
-                    </div>
-                    <span className="text-gray-500 text-sm ml-2">({provider.reviews} reviews)</span>
-                  </div>
-                  
-                  <div className="flex items-start mb-2">
-                    <MapPin className="h-4 w-4 text-gray-500 mt-0.5 mr-2" />
-                    <span className="text-gray-600">{provider.location}</span>
-                  </div>
-                  
-                  <div className="flex items-start mb-4">
-                    <Phone className="h-4 w-4 text-gray-500 mt-0.5 mr-2" />
-                    <span className="text-gray-600">{provider.phone}</span>
-                  </div>
-                  
-                  <Button className="w-full bg-greenyp-600 hover:bg-greenyp-700 text-white mt-2">
-                    View Profile
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
         
         {/* CTA Section */}
         <section className="bg-greenyp-100 py-12">
