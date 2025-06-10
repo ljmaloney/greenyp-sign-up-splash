@@ -23,7 +23,7 @@ interface DashboardSidebarProps {
 
 const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
   const location = useLocation();
-  const { data: subscriptions } = useSubscriptions();
+  const { data: subscriptions, isLoading, error } = useSubscriptions();
 
   // Mock current user's subscription ID - in a real app, this would come from user context
   const currentSubscriptionId = 'featured-business-001'; // This would come from auth context
@@ -31,11 +31,21 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
   // Find the current subscription details
   const currentSubscription = subscriptions?.find(sub => sub.subscriptionId === currentSubscriptionId);
   
+  // Debug logging
+  console.log('Subscriptions data:', subscriptions);
+  console.log('Current subscription:', currentSubscription);
+  console.log('Subscriptions loading:', isLoading);
+  console.log('Subscriptions error:', error);
+  
   // Check if subscription includes Products or Services features
   const hasProductsFeature = currentSubscription?.features.some(feature => 
     feature.toLowerCase().includes('product')) || false;
   const hasServicesFeature = currentSubscription?.features.some(feature => 
     feature.toLowerCase().includes('service')) || false;
+
+  console.log('Has Products Feature:', hasProductsFeature);
+  console.log('Has Services Feature:', hasServicesFeature);
+  console.log('Current subscription features:', currentSubscription?.features);
 
   const menuItems = [
     {
