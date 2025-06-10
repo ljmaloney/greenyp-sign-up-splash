@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -14,7 +15,6 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useSubscriptions } from '@/hooks/useSubscriptions';
-import { useAuth } from '@/contexts/AuthContext';
 
 interface DashboardSidebarProps {
   isOpen: boolean;
@@ -23,19 +23,15 @@ interface DashboardSidebarProps {
 
 const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
   const location = useLocation();
-  const { user } = useAuth();
   const { data: subscriptions, isLoading, error } = useSubscriptions();
 
-  // Get user's subscription ID from user context - for now using mock data
-  // In a real app, this would come from the user's profile/subscription data
-  const currentSubscriptionId = user?.email?.includes('basic@') ? 'basic-listing-001' : 'featured-business-001';
+  // Mock current user's subscription ID - in a real app, this would come from user context
+  const currentSubscriptionId = 'basic-listing-001'; // This would come from auth context
   
   // Find the current subscription details
   const currentSubscription = subscriptions?.find(sub => sub.subscriptionId === currentSubscriptionId);
   
   // Debug logging
-  console.log('Current user:', user);
-  console.log('Current subscription ID:', currentSubscriptionId);
   console.log('Subscriptions data:', subscriptions);
   console.log('Current subscription:', currentSubscription);
   console.log('Subscriptions loading:', isLoading);
@@ -74,13 +70,15 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
       label: 'Products',
       icon: Package,
       href: '/dashboard/products',
-      enabled: hasProductsFeature
+      enabled: hasProductsFeature,
+      upgradeHref: '/dashboard/upgrade'
     },
     {
       label: 'Services',
       icon: Wrench,
       href: '/dashboard/services',
-      enabled: hasServicesFeature
+      enabled: hasServicesFeature,
+      upgradeHref: '/dashboard/upgrade'
     },
     {
       label: 'Authorized Users',
@@ -113,13 +111,15 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
     
     if (!item.enabled) {
       return (
-        <div className={cn(
-          "flex items-center px-4 py-3 text-sm font-medium rounded-lg mx-2 mb-1",
-          "text-gray-400 cursor-not-allowed opacity-50"
-        )}>
-          <item.icon className="mr-3 h-5 w-5" />
-          {item.label}
-        </div>
+        <Link to={item.upgradeHref || '/dashboard/upgrade'} onClick={() => onClose()}>
+          <div className={cn(
+            "flex items-center px-4 py-3 text-sm font-medium rounded-lg mx-2 mb-1 transition-colors",
+            "text-gray-400 cursor-pointer opacity-50 hover:bg-gray-50"
+          )}>
+            <item.icon className="mr-3 h-5 w-5" />
+            {item.label}
+          </div>
+        </Link>
       );
     }
     
