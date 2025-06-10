@@ -39,10 +39,14 @@ const SubscriptionForm = () => {
     if (selectedPlan) params.set('plan', selectedPlan);
     if (billingPeriod) params.set('billing', billingPeriod);
     
+    // Scroll to top before navigation
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     navigate(`/subscriber/signup?${params.toString()}`);
   };
 
   const handleStartFreeTrialClick = () => {
+    // Scroll to top before navigation
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     navigate('/subscriber/signup');
   };
 

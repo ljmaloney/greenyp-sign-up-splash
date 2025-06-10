@@ -18,6 +18,8 @@ const PricingSectionSubscribe = () => {
       return;
     }
     
+    // Scroll to top before navigation
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     navigate(`/subscriber/signup?plan=${subscriptionId}&billing=monthly`);
   };
 
