@@ -1,8 +1,6 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Plus } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { deleteProduct } from '@/services/productService';
 import AddProductDialog from './AddProductDialog';
@@ -123,13 +121,6 @@ const DashboardProductsList = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-900">Products</h1>
-        <Button 
-          className="bg-greenyp-600 hover:bg-greenyp-700"
-          onClick={() => setIsAddingProduct(true)}
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Add Product
-        </Button>
       </div>
 
       <div className="space-y-4">
