@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -11,7 +10,6 @@ import {
   CreditCard,
   Crown,
   Receipt,
-  BarChart,
   X 
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -53,12 +51,6 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
       label: 'Services',
       icon: Wrench,
       href: '/dashboard/services',
-      enabled: true
-    },
-    {
-      label: 'Analytics',
-      icon: BarChart,
-      href: '/dashboard/analytics',
       enabled: true
     },
     {
