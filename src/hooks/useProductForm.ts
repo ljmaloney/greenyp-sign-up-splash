@@ -1,32 +1,11 @@
 
 import { useState, useEffect } from 'react';
-
-export interface ProductFormData {
-  producerLocationId: string;
-  productType: string;
-  botanicalGroup: string;
-  name: string;
-  price: number;
-  availableQuantity: number;
-  containerSize: string;
-  description: string;
-  attributes: Record<string, any>;
-}
-
-const initialFormData: ProductFormData = {
-  producerLocationId: '',
-  productType: 'BAGGED_MATERIAL',
-  botanicalGroup: '',
-  name: '',
-  price: 0,
-  availableQuantity: 0,
-  containerSize: '',
-  description: '',
-  attributes: {}
-};
+import { ProductFormData } from '@/types/productForm';
+import { initialProductFormData } from '@/constants/productForm';
+import { createResetFormData, updateFormField } from '@/utils/productFormUtils';
 
 export const useProductForm = (preSelectedLocationId?: string) => {
-  const [formData, setFormData] = useState<ProductFormData>(initialFormData);
+  const [formData, setFormData] = useState<ProductFormData>(initialProductFormData);
 
   // Update form data when preSelectedLocationId changes
   useEffect(() => {
@@ -36,14 +15,11 @@ export const useProductForm = (preSelectedLocationId?: string) => {
   }, [preSelectedLocationId]);
 
   const handleChange = (field: string, value: string | number) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData(prev => updateFormField(prev, field, value));
   };
 
   const resetForm = () => {
-    setFormData({
-      ...initialFormData,
-      producerLocationId: preSelectedLocationId || ''
-    });
+    setFormData(createResetFormData(preSelectedLocationId));
   };
 
   return {
