@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -27,6 +28,7 @@ import DashboardSubscription from "./pages/dashboard/Subscription";
 import DashboardPayment from "./pages/dashboard/Payment";
 import AuthorizedUsers from "./pages/dashboard/AuthorizedUsers";
 import AdminIndex from "./pages/admin/Index";
+import AdminUsers from "./pages/admin/Users";
 
 const queryClient = new QueryClient();
 
@@ -61,6 +63,7 @@ const App = () => (
           <Route path="/dashboard/subscription" element={<DashboardSubscription />} />
           <Route path="/dashboard/payment" element={<DashboardPayment />} />
           <Route path="/admin" element={<AdminIndex />} />
+          <Route path="/admin/users" element={<AdminUsers />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
