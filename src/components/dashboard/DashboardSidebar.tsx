@@ -49,7 +49,7 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
 
   const menuItems = [
     {
-      label: 'Dashboard',
+      label: 'Business Profile',
       icon: LayoutDashboard,
       href: '/dashboard',
       enabled: true
@@ -67,6 +67,12 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
       enabled: true
     },
     {
+      label: 'Authorized Users',
+      icon: Users,
+      href: '/dashboard/authorized-users',
+      enabled: true
+    },
+    {
       label: 'Products',
       icon: Package,
       href: '/dashboard/products',
@@ -79,12 +85,6 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
       href: '/dashboard/services',
       enabled: hasServicesFeature,
       upgradeHref: '/dashboard/upgrade'
-    },
-    {
-      label: 'Authorized Users',
-      icon: Users,
-      href: '/dashboard/authorized-users',
-      enabled: true
     },
     {
       label: 'Subscription',
