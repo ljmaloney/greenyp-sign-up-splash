@@ -6,7 +6,6 @@ import SubscriberStatsCards from '@/components/admin/SubscriberStatsCards';
 import SubscriberChart from '@/components/admin/SubscriberChart';
 import InvoiceStatsCard from '@/components/admin/InvoiceStatsCard';
 import SubscribersDrilldownTable from '@/components/admin/SubscribersDrilldownTable';
-import InvoicesDrilldownTable from '@/components/admin/InvoicesDrilldownTable';
 
 const AdminAnalytics = () => {
   return (
@@ -25,7 +24,6 @@ const AdminAnalytics = () => {
 
         <div className="space-y-6">
           <SubscribersDrilldownTable />
-          <InvoicesDrilldownTable />
         </div>
       </div>
     </AdminLayout>
