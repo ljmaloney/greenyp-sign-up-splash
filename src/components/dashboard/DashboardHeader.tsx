@@ -3,12 +3,23 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Leaf, Menu, User, LogOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface DashboardHeaderProps {
   onMenuClick: () => void;
 }
 
 const DashboardHeader = ({ onMenuClick }: DashboardHeaderProps) => {
+  const { user, logout } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
   return (
     <header className="bg-white shadow-sm border-b">
       <div className="flex items-center justify-between px-4 py-3">
@@ -30,9 +41,9 @@ const DashboardHeader = ({ onMenuClick }: DashboardHeaderProps) => {
         <div className="flex items-center space-x-4">
           <div className="hidden md:flex items-center space-x-2 text-sm text-gray-600">
             <User className="h-4 w-4" />
-            <span>Welcome back!</span>
+            <span>Welcome, {user?.name || 'User'}!</span>
           </div>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={handleLogout}>
             <LogOut className="h-4 w-4 mr-2" />
             Log Out
           </Button>
