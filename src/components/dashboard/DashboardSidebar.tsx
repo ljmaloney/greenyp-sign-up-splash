@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -15,6 +14,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useSubscriptions } from '@/hooks/useSubscriptions';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface DashboardSidebarProps {
   isOpen: boolean;
@@ -23,15 +23,19 @@ interface DashboardSidebarProps {
 
 const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
   const location = useLocation();
+  const { user } = useAuth();
   const { data: subscriptions, isLoading, error } = useSubscriptions();
 
-  // Mock current user's subscription ID - in a real app, this would come from user context
-  const currentSubscriptionId = 'featured-business-001'; // This would come from auth context
+  // Get user's subscription ID from user context - for now using mock data
+  // In a real app, this would come from the user's profile/subscription data
+  const currentSubscriptionId = user?.email?.includes('basic@') ? 'basic-listing-001' : 'featured-business-001';
   
   // Find the current subscription details
   const currentSubscription = subscriptions?.find(sub => sub.subscriptionId === currentSubscriptionId);
   
   // Debug logging
+  console.log('Current user:', user);
+  console.log('Current subscription ID:', currentSubscriptionId);
   console.log('Subscriptions data:', subscriptions);
   console.log('Current subscription:', currentSubscription);
   console.log('Subscriptions loading:', isLoading);
