@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from "@/components/ui/button";
@@ -22,6 +21,7 @@ interface SignUpFormData {
   subscriptionId: string;
   websiteUrl: string;
   narrative: string;
+  signupCode: string;
   firstName: string;
   lastName: string;
   phoneNumber: string;
@@ -59,6 +59,7 @@ const SignUp = () => {
       subscriptionId: selectedPlan,
       websiteUrl: '',
       narrative: '',
+      signupCode: '',
       firstName: '',
       lastName: '',
       phoneNumber: '',
@@ -92,10 +93,11 @@ const SignUp = () => {
           businessName: data.businessName,
           lineOfBusinessId: data.lineOfBusinessId,
           subscriptionId: data.subscriptionId,
-          subscriptionType: "ADMIN",
+          subscriptionType: "LIVE_UNPAID",
           invoiceCycleType: "MONTHLY",
           websiteUrl: data.websiteUrl,
-          narrative: data.narrative
+          narrative: data.narrative,
+          signupCode: data.signupCode
         },
         primaryContact: {
           producerContactType: "PRIMARY",
@@ -273,6 +275,20 @@ const SignUp = () => {
                             <FormLabel>Website URL</FormLabel>
                             <FormControl>
                               <Input placeholder="https://www.yourbusiness.com" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="signupCode"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Sign Up Code</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Enter your sign up code (if applicable)" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
