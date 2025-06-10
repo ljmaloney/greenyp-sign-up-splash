@@ -103,6 +103,17 @@ const ContactFormFields = ({ formData, locations, onFieldChange }: ContactFormFi
         />
       </div>
       
+      <div className="md:col-span-2">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Title
+        </label>
+        <Input
+          value={formData.title}
+          onChange={(e) => onFieldChange('title', e.target.value)}
+          placeholder="e.g., Manager, Sales Representative"
+        />
+      </div>
+      
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Phone Number

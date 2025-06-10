@@ -6,6 +6,7 @@ export interface ContactFormData {
   genericContactName: string;
   firstName: string;
   lastName: string;
+  title: string;
   phoneNumber: string;
   cellPhoneNumber: string;
   emailAddress: string;

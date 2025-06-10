@@ -17,6 +17,7 @@ export const useEditContactForm = (
     genericContactName: contact.genericContactName || '',
     firstName: contact.firstName || contact.name.split(' ')[0] || '',
     lastName: contact.lastName || contact.name.split(' ').slice(1).join(' ') || '',
+    title: contact.title || '',
     phoneNumber: contact.phoneNumber || contact.phone || '',
     cellPhoneNumber: contact.cellPhoneNumber || '',
     emailAddress: contact.emailAddress || contact.email || ''

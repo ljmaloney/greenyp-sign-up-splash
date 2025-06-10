@@ -13,6 +13,7 @@ export const useContactForm = (onSuccess: (contact: ContactFormData) => void, on
     genericContactName: '',
     firstName: '',
     lastName: '',
+    title: '',
     phoneNumber: '',
     cellPhoneNumber: '',
     emailAddress: ''
@@ -32,6 +33,7 @@ export const useContactForm = (onSuccess: (contact: ContactFormData) => void, on
       genericContactName: '',
       firstName: '',
       lastName: '',
+      title: '',
       phoneNumber: '',
       cellPhoneNumber: '',
       emailAddress: ''
