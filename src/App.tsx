@@ -30,6 +30,7 @@ import AuthorizedUsers from "./pages/dashboard/AuthorizedUsers";
 import AdminIndex from "./pages/admin/Index";
 import AdminUsers from "./pages/admin/Users";
 import AdminSubscribers from "./pages/admin/Subscribers";
+import AdminAnalytics from "./pages/admin/Analytics";
 
 const queryClient = new QueryClient();
 
@@ -66,6 +67,7 @@ const App = () => (
           <Route path="/admin" element={<AdminIndex />} />
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/subscribers" element={<AdminSubscribers />} />
+          <Route path="/admin/analytics" element={<AdminAnalytics />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
