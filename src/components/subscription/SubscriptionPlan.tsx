@@ -7,6 +7,7 @@ export interface PlanProps {
   name: string;
   price: string;
   period: string;
+  description?: string;
   features: string[];
   cta: string;
   popular: boolean;
@@ -18,6 +19,7 @@ const SubscriptionPlan = ({
   name,
   price,
   period,
+  description,
   features,
   cta,
   popular,
@@ -45,6 +47,9 @@ const SubscriptionPlan = ({
           <span className="text-yellow-600 text-sm font-normal ml-2">Coming Soon</span>
         )}
       </h3>
+      {description && (
+        <p className="text-gray-600 text-sm mb-4">{description}</p>
+      )}
       {!comingSoon && (
         <div className="mb-4">
           <span className="text-3xl font-bold text-gray-900">{price}</span>

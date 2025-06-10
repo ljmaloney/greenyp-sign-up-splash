@@ -1,3 +1,4 @@
+
 import React from 'react';
 import SubscriptionPlan from './SubscriptionPlan';
 import { useNavigate } from 'react-router-dom';
@@ -61,6 +62,7 @@ const PricingSectionSubscribe = () => {
                 name={subscription.displayName}
                 price={subscription.comingSoon ? "" : subscription.formattedMonthlyPrice}
                 period={subscription.comingSoon ? "" : subscription.monthlyAutopayAmount === 0 ? "forever" : "per month"}
+                description={subscription.shortDescription}
                 features={subscription.formattedFeatures.map(f => f.name)}
                 cta={subscription.comingSoon ? 'Coming Soon' : 'Start Your Listing'}
                 popular={subscription.popular || false}
