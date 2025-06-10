@@ -79,6 +79,8 @@ const InvoicesDrilldownTable = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchType, setSearchType] = useState('all');
   const [dateRange, setDateRange] = useState('all');
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
+  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
 
   const filteredInvoices = useMemo(() => {
     let filtered = mockInvoices;
@@ -111,39 +113,52 @@ const InvoicesDrilldownTable = () => {
     // Apply date range filter
     if (dateRange !== 'all') {
       const now = new Date();
-      const startDate = new Date();
+      let filterStartDate = new Date();
 
-      switch (dateRange) {
-        case 'today':
-          startDate.setHours(0, 0, 0, 0);
-          break;
-        case 'week':
-          startDate.setDate(now.getDate() - 7);
-          break;
-        case 'month':
-          startDate.setMonth(now.getMonth() - 1);
-          break;
-        case 'quarter':
-          startDate.setMonth(now.getMonth() - 3);
-          break;
-        case 'year':
-          startDate.setFullYear(now.getFullYear() - 1);
-          break;
+      if (dateRange === 'custom' && startDate && endDate) {
+        // Use custom date range
+        filtered = filtered.filter(invoice => {
+          const invoiceDate = new Date(invoice.paymentDate);
+          return invoiceDate >= startDate && invoiceDate <= endDate;
+        });
+      } else {
+        // Use preset date ranges
+        switch (dateRange) {
+          case 'today':
+            filterStartDate.setHours(0, 0, 0, 0);
+            break;
+          case 'week':
+            filterStartDate.setDate(now.getDate() - 7);
+            break;
+          case 'month':
+            filterStartDate.setMonth(now.getMonth() - 1);
+            break;
+          case 'quarter':
+            filterStartDate.setMonth(now.getMonth() - 3);
+            break;
+          case 'year':
+            filterStartDate.setFullYear(now.getFullYear() - 1);
+            break;
+        }
+
+        if (dateRange !== 'custom') {
+          filtered = filtered.filter(invoice => {
+            const invoiceDate = new Date(invoice.paymentDate);
+            return invoiceDate >= filterStartDate;
+          });
+        }
       }
-
-      filtered = filtered.filter(invoice => {
-        const invoiceDate = new Date(invoice.paymentDate);
-        return invoiceDate >= startDate;
-      });
     }
 
     return filtered;
-  }, [searchTerm, searchType, dateRange]);
+  }, [searchTerm, searchType, dateRange, startDate, endDate]);
 
   const handleClearFilters = () => {
     setSearchTerm('');
     setSearchType('all');
     setDateRange('all');
+    setStartDate(undefined);
+    setEndDate(undefined);
   };
 
   const getStatusBadgeVariant = (status: string) => {
@@ -165,9 +180,13 @@ const InvoicesDrilldownTable = () => {
           searchTerm={searchTerm}
           searchType={searchType}
           dateRange={dateRange}
+          startDate={startDate}
+          endDate={endDate}
           onSearchChange={setSearchTerm}
           onSearchTypeChange={setSearchType}
           onDateRangeChange={setDateRange}
+          onStartDateChange={setStartDate}
+          onEndDateChange={setEndDate}
           onClearFilters={handleClearFilters}
         />
         
