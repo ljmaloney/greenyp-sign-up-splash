@@ -29,6 +29,7 @@ import DashboardPayment from "./pages/dashboard/Payment";
 import AuthorizedUsers from "./pages/dashboard/AuthorizedUsers";
 import AdminIndex from "./pages/admin/Index";
 import AdminUsers from "./pages/admin/Users";
+import AdminSubscribers from "./pages/admin/Subscribers";
 
 const queryClient = new QueryClient();
 
@@ -64,6 +65,7 @@ const App = () => (
           <Route path="/dashboard/payment" element={<DashboardPayment />} />
           <Route path="/admin" element={<AdminIndex />} />
           <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/subscribers" element={<AdminSubscribers />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

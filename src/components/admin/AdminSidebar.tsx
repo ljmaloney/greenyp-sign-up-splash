@@ -1,11 +1,10 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { 
   LayoutDashboard,
   Users,
-  Building2,
+  UserCheck,
   Settings,
   BarChart,
   ShieldCheck,
@@ -35,9 +34,9 @@ const AdminSidebar = ({ isOpen, onClose }: AdminSidebarProps) => {
       enabled: true
     },
     {
-      label: 'Businesses',
-      icon: Building2,
-      href: '/admin/businesses',
+      label: 'Subscribers',
+      icon: UserCheck,
+      href: '/admin/subscribers',
       enabled: true
     },
     {
