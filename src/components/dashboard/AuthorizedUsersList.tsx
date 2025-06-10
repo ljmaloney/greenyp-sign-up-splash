@@ -76,12 +76,12 @@ const AuthorizedUsersList = () => {
                   {user.firstName} {user.lastName}
                 </div>
                 <Button 
-                  variant="outline" 
+                  variant="ghost" 
                   size="sm"
                   onClick={() => {/* Edit functionality can be added later */}}
+                  className="h-8 w-8 p-0"
                 >
-                  <Edit className="w-4 h-4 mr-2" />
-                  Edit
+                  <Edit className="w-4 h-4" />
                 </Button>
               </CardTitle>
             </CardHeader>

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { Users, Edit, Mail, Phone, Trash } from 'lucide-react';
+import { Users, Edit, Mail, Phone, Trash2 } from 'lucide-react';
 import { Contact } from "@/types/contact";
 
 interface ContactCardProps {
@@ -42,21 +42,20 @@ const ContactCard = ({ contact, onEdit, onDelete }: ContactCardProps) => {
         </div>
         <div className="flex space-x-2">
           <Button 
-            variant="outline" 
+            variant="ghost" 
             size="sm"
             onClick={() => onEdit(contact)}
+            className="h-8 w-8 p-0"
           >
-            <Edit className="w-4 h-4 mr-2" />
-            Edit
+            <Edit className="w-4 h-4" />
           </Button>
           <Button
-            variant="outline"
+            variant="ghost"
             size="sm"
             onClick={() => onDelete(contact.id)}
-            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+            className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
           >
-            <Trash className="w-4 h-4 mr-2" />
-            Delete
+            <Trash2 className="w-4 h-4" />
           </Button>
         </div>
       </div>

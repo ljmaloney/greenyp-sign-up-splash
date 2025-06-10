@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { MapPin, ChevronDown, ChevronUp, Plus } from 'lucide-react';
+import { MapPin, ChevronDown, ChevronUp, Plus, Edit, Trash2 } from 'lucide-react';
 import { ProducerService } from "@/types/profile";
 
 interface ServiceLocationGroupProps {
@@ -111,19 +112,20 @@ const ServiceLocationGroup = ({
                   </div>
                   <div className="flex space-x-2 ml-4">
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
                       onClick={() => onEditService(service)}
+                      className="h-8 w-8 p-0"
                     >
-                      Edit
+                      <Edit className="w-4 h-4" />
                     </Button>
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
                       onClick={() => onDeleteService(service.producerServiceId)}
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
                     >
-                      Delete
+                      <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
                 </div>
