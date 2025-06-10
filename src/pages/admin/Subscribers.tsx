@@ -1,25 +1,9 @@
+
 import React, { useState, useMemo } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { Search, UserPlus, Edit, Trash2, MoreHorizontal, Filter } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import SubscriberPageHeader from '@/components/admin/SubscriberPageHeader';
+import SubscriberSearch from '@/components/admin/SubscriberSearch';
+import SubscriberTable from '@/components/admin/SubscriberTable';
 
 // Mock subscriber data
 const mockSubscribers = [
@@ -142,158 +126,26 @@ const AdminSubscribers = () => {
     });
   }, [subscribers, searchTerm, searchType, sortBy, showRecent]);
 
-  const getStatusBadgeVariant = (status: string) => {
-    switch (status) {
-      case 'Active':
-        return 'default';
-      case 'Inactive':
-        return 'secondary';
-      case 'Pending':
-        return 'outline';
-      default:
-        return 'secondary';
-    }
-  };
-
-  const getSubscriptionBadgeVariant = (type: string) => {
-    switch (type) {
-      case 'Enterprise':
-        return 'enterprise';
-      case 'Premium':
-        return 'default';
-      case 'Basic':
-        return 'secondary';
-      default:
-        return 'secondary';
-    }
-  };
-
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Subscriber Management</h1>
-            <p className="text-gray-600 mt-2">
-              Search and manage subscriber accounts and subscriptions
-            </p>
-          </div>
-          <Button>
-            <UserPlus className="h-4 w-4 mr-2" />
-            Add Subscriber
-          </Button>
-        </div>
+        <SubscriberPageHeader />
 
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Search subscribers..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          
-          <Select value={searchType} onValueChange={setSearchType}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Search by..." />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Fields</SelectItem>
-              <SelectItem value="name">Name</SelectItem>
-              <SelectItem value="email">Email</SelectItem>
-              <SelectItem value="phone">Phone</SelectItem>
-              <SelectItem value="address">Address</SelectItem>
-            </SelectContent>
-          </Select>
+        <SubscriberSearch
+          searchTerm={searchTerm}
+          searchType={searchType}
+          sortBy={sortBy}
+          showRecent={showRecent}
+          onSearchChange={setSearchTerm}
+          onSearchTypeChange={setSearchType}
+          onSortByChange={setSortBy}
+          onRecentToggle={() => setShowRecent(!showRecent)}
+        />
 
-          <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Sort by..." />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="name">Name</SelectItem>
-              <SelectItem value="joinDate">Join Date</SelectItem>
-              <SelectItem value="lastActivity">Last Activity</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Button
-            variant={showRecent ? "default" : "outline"}
-            onClick={() => setShowRecent(!showRecent)}
-          >
-            <Filter className="h-4 w-4 mr-2" />
-            Recent (30d)
-          </Button>
-        </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Subscribers ({filteredAndSortedSubscribers.length})</CardTitle>
-            <CardDescription>
-              {showRecent ? 'Recent subscribers from the last 30 days' : 'All subscribers in the system'}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Business Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Phone</TableHead>
-                  <TableHead>Address</TableHead>
-                  <TableHead>Subscription</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Join Date</TableHead>
-                  <TableHead className="w-[50px]">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredAndSortedSubscribers.map((subscriber) => (
-                  <TableRow key={subscriber.id}>
-                    <TableCell className="font-medium">{subscriber.name}</TableCell>
-                    <TableCell>{subscriber.email}</TableCell>
-                    <TableCell>{subscriber.phone}</TableCell>
-                    <TableCell className="max-w-[200px] truncate" title={subscriber.address}>
-                      {subscriber.address}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={getSubscriptionBadgeVariant(subscriber.subscriptionType)}>
-                        {subscriber.subscriptionType}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={getStatusBadgeVariant(subscriber.status)}>
-                        {subscriber.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{subscriber.joinDate}</TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
-                            <Edit className="h-4 w-4 mr-2" />
-                            Edit Subscriber
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="text-red-600">
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Delete Subscriber
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+        <SubscriberTable 
+          subscribers={filteredAndSortedSubscribers}
+          showRecent={showRecent}
+        />
       </div>
     </AdminLayout>
   );
