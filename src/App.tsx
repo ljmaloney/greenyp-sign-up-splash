@@ -32,6 +32,8 @@ import AdminUsers from "./pages/admin/Users";
 import AdminSubscribers from "./pages/admin/Subscribers";
 import AdminInvoices from "./pages/admin/Invoices";
 import AdminAnalytics from "./pages/admin/Analytics";
+import AdminPermissions from "./pages/admin/Permissions";
+import AdminSettings from "./pages/admin/Settings";
 
 const queryClient = new QueryClient();
 
@@ -70,6 +72,8 @@ const App = () => (
           <Route path="/admin/subscribers" element={<AdminSubscribers />} />
           <Route path="/admin/invoices" element={<AdminInvoices />} />
           <Route path="/admin/analytics" element={<AdminAnalytics />} />
+          <Route path="/admin/permissions" element={<AdminPermissions />} />
+          <Route path="/admin/settings" element={<AdminSettings />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -57,18 +57,30 @@ const AdminSidebar = ({ isOpen, onClose }: AdminSidebarProps) => {
       label: 'Permissions',
       icon: ShieldCheck,
       href: '/admin/permissions',
-      enabled: true
+      enabled: false
     },
     {
       label: 'Settings',
       icon: Settings,
       href: '/admin/settings',
-      enabled: true
+      enabled: false
     }
   ];
 
   const MenuItem = ({ item }: { item: typeof menuItems[0] }) => {
     const isActive = location.pathname === item.href;
+    
+    if (!item.enabled) {
+      return (
+        <div className={cn(
+          "flex items-center px-4 py-3 text-sm font-medium rounded-lg mx-2 mb-1",
+          "text-gray-400 cursor-not-allowed opacity-50"
+        )}>
+          <item.icon className="mr-3 h-5 w-5" />
+          {item.label}
+        </div>
+      );
+    }
     
     return (
       <Link to={item.href} onClick={() => onClose()}>
