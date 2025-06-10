@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Users, Plus, Edit, Mail, Phone, Trash, MapPin } from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Users, Plus, Edit, Mail, Phone, Trash, MapPin, ChevronDown, ChevronRight } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { getApiUrl } from "@/config/api";
 import AddContactDialog from './AddContactDialog';
@@ -29,6 +30,7 @@ const ContactsList = () => {
   const [editingContact, setEditingContact] = useState<Contact | null>(null);
   const [deletingContactId, setDeletingContactId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [openLocations, setOpenLocations] = useState<Record<string, boolean>>({});
   const { toast } = useToast();
   
   // Mock contacts data with location associations
@@ -66,11 +68,28 @@ const ContactsList = () => {
     return location ? location.locationName : 'Unknown Location';
   };
 
+  // Group contacts by location
+  const groupedContacts = contacts.reduce((groups, contact) => {
+    const locationId = contact.locationId || 'no-location';
+    if (!groups[locationId]) {
+      groups[locationId] = [];
+    }
+    groups[locationId].push(contact);
+    return groups;
+  }, {} as Record<string, Contact[]>);
+
+  const toggleLocation = (locationId: string) => {
+    setOpenLocations(prev => ({
+      ...prev,
+      [locationId]: !prev[locationId]
+    }));
+  };
+
   const handleContactAdded = (newContactData: any) => {
     const newContact: Contact = {
       id: Date.now().toString(),
       name: `${newContactData.firstName} ${newContactData.lastName}`,
-      title: newContactData.genericContactName || 'Contact',
+      title: newContactData.title || 'Contact',
       email: newContactData.emailAddress,
       phone: newContactData.phoneNumber || newContactData.cellPhoneNumber,
       isPrimary: newContactData.producerContactType === 'PRIMARY',
@@ -84,7 +103,7 @@ const ContactsList = () => {
       const updatedContact: Contact = {
         ...editingContact,
         name: `${updatedContactData.firstName} ${updatedContactData.lastName}`,
-        title: updatedContactData.genericContactName || editingContact.title,
+        title: updatedContactData.title || editingContact.title,
         email: updatedContactData.emailAddress,
         phone: updatedContactData.phoneNumber || updatedContactData.cellPhoneNumber,
         isPrimary: updatedContactData.producerContactType === 'PRIMARY',
@@ -147,62 +166,89 @@ const ContactsList = () => {
         </Button>
       </div>
 
-      <div className="grid gap-6">
-        {contacts.map((contact) => (
-          <Card key={contact.id}>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <Users className="w-5 h-5 mr-2 text-greenyp-600" />
-                  <div>
-                    <div>{contact.name}</div>
-                    <div className="flex items-center text-sm text-gray-500 font-normal">
-                      <MapPin className="w-3 h-3 mr-1" />
-                      {getLocationName(contact.locationId)}
+      <div className="space-y-4">
+        {Object.entries(groupedContacts).map(([locationId, locationContacts]) => {
+          const locationName = getLocationName(locationId === 'no-location' ? undefined : locationId);
+          const isOpen = openLocations[locationId] ?? true;
+          const hasMultipleContacts = locationContacts.length > 1;
+
+          return (
+            <div key={locationId} className="border rounded-lg overflow-hidden">
+              <Collapsible open={isOpen} onOpenChange={() => hasMultipleContacts && toggleLocation(locationId)}>
+                <div className="bg-gray-50 p-4 border-b">
+                  <CollapsibleTrigger asChild>
+                    <div className={`flex items-center justify-between ${hasMultipleContacts ? 'cursor-pointer' : 'cursor-default'}`}>
+                      <div className="flex items-center">
+                        <MapPin className="w-4 h-4 mr-2 text-greenyp-600" />
+                        <h3 className="font-semibold text-gray-900">{locationName}</h3>
+                        <span className="ml-2 text-sm text-gray-500">({locationContacts.length} contact{locationContacts.length !== 1 ? 's' : ''})</span>
+                      </div>
+                      {hasMultipleContacts && (
+                        isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />
+                      )}
                     </div>
+                  </CollapsibleTrigger>
+                </div>
+                
+                <CollapsibleContent>
+                  <div className="divide-y">
+                    {locationContacts.map((contact) => (
+                      <div key={contact.id} className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center mb-2">
+                              <Users className="w-4 h-4 mr-2 text-greenyp-600" />
+                              <div className="flex items-center">
+                                <span className="font-medium text-gray-900">
+                                  {contact.name}
+                                  {contact.title && ` - ${contact.title}`}
+                                </span>
+                                {contact.isPrimary && (
+                                  <span className="ml-2 px-2 py-1 bg-greenyp-100 text-greenyp-700 text-xs rounded-full">
+                                    Primary
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex items-center space-x-6 text-sm text-gray-600">
+                              <div className="flex items-center">
+                                <Mail className="w-3 h-3 mr-1" />
+                                <span>{contact.email}</span>
+                              </div>
+                              <div className="flex items-center">
+                                <Phone className="w-3 h-3 mr-1" />
+                                <span>{contact.phone}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex space-x-2">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => setEditingContact(contact)}
+                            >
+                              <Edit className="w-4 h-4 mr-2" />
+                              Edit
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setDeletingContactId(contact.id)}
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            >
+                              <Trash className="w-4 h-4 mr-2" />
+                              Delete
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  {contact.isPrimary && (
-                    <span className="ml-2 px-2 py-1 bg-greenyp-100 text-greenyp-700 text-xs rounded-full">
-                      Primary
-                    </span>
-                  )}
-                </div>
-                <div className="flex space-x-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => setEditingContact(contact)}
-                  >
-                    <Edit className="w-4 h-4 mr-2" />
-                    Edit
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setDeletingContactId(contact.id)}
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                  >
-                    <Trash className="w-4 h-4 mr-2" />
-                    Delete
-                  </Button>
-                </div>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <p className="text-gray-600 font-medium">{contact.title}</p>
-                <div className="flex items-center space-x-3">
-                  <Mail className="w-4 h-4 text-gray-500" />
-                  <span>{contact.email}</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <Phone className="w-4 h-4 text-gray-500" />
-                  <span>{contact.phone}</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+                </CollapsibleContent>
+              </Collapsible>
+            </div>
+          );
+        })}
       </div>
 
       <AddContactDialog 
