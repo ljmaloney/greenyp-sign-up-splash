@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -95,18 +94,17 @@ const ProductFormFields = ({ formData, onFieldChange, locations }: ProductFormFi
         />
       </div>
 
-      {formData.productType === 'BOTANICAL' && (
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Botanical Group (Genus and Species)
-          </label>
-          <Input
-            value={formData.botanicalGroup}
-            onChange={(e) => onFieldChange('botanicalGroup', e.target.value)}
-            placeholder="e.g., Acer palmatum, Rosa damascena"
-          />
-        </div>
-      )}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Botanical Group (Genus and Species)
+        </label>
+        <Input
+          value={formData.botanicalGroup}
+          onChange={(e) => onFieldChange('botanicalGroup', e.target.value)}
+          placeholder="e.g., Acer palmatum, Rosa damascena"
+          disabled={formData.productType !== 'BOTANICAL'}
+        />
+      </div>
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
