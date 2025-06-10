@@ -27,11 +27,11 @@ import DashboardUpgrade from "./pages/dashboard/Upgrade";
 import DashboardSubscription from "./pages/dashboard/Subscription";
 import DashboardPayment from "./pages/dashboard/Payment";
 import AuthorizedUsers from "./pages/dashboard/AuthorizedUsers";
+import DashboardAnalytics from "./pages/dashboard/Analytics";
 import AdminIndex from "./pages/admin/Index";
 import AdminUsers from "./pages/admin/Users";
 import AdminSubscribers from "./pages/admin/Subscribers";
 import AdminInvoices from "./pages/admin/Invoices";
-import AdminAnalytics from "./pages/admin/Analytics";
 import AdminPermissions from "./pages/admin/Permissions";
 import AdminSettings from "./pages/admin/Settings";
 
@@ -67,11 +67,11 @@ const App = () => (
           <Route path="/dashboard/upgrade" element={<DashboardUpgrade />} />
           <Route path="/dashboard/subscription" element={<DashboardSubscription />} />
           <Route path="/dashboard/payment" element={<DashboardPayment />} />
+          <Route path="/dashboard/analytics" element={<DashboardAnalytics />} />
           <Route path="/admin" element={<AdminIndex />} />
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/subscribers" element={<AdminSubscribers />} />
           <Route path="/admin/invoices" element={<AdminInvoices />} />
-          <Route path="/admin/analytics" element={<AdminAnalytics />} />
           <Route path="/admin/permissions" element={<AdminPermissions />} />
           <Route path="/admin/settings" element={<AdminSettings />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

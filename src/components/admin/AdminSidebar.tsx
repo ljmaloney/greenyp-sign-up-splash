@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -7,7 +6,6 @@ import {
   Users,
   UserCheck,
   Settings,
-  BarChart,
   ShieldCheck,
   Receipt,
   X 
@@ -45,12 +43,6 @@ const AdminSidebar = ({ isOpen, onClose }: AdminSidebarProps) => {
       label: 'Invoices',
       icon: Receipt,
       href: '/admin/invoices',
-      enabled: true
-    },
-    {
-      label: 'Analytics',
-      icon: BarChart,
-      href: '/admin/analytics',
       enabled: true
     },
     {
