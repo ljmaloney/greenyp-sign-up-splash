@@ -1,0 +1,135 @@
+
+import React from 'react';
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ProductFormData } from '@/hooks/useProductForm';
+
+interface Location {
+  id: string;
+  name: string;
+  address: string;
+}
+
+interface ProductFormFieldsProps {
+  formData: ProductFormData;
+  onFieldChange: (field: string, value: string | number) => void;
+  locations: Location[];
+}
+
+const ProductFormFields = ({ formData, onFieldChange, locations }: ProductFormFieldsProps) => {
+  return (
+    <div className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Location *
+        </label>
+        <Select value={formData.producerLocationId} onValueChange={(value) => onFieldChange('producerLocationId', value)}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select a location" />
+          </SelectTrigger>
+          <SelectContent>
+            {locations.map((location) => (
+              <SelectItem key={location.id} value={location.id}>
+                <div>
+                  <div className="font-medium">{location.name}</div>
+                  <div className="text-sm text-gray-500">{location.address}</div>
+                </div>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Product Type
+        </label>
+        <Select value={formData.productType} onValueChange={(value) => onFieldChange('productType', value)}>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="BAGGED_MATERIAL">Bagged Material</SelectItem>
+            <SelectItem value="PLANT">Plant</SelectItem>
+            <SelectItem value="TOOL">Tool</SelectItem>
+            <SelectItem value="FERTILIZER">Fertilizer</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Product Name *
+        </label>
+        <Input
+          value={formData.name}
+          onChange={(e) => onFieldChange('name', e.target.value)}
+          required
+        />
+      </div>
+      
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Description *
+        </label>
+        <Textarea
+          value={formData.description}
+          onChange={(e) => onFieldChange('description', e.target.value)}
+          rows={3}
+          required
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Botanical Group
+        </label>
+        <Input
+          value={formData.botanicalGroup}
+          onChange={(e) => onFieldChange('botanicalGroup', e.target.value)}
+          placeholder="e.g., Perennials, Annuals"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Container Size
+        </label>
+        <Input
+          value={formData.containerSize}
+          onChange={(e) => onFieldChange('containerSize', e.target.value)}
+          placeholder="e.g., 1 gallon, 25lb bag"
+        />
+      </div>
+      
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Price ($) *
+          </label>
+          <Input
+            type="number"
+            step="0.01"
+            value={formData.price}
+            onChange={(e) => onFieldChange('price', Number(e.target.value))}
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Available Quantity *
+          </label>
+          <Input
+            type="number"
+            value={formData.availableQuantity}
+            onChange={(e) => onFieldChange('availableQuantity', Number(e.target.value))}
+            required
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ProductFormFields;
