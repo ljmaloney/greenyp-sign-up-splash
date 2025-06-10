@@ -77,14 +77,16 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
       icon: Package,
       href: '/dashboard/products',
       enabled: hasProductsFeature,
-      upgradeHref: '/dashboard/upgrade'
+      upgradeHref: '/dashboard/upgrade',
+      isPremium: true
     },
     {
       label: 'Services',
       icon: Wrench,
       href: '/dashboard/services',
       enabled: hasServicesFeature,
-      upgradeHref: '/dashboard/upgrade'
+      upgradeHref: '/dashboard/upgrade',
+      isPremium: true
     },
     {
       label: 'Subscription',
@@ -118,6 +120,9 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
           )}>
             <item.icon className="mr-3 h-5 w-5" />
             {item.label}
+            {item.isPremium && (
+              <Crown className="ml-auto h-4 w-4 text-yellow-500" />
+            )}
           </div>
         </Link>
       );
@@ -133,6 +138,9 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
         )}>
           <item.icon className="mr-3 h-5 w-5" />
           {item.label}
+          {item.isPremium && (
+            <Crown className="ml-auto h-4 w-4 text-yellow-500" />
+          )}
         </div>
       </Link>
     );
