@@ -68,7 +68,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         id: '1',
         email,
         name: 'User Name',
-        roles: email.includes('admin') ? ['admin', 'user'] : ['user']
+        roles: (() => {
+          // Mock role assignment based on email for testing
+          if (email.includes('admin@')) {
+            return ['GreenPages-Admin', 'Greepages-Subscriber'];
+          } else if (email.includes('sysadmin@')) {
+            return ['SysAdmin', 'GreenPages-Admin', 'Greepages-Subscriber'];
+          } else if (email.includes('subadmin@')) {
+            return ['Greepages-SubscriberAdmin', 'Greepages-Subscriber'];
+          } else {
+            return ['Greepages-Subscriber'];
+          }
+        })()
       };
       
       // Store auth data

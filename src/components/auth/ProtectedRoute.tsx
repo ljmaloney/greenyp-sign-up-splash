@@ -37,9 +37,26 @@ const ProtectedRoute = ({
     return <Navigate to={fallbackPath} state={{ from: location }} replace />;
   }
 
-  if (requiredRole && !hasRole(requiredRole)) {
-    // User doesn't have required role, redirect to unauthorized page
-    return <Navigate to="/unauthorized" replace />;
+  if (requiredRole) {
+    const hasRequiredRole = (() => {
+      // Dashboard routes: allow both Greepages-Subscriber and Greepages-SubscriberAdmin
+      if (requiredRole === 'Greepages-Subscriber') {
+        return hasRole('Greepages-Subscriber') || hasRole('Greepages-SubscriberAdmin');
+      }
+      
+      // Admin routes: allow both GreenPages-Admin and SysAdmin
+      if (requiredRole === 'GreenPages-Admin') {
+        return hasRole('GreenPages-Admin') || hasRole('SysAdmin');
+      }
+      
+      // For any other role, check exact match
+      return hasRole(requiredRole);
+    })();
+
+    if (!hasRequiredRole) {
+      // User doesn't have required role, redirect to unauthorized page
+      return <Navigate to="/unauthorized" replace />;
+    }
   }
 
   return <>{children}</>;

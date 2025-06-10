@@ -69,86 +69,86 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
             
-            {/* Protected dashboard routes */}
+            {/* Protected dashboard routes - require Greepages-Subscriber or Greepages-SubscriberAdmin */}
             <Route path="/dashboard" element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="Greepages-Subscriber">
                 <DashboardIndex />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/locations" element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="Greepages-Subscriber">
                 <DashboardLocations />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/contacts" element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="Greepages-Subscriber">
                 <DashboardContacts />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/authorized-users" element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="Greepages-Subscriber">
                 <AuthorizedUsers />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/products" element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="Greepages-Subscriber">
                 <DashboardProducts />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/services" element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="Greepages-Subscriber">
                 <DashboardServices />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/upgrade" element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="Greepages-Subscriber">
                 <DashboardUpgrade />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/subscription" element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="Greepages-Subscriber">
                 <DashboardSubscription />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/payment" element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="Greepages-Subscriber">
                 <DashboardPayment />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/analytics" element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="Greepages-Subscriber">
                 <DashboardAnalytics />
               </ProtectedRoute>
             } />
             
-            {/* Protected admin routes - require admin role */}
+            {/* Protected admin routes - require GreenPages-Admin or SysAdmin */}
             <Route path="/admin" element={
-              <ProtectedRoute requiredRole="admin">
+              <ProtectedRoute requiredRole="GreenPages-Admin">
                 <AdminIndex />
               </ProtectedRoute>
             } />
             <Route path="/admin/users" element={
-              <ProtectedRoute requiredRole="admin">
+              <ProtectedRoute requiredRole="GreenPages-Admin">
                 <AdminUsers />
               </ProtectedRoute>
             } />
             <Route path="/admin/subscribers" element={
-              <ProtectedRoute requiredRole="admin">
+              <ProtectedRoute requiredRole="GreenPages-Admin">
                 <AdminSubscribers />
               </ProtectedRoute>
             } />
             <Route path="/admin/invoices" element={
-              <ProtectedRoute requiredRole="admin">
+              <ProtectedRoute requiredRole="GreenPages-Admin">
                 <AdminInvoices />
               </ProtectedRoute>
             } />
             <Route path="/admin/permissions" element={
-              <ProtectedRoute requiredRole="admin">
+              <ProtectedRoute requiredRole="GreenPages-Admin">
                 <AdminPermissions />
               </ProtectedRoute>
             } />
             <Route path="/admin/settings" element={
-              <ProtectedRoute requiredRole="admin">
+              <ProtectedRoute requiredRole="GreenPages-Admin">
                 <AdminSettings />
               </ProtectedRoute>
             } />
