@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,7 @@ import {
   X 
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useSubscriptions } from '@/hooks/useSubscriptions';
 
 interface DashboardSidebarProps {
   isOpen: boolean;
@@ -21,6 +23,19 @@ interface DashboardSidebarProps {
 
 const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
   const location = useLocation();
+  const { data: subscriptions } = useSubscriptions();
+
+  // Mock current user's subscription ID - in a real app, this would come from user context
+  const currentSubscriptionId = 'featured-business-001'; // This would come from auth context
+  
+  // Find the current subscription details
+  const currentSubscription = subscriptions?.find(sub => sub.subscriptionId === currentSubscriptionId);
+  
+  // Check if subscription includes Products or Services features
+  const hasProductsFeature = currentSubscription?.features.some(feature => 
+    feature.toLowerCase().includes('product')) || false;
+  const hasServicesFeature = currentSubscription?.features.some(feature => 
+    feature.toLowerCase().includes('service')) || false;
 
   const menuItems = [
     {
@@ -45,13 +60,13 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
       label: 'Products',
       icon: Package,
       href: '/dashboard/products',
-      enabled: true
+      enabled: hasProductsFeature
     },
     {
       label: 'Services',
       icon: Wrench,
       href: '/dashboard/services',
-      enabled: true
+      enabled: hasServicesFeature
     },
     {
       label: 'Authorized Users',
