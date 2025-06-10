@@ -9,7 +9,7 @@ export const useContactForm = (onSuccess: (contact: ContactFormData) => void, on
   const [formData, setFormData] = useState<ContactFormData>({
     producerLocationId: '',
     producerContactType: 'PRIMARY',
-    displayContactType: 'NO_DISPLAY',
+    displayContactType: 'PHONE_EMAIL_ONLY',
     genericContactName: '',
     firstName: '',
     lastName: '',
@@ -29,14 +29,23 @@ export const useContactForm = (onSuccess: (contact: ContactFormData) => void, on
   }, [preSelectedLocationId]);
 
   const handleChange = (field: keyof ContactFormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData(prev => {
+      const newFormData = { ...prev, [field]: value };
+      
+      // When contact type changes to PRIMARY, default display type to PHONE_EMAIL_ONLY
+      if (field === 'producerContactType' && value === 'PRIMARY') {
+        newFormData.displayContactType = 'PHONE_EMAIL_ONLY';
+      }
+      
+      return newFormData;
+    });
   };
 
   const resetForm = () => {
     setFormData({
       producerLocationId: preSelectedLocationId || '',
       producerContactType: 'PRIMARY',
-      displayContactType: 'NO_DISPLAY',
+      displayContactType: 'PHONE_EMAIL_ONLY',
       genericContactName: '',
       firstName: '',
       lastName: '',
