@@ -1,19 +1,21 @@
 
 import React, { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Package, Plus, Edit, Trash, MapPin } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { deleteProduct } from '@/services/productService';
 import AddProductDialog from './AddProductDialog';
 import EditProductDialog from './EditProductDialog';
+import ProductLocationGroup from './ProductLocationGroup';
 
 const DashboardProductsList = () => {
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [deletingProductId, setDeletingProductId] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [preSelectedLocationId, setPreSelectedLocationId] = useState('');
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
   const { toast } = useToast();
 
   // Mock locations data
@@ -41,13 +43,32 @@ const DashboardProductsList = () => {
       category: 'Trees',
       description: 'Beautiful red maple tree, perfect for landscaping',
       locationId: '2'
+    },
+    {
+      id: '3',
+      name: 'Premium Potting Soil',
+      price: 12.99,
+      quantity: 200,
+      category: 'Soil',
+      description: 'Nutrient-rich potting soil blend',
+      locationId: '1'
     }
   ];
 
-  const getLocationName = (locationId: string) => {
-    const location = locations.find(loc => loc.id === locationId);
-    return location ? location.name : 'Unknown Location';
-  };
+  // Group products by location
+  const groupedProducts = React.useMemo(() => {
+    const groups: Record<string, any[]> = {};
+    
+    products.forEach(product => {
+      const locationId = product.locationId || 'no-location';
+      if (!groups[locationId]) {
+        groups[locationId] = [];
+      }
+      groups[locationId].push(product);
+    });
+    
+    return groups;
+  }, [products]);
 
   const handleEdit = (product) => {
     setEditingProduct(product);
@@ -65,7 +86,6 @@ const DashboardProductsList = () => {
         description: "The product has been successfully deleted.",
       });
       
-      // In a real app, you would refetch the products list here
       setDeletingProductId(null);
     } catch (error) {
       console.error('Error deleting product:', error);
@@ -80,13 +100,23 @@ const DashboardProductsList = () => {
   };
 
   const handleProductUpdated = () => {
-    // In a real app, you would refetch the products list here
     console.log('Product updated, refreshing list...');
   };
 
   const handleProductCreated = () => {
-    // In a real app, you would refetch the products list here
     console.log('Product created, refreshing list...');
+  };
+
+  const handleAddProduct = (locationId: string) => {
+    setPreSelectedLocationId(locationId === 'no-location' ? '' : locationId);
+    setIsAddingProduct(true);
+  };
+
+  const toggleGroup = (locationId: string) => {
+    setOpenGroups(prev => ({
+      ...prev,
+      [locationId]: !prev[locationId]
+    }));
   };
 
   return (
@@ -102,62 +132,30 @@ const DashboardProductsList = () => {
         </Button>
       </div>
 
-      <div className="grid gap-6">
-        {products.map((product) => (
-          <Card key={product.id}>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <Package className="w-5 h-5 mr-2 text-greenyp-600" />
-                  <div>
-                    <div>{product.name}</div>
-                    <div className="flex items-center text-sm text-gray-500 font-normal">
-                      <MapPin className="w-3 h-3 mr-1" />
-                      {getLocationName(product.locationId)}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleEdit(product)}
-                  >
-                    <Edit className="w-4 h-4 mr-2" />
-                    Edit
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setDeletingProductId(product.id)}
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                  >
-                    <Trash className="w-4 h-4 mr-2" />
-                    Delete
-                  </Button>
-                </div>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <p className="text-gray-600">{product.description}</p>
-                  <p className="text-sm text-gray-500">Category: {product.category}</p>
-                </div>
-                <div className="space-y-2 text-right">
-                  <p className="text-2xl font-bold text-greenyp-600">${product.price}</p>
-                  <p className="text-sm text-gray-500">In Stock: {product.quantity}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+      <div className="space-y-4">
+        {Object.entries(groupedProducts).map(([locationId, locationProducts]) => (
+          <ProductLocationGroup
+            key={locationId}
+            locationId={locationId}
+            locationProducts={locationProducts}
+            locations={locations}
+            isOpen={openGroups[locationId] || locationProducts.length === 1}
+            onToggle={() => toggleGroup(locationId)}
+            onEditProduct={handleEdit}
+            onDeleteProduct={(productId) => setDeletingProductId(productId)}
+            onAddProduct={handleAddProduct}
+          />
         ))}
       </div>
 
       <AddProductDialog
         isOpen={isAddingProduct}
-        onClose={() => setIsAddingProduct(false)}
+        onClose={() => {
+          setIsAddingProduct(false);
+          setPreSelectedLocationId('');
+        }}
         onProductCreated={handleProductCreated}
+        preSelectedLocationId={preSelectedLocationId}
       />
 
       <EditProductDialog

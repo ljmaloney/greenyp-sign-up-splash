@@ -1,18 +1,21 @@
+
 import React, { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Wrench, Plus, Edit, Trash, MapPin } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { deleteService } from '@/services/serviceService';
 import EditServiceDialog from './EditServiceDialog';
 import AddServiceDialog from './AddServiceDialog';
+import ServiceLocationGroup from './ServiceLocationGroup';
 
 const DashboardServicesList = () => {
   const [editingService, setEditingService] = useState(null);
   const [isAddingService, setIsAddingService] = useState(false);
   const [deletingServiceId, setDeletingServiceId] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [preSelectedLocationId, setPreSelectedLocationId] = useState('');
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
   const { toast } = useToast();
 
   // Mock locations data
@@ -40,13 +43,32 @@ const DashboardServicesList = () => {
       priceUnit: 'per project',
       description: 'Professional garden design and installation services',
       locationId: '2'
+    },
+    {
+      id: '3',
+      name: 'Tree Trimming',
+      minPrice: 150,
+      maxPrice: 500,
+      priceUnit: 'per visit',
+      description: 'Professional tree trimming and maintenance',
+      locationId: '1'
     }
   ];
 
-  const getLocationName = (locationId: string) => {
-    const location = locations.find(loc => loc.id === locationId);
-    return location ? location.name : 'Unknown Location';
-  };
+  // Group services by location
+  const groupedServices = React.useMemo(() => {
+    const groups: Record<string, any[]> = {};
+    
+    services.forEach(service => {
+      const locationId = service.locationId || 'no-location';
+      if (!groups[locationId]) {
+        groups[locationId] = [];
+      }
+      groups[locationId].push(service);
+    });
+    
+    return groups;
+  }, [services]);
 
   const handleEdit = (service) => {
     setEditingService(service);
@@ -64,7 +86,6 @@ const DashboardServicesList = () => {
         description: "The service has been successfully deleted.",
       });
       
-      // In a real app, you would refetch the services list here
       setDeletingServiceId(null);
     } catch (error) {
       console.error('Error deleting service:', error);
@@ -79,13 +100,23 @@ const DashboardServicesList = () => {
   };
 
   const handleServiceUpdated = () => {
-    // In a real app, you would refetch the services list here
     console.log('Service updated, refreshing list...');
   };
 
   const handleServiceCreated = () => {
-    // In a real app, you would refetch the services list here
     console.log('Service created, refreshing list...');
+  };
+
+  const handleAddService = (locationId: string) => {
+    setPreSelectedLocationId(locationId === 'no-location' ? '' : locationId);
+    setIsAddingService(true);
+  };
+
+  const toggleGroup = (locationId: string) => {
+    setOpenGroups(prev => ({
+      ...prev,
+      [locationId]: !prev[locationId]
+    }));
   };
 
   return (
@@ -101,63 +132,30 @@ const DashboardServicesList = () => {
         </Button>
       </div>
 
-      <div className="grid gap-6">
-        {services.map((service) => (
-          <Card key={service.id}>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <Wrench className="w-5 h-5 mr-2 text-greenyp-600" />
-                  <div>
-                    <div>{service.name}</div>
-                    <div className="flex items-center text-sm text-gray-500 font-normal">
-                      <MapPin className="w-3 h-3 mr-1" />
-                      {getLocationName(service.locationId)}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleEdit(service)}
-                  >
-                    <Edit className="w-4 h-4 mr-2" />
-                    Edit
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setDeletingServiceId(service.id)}
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                  >
-                    <Trash className="w-4 h-4 mr-2" />
-                    Delete
-                  </Button>
-                </div>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <p className="text-gray-600">{service.description}</p>
-                </div>
-                <div className="text-right ml-4">
-                  <p className="text-2xl font-bold text-greenyp-600">
-                    ${service.minPrice} - ${service.maxPrice}
-                  </p>
-                  <p className="text-sm text-gray-500">{service.priceUnit}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+      <div className="space-y-4">
+        {Object.entries(groupedServices).map(([locationId, locationServices]) => (
+          <ServiceLocationGroup
+            key={locationId}
+            locationId={locationId}
+            locationServices={locationServices}
+            locations={locations}
+            isOpen={openGroups[locationId] || locationServices.length === 1}
+            onToggle={() => toggleGroup(locationId)}
+            onEditService={handleEdit}
+            onDeleteService={(serviceId) => setDeletingServiceId(serviceId)}
+            onAddService={handleAddService}
+          />
         ))}
       </div>
 
       <AddServiceDialog
         isOpen={isAddingService}
-        onClose={() => setIsAddingService(false)}
+        onClose={() => {
+          setIsAddingService(false);
+          setPreSelectedLocationId('');
+        }}
         onServiceCreated={handleServiceCreated}
+        preSelectedLocationId={preSelectedLocationId}
       />
 
       <EditServiceDialog
