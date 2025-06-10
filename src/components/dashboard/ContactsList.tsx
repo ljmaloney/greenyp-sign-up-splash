@@ -11,6 +11,7 @@ const ContactsList = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingContact, setEditingContact] = useState<Contact | null>(null);
   const [deletingContactId, setDeletingContactId] = useState<string | null>(null);
+  const [preSelectedLocationId, setPreSelectedLocationId] = useState<string>('');
 
   const {
     locations,
@@ -45,8 +46,15 @@ const ContactsList = () => {
     }
   };
 
-  const handleAddContactClick = () => {
+  const handleAddContactClick = (locationId: string) => {
+    const actualLocationId = locationId === 'no-location' ? '' : locationId;
+    setPreSelectedLocationId(actualLocationId);
     setIsAddDialogOpen(true);
+  };
+
+  const handleAddDialogClose = () => {
+    setIsAddDialogOpen(false);
+    setPreSelectedLocationId('');
   };
 
   return (
@@ -73,9 +81,10 @@ const ContactsList = () => {
 
       <AddContactDialog 
         isOpen={isAddDialogOpen}
-        onClose={() => setIsAddDialogOpen(false)}
+        onClose={handleAddDialogClose}
         locations={locations}
         onContactAdded={handleContactAdded}
+        preSelectedLocationId={preSelectedLocationId}
       />
 
       {editingContact && (

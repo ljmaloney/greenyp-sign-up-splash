@@ -1,11 +1,11 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ContactFormData } from "@/types/contact";
 import { useToast } from "@/hooks/use-toast";
 import { getApiUrl } from "@/config/api";
 import { validateContactForm } from "@/utils/contactValidation";
 
-export const useContactForm = (onSuccess: (contact: ContactFormData) => void, onClose: () => void) => {
+export const useContactForm = (onSuccess: (contact: ContactFormData) => void, onClose: () => void, preSelectedLocationId?: string) => {
   const [formData, setFormData] = useState<ContactFormData>({
     producerLocationId: '',
     producerContactType: 'PRIMARY',
@@ -21,13 +21,20 @@ export const useContactForm = (onSuccess: (contact: ContactFormData) => void, on
   
   const { toast } = useToast();
 
+  // Set pre-selected location when provided
+  useEffect(() => {
+    if (preSelectedLocationId) {
+      setFormData(prev => ({ ...prev, producerLocationId: preSelectedLocationId }));
+    }
+  }, [preSelectedLocationId]);
+
   const handleChange = (field: keyof ContactFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const resetForm = () => {
     setFormData({
-      producerLocationId: '',
+      producerLocationId: preSelectedLocationId || '',
       producerContactType: 'PRIMARY',
       displayContactType: 'NO_DISPLAY',
       genericContactName: '',

@@ -11,10 +11,11 @@ interface AddContactDialogProps {
   onClose: () => void;
   locations: Location[];
   onContactAdded: (contact: ContactFormData) => void;
+  preSelectedLocationId?: string;
 }
 
-const AddContactDialog = ({ isOpen, onClose, locations, onContactAdded }: AddContactDialogProps) => {
-  const { formData, handleChange, handleSubmit } = useContactForm(onContactAdded, onClose);
+const AddContactDialog = ({ isOpen, onClose, locations, onContactAdded, preSelectedLocationId }: AddContactDialogProps) => {
+  const { formData, handleChange, handleSubmit } = useContactForm(onContactAdded, onClose, preSelectedLocationId);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

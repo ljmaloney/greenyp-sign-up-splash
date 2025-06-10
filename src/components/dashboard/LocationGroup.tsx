@@ -14,7 +14,7 @@ interface LocationGroupProps {
   onToggle: () => void;
   onEditContact: (contact: Contact) => void;
   onDeleteContact: (contactId: string) => void;
-  onAddContact: () => void;
+  onAddContact: (locationId: string) => void;
 }
 
 const LocationGroup = ({ 
@@ -56,8 +56,8 @@ const LocationGroup = ({
             <Button 
               variant="outline" 
               size="sm"
-              onClick={onAddContact}
-              className="ml-4"
+              onClick={() => onAddContact(locationId)}
+              className="ml-4 bg-greenyp-700 hover:bg-greenyp-800 text-white border-greenyp-700 hover:border-greenyp-800"
             >
               <Plus className="w-4 h-4" />
             </Button>
