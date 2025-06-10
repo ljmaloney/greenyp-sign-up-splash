@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Control } from 'react-hook-form';
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,6 +16,14 @@ interface BusinessInformationCardProps {
 const BusinessInformationCard = ({ control }: BusinessInformationCardProps) => {
   const { data: categories } = useCategories();
   const { data: subscriptions } = useSubscriptions();
+  const businessNameInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    // Auto-focus the Business Name field when component mounts
+    if (businessNameInputRef.current) {
+      businessNameInputRef.current.focus();
+    }
+  }, []);
 
   return (
     <Card>
@@ -32,7 +39,12 @@ const BusinessInformationCard = ({ control }: BusinessInformationCardProps) => {
               <FormItem>
                 <FormLabel>Business Name *</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter your business name" {...field} required />
+                  <Input 
+                    ref={businessNameInputRef}
+                    placeholder="Enter your business name" 
+                    {...field} 
+                    required 
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
