@@ -4,7 +4,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { getApiUrl } from "@/config/api";
 
 interface UserFormData {
   firstName: string;
@@ -13,7 +12,6 @@ interface UserFormData {
   cellPhone: string;
   emailAddress: string;
   userName: string;
-  credentials: string;
 }
 
 interface AddAuthorizedUserDialogProps {
@@ -29,14 +27,33 @@ const AddAuthorizedUserDialog = ({ isOpen, onClose, onUserAdded }: AddAuthorized
     businessPhone: '',
     cellPhone: '',
     emailAddress: '',
-    userName: '',
-    credentials: ''
+    userName: ''
   });
   
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (password !== confirmPassword) {
+      toast({
+        title: "Password Mismatch",
+        description: "Passwords do not match. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!password.trim()) {
+      toast({
+        title: "Password Required",
+        description: "Please enter a password.",
+        variant: "destructive",
+      });
+      return;
+    }
     
     try {
       console.log('Adding authorized user:', formData);
@@ -50,13 +67,14 @@ const AddAuthorizedUserDialog = ({ isOpen, onClose, onUserAdded }: AddAuthorized
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          producerContactId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
           firstName: formData.firstName,
           lastName: formData.lastName,
           businessPhone: formData.businessPhone,
           cellPhone: formData.cellPhone,
           emailAddress: formData.emailAddress,
           userName: formData.userName,
-          credentials: formData.credentials || "{<rt4.kG+N=j7R'_:R$d"
+          credentials: password
         }),
       });
 
@@ -81,9 +99,10 @@ const AddAuthorizedUserDialog = ({ isOpen, onClose, onUserAdded }: AddAuthorized
         businessPhone: '',
         cellPhone: '',
         emailAddress: '',
-        userName: '',
-        credentials: ''
+        userName: ''
       });
+      setPassword('');
+      setConfirmPassword('');
     } catch (error) {
       console.error('Error adding authorized user:', error);
       toast({
@@ -176,12 +195,27 @@ const AddAuthorizedUserDialog = ({ isOpen, onClose, onUserAdded }: AddAuthorized
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Credentials
+                Password *
               </label>
               <Input
-                value={formData.credentials}
-                onChange={(e) => handleChange('credentials', e.target.value)}
-                placeholder="Leave empty for default"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                placeholder="Enter password"
+              />
+            </div>
+            
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Confirm Password *
+              </label>
+              <Input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                placeholder="Confirm password"
               />
             </div>
           </div>
