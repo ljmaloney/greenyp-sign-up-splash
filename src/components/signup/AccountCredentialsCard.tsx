@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Control } from 'react-hook-form';
+import { Control, useWatch } from 'react-hook-form';
 import { Input } from "@/components/ui/input";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,6 +11,11 @@ interface AccountCredentialsCardProps {
 }
 
 const AccountCredentialsCard = ({ control }: AccountCredentialsCardProps) => {
+  const emailAddress = useWatch({
+    control,
+    name: "emailAddress"
+  });
+
   return (
     <Card>
       <CardHeader>
@@ -25,7 +30,12 @@ const AccountCredentialsCard = ({ control }: AccountCredentialsCardProps) => {
               <FormItem>
                 <FormLabel>Username *</FormLabel>
                 <FormControl>
-                  <Input placeholder="Choose a username" {...field} required />
+                  <Input 
+                    placeholder="Choose a username" 
+                    {...field} 
+                    value={field.value || emailAddress || ''}
+                    required 
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
