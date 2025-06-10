@@ -24,3 +24,16 @@ export const getRoleBadgeVariant = (role: string) => {
       return 'secondary';
   }
 };
+
+export const getSubscriptionBadgeVariant = (type: string) => {
+  switch (type) {
+    case 'Enterprise':
+      return 'enterprise';
+    case 'Premium':
+      return 'default';
+    case 'Basic':
+      return 'secondary';
+    default:
+      return 'secondary';
+  }
+};

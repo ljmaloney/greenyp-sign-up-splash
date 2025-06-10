@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -159,7 +158,7 @@ const AdminSubscribers = () => {
   const getSubscriptionBadgeVariant = (type: string) => {
     switch (type) {
       case 'Enterprise':
-        return 'destructive';
+        return 'enterprise';
       case 'Premium':
         return 'default';
       case 'Basic':

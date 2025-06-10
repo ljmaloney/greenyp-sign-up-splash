@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -10,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { getStatusBadgeVariant, getRoleBadgeVariant } from '@/utils/userBadgeUtils';
+import { getStatusBadgeVariant, getRoleBadgeVariant, getSubscriptionBadgeVariant } from '@/utils/userBadgeUtils';
 
 interface User {
   id: string;
