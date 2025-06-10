@@ -88,17 +88,19 @@ const AuthorizedUsersList = () => {
             <CardContent>
               <div className="space-y-2">
                 <p className="text-gray-600 font-medium">Username: {user.userName}</p>
-                <div className="flex items-center space-x-3">
-                  <Mail className="w-4 h-4 text-gray-500" />
-                  <span>{user.emailAddress}</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <Phone className="w-4 h-4 text-gray-500" />
-                  <span>Business: {user.businessPhone}</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <Phone className="w-4 h-4 text-gray-500" />
-                  <span>Cell: {user.cellPhone}</span>
+                <div className="flex items-center space-x-6">
+                  <div className="flex items-center space-x-2">
+                    <Mail className="w-4 h-4 text-gray-500" />
+                    <span>{user.emailAddress}</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Phone className="w-4 h-4 text-gray-500" />
+                    <span>Business: {user.businessPhone}</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Phone className="w-4 h-4 text-gray-500" />
+                    <span>Cell: {user.cellPhone}</span>
+                  </div>
                 </div>
               </div>
             </CardContent>
