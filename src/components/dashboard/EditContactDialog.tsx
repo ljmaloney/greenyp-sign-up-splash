@@ -12,10 +12,23 @@ interface EditContactDialogProps {
   contact: Contact;
   locations: Location[];
   onContactUpdated: (contact: ContactFormData) => void;
+  existingContacts?: Contact[];
 }
 
-const EditContactDialog = ({ isOpen, onClose, contact, locations, onContactUpdated }: EditContactDialogProps) => {
-  const { formData, handleChange, handleSubmit } = useEditContactForm(contact, onContactUpdated, onClose);
+const EditContactDialog = ({ 
+  isOpen, 
+  onClose, 
+  contact, 
+  locations, 
+  onContactUpdated,
+  existingContacts 
+}: EditContactDialogProps) => {
+  const { formData, handleChange, handleSubmit } = useEditContactForm(
+    contact, 
+    onContactUpdated, 
+    onClose,
+    existingContacts
+  );
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

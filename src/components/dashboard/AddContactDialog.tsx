@@ -2,7 +2,7 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ContactFormData, Location } from "@/types/contact";
+import { ContactFormData, Location, Contact } from "@/types/contact";
 import { useContactForm } from "@/hooks/useContactForm";
 import ContactFormFields from "./ContactFormFields";
 
@@ -12,10 +12,23 @@ interface AddContactDialogProps {
   locations: Location[];
   onContactAdded: (contact: ContactFormData) => void;
   preSelectedLocationId?: string;
+  existingContacts?: Contact[];
 }
 
-const AddContactDialog = ({ isOpen, onClose, locations, onContactAdded, preSelectedLocationId }: AddContactDialogProps) => {
-  const { formData, handleChange, handleSubmit } = useContactForm(onContactAdded, onClose, preSelectedLocationId);
+const AddContactDialog = ({ 
+  isOpen, 
+  onClose, 
+  locations, 
+  onContactAdded, 
+  preSelectedLocationId,
+  existingContacts 
+}: AddContactDialogProps) => {
+  const { formData, handleChange, handleSubmit } = useContactForm(
+    onContactAdded, 
+    onClose, 
+    preSelectedLocationId,
+    existingContacts
+  );
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

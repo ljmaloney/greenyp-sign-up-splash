@@ -8,7 +8,8 @@ import { validateContactForm } from "@/utils/contactValidation";
 export const useEditContactForm = (
   contact: Contact,
   onContactUpdated: (contact: ContactFormData) => void,
-  onClose: () => void
+  onClose: () => void,
+  existingContacts?: Contact[]
 ) => {
   const [formData, setFormData] = useState<ContactFormData>({
     producerLocationId: contact.producerLocationId || contact.locationId || '',
@@ -26,13 +27,22 @@ export const useEditContactForm = (
   const { toast } = useToast();
 
   const handleChange = (field: keyof ContactFormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData(prev => {
+      const newFormData = { ...prev, [field]: value };
+      
+      // When contact type changes to PRIMARY, default display type to PHONE_EMAIL_ONLY
+      if (field === 'producerContactType' && value === 'PRIMARY') {
+        newFormData.displayContactType = 'PHONE_EMAIL_ONLY';
+      }
+      
+      return newFormData;
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const validation = validateContactForm(formData);
+    const validation = validateContactForm(formData, existingContacts, contact.id);
     if (!validation.isValid) {
       toast({
         title: "Error",

@@ -1,11 +1,15 @@
-
 import { useState, useEffect } from 'react';
-import { ContactFormData } from "@/types/contact";
+import { ContactFormData, Contact } from "@/types/contact";
 import { useToast } from "@/hooks/use-toast";
 import { getApiUrl } from "@/config/api";
 import { validateContactForm } from "@/utils/contactValidation";
 
-export const useContactForm = (onSuccess: (contact: ContactFormData) => void, onClose: () => void, preSelectedLocationId?: string) => {
+export const useContactForm = (
+  onSuccess: (contact: ContactFormData) => void, 
+  onClose: () => void, 
+  preSelectedLocationId?: string,
+  existingContacts?: Contact[]
+) => {
   const [formData, setFormData] = useState<ContactFormData>({
     producerLocationId: '',
     producerContactType: 'PRIMARY',
@@ -59,7 +63,7 @@ export const useContactForm = (onSuccess: (contact: ContactFormData) => void, on
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const validation = validateContactForm(formData);
+    const validation = validateContactForm(formData, existingContacts);
     if (!validation.isValid) {
       toast({
         title: "Error",

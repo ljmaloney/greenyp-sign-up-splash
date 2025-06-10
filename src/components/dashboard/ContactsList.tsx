@@ -14,6 +14,7 @@ const ContactsList = () => {
   const [preSelectedLocationId, setPreSelectedLocationId] = useState<string>('');
 
   const {
+    contacts,
     locations,
     groupedContacts,
     openLocations,
@@ -85,6 +86,7 @@ const ContactsList = () => {
         locations={locations}
         onContactAdded={handleContactAdded}
         preSelectedLocationId={preSelectedLocationId}
+        existingContacts={contacts}
       />
 
       {editingContact && (
@@ -94,6 +96,7 @@ const ContactsList = () => {
           contact={editingContact}
           locations={locations}
           onContactUpdated={handleContactUpdatedWrapper}
+          existingContacts={contacts}
         />
       )}
 

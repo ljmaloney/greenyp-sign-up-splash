@@ -1,13 +1,29 @@
 
-import { ContactFormData } from "@/types/contact";
+import { ContactFormData, Contact } from "@/types/contact";
 
 export const validateGenericContactName = (name: string): boolean => {
   return /^[A-Za-z\s&]*$/.test(name);
 };
 
-export const validateContactForm = (formData: ContactFormData) => {
+export const validateContactForm = (formData: ContactFormData, existingContacts?: Contact[], editingContactId?: string) => {
   if (!formData.producerLocationId) {
     return { isValid: false, error: "Please select a location." };
+  }
+
+  // Check for existing PRIMARY contact when creating a new PRIMARY contact
+  if (formData.producerContactType === 'PRIMARY' && existingContacts) {
+    const existingPrimaryContact = existingContacts.find(contact => 
+      contact.isPrimary && 
+      contact.locationId === formData.producerLocationId &&
+      contact.id !== editingContactId // Exclude the contact being edited
+    );
+    
+    if (existingPrimaryContact) {
+      return {
+        isValid: false,
+        error: "A PRIMARY contact already exists for this location. Please select a different contact type."
+      };
+    }
   }
 
   // Validate PRIMARY contact display type
