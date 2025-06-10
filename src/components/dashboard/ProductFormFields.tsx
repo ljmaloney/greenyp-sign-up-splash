@@ -18,6 +18,19 @@ interface ProductFormFieldsProps {
 }
 
 const ProductFormFields = ({ formData, onFieldChange, locations }: ProductFormFieldsProps) => {
+  const productTypes = [
+    { value: 'BAGGED_MATERIAL', label: 'Bagged Material - Bagged gravel, sand, decorative stone, mulches, etc' },
+    { value: 'BOTANICAL', label: 'Botanical - Live plants, trees, shrubs, and flowers' },
+    { value: 'BULK_MATERIAL', label: 'Bulk Material - Bulk gravel, soil, mulches, decorative stone, etc' },
+    { value: 'CONTAINERS', label: 'Containers - Pots, starting trays, etc' },
+    { value: 'DECORATIVE_STONE', label: 'Decorative Stone - Fieldstone, river rock, beach pebbles, etc' },
+    { value: 'HARDWARE', label: 'Hardware - Miscellaneous hardware' },
+    { value: 'LANDSCAPE_PRODUCTS', label: 'Landscape Products - Misc landscape products' },
+    { value: 'LANDSCAPE_TOOLS', label: 'Landscape Tools - Landscaping tools and equipment' },
+    { value: 'POND_MAINTENANCE', label: 'Pond Maintenance - Pond installation, pumps, etc' },
+    { value: 'SOIL_AMENDMENTS', label: 'Soil Amendments - Soil amendments' }
+  ];
+
   return (
     <div className="space-y-4">
       <div>
@@ -50,10 +63,11 @@ const ProductFormFields = ({ formData, onFieldChange, locations }: ProductFormFi
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="BAGGED_MATERIAL">Bagged Material</SelectItem>
-            <SelectItem value="PLANT">Plant</SelectItem>
-            <SelectItem value="TOOL">Tool</SelectItem>
-            <SelectItem value="FERTILIZER">Fertilizer</SelectItem>
+            {productTypes.map((type) => (
+              <SelectItem key={type.value} value={type.value}>
+                {type.label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
@@ -81,16 +95,18 @@ const ProductFormFields = ({ formData, onFieldChange, locations }: ProductFormFi
         />
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Botanical Group
-        </label>
-        <Input
-          value={formData.botanicalGroup}
-          onChange={(e) => onFieldChange('botanicalGroup', e.target.value)}
-          placeholder="e.g., Perennials, Annuals"
-        />
-      </div>
+      {formData.productType === 'BOTANICAL' && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Botanical Group (Genus and Species)
+          </label>
+          <Input
+            value={formData.botanicalGroup}
+            onChange={(e) => onFieldChange('botanicalGroup', e.target.value)}
+            placeholder="e.g., Acer palmatum, Rosa damascena"
+          />
+        </div>
+      )}
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
