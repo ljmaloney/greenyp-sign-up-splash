@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Users, Plus, Edit, Mail, Phone, Trash, MapPin, ChevronDown, ChevronRight } from 'lucide-react';
+import { Users, Plus, Edit, Mail, Phone, Trash, MapPin, ChevronDown, ChevronUp } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { getApiUrl } from "@/config/api";
 import AddContactDialog from './AddContactDialog';
@@ -173,7 +173,7 @@ const ContactsList = () => {
           const hasMultipleContacts = locationContacts.length > 1;
 
           return (
-            <div key={locationId} className="border rounded-lg overflow-hidden">
+            <div key={locationId} className="bg-white border rounded-lg overflow-hidden shadow-sm">
               <Collapsible open={isOpen} onOpenChange={() => hasMultipleContacts && toggleLocation(locationId)}>
                 <div className="bg-gray-50 p-4 border-b">
                   <CollapsibleTrigger asChild>
@@ -184,16 +184,16 @@ const ContactsList = () => {
                         <span className="ml-2 text-sm text-gray-500">({locationContacts.length} contact{locationContacts.length !== 1 ? 's' : ''})</span>
                       </div>
                       {hasMultipleContacts && (
-                        isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />
+                        isOpen ? <ChevronUp className="w-4 h-4 text-gray-600" /> : <ChevronDown className="w-4 h-4 text-gray-600" />
                       )}
                     </div>
                   </CollapsibleTrigger>
                 </div>
                 
                 <CollapsibleContent>
-                  <div className="divide-y">
+                  <div className="divide-y bg-white">
                     {locationContacts.map((contact) => (
-                      <div key={contact.id} className="p-4">
+                      <div key={contact.id} className="p-4 bg-white">
                         <div className="flex items-center justify-between">
                           <div className="flex-1">
                             <div className="flex items-center mb-2">
