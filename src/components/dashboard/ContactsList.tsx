@@ -1,7 +1,5 @@
 
 import React, { useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { Plus } from 'lucide-react';
 import { Contact } from "@/types/contact";
 import { useContactsList } from "@/hooks/useContactsList";
 import AddContactDialog from './AddContactDialog';
@@ -47,17 +45,14 @@ const ContactsList = () => {
     }
   };
 
+  const handleAddContactClick = () => {
+    setIsAddDialogOpen(true);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-900">Contacts</h1>
-        <Button 
-          className="bg-greenyp-600 hover:bg-greenyp-700"
-          onClick={() => setIsAddDialogOpen(true)}
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Add Contact
-        </Button>
       </div>
 
       <div className="space-y-4">
@@ -71,6 +66,7 @@ const ContactsList = () => {
             onToggle={() => toggleLocation(locationId)}
             onEditContact={handleEditContact}
             onDeleteContact={handleDeleteContactClick}
+            onAddContact={handleAddContactClick}
           />
         ))}
       </div>
