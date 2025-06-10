@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,6 +27,10 @@ const EditAuthorizedUserDialog = ({ isOpen, onClose, user, onUserUpdated }: Edit
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const { toast } = useToast();
+
+  useEffect(() => {
+    setFormData(user);
+  }, [user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,6 +102,11 @@ const EditAuthorizedUserDialog = ({ isOpen, onClose, user, onUserUpdated }: Edit
 
   const handleChange = (field: keyof AuthorizedUser, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    
+    // Default username to email address when email is entered
+    if (field === 'emailAddress') {
+      setFormData(prev => ({ ...prev, userName: value }));
+    }
   };
 
   return (
@@ -152,30 +161,32 @@ const EditAuthorizedUserDialog = ({ isOpen, onClose, user, onUserUpdated }: Edit
                 placeholder="(555) 123-4567"
               />
             </div>
-            
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email Address *
-              </label>
-              <Input
-                type="email"
-                value={formData.emailAddress}
-                onChange={(e) => handleChange('emailAddress', e.target.value)}
-                required
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Username *
-              </label>
-              <Input
-                value={formData.userName}
-                onChange={(e) => handleChange('userName', e.target.value)}
-                required
-              />
-            </div>
-            
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email Address *
+            </label>
+            <Input
+              type="email"
+              value={formData.emailAddress}
+              onChange={(e) => handleChange('emailAddress', e.target.value)}
+              required
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Username *
+            </label>
+            <Input
+              value={formData.userName}
+              onChange={(e) => handleChange('userName', e.target.value)}
+              required
+            />
+          </div>
+          
+          <div className="grid gap-4 md:grid-cols-2">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Password *
@@ -189,7 +200,7 @@ const EditAuthorizedUserDialog = ({ isOpen, onClose, user, onUserUpdated }: Edit
               />
             </div>
             
-            <div className="md:col-span-2">
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Confirm Password *
               </label>

@@ -115,6 +115,11 @@ const AddAuthorizedUserDialog = ({ isOpen, onClose, onUserAdded }: AddAuthorized
 
   const handleChange = (field: keyof UserFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    
+    // Default username to email address when email is entered
+    if (field === 'emailAddress') {
+      setFormData(prev => ({ ...prev, userName: value }));
+    }
   };
 
   return (
@@ -169,30 +174,32 @@ const AddAuthorizedUserDialog = ({ isOpen, onClose, onUserAdded }: AddAuthorized
                 placeholder="(555) 123-4567"
               />
             </div>
-            
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email Address *
-              </label>
-              <Input
-                type="email"
-                value={formData.emailAddress}
-                onChange={(e) => handleChange('emailAddress', e.target.value)}
-                required
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Username *
-              </label>
-              <Input
-                value={formData.userName}
-                onChange={(e) => handleChange('userName', e.target.value)}
-                required
-              />
-            </div>
-            
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email Address *
+            </label>
+            <Input
+              type="email"
+              value={formData.emailAddress}
+              onChange={(e) => handleChange('emailAddress', e.target.value)}
+              required
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Username *
+            </label>
+            <Input
+              value={formData.userName}
+              onChange={(e) => handleChange('userName', e.target.value)}
+              required
+            />
+          </div>
+          
+          <div className="grid gap-4 md:grid-cols-2">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Password *
@@ -206,7 +213,7 @@ const AddAuthorizedUserDialog = ({ isOpen, onClose, onUserAdded }: AddAuthorized
               />
             </div>
             
-            <div className="md:col-span-2">
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Confirm Password *
               </label>
