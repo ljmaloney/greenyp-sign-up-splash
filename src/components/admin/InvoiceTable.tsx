@@ -2,18 +2,7 @@
 import React from 'react';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import InvoiceTableRow from './InvoiceTableRow';
-
-interface Invoice {
-  id: string;
-  subscriberName: string;
-  email: string;
-  phone: string;
-  producerId: string;
-  amount: number;
-  subscriptionType: string;
-  paymentDate: string;
-  status: string;
-}
+import { Invoice } from '@/data/mockInvoices';
 
 interface InvoiceTableProps {
   invoices: Invoice[];

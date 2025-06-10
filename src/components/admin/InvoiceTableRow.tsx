@@ -2,18 +2,7 @@
 import React from 'react';
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-
-interface Invoice {
-  id: string;
-  subscriberName: string;
-  email: string;
-  phone: string;
-  producerId: string;
-  amount: number;
-  subscriptionType: string;
-  paymentDate: string;
-  status: string;
-}
+import { Invoice } from '@/data/mockInvoices';
 
 interface InvoiceTableRowProps {
   invoice: Invoice;
