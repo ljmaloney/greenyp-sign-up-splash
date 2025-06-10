@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
@@ -24,33 +23,51 @@ const DashboardServicesList = () => {
     { id: '2', name: 'Warehouse', address: '456 Industrial Blvd, San Francisco, CA 94103' }
   ];
 
-  // Mock services data with location associations
+  // Mock services data with location associations and priceUnitsType
   const services = [
     {
       id: '1',
+      producerServiceId: '1',
       name: 'Lawn Maintenance',
+      shortDescription: 'Lawn Maintenance',
       minPrice: 50,
       maxPrice: 100,
+      minServicePrice: 50,
+      maxServicePrice: 100,
+      priceUnitsType: 'PER_VISIT',
       priceUnit: 'per visit',
       description: 'Complete lawn care including mowing, edging, and cleanup',
+      serviceTerms: 'Weather permitting',
       locationId: '1'
     },
     {
       id: '2',
+      producerServiceId: '2',
       name: 'Garden Design',
+      shortDescription: 'Garden Design',
       minPrice: 500,
       maxPrice: 2000,
+      minServicePrice: 500,
+      maxServicePrice: 2000,
+      priceUnitsType: 'FIXED_ESTIMATE',
       priceUnit: 'per project',
       description: 'Professional garden design and installation services',
+      serviceTerms: 'Design approval required before installation',
       locationId: '2'
     },
     {
       id: '3',
+      producerServiceId: '3',
       name: 'Tree Trimming',
+      shortDescription: 'Tree Trimming',
       minPrice: 150,
       maxPrice: 500,
+      minServicePrice: 150,
+      maxServicePrice: 500,
+      priceUnitsType: 'PER_VISIT',
       priceUnit: 'per visit',
       description: 'Professional tree trimming and maintenance',
+      serviceTerms: 'Safety equipment required',
       locationId: '1'
     }
   ];

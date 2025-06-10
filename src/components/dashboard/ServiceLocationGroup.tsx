@@ -35,7 +35,11 @@ const ServiceLocationGroup = ({
   const locationName = getLocationName(locationId === 'no-location' ? undefined : locationId);
   const hasMultipleServices = locationServices.length > 1;
 
-  const getPriceUnitsDisplay = (priceUnitsType: string): string => {
+  const getPriceUnitsDisplay = (priceUnitsType?: string): string => {
+    if (!priceUnitsType) {
+      return 'per service';
+    }
+    
     const mappings: Record<string, string> = {
       'LOT_SIZE': 'per lot size',
       'PER_HOUR': 'per hour',
