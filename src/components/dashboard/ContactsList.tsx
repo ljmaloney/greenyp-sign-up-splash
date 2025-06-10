@@ -175,7 +175,7 @@ const ContactsList = () => {
           return (
             <div key={locationId} className="bg-white border rounded-lg overflow-hidden shadow-sm">
               <Collapsible open={isOpen} onOpenChange={() => hasMultipleContacts && toggleLocation(locationId)}>
-                <div className="bg-gray-50 p-4 border-b">
+                <div className="bg-greenyp-50 p-4 border-b border-greenyp-100">
                   <CollapsibleTrigger asChild>
                     <div className={`flex items-center justify-between ${hasMultipleContacts ? 'cursor-pointer' : 'cursor-default'}`}>
                       <div className="flex items-center">
