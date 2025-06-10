@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,9 +17,10 @@ interface AddProductDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onProductCreated: () => void;
+  preSelectedLocationId?: string;
 }
 
-const AddProductDialog = ({ isOpen, onClose, onProductCreated }: AddProductDialogProps) => {
+const AddProductDialog = ({ isOpen, onClose, onProductCreated, preSelectedLocationId }: AddProductDialogProps) => {
   const [formData, setFormData] = useState({
     producerLocationId: '',
     productType: 'BAGGED_MATERIAL',
@@ -40,6 +40,13 @@ const AddProductDialog = ({ isOpen, onClose, onProductCreated }: AddProductDialo
     { id: '1', name: 'Main Office', address: '123 Garden Street, San Francisco, CA 94102' },
     { id: '2', name: 'Warehouse', address: '456 Industrial Blvd, San Francisco, CA 94103' }
   ];
+
+  // Update form data when preSelectedLocationId changes
+  useEffect(() => {
+    if (preSelectedLocationId) {
+      setFormData(prev => ({ ...prev, producerLocationId: preSelectedLocationId }));
+    }
+  }, [preSelectedLocationId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,7 +89,7 @@ const AddProductDialog = ({ isOpen, onClose, onProductCreated }: AddProductDialo
       
       // Reset form
       setFormData({
-        producerLocationId: '',
+        producerLocationId: preSelectedLocationId || '',
         productType: 'BAGGED_MATERIAL',
         botanicalGroup: '',
         name: '',

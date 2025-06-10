@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,9 +11,10 @@ interface AddServiceDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onServiceCreated: () => void;
+  preSelectedLocationId?: string;
 }
 
-const AddServiceDialog = ({ isOpen, onClose, onServiceCreated }: AddServiceDialogProps) => {
+const AddServiceDialog = ({ isOpen, onClose, onServiceCreated, preSelectedLocationId }: AddServiceDialogProps) => {
   const [formData, setFormData] = useState({
     shortDescription: '',
     description: '',
@@ -32,6 +32,13 @@ const AddServiceDialog = ({ isOpen, onClose, onServiceCreated }: AddServiceDialo
     { id: '1', name: 'Main Office', address: '123 Garden Street, San Francisco, CA 94102' },
     { id: '2', name: 'Warehouse', address: '456 Industrial Blvd, San Francisco, CA 94103' }
   ];
+
+  // Update form data when preSelectedLocationId changes
+  useEffect(() => {
+    if (preSelectedLocationId) {
+      setFormData(prev => ({ ...prev, producerLocationId: preSelectedLocationId }));
+    }
+  }, [preSelectedLocationId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,7 +85,7 @@ const AddServiceDialog = ({ isOpen, onClose, onServiceCreated }: AddServiceDialo
         maxServicePrice: 0,
         priceUnitsType: 'LOT_SIZE',
         serviceTerms: '',
-        producerLocationId: ''
+        producerLocationId: preSelectedLocationId || ''
       });
     } catch (error) {
       console.error('Error creating service:', error);
