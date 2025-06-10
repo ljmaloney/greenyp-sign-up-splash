@@ -42,9 +42,10 @@ const ServiceLocationGroup = ({
     const mappings: Record<string, string> = {
       'LOT_SIZE': 'per lot size',
       'PER_HOUR': 'per hour',
-      'PER_MILE': 'distance (per mile)',
+      'PER_MILE': 'per mile',
+      'PER_MILE_RANGE': 'per mile (range)',
       'PER_VISIT': 'per visit',
-      'FIXED_ESTIMATE': 'per project'
+      'FIXED_ESTIMATE': 'per estimate'
     };
     
     return mappings[priceUnitsType] || priceUnitsType.toLowerCase().replace('_', ' ');

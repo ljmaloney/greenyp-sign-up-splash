@@ -64,7 +64,7 @@ const ServiceFormFields = ({ formData, onFieldChange, locations }: ServiceFormFi
         />
       </div>
       
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-3 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Min Price ($) *
@@ -87,23 +87,54 @@ const ServiceFormFields = ({ formData, onFieldChange, locations }: ServiceFormFi
             required
           />
         </div>
-      </div>
-      
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Price Units Type *
-        </label>
-        <Select value={formData.priceUnitsType} onValueChange={(value) => onFieldChange('priceUnitsType', value)}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select price unit type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="LOT_SIZE">Lot Size</SelectItem>
-            <SelectItem value="PER_VISIT">Per Visit</SelectItem>
-            <SelectItem value="PER_HOUR">Per Hour</SelectItem>
-            <SelectItem value="PER_PROJECT">Per Project</SelectItem>
-          </SelectContent>
-        </Select>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Price Units Type *
+          </label>
+          <Select value={formData.priceUnitsType} onValueChange={(value) => onFieldChange('priceUnitsType', value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select price unit type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="LOT_SIZE">
+                <div>
+                  <div className="font-medium">Lot size</div>
+                  <div className="text-sm text-gray-500">Priced based on size of lot</div>
+                </div>
+              </SelectItem>
+              <SelectItem value="PER_HOUR">
+                <div>
+                  <div className="font-medium">Per hour</div>
+                  <div className="text-sm text-gray-500">Price based on time in hour increments</div>
+                </div>
+              </SelectItem>
+              <SelectItem value="PER_MILE">
+                <div>
+                  <div className="font-medium">Per mile</div>
+                  <div className="text-sm text-gray-500">Price based on number of loaded miles</div>
+                </div>
+              </SelectItem>
+              <SelectItem value="PER_MILE_RANGE">
+                <div>
+                  <div className="font-medium">Per mile (range)</div>
+                  <div className="text-sm text-gray-500">Price based on a range of miles</div>
+                </div>
+              </SelectItem>
+              <SelectItem value="PER_VISIT">
+                <div>
+                  <div className="font-medium">Per visit</div>
+                  <div className="text-sm text-gray-500">Price per visit</div>
+                </div>
+              </SelectItem>
+              <SelectItem value="FIXED_ESTIMATE">
+                <div>
+                  <div className="font-medium">Estimate</div>
+                  <div className="text-sm text-gray-500">Priced determined per contract after estimate</div>
+                </div>
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
       
       <div>
