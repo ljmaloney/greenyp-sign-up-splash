@@ -1,9 +1,8 @@
 
-import React, { useState, useMemo } from 'react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import InvoiceSearch from './InvoiceSearch';
+import InvoiceFilters from './InvoiceFilters';
+import InvoiceTable from './InvoiceTable';
 
 interface Invoice {
   id: string;
@@ -76,98 +75,10 @@ const mockInvoices: Invoice[] = [
 ];
 
 const InvoicesDrilldownTable = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchType, setSearchType] = useState('all');
-  const [dateRange, setDateRange] = useState('all');
-  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
-  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+  const [filteredInvoices, setFilteredInvoices] = useState<Invoice[]>(mockInvoices);
 
-  const filteredInvoices = useMemo(() => {
-    let filtered = mockInvoices;
-
-    // Apply search filter
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      filtered = mockInvoices.filter(invoice => {
-        switch (searchType) {
-          case 'subscriberName':
-            return invoice.subscriberName.toLowerCase().includes(term);
-          case 'email':
-            return invoice.email.toLowerCase().includes(term);
-          case 'phone':
-            return invoice.phone.toLowerCase().includes(term);
-          case 'producerId':
-            return invoice.producerId.toLowerCase().includes(term);
-          case 'all':
-          default:
-            return (
-              invoice.subscriberName.toLowerCase().includes(term) ||
-              invoice.email.toLowerCase().includes(term) ||
-              invoice.phone.toLowerCase().includes(term) ||
-              invoice.producerId.toLowerCase().includes(term)
-            );
-        }
-      });
-    }
-
-    // Apply date range filter
-    if (dateRange !== 'all') {
-      const now = new Date();
-      let filterStartDate = new Date();
-
-      if (dateRange === 'custom' && startDate && endDate) {
-        // Use custom date range
-        filtered = filtered.filter(invoice => {
-          const invoiceDate = new Date(invoice.paymentDate);
-          return invoiceDate >= startDate && invoiceDate <= endDate;
-        });
-      } else {
-        // Use preset date ranges
-        switch (dateRange) {
-          case 'today':
-            filterStartDate.setHours(0, 0, 0, 0);
-            break;
-          case 'week':
-            filterStartDate.setDate(now.getDate() - 7);
-            break;
-          case 'month':
-            filterStartDate.setMonth(now.getMonth() - 1);
-            break;
-          case 'quarter':
-            filterStartDate.setMonth(now.getMonth() - 3);
-            break;
-          case 'year':
-            filterStartDate.setFullYear(now.getFullYear() - 1);
-            break;
-        }
-
-        if (dateRange !== 'custom') {
-          filtered = filtered.filter(invoice => {
-            const invoiceDate = new Date(invoice.paymentDate);
-            return invoiceDate >= filterStartDate;
-          });
-        }
-      }
-    }
-
-    return filtered;
-  }, [searchTerm, searchType, dateRange, startDate, endDate]);
-
-  const handleClearFilters = () => {
-    setSearchTerm('');
-    setSearchType('all');
-    setDateRange('all');
-    setStartDate(undefined);
-    setEndDate(undefined);
-  };
-
-  const getStatusBadgeVariant = (status: string) => {
-    switch (status) {
-      case 'Paid': return 'default';
-      case 'Pending': return 'secondary';
-      case 'Failed': return 'destructive';
-      default: return 'secondary';
-    }
+  const handleFilteredInvoicesChange = (filtered: Invoice[]) => {
+    setFilteredInvoices(filtered);
   };
 
   return (
@@ -176,56 +87,16 @@ const InvoicesDrilldownTable = () => {
         <CardTitle>Invoice Management</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <InvoiceSearch
-          searchTerm={searchTerm}
-          searchType={searchType}
-          dateRange={dateRange}
-          startDate={startDate}
-          endDate={endDate}
-          onSearchChange={setSearchTerm}
-          onSearchTypeChange={setSearchType}
-          onDateRangeChange={setDateRange}
-          onStartDateChange={setStartDate}
-          onEndDateChange={setEndDate}
-          onClearFilters={handleClearFilters}
+        <InvoiceFilters
+          invoices={mockInvoices}
+          onFilteredInvoicesChange={handleFilteredInvoicesChange}
         />
         
         <div className="text-sm text-gray-600">
           Showing {filteredInvoices.length} of {mockInvoices.length} invoices
         </div>
         
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Invoice ID</TableHead>
-              <TableHead>Subscriber Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Phone</TableHead>
-              <TableHead>Producer ID</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Payment Date</TableHead>
-              <TableHead>Status</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredInvoices.map((invoice) => (
-              <TableRow key={invoice.id}>
-                <TableCell className="font-medium">{invoice.id}</TableCell>
-                <TableCell>{invoice.subscriberName}</TableCell>
-                <TableCell>{invoice.email}</TableCell>
-                <TableCell>{invoice.phone}</TableCell>
-                <TableCell>{invoice.producerId}</TableCell>
-                <TableCell>${invoice.amount.toFixed(2)}</TableCell>
-                <TableCell>{new Date(invoice.paymentDate).toLocaleDateString()}</TableCell>
-                <TableCell>
-                  <Badge variant={getStatusBadgeVariant(invoice.status)}>
-                    {invoice.status}
-                  </Badge>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <InvoiceTable invoices={filteredInvoices} />
       </CardContent>
     </Card>
   );
