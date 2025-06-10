@@ -140,13 +140,6 @@ const DashboardServicesList = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-900">Services</h1>
-        <Button 
-          className="bg-greenyp-600 hover:bg-greenyp-700"
-          onClick={() => setIsAddingService(true)}
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Add Service
-        </Button>
       </div>
 
       <div className="space-y-4">

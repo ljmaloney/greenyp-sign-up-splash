@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -85,7 +84,7 @@ const ServiceLocationGroup = ({
               <div key={service.producerServiceId} className="p-4">
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
-                    <div className="flex justify-between items-start mb-2">
+                    <div className="flex justify-between items-start mb-1">
                       <h4 className="font-medium text-gray-900">{service.shortDescription}</h4>
                       <div className="text-right">
                         {service.minServicePrice === service.maxServicePrice ? (
@@ -103,7 +102,7 @@ const ServiceLocationGroup = ({
                       </div>
                     </div>
                     {service.description && (
-                      <p className="text-gray-600 text-sm mb-2">{service.description}</p>
+                      <p className="text-gray-600 text-sm mb-1">{service.description}</p>
                     )}
                     {service.serviceTerms && (
                       <p className="text-gray-500 text-xs">Terms: {service.serviceTerms}</p>
