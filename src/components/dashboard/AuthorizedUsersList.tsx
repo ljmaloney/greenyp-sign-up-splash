@@ -4,6 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { UserPlus, Edit, Mail, Phone, User } from 'lucide-react';
 import AddAuthorizedUserDialog from './AddAuthorizedUserDialog';
+import EditAuthorizedUserDialog from './EditAuthorizedUserDialog';
 
 interface AuthorizedUser {
   id: string;
@@ -17,6 +18,8 @@ interface AuthorizedUser {
 
 const AuthorizedUsersList = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<AuthorizedUser | null>(null);
   
   // Mock authorized users data
   const [authorizedUsers, setAuthorizedUsers] = useState<AuthorizedUser[]>([
@@ -53,6 +56,22 @@ const AuthorizedUsersList = () => {
     setAuthorizedUsers(prev => [...prev, newUser]);
   };
 
+  const handleUserUpdated = (updatedUser: AuthorizedUser) => {
+    setAuthorizedUsers(prev => 
+      prev.map(user => user.id === updatedUser.id ? updatedUser : user)
+    );
+  };
+
+  const handleEditUser = (user: AuthorizedUser) => {
+    setSelectedUser(user);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleCloseEditDialog = () => {
+    setIsEditDialogOpen(false);
+    setSelectedUser(null);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -78,7 +97,7 @@ const AuthorizedUsersList = () => {
                 <Button 
                   variant="ghost" 
                   size="sm"
-                  onClick={() => {/* Edit functionality can be added later */}}
+                  onClick={() => handleEditUser(user)}
                   className="h-8 w-8 p-0"
                 >
                   <Edit className="w-4 h-4" />
@@ -113,6 +132,15 @@ const AuthorizedUsersList = () => {
         onClose={() => setIsAddDialogOpen(false)}
         onUserAdded={handleUserAdded}
       />
+
+      {selectedUser && (
+        <EditAuthorizedUserDialog
+          isOpen={isEditDialogOpen}
+          onClose={handleCloseEditDialog}
+          user={selectedUser}
+          onUserUpdated={handleUserUpdated}
+        />
+      )}
     </div>
   );
 };
