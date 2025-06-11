@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Control, useWatch } from 'react-hook-form';
 import { Input } from "@/components/ui/input";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -14,6 +14,11 @@ const AccountCredentialsCard = ({ control }: AccountCredentialsCardProps) => {
   const emailAddress = useWatch({
     control,
     name: "emailAddress"
+  });
+
+  const userName = useWatch({
+    control,
+    name: "userName"
   });
 
   return (
@@ -34,6 +39,9 @@ const AccountCredentialsCard = ({ control }: AccountCredentialsCardProps) => {
                     placeholder="Username (defaults to email)" 
                     {...field} 
                     value={field.value || emailAddress || ''}
+                    onChange={(e) => {
+                      field.onChange(e.target.value);
+                    }}
                     required 
                   />
                 </FormControl>
