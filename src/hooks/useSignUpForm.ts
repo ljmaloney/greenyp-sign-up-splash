@@ -119,7 +119,8 @@ export const useSignUpForm = (selectedPlan: string) => {
         // Redirect to confirmation page with account data
         const confirmationParams = new URLSearchParams({
           businessName: data.businessName,
-          plan: selectedSubscription?.displayName || data.subscriptionId,
+          plan: selectedSubscription?.displayName || 'Selected Plan',
+          planPrice: selectedSubscription?.formattedMonthlyPrice || '',
           email: data.emailAddress,
           phone: data.phoneNumber,
           location: `${data.city}, ${data.state}`,

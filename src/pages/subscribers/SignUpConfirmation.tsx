@@ -10,14 +10,14 @@ import Footer from '@/components/Footer';
 const SignUpConfirmation = () => {
   const [searchParams] = useSearchParams();
   
-  // Dummy data for initial look and feel
   const accountData = {
-    businessName: searchParams.get('businessName') || 'Green Landscaping Pro',
+    businessName: searchParams.get('businessName') || 'Your Business',
     subscriptionPlan: searchParams.get('plan') || 'Basic Listing',
-    email: searchParams.get('email') || 'john@greenlandscaping.com',
+    subscriptionPrice: searchParams.get('planPrice') || '$5',
+    email: searchParams.get('email') || 'your@email.com',
     phone: searchParams.get('phone') || '(555) 123-4567',
-    location: searchParams.get('location') || 'San Francisco, CA',
-    website: searchParams.get('website') || 'www.greenlandscaping.com',
+    location: searchParams.get('location') || 'Your City, State',
+    website: searchParams.get('website') || '',
     accountId: 'GYP-' + Math.random().toString(36).substr(2, 9).toUpperCase()
   };
 
@@ -54,7 +54,12 @@ const SignUpConfirmation = () => {
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Subscription Plan</p>
-                  <p className="font-semibold text-green-600">{accountData.subscriptionPlan}</p>
+                  <p className="font-semibold text-green-600">
+                    {accountData.subscriptionPlan}
+                    {accountData.subscriptionPrice && accountData.subscriptionPrice !== '$0' && (
+                      <span className="text-sm text-gray-600 ml-2">({accountData.subscriptionPrice}/month)</span>
+                    )}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Account ID</p>
@@ -81,10 +86,12 @@ const SignUpConfirmation = () => {
                   <MapPin className="h-4 w-4 text-gray-500" />
                   <span>{accountData.location}</span>
                 </div>
-                <div className="flex items-center space-x-3">
-                  <Globe className="h-4 w-4 text-gray-500" />
-                  <span>{accountData.website}</span>
-                </div>
+                {accountData.website && (
+                  <div className="flex items-center space-x-3">
+                    <Globe className="h-4 w-4 text-gray-500" />
+                    <span>{accountData.website}</span>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
