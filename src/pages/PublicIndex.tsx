@@ -37,23 +37,6 @@ const PublicIndex = () => {
         
         <SearchForm />
         <CategorySection />
-        
-        {/* Link before Features Section */}
-        <section className="py-8 bg-gray-50">
-          <div className="container mx-auto px-4 md:px-8 text-center">
-            <div className="max-w-2xl mx-auto">
-              <h3 className="text-2xl font-semibold mb-4 text-gray-900">
-                Are you a green industry professional?
-              </h3>
-              <p className="text-gray-700 mb-6">
-                Join thousands of landscapers, lawn care specialists, and nurseries connecting with customers through GreenYP.
-              </p>
-              <Button asChild className="bg-greenyp-600 hover:bg-greenyp-700 text-white px-8 py-3 text-lg">
-                <Link to="/subscriber">List Your Business</Link>
-              </Button>
-            </div>
-          </div>
-        </section>
 
         <FeaturesSection />
         
