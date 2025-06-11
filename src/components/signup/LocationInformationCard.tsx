@@ -5,10 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { SignUpFormData } from '@/types/signUpForm';
+import { SignUpFormSchema } from '@/utils/signUpValidation';
 
 interface LocationInformationCardProps {
-  control: Control<SignUpFormData>;
+  control: Control<SignUpFormSchema>;
 }
 
 const LocationInformationCard = ({ control }: LocationInformationCardProps) => {
