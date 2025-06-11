@@ -20,7 +20,7 @@ const PricingSectionSubscribe = () => {
     
     // Scroll to top before navigation
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    navigate('/subscriber/signup');
+    navigate(`/subscriber/signup?plan=${subscriptionId}`);
   };
 
   if (isLoading) {
