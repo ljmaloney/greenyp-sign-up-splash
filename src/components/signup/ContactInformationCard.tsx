@@ -59,7 +59,7 @@ const ContactInformationCard = ({ control }: ContactInformationCardProps) => {
             control={control}
             name="genericContactName"
             render={({ field }) => (
-              <FormItem className={isGenericNameSelected ? "md:col-span-2" : ""}>
+              <FormItem className="md:col-span-2">
                 <FormLabel>
                   Generic Contact Name {isGenericNameSelected ? "*" : ""}
                 </FormLabel>
