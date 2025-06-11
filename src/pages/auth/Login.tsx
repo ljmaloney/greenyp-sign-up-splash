@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Leaf, Loader2 } from 'lucide-react';
+import {ChevronRight, Leaf, Loader2} from 'lucide-react';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -97,7 +97,25 @@ const Login = () => {
               )}
             </Button>
           </form>
-          
+        <div className="flex justify-center">
+          <Link
+              to={`/subscriber/signup`}
+              className="mt-6 inline-flex items-center text-greenyp-600 hover:text-greenyp-800 font-medium"
+              aria-label={`Create subscriber account`}
+          >
+            List Your Business
+            <ChevronRight className="w-4 h-4 ml-2" />
+          </Link>
+          <br/>
+          <Link
+              to={`/subscriber`}
+              className="mt-6 inline-flex items-center text-greenyp-600 hover:text-greenyp-800 font-medium"
+              aria-label={`Show more information for subscribers`}
+          >
+            More Information
+            <ChevronRight className="w-4 h-4 ml-2" />
+          </Link>
+        </div>
           <div className="mt-4 text-center text-sm text-gray-600">
             <p>Demo credentials:</p>
             <p>User: user@example.com / Admin: admin@example.com</p>
