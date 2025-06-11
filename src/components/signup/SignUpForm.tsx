@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from "@/components/ui/button";
@@ -54,6 +54,15 @@ const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
       confirmPassword: ''
     }
   });
+
+  // Watch for email address changes and update userName accordingly
+  const emailAddress = form.watch('emailAddress');
+  
+  useEffect(() => {
+    if (emailAddress && !form.getValues('userName')) {
+      form.setValue('userName', emailAddress, { shouldValidate: false });
+    }
+  }, [emailAddress, form]);
 
   const onSubmit = async (data: SignUpFormSchema) => {
     setLoading(true);

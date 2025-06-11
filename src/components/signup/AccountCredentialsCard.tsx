@@ -31,7 +31,7 @@ const AccountCredentialsCard = ({ control }: AccountCredentialsCardProps) => {
                 <FormLabel>Username *</FormLabel>
                 <FormControl>
                   <Input 
-                    placeholder="Choose a username" 
+                    placeholder="Username (defaults to email)" 
                     {...field} 
                     value={field.value || emailAddress || ''}
                     required 
