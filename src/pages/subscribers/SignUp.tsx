@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -8,6 +8,11 @@ import SignUpForm from '@/components/signup/SignUpForm';
 const SignUp = () => {
   const [searchParams] = useSearchParams();
   const selectedPlan = searchParams.get('plan') || '';
+
+  useEffect(() => {
+    // Scroll to top when component mounts
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col">
