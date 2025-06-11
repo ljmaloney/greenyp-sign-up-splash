@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Control } from 'react-hook-form';
 import { Input } from "@/components/ui/input";
@@ -117,6 +116,26 @@ const LocationInformationCard = ({ control }: LocationInformationCardProps) => {
               </FormItem>
             )}
           />
+
+          <FormField
+            control={control}
+            name="websiteUrl"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Website URL</FormLabel>
+                <FormControl>
+                  <Input 
+                    type="url" 
+                    placeholder="https://www.yourwebsite.com" 
+                    {...field} 
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div></div>
 
           <FormField
             control={control}

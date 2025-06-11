@@ -91,24 +91,6 @@ const ContactInformationCard = ({ control }: ContactInformationCardProps) => {
 
           <FormField
             control={control}
-            name="websiteUrl"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Website URL</FormLabel>
-                <FormControl>
-                  <Input 
-                    type="url" 
-                    placeholder="https://www.yourwebsite.com" 
-                    {...field} 
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={control}
             name="phoneNumber"
             render={({ field }) => (
               <FormItem>
