@@ -40,6 +40,8 @@ export const signUpFormSchema = z.object({
   emailAddress: z.string()
     .min(1, 'Email address is required')
     .email('Please enter a valid email address'),
+  genericContactName: z.string().optional(),
+  title: z.string().optional(),
   displayContactType: z.string().min(1, 'Contact display type is required'),
   locationName: z.string().optional(),
   locationDisplayType: z.string().min(1, 'Location display type is required'),

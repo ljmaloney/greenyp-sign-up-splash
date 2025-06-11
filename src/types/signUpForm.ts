@@ -11,6 +11,8 @@ export interface SignUpFormData {
   phoneNumber: string;
   cellPhoneNumber: string;
   emailAddress: string;
+  genericContactName: string;
+  title: string;
   displayContactType: string;
   locationName: string;
   locationDisplayType: string;

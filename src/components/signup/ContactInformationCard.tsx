@@ -49,6 +49,34 @@ const ContactInformationCard = ({ control }: ContactInformationCardProps) => {
 
           <FormField
             control={control}
+            name="genericContactName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Generic Contact Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Optional generic contact name" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Title</FormLabel>
+                <FormControl>
+                  <Input placeholder="Job title or position" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={control}
             name="emailAddress"
             render={({ field }) => (
               <FormItem>

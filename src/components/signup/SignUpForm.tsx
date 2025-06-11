@@ -40,6 +40,8 @@ const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
       phoneNumber: '',
       cellPhoneNumber: '',
       emailAddress: '',
+      genericContactName: '',
+      title: '',
       displayContactType: 'FULL_NAME_PHONE_EMAIL',
       locationName: '',
       locationDisplayType: 'CITY_STATE_ZIP',
@@ -82,9 +84,10 @@ const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
         primaryContact: {
           producerContactType: "PRIMARY",
           displayContactType: data.displayContactType,
-          genericContactName: `${data.firstName} ${data.lastName}`,
+          genericContactName: data.genericContactName || `${data.firstName} ${data.lastName}`,
           firstName: data.firstName,
           lastName: data.lastName,
+          title: data.title,
           phoneNumber: data.phoneNumber,
           cellPhoneNumber: data.cellPhoneNumber,
           emailAddress: data.emailAddress
