@@ -4,7 +4,7 @@ import { Control, useWatch } from 'react-hook-form';
 import { Input } from "@/components/ui/input";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { SignUpFormSchema } from '@/utils/signUpValidation';
+import { SignUpFormSchema, formatPhoneNumber } from '@/utils/signUpValidation';
 
 interface AccountCredentialsCardProps {
   control: Control<SignUpFormSchema>;
@@ -28,6 +28,77 @@ const AccountCredentialsCard = ({ control }: AccountCredentialsCardProps) => {
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <FormField
+            control={control}
+            name="firstName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>First Name *</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter your first name" {...field} required />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={control}
+            name="lastName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Last Name *</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter your last name" {...field} required />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={control}
+            name="phoneNumber"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Business Phone *</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="(555) 123-4567" 
+                    {...field}
+                    onChange={(e) => {
+                      const formatted = formatPhoneNumber(e.target.value);
+                      field.onChange(formatted);
+                    }}
+                    required 
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={control}
+            name="cellPhoneNumber"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Cell Phone</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="(555) 123-4567" 
+                    {...field}
+                    onChange={(e) => {
+                      const formatted = formatPhoneNumber(e.target.value);
+                      field.onChange(formatted);
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <FormField
             control={control}
             name="userName"
