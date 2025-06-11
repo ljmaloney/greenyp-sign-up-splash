@@ -104,7 +104,6 @@ const Login = () => {
               aria-label={`Create subscriber account`}
           >
             List Your Business
-            <ChevronRight className="w-4 h-4 ml-2" />
           </Link>
           <br/>
           <Link
@@ -113,7 +112,6 @@ const Login = () => {
               aria-label={`Show more information for subscribers`}
           >
             More Information
-            <ChevronRight className="w-4 h-4 ml-2" />
           </Link>
         </div>
           <div className="mt-4 text-center text-sm text-gray-600">
