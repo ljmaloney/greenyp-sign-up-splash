@@ -5,10 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { SignUpFormData } from '@/types/signUpForm';
+import { SignUpFormSchema, formatPhoneNumber } from '@/utils/signUpValidation';
 
 interface ContactInformationCardProps {
-  control: Control<SignUpFormData>;
+  control: Control<SignUpFormSchema>;
 }
 
 const ContactInformationCard = ({ control }: ContactInformationCardProps) => {
@@ -68,7 +68,15 @@ const ContactInformationCard = ({ control }: ContactInformationCardProps) => {
               <FormItem>
                 <FormLabel>Business Phone *</FormLabel>
                 <FormControl>
-                  <Input placeholder="(555) 123-4567" {...field} required />
+                  <Input 
+                    placeholder="(555) 123-4567" 
+                    {...field}
+                    onChange={(e) => {
+                      const formatted = formatPhoneNumber(e.target.value);
+                      field.onChange(formatted);
+                    }}
+                    required 
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -82,7 +90,14 @@ const ContactInformationCard = ({ control }: ContactInformationCardProps) => {
               <FormItem>
                 <FormLabel>Cell Phone</FormLabel>
                 <FormControl>
-                  <Input placeholder="(555) 123-4567" {...field} />
+                  <Input 
+                    placeholder="(555) 123-4567" 
+                    {...field}
+                    onChange={(e) => {
+                      const formatted = formatPhoneNumber(e.target.value);
+                      field.onChange(formatted);
+                    }}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { toast } from "@/components/ui/sonner";
@@ -8,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSubscriptions } from '@/hooks/useSubscriptions';
 import { getApiUrl } from '@/config/api';
 import { SignUpFormData } from '@/types/signUpForm';
+import { signUpFormSchema, SignUpFormSchema } from '@/utils/signUpValidation';
 import BusinessInformationCard from './BusinessInformationCard';
 import ContactInformationCard from './ContactInformationCard';
 import LocationInformationCard from './LocationInformationCard';
@@ -25,7 +27,8 @@ const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
   // Find the selected subscription to display its name
   const selectedSubscription = subscriptions?.find(sub => sub.subscriptionId === selectedPlan);
   
-  const form = useForm<SignUpFormData>({
+  const form = useForm<SignUpFormSchema>({
+    resolver: zodResolver(signUpFormSchema),
     defaultValues: {
       businessName: '',
       lineOfBusinessId: '',
@@ -52,12 +55,7 @@ const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
     }
   });
 
-  const onSubmit = async (data: SignUpFormData) => {
-    if (data.password !== data.confirmPassword) {
-      toast.error("Passwords don't match");
-      return;
-    }
-
+  const onSubmit = async (data: SignUpFormSchema) => {
     setLoading(true);
     
     try {

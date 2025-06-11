@@ -4,10 +4,10 @@ import { Control, useWatch } from 'react-hook-form';
 import { Input } from "@/components/ui/input";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { SignUpFormData } from '@/types/signUpForm';
+import { SignUpFormSchema } from '@/utils/signUpValidation';
 
 interface AccountCredentialsCardProps {
-  control: Control<SignUpFormData>;
+  control: Control<SignUpFormSchema>;
 }
 
 const AccountCredentialsCard = ({ control }: AccountCredentialsCardProps) => {
@@ -54,6 +54,9 @@ const AccountCredentialsCard = ({ control }: AccountCredentialsCardProps) => {
                   <Input type="password" placeholder="Enter password" {...field} required />
                 </FormControl>
                 <FormMessage />
+                <p className="text-xs text-gray-500 mt-1">
+                  8-20 characters with at least one letter, number, or special character
+                </p>
               </FormItem>
             )}
           />

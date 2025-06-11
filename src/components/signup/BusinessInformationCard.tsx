@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from 'react';
 import { Control } from 'react-hook-form';
 import { Input } from "@/components/ui/input";
@@ -7,10 +8,10 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/comp
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCategories } from '@/hooks/useCategories';
 import { useSubscriptions } from '@/hooks/useSubscriptions';
-import { SignUpFormData } from '@/types/signUpForm';
+import { SignUpFormSchema } from '@/utils/signUpValidation';
 
 interface BusinessInformationCardProps {
-  control: Control<SignUpFormData>;
+  control: Control<SignUpFormSchema>;
 }
 
 const BusinessInformationCard = ({ control }: BusinessInformationCardProps) => {
@@ -122,7 +123,15 @@ const BusinessInformationCard = ({ control }: BusinessInformationCardProps) => {
               <FormItem>
                 <FormLabel>Sign Up Code</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter your sign up code (if applicable)" {...field} />
+                  <Input 
+                    placeholder="Enter your sign up code (if applicable)" 
+                    {...field}
+                    onChange={(e) => {
+                      // Remove spaces and convert to uppercase for consistency
+                      const cleanValue = e.target.value.replace(/\s/g, '').toUpperCase();
+                      field.onChange(cleanValue);
+                    }}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
