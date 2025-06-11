@@ -29,8 +29,8 @@ export const signUpFormSchema = z.object({
     .max(20, 'Sign up code must be at most 20 characters')
     .optional()
     .or(z.literal('')),
-  firstName: z.string().min(1, 'First name is required'),
-  lastName: z.string().min(1, 'Last name is required'),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
   phoneNumber: z.string()
     .min(1, 'Business phone is required')
     .regex(/^\(\d{3}\) \d{3}-\d{4}$/, 'Please enter a valid US phone number'),
@@ -59,6 +59,17 @@ export const signUpFormSchema = z.object({
       'Password must contain at least one letter, number, or special character (#?!@$%^&*-)'
     ),
   confirmPassword: z.string().min(1, 'Please confirm your password')
+}).refine((data) => {
+  // Conditional validation based on displayContactType
+  if (data.displayContactType === 'GENERIC_NAME_PHONE_EMAIL') {
+    return data.genericContactName && data.genericContactName.trim().length > 0;
+  } else {
+    return data.firstName && data.firstName.trim().length > 0 && 
+           data.lastName && data.lastName.trim().length > 0;
+  }
+}, {
+  message: "Please provide the required contact information based on your display type selection",
+  path: ["displayContactType"],
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],

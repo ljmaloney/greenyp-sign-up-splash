@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Control } from 'react-hook-form';
+import { Control, useWatch } from 'react-hook-form';
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -12,6 +12,13 @@ interface ContactInformationCardProps {
 }
 
 const ContactInformationCard = ({ control }: ContactInformationCardProps) => {
+  const displayContactType = useWatch({
+    control,
+    name: "displayContactType"
+  });
+
+  const isGenericNameRequired = displayContactType === 'GENERIC_NAME_PHONE_EMAIL';
+
   return (
     <Card>
       <CardHeader>
@@ -21,45 +28,92 @@ const ContactInformationCard = ({ control }: ContactInformationCardProps) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormField
             control={control}
-            name="firstName"
+            name="displayContactType"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>First Name *</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter your first name" {...field} required />
-                </FormControl>
+              <FormItem className="md:col-span-2">
+                <FormLabel>Contact Display Type *</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select display type" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="FULL_NAME_PHONE_EMAIL">
+                      Display all details in search results
+                    </SelectItem>
+                    <SelectItem value="GENERIC_NAME_PHONE_EMAIL">
+                      Display only generic name, phone and email in search results
+                    </SelectItem>
+                    <SelectItem value="PHONE_EMAIL_ONLY">
+                      Display only the phone and email in search results
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          <FormField
-            control={control}
-            name="lastName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Last Name *</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter your last name" {...field} required />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {isGenericNameRequired ? (
+            <FormField
+              control={control}
+              name="genericContactName"
+              render={({ field }) => (
+                <FormItem className="md:col-span-2">
+                  <FormLabel>Generic Contact Name *</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter generic contact name" {...field} required />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ) : (
+            <>
+              <FormField
+                control={control}
+                name="firstName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>First Name *</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter your first name" {...field} required />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <FormField
-            control={control}
-            name="genericContactName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Generic Contact Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Optional generic contact name" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+              <FormField
+                control={control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Last Name *</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter your last name" {...field} required />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={control}
+                name="genericContactName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Generic Contact Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Optional generic contact name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </>
+          )}
 
           <FormField
             control={control}
@@ -127,35 +181,6 @@ const ContactInformationCard = ({ control }: ContactInformationCardProps) => {
                     }}
                   />
                 </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={control}
-            name="displayContactType"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Contact Display Type *</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select display type" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="FULL_NAME_PHONE_EMAIL">
-                      Display all details in search results
-                    </SelectItem>
-                    <SelectItem value="GENERIC_NAME_PHONE_EMAIL">
-                      Display only generic name, phone and email in search results
-                    </SelectItem>
-                    <SelectItem value="PHONE_EMAIL_ONLY">
-                      Display only the phone and email in search results
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
                 <FormMessage />
               </FormItem>
             )}
