@@ -6,6 +6,8 @@ import CategorySection from '@/components/CategorySection';
 import FeaturesSection from '@/components/FeaturesSection';
 import Footer from '@/components/Footer';
 import DevApiConfig from '@/components/DevApiConfig';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 const PublicIndex = () => {
   return (
@@ -35,8 +37,66 @@ const PublicIndex = () => {
         
         <SearchForm />
         <CategorySection />
+        
+        {/* Link before Features Section */}
+        <section className="py-8 bg-gray-50">
+          <div className="container mx-auto px-4 md:px-8 text-center">
+            <div className="max-w-2xl mx-auto">
+              <h3 className="text-2xl font-semibold mb-4 text-gray-900">
+                Are you a green industry professional?
+              </h3>
+              <p className="text-gray-700 mb-6">
+                Join thousands of landscapers, lawn care specialists, and nurseries connecting with customers through GreenYP.
+              </p>
+              <Button asChild className="bg-greenyp-600 hover:bg-greenyp-700 text-white px-8 py-3 text-lg">
+                <Link to="/subscriber">List Your Business</Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+
         <FeaturesSection />
+        
+        {/* Link after Features Section */}
+        <section className="py-12 bg-greenyp-50">
+          <div className="container mx-auto px-4 md:px-8 text-center">
+            <div className="max-w-3xl mx-auto">
+              <h3 className="text-3xl font-bold mb-4 text-gray-900">
+                Ready to Grow Your Green Business?
+              </h3>
+              <p className="text-xl text-gray-700 mb-8">
+                Start connecting with customers today. Create your business listing and join the leading directory for green industry professionals.
+              </p>
+              <Button asChild size="lg" className="bg-greenyp-600 hover:bg-greenyp-700 text-white px-10 py-4 text-lg">
+                <Link to="/subscriber">Get Started Now</Link>
+              </Button>
+            </div>
+          </div>
+        </section>
       </main>
+      
+      {/* Link before Footer */}
+      <section className="py-16 bg-gray-900 text-white">
+        <div className="container mx-auto px-4 md:px-8 text-center">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-4xl font-bold mb-6">
+              Join the GreenYP Community
+            </h2>
+            <p className="text-xl text-gray-300 mb-8">
+              Whether you're looking for green industry services or want to grow your business, GreenYP connects you with the right people at the right time.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button asChild variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-gray-900">
+                <Link to="/categories">Browse Services</Link>
+              </Button>
+              <Button asChild size="lg" className="bg-greenyp-600 hover:bg-greenyp-700 text-white">
+                <Link to="/subscriber">List Your Business</Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+      
       <Footer />
       <DevApiConfig />
     </div>
