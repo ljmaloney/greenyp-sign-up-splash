@@ -17,7 +17,7 @@ const ContactInformationCard = ({ control }: ContactInformationCardProps) => {
     name: "displayContactType"
   });
 
-  const isGenericNameRequired = displayContactType === 'GENERIC_NAME_PHONE_EMAIL';
+  const isGenericNameSelected = displayContactType === 'GENERIC_NAME_PHONE_EMAIL';
 
   return (
     <Card>
@@ -55,65 +55,69 @@ const ContactInformationCard = ({ control }: ContactInformationCardProps) => {
             )}
           />
 
-          {isGenericNameRequired ? (
-            <FormField
-              control={control}
-              name="genericContactName"
-              render={({ field }) => (
-                <FormItem className="md:col-span-2">
-                  <FormLabel>Generic Contact Name *</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter generic contact name" {...field} required />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          ) : (
-            <>
-              <FormField
-                control={control}
-                name="firstName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>First Name *</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter your first name" {...field} required />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+          <FormField
+            control={control}
+            name="genericContactName"
+            render={({ field }) => (
+              <FormItem className={isGenericNameSelected ? "md:col-span-2" : ""}>
+                <FormLabel>
+                  Generic Contact Name {isGenericNameSelected ? "*" : ""}
+                </FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder={isGenericNameSelected ? "Enter generic contact name" : "Optional generic contact name"} 
+                    {...field} 
+                    required={isGenericNameSelected}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-              <FormField
-                control={control}
-                name="lastName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Last Name *</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter your last name" {...field} required />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+          <FormField
+            control={control}
+            name="firstName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className={isGenericNameSelected ? "text-muted-foreground" : ""}>
+                  First Name {!isGenericNameSelected ? "*" : ""}
+                </FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="Enter your first name" 
+                    {...field} 
+                    required={!isGenericNameSelected}
+                    disabled={isGenericNameSelected}
+                    className={isGenericNameSelected ? "bg-muted text-muted-foreground cursor-not-allowed" : ""}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-              <FormField
-                control={control}
-                name="genericContactName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Generic Contact Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Optional generic contact name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </>
-          )}
+          <FormField
+            control={control}
+            name="lastName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className={isGenericNameSelected ? "text-muted-foreground" : ""}>
+                  Last Name {!isGenericNameSelected ? "*" : ""}
+                </FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="Enter your last name" 
+                    {...field} 
+                    required={!isGenericNameSelected}
+                    disabled={isGenericNameSelected}
+                    className={isGenericNameSelected ? "bg-muted text-muted-foreground cursor-not-allowed" : ""}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <FormField
             control={control}
