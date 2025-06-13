@@ -61,9 +61,9 @@ const LocationFormFields = ({ formData, onFieldChange, showActiveToggle = false 
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="NO_DISPLAY">No Display</SelectItem>
-            <SelectItem value="DISPLAY_WITH_MAP">Display with Map</SelectItem>
-            <SelectItem value="DISPLAY_ONLY">Display Only</SelectItem>
+            <SelectItem value="NO_DISPLAY">Do not display this location in the search results</SelectItem>
+            <SelectItem value="CITY_STATE_ZIP">Display only the city, state, and zip code in search results</SelectItem>
+            <SelectItem value="FULL_ADDRESS">Display the full address in the search results</SelectItem>
           </SelectContent>
         </Select>
       </div>
