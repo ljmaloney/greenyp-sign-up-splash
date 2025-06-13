@@ -8,6 +8,7 @@ import BusinessOverviewCard from './BusinessOverviewCard';
 import PrimaryLocationCard from './PrimaryLocationCard';
 import SubscriptionCard from './SubscriptionCard';
 import DashboardContactCard from './DashboardContactCard';
+import ActiveSubscriptionsCard from './ActiveSubscriptionsCard';
 
 const BusinessProfile = () => {
   const { user } = useAuth();
@@ -65,6 +66,9 @@ const BusinessProfile = () => {
 
       {/* Primary Location */}
       <PrimaryLocationCard primaryLocation={primaryLocation} />
+
+      {/* Active Subscriptions */}
+      <ActiveSubscriptionsCard subscriptions={producer.subscriptions} />
 
       {/* Subscription Information */}
       <SubscriptionCard subscriptions={producer.subscriptions} />
