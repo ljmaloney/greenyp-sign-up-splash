@@ -15,7 +15,7 @@ const DashboardContactCard = ({ contact, title, icon: Icon }: DashboardContactCa
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-greenyp-600">
           <Icon className="h-5 w-5" />
           {title}
         </CardTitle>

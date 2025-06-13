@@ -26,7 +26,17 @@ const BusinessOverviewCard = ({ producer }: BusinessOverviewCardProps) => {
   };
 
   const getLineOfBusinessName = (lineOfBusinessId: string) => {
-    const lob = lineOfBusinessData?.find(item => item.lineOfBusinessId === lineOfBusinessId);
+    console.log('🔍 Looking for lineOfBusinessId:', lineOfBusinessId);
+    console.log('📊 Available line of business data:', lineOfBusinessData);
+    
+    if (!lineOfBusinessData || !lineOfBusinessId) {
+      console.log('❌ No line of business data or ID available');
+      return 'Not specified';
+    }
+    
+    const lob = lineOfBusinessData.find(item => item.lineOfBusinessId === lineOfBusinessId);
+    console.log('✅ Found line of business:', lob);
+    
     return lob?.displayName || 'Unknown';
   };
 
