@@ -12,16 +12,50 @@ const AuthCallback = () => {
   useEffect(() => {
     const handleCallback = async () => {
       try {
+        console.log('🔄 Starting callback handling...');
         const user = await oidcService.handleCallback();
         
-        if (user) {
-          // Redirect to dashboard
-          navigate('/dashboard');
+        console.log('✅ Callback completed, user received:', {
+          hasUser: !!user,
+          userProfile: user ? {
+            sub: user.profile?.sub,
+            email: user.profile?.email,
+            name: user.profile?.name,
+            expired: user.expired,
+            accessToken: user.access_token ? 'present' : 'missing'
+          } : 'no user'
+        });
+        
+        if (user && !user.expired) {
+          console.log('🎯 User is valid, checking if properly stored...');
+          
+          // Give a small delay to ensure user is stored properly
+          setTimeout(async () => {
+            const storedUser = await oidcService.getUser();
+            console.log('🔍 Checking stored user after callback:', {
+              hasStoredUser: !!storedUser,
+              storedUserValid: storedUser && !storedUser.expired
+            });
+            
+            if (storedUser && !storedUser.expired) {
+              console.log('✅ User properly stored, redirecting to dashboard');
+              navigate('/dashboard');
+            } else {
+              console.error('❌ User not properly stored after callback');
+              setError('Authentication completed but user session could not be established');
+            }
+          }, 100);
         } else {
-          setError('Authentication failed - no user returned');
+          console.error('❌ Invalid user from callback:', user);
+          setError('Authentication failed - invalid user session');
         }
       } catch (error) {
-        console.error('Auth callback error:', error);
+        console.error('❌ Auth callback error:', error);
+        console.error('Error details:', {
+          message: error.message,
+          stack: error.stack,
+          name: error.name
+        });
         setError('Authentication failed. Please try again.');
         setTimeout(() => navigate('/login'), 3000);
       }

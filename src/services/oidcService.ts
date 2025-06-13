@@ -17,20 +17,23 @@ class OIDCService {
     
     // Set up event handlers
     this.userManager.events.addUserLoaded((user) => {
-      console.log('User loaded:', user);
+      console.log('🔔 User loaded event:', {
+        sub: user.profile?.sub,
+        email: user.profile?.email,
+        expired: user.expired
+      });
     });
     
     this.userManager.events.addUserUnloaded(() => {
-      console.log('User unloaded');
+      console.log('🔔 User unloaded event');
     });
     
     this.userManager.events.addAccessTokenExpired(() => {
-      console.log('Access token expired');
+      console.log('🔔 Access token expired event');
     });
 
-    // Add error event handler
     this.userManager.events.addAccessTokenExpiring(() => {
-      console.log('Access token expiring');
+      console.log('🔔 Access token expiring event');
     });
   }
 
@@ -101,15 +104,33 @@ class OIDCService {
 
   async handleCallback(): Promise<User> {
     try {
-      console.log('Handling OIDC callback...');
-      console.log('Current URL:', window.location.href);
-      console.log('URL search params:', window.location.search);
+      console.log('🔄 Handling OIDC callback...');
+      console.log('📍 Current URL:', window.location.href);
+      console.log('🔍 URL search params:', window.location.search);
       
       const user = await this.userManager.signinRedirectCallback();
-      console.log('Callback successful, user:', user);
+      console.log('✅ Callback successful, user details:', {
+        hasUser: !!user,
+        sub: user?.profile?.sub,
+        email: user?.profile?.email,
+        name: user?.profile?.name,
+        expired: user?.expired,
+        expiresAt: user?.expires_at,
+        currentTime: Math.floor(Date.now() / 1000),
+        hasAccessToken: !!user?.access_token,
+        hasIdToken: !!user?.id_token
+      });
+      
+      // Verify the user is properly stored
+      const storedUser = await this.userManager.getUser();
+      console.log('🔍 User stored check:', {
+        isStored: !!storedUser,
+        matches: storedUser?.profile?.sub === user?.profile?.sub
+      });
+      
       return user;
     } catch (error) {
-      console.error('Callback handling failed:', error);
+      console.error('❌ Callback handling failed:', error);
       console.error('Error details:', {
         message: error.message,
         stack: error.stack,
@@ -142,10 +163,20 @@ class OIDCService {
   async getUser(): Promise<User | null> {
     try {
       const user = await this.userManager.getUser();
-      console.log('Retrieved user:', user ? 'User found' : 'No user');
+      console.log('👤 Get user result:', {
+        hasUser: !!user,
+        userValid: user && !user.expired,
+        userDetails: user ? {
+          sub: user.profile?.sub,
+          email: user.profile?.email,
+          expired: user.expired,
+          expiresAt: user.expires_at,
+          currentTime: Math.floor(Date.now() / 1000)
+        } : 'no user'
+      });
       return user;
     } catch (error) {
-      console.error('Get user failed:', error);
+      console.error('❌ Get user failed:', error);
       return null;
     }
   }
