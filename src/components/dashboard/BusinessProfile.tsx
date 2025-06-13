@@ -1,228 +1,208 @@
 
-import React, { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { User, Phone, Mail, MapPin, Globe, Edit, Upload, Images, Star } from 'lucide-react';
-import EditBusinessProfileDialog from './EditBusinessProfileDialog';
-import EditBusinessInfoDialog from './EditBusinessInfoDialog';
-import EditContactInfoDialog from './EditContactInfoDialog';
-import { useSubscriptions } from '@/hooks/useSubscriptions';
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { MapPin, Phone, Mail, Calendar, DollarSign } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useAccountData } from '@/hooks/useAccountData';
 
 const BusinessProfile = () => {
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isBusinessInfoDialogOpen, setIsBusinessInfoDialogOpen] = useState(false);
-  const [isContactInfoDialogOpen, setIsContactInfoDialogOpen] = useState(false);
-  const { data: subscriptions } = useSubscriptions();
-  
-  // Mock business data - in real app this would come from API
-  const businessData = {
-    businessName: 'Green Landscaping Pro',
-    contactName: 'John Smith',
-    email: 'john@greenlandscaping.com',
-    phone: '(555) 123-4567',
-    address: '123 Garden Street, San Francisco, CA 94102',
-    website: 'www.greenlandscaping.com',
-    description: 'Professional landscaping services specializing in sustainable garden design and maintenance.',
-    subscriptionId: 'featured-business-001', // Mock subscription ID
-    subscriptionType: 'ADMIN' // Mock subscription type
-  };
+  const { user } = useAuth();
+  const { data: accountData, isLoading, error } = useAccountData(user?.id || null);
 
-  // Check if current subscription has logo feature
-  const currentSubscription = subscriptions?.find(sub => sub.subscriptionId === businessData.subscriptionId);
-  const hasLogoFeature = currentSubscription?.features.some(feature => 
-    feature.toLowerCase().includes('logo') || feature.toLowerCase().includes('branding')
-  ) || false;
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardContent className="p-6">
+            <div className="animate-pulse space-y-4">
+              <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+              <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
-  // Check if current subscription has image gallery feature
-  const hasImageFeature = currentSubscription?.features.some(feature => 
-    feature.toLowerCase().includes('photo') || 
-    feature.toLowerCase().includes('image') || 
-    feature.toLowerCase().includes('gallery')
-  ) || false;
+  if (error) {
+    return (
+      <Card>
+        <CardContent className="p-6">
+          <div className="text-center py-8">
+            <p className="text-red-600 mb-2">Error loading account data</p>
+            <p className="text-sm text-gray-600">{error.message}</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
-  // Check if subscription type is ADMIN
-  const isAdminSubscription = businessData.subscriptionType === 'ADMIN';
+  if (!accountData) {
+    return (
+      <Card>
+        <CardContent className="p-6">
+          <div className="text-center py-8">
+            <p className="text-gray-600">No account data available</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
-  const handleLogoUpload = () => {
-    if (hasLogoFeature) {
-      // In real app, this would open file picker and handle upload
-      console.log('Opening logo upload...');
-    }
-  };
-
-  const handleImageUpload = () => {
-    if (hasImageFeature) {
-      // In real app, this would open file picker and handle upload
-      console.log('Opening image gallery upload...');
-    }
-  };
+  const { producer, primaryLocation, contacts } = accountData;
+  const primaryContact = contacts.find(contact => contact.producerContactType === 'PRIMARY');
+  const adminContact = contacts.find(contact => contact.producerContactType === 'ADMIN');
 
   return (
-    <div className="space-y-6 text-left">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">Business Profile</h1>
-        <Button 
-          className="bg-greenyp-600 hover:bg-greenyp-700"
-          onClick={() => setIsEditDialogOpen(true)}
-        >
-          <Edit className="w-4 h-4 mr-2" />
-          Edit Profile
-        </Button>
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Business Information */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <div className="flex flex-col">
-              <CardTitle className="flex items-center">
-                <User className="w-5 h-5 mr-2 text-greenyp-600" />
-                Business Information
-                {isAdminSubscription && (
-                  <Star className="w-4 h-4 ml-2 text-yellow-500 fill-yellow-500" />
-                )}
-              </CardTitle>
-              {isAdminSubscription && (
-                <p className="text-sm text-green-600 font-medium mt-1">free subscription</p>
-              )}
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsBusinessInfoDialogOpen(true)}
-            >
-              <Edit className="w-4 h-4" />
-            </Button>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <label className="text-sm font-medium text-gray-600">Business Name</label>
-              <p className="text-gray-900">{businessData.businessName}</p>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-600">Contact Name</label>
-              <p className="text-gray-900">{businessData.contactName}</p>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-600">Website</label>
-              <div className="flex items-center space-x-3">
-                <Globe className="w-4 h-4 text-gray-500" />
-                <span>{businessData.website}</span>
-              </div>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-600">Description</label>
-              <p className="text-gray-900">{businessData.description}</p>
-            </div>
-            
-            {/* Logo Upload Section */}
-            <div>
-              <label className="text-sm font-medium text-gray-600 mb-2 block">Business Logo</label>
-              <Button
-                variant="outline"
-                onClick={handleLogoUpload}
-                disabled={!hasLogoFeature}
-                className={`w-full ${!hasLogoFeature ? 'opacity-50 cursor-not-allowed' : ''}`}
-              >
-                <Upload className="w-4 h-4 mr-2" />
-                {hasLogoFeature ? 'Upload Logo' : 'Upload Logo (Upgrade Required)'}
-              </Button>
-              {!hasLogoFeature && (
-                <p className="text-xs text-gray-500 mt-1">
-                  Logo upload is available with premium subscriptions
-                </p>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Contact Information */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="flex items-center">
-              <Phone className="w-5 h-5 mr-2 text-greenyp-600" />
-              Contact Information
-            </CardTitle>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsContactInfoDialogOpen(true)}
-            >
-              <Edit className="w-4 h-4" />
-            </Button>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center space-x-3">
-              <Mail className="w-4 h-4 text-gray-500" />
-              <span>{businessData.email}</span>
-            </div>
-            <div className="flex items-center space-x-3">
-              <Phone className="w-4 h-4 text-gray-500" />
-              <span>{businessData.phone}</span>
-            </div>
-            <div className="flex items-center space-x-3">
-              <MapPin className="w-4 h-4 text-gray-500" />
-              <span>{businessData.address}</span>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Image Gallery Section */}
+    <div className="space-y-6">
+      {/* Business Overview */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center">
-            <Images className="w-5 h-5 mr-2 text-greenyp-600" />
-            Image Gallery
+          <div className="flex justify-between items-start">
+            <div>
+              <CardTitle className="text-2xl">{producer.businessName}</CardTitle>
+              <p className="text-gray-600 mt-2">{producer.narrative}</p>
+            </div>
+            <Badge variant={producer.subscriptionType === 'LIVE_UNPAID' ? 'destructive' : 'default'}>
+              {producer.subscriptionType.replace('_', ' ')}
+            </Badge>
+          </div>
+        </CardHeader>
+      </Card>
+
+      {/* Primary Location */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <MapPin className="h-5 w-5" />
+            Primary Location
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div>
-            <label className="text-sm font-medium text-gray-600 mb-2 block">Business Images</label>
-            <Button
-              variant="outline"
-              onClick={handleImageUpload}
-              disabled={!hasImageFeature}
-              className={`w-full ${!hasImageFeature ? 'opacity-50 cursor-not-allowed' : ''}`}
-            >
-              <Upload className="w-4 h-4 mr-2" />
-              {hasImageFeature ? 'Upload Images' : 'Upload Images (Upgrade Required)'}
-            </Button>
-            {!hasImageFeature && (
-              <p className="text-xs text-gray-500 mt-1">
-                Image gallery is available with featured business subscriptions
-              </p>
-            )}
+          <div className="space-y-2">
+            <h3 className="font-semibold">{primaryLocation.locationName}</h3>
+            <div className="text-gray-600">
+              <p>{primaryLocation.addressLine1}</p>
+              {primaryLocation.addressLine2 && <p>{primaryLocation.addressLine2}</p>}
+              <p>{primaryLocation.city}, {primaryLocation.state} {primaryLocation.postalCode}</p>
+            </div>
+            <Badge variant="outline">
+              {primaryLocation.locationType.replace('_', ' ')}
+            </Badge>
           </div>
         </CardContent>
       </Card>
 
-      <EditBusinessProfileDialog 
-        isOpen={isEditDialogOpen}
-        onClose={() => setIsEditDialogOpen(false)}
-        businessData={businessData}
-      />
+      {/* Subscription Information */}
+      {producer.subscriptions.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <DollarSign className="h-5 w-5" />
+              Active Subscriptions
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {producer.subscriptions.map((subscription) => (
+                <div key={subscription.subscriptionId} className="border rounded-lg p-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <h4 className="font-semibold">{subscription.displayName}</h4>
+                      <p className="text-sm text-gray-600">{subscription.shortDescription}</p>
+                    </div>
+                    <Badge variant="outline">
+                      ${subscription.subscriptionAmount}/{subscription.invoiceCycleType.toLowerCase()}
+                    </Badge>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-gray-600">Start Date:</span>
+                      <p>{new Date(subscription.startDate).toLocaleDateString()}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Next Invoice:</span>
+                      <p>{new Date(subscription.nextInvoiceDate).toLocaleDateString()}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
-      <EditBusinessInfoDialog 
-        isOpen={isBusinessInfoDialogOpen}
-        onClose={() => setIsBusinessInfoDialogOpen(false)}
-        businessData={{
-          businessName: businessData.businessName,
-          contactName: businessData.contactName,
-          description: businessData.description,
-          websiteUrl: businessData.website
-        }}
-      />
+      {/* Contact Information */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {primaryContact && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Phone className="h-5 w-5" />
+                Primary Contact
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <h4 className="font-semibold">
+                  {primaryContact.genericContactName || `${primaryContact.firstName} ${primaryContact.lastName}`}
+                </h4>
+                {primaryContact.title && <p className="text-sm text-gray-600">{primaryContact.title}</p>}
+                <div className="space-y-1 text-sm">
+                  <div className="flex items-center gap-2">
+                    <Phone className="h-4 w-4" />
+                    <span>{primaryContact.phoneNumber}</span>
+                  </div>
+                  {primaryContact.cellPhoneNumber && (
+                    <div className="flex items-center gap-2">
+                      <Phone className="h-4 w-4" />
+                      <span>{primaryContact.cellPhoneNumber}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <Mail className="h-4 w-4" />
+                    <span>{primaryContact.emailAddress}</span>
+                    {!primaryContact.emailConfirmed && (
+                      <Badge variant="destructive" className="text-xs">Unconfirmed</Badge>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
-      <EditContactInfoDialog 
-        isOpen={isContactInfoDialogOpen}
-        onClose={() => setIsContactInfoDialogOpen(false)}
-        contactData={{
-          email: businessData.email,
-          phone: businessData.phone,
-          address: businessData.address
-        }}
-      />
+        {adminContact && adminContact.contactId !== primaryContact?.contactId && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Mail className="h-5 w-5" />
+                Admin Contact
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <h4 className="font-semibold">{adminContact.firstName} {adminContact.lastName}</h4>
+                <div className="space-y-1 text-sm">
+                  <div className="flex items-center gap-2">
+                    <Phone className="h-4 w-4" />
+                    <span>{adminContact.phoneNumber}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Mail className="h-4 w-4" />
+                    <span>{adminContact.emailAddress}</span>
+                    {!adminContact.emailConfirmed && (
+                      <Badge variant="destructive" className="text-xs">Unconfirmed</Badge>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
 };
