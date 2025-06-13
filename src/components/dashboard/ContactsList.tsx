@@ -1,21 +1,91 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Users, Phone, Mail } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Users, Phone, Mail, Plus, Edit, Trash2 } from 'lucide-react';
 import { useContacts } from '@/hooks/useContacts';
+import { useLocations } from '@/hooks/useLocations';
+import { useToast } from '@/hooks/use-toast';
+import { getApiUrl } from '@/config/api';
+import AddContactDialog from './AddContactDialog';
+import EditContactDialog from './EditContactDialog';
+import DeleteContactDialog from './DeleteContactDialog';
 
 const ContactsList = () => {
   const [searchParams] = useSearchParams();
   const producerId = searchParams.get('producerId');
   
-  const { data: contacts, isLoading, error } = useContacts(producerId);
+  const { data: contacts, isLoading, error, refetch } = useContacts(producerId);
+  const { data: locations } = useLocations(producerId);
+  const { toast } = useToast();
+
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedContact, setSelectedContact] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   console.log('👥 ContactsList - producerId:', producerId);
   console.log('👥 ContactsList - contacts data:', contacts);
   console.log('👥 ContactsList - loading:', isLoading);
   console.log('👥 ContactsList - error:', error);
+
+  const handleAddContact = () => {
+    setIsAddDialogOpen(true);
+  };
+
+  const handleEditContact = (contact) => {
+    setSelectedContact(contact);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleDeleteContact = (contact) => {
+    setSelectedContact(contact);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteContact = async () => {
+    if (!selectedContact) return;
+    
+    setIsDeleting(true);
+    try {
+      const response = await fetch(getApiUrl(`/producer/contact/${selectedContact.contactId}`), {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete contact: ${response.status}`);
+      }
+
+      toast({
+        title: "Contact Deleted",
+        description: "Contact has been successfully deleted.",
+      });
+      
+      refetch();
+      setIsDeleteDialogOpen(false);
+      setSelectedContact(null);
+    } catch (error) {
+      console.error('Error deleting contact:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete contact. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleContactAdded = () => {
+    refetch();
+  };
+
+  const handleContactUpdated = () => {
+    refetch();
+  };
 
   if (isLoading) {
     return (
@@ -107,6 +177,10 @@ const ContactsList = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Contacts</h1>
+        <Button onClick={handleAddContact} className="bg-greenyp-600 hover:bg-greenyp-700">
+          <Plus className="h-4 w-4 mr-2" />
+          Add Contact
+        </Button>
       </div>
 
       {!contacts || contacts.length === 0 ? (
@@ -140,6 +214,24 @@ const ContactsList = () => {
                         </Badge>
                       )}
                     </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleEditContact(contact)}
+                      className="h-8 w-8 p-0"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDeleteContact(contact)}
+                      className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
               </CardHeader>
@@ -187,6 +279,62 @@ const ContactsList = () => {
           ))}
         </div>
       )}
+
+      {locations && (
+        <AddContactDialog
+          isOpen={isAddDialogOpen}
+          onClose={() => setIsAddDialogOpen(false)}
+          locations={locations.map(loc => ({
+            id: loc.locationId,
+            locationName: loc.locationName
+          }))}
+          onContactAdded={handleContactAdded}
+          existingContacts={contacts}
+        />
+      )}
+
+      {selectedContact && locations && (
+        <EditContactDialog
+          isOpen={isEditDialogOpen}
+          onClose={() => {
+            setIsEditDialogOpen(false);
+            setSelectedContact(null);
+          }}
+          contact={{
+            id: selectedContact.contactId,
+            producerLocationId: selectedContact.producerLocationId,
+            producerContactType: selectedContact.producerContactType,
+            displayContactType: selectedContact.displayContactType,
+            genericContactName: selectedContact.genericContactName,
+            firstName: selectedContact.firstName,
+            lastName: selectedContact.lastName,
+            title: selectedContact.title,
+            phoneNumber: selectedContact.phoneNumber,
+            cellPhoneNumber: selectedContact.cellPhoneNumber,
+            emailAddress: selectedContact.emailAddress,
+            name: `${selectedContact.firstName} ${selectedContact.lastName}`,
+            email: selectedContact.emailAddress,
+            phone: selectedContact.phoneNumber,
+            isPrimary: selectedContact.producerContactType === 'PRIMARY'
+          }}
+          locations={locations.map(loc => ({
+            id: loc.locationId,
+            locationName: loc.locationName
+          }))}
+          onContactUpdated={handleContactUpdated}
+          existingContacts={contacts}
+        />
+      )}
+
+      <DeleteContactDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => {
+          setIsDeleteDialogOpen(false);
+          setSelectedContact(null);
+        }}
+        onConfirm={confirmDeleteContact}
+        isDeleting={isDeleting}
+      />
     </div>
   );
 };

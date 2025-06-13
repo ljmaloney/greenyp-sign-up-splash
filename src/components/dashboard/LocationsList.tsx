@@ -1,21 +1,80 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Plus, Globe } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { MapPin, Plus, Globe, Edit, Trash2 } from 'lucide-react';
 import { useLocations } from '@/hooks/useLocations';
+import { useToast } from '@/hooks/use-toast';
+import { getApiUrl } from '@/config/api';
+import AddLocationDialog from './AddLocationDialog';
+import EditLocationDialog from './EditLocationDialog';
 
 const LocationsList = () => {
   const [searchParams] = useSearchParams();
   const producerId = searchParams.get('producerId');
   
-  const { data: locations, isLoading, error } = useLocations(producerId);
+  const { data: locations, isLoading, error, refetch } = useLocations(producerId);
+  const { toast } = useToast();
+
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   console.log('📍 LocationsList - producerId:', producerId);
   console.log('📍 LocationsList - locations data:', locations);
   console.log('📍 LocationsList - loading:', isLoading);
   console.log('📍 LocationsList - error:', error);
+
+  const handleAddLocation = () => {
+    setIsAddDialogOpen(true);
+  };
+
+  const handleEditLocation = (location) => {
+    setSelectedLocation(location);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleDeleteLocation = async (location) => {
+    if (window.confirm('Are you sure you want to delete this location? This action cannot be undone.')) {
+      setIsDeleting(true);
+      try {
+        const response = await fetch(getApiUrl(`/producer/location/${location.locationId}`), {
+          method: 'DELETE',
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to delete location: ${response.status}`);
+        }
+
+        toast({
+          title: "Location Deleted",
+          description: "Location has been successfully deleted.",
+        });
+        
+        refetch();
+      } catch (error) {
+        console.error('Error deleting location:', error);
+        toast({
+          title: "Error",
+          description: "Failed to delete location. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsDeleting(false);
+      }
+    }
+  };
+
+  const handleLocationAdded = () => {
+    refetch();
+  };
+
+  const handleLocationUpdated = () => {
+    refetch();
+  };
 
   if (isLoading) {
     return (
@@ -103,6 +162,10 @@ const LocationsList = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Locations</h1>
+        <Button onClick={handleAddLocation} className="bg-greenyp-600 hover:bg-greenyp-700">
+          <Plus className="h-4 w-4 mr-2" />
+          Add Location
+        </Button>
       </div>
 
       {!locations || locations.length === 0 ? (
@@ -134,6 +197,25 @@ const LocationsList = () => {
                         {getLocationTypeDisplay(location.locationType)}
                       </Badge>
                     </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleEditLocation(location)}
+                      className="h-8 w-8 p-0"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDeleteLocation(location)}
+                      disabled={isDeleting}
+                      className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
               </CardHeader>
@@ -180,6 +262,24 @@ const LocationsList = () => {
             </Card>
           ))}
         </div>
+      )}
+
+      <AddLocationDialog
+        isOpen={isAddDialogOpen}
+        onClose={() => setIsAddDialogOpen(false)}
+        onLocationAdded={handleLocationAdded}
+      />
+
+      {selectedLocation && (
+        <EditLocationDialog
+          isOpen={isEditDialogOpen}
+          onClose={() => {
+            setIsEditDialogOpen(false);
+            setSelectedLocation(null);
+          }}
+          location={selectedLocation}
+          onLocationUpdated={handleLocationUpdated}
+        />
       )}
     </div>
   );
