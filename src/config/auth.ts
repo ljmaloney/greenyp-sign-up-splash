@@ -17,7 +17,7 @@ const getAuthConfig = (): UserManagerSettings => {
     automaticSilentRenew: true,
     silent_redirect_uri: `${baseUrl}/auth/silent-callback`,
     filterProtocolClaims: true,
-    loadUserInfo: true,
+    loadUserInfo: false, // Disable to avoid CORS issues
     // Add client authentication method for confidential clients
     client_authentication: 'client_secret_post'
   };
@@ -36,7 +36,8 @@ const getAuthConfig = (): UserManagerSettings => {
     client_id: config.client_id,
     redirect_uri: config.redirect_uri,
     has_client_secret: !!clientSecret,
-    client_authentication: config.client_authentication
+    client_authentication: config.client_authentication,
+    loadUserInfo: config.loadUserInfo
   });
 
   return config;
