@@ -149,7 +149,13 @@ export const useSignUpForm = (selectedPlan: string) => {
       if (response.status >= 400 && response.status < 500) {
         try {
           const errorData = await response.json();
-          const errorMessage = errorData.errorMessage || `Request failed with status ${response.status}`;
+          console.log('Error response data:', errorData);
+          
+          // Extract error message from the API response structure
+          const errorMessage = errorData.errorMessageApi?.displayMessage || 
+                              errorData.errorMessageApi?.errorDetails || 
+                              `Request failed with status ${response.status}`;
+          
           console.error('Client error:', errorData);
           setError(errorMessage);
         } catch (parseError) {
