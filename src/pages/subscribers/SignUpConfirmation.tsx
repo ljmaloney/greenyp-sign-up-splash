@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { CheckCircle, ArrowRight, Mail, Phone, MapPin, Globe } from 'lucide-react';
+import { CheckCircle, ArrowRight, Mail, Phone, MapPin, Globe, Building, Package } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Header from '@/components/Header';
@@ -14,11 +14,18 @@ const SignUpConfirmation = () => {
     businessName: searchParams.get('businessName') || 'Your Business',
     subscriptionPlan: searchParams.get('plan') || 'Basic Listing',
     subscriptionPrice: searchParams.get('planPrice') || '$5',
+    subscriptionType: searchParams.get('subscriptionType') || 'LIVE_UNPAID',
+    lineOfBusiness: searchParams.get('lineOfBusiness') || 'Business Category',
     email: searchParams.get('email') || 'your@email.com',
     phone: searchParams.get('phone') || '(555) 123-4567',
     location: searchParams.get('location') || 'Your City, State',
     website: searchParams.get('website') || '',
-    accountId: 'GYP-' + Math.random().toString(36).substr(2, 9).toUpperCase()
+    producerId: searchParams.get('producerId') || 'GYP-' + Math.random().toString(36).substr(2, 9).toUpperCase()
+  };
+
+  // Format subscription type for display
+  const formatSubscriptionType = (type: string) => {
+    return type.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
   };
 
   return (
@@ -53,7 +60,17 @@ const SignUpConfirmation = () => {
                   <p className="font-semibold">{accountData.businessName}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Subscription Plan</p>
+                  <p className="text-sm text-gray-600 flex items-center">
+                    <Building className="h-4 w-4 mr-1" />
+                    Line of Business
+                  </p>
+                  <p className="font-semibold text-blue-600">{accountData.lineOfBusiness}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 flex items-center">
+                    <Package className="h-4 w-4 mr-1" />
+                    Subscription Plan
+                  </p>
                   <p className="font-semibold text-green-600">
                     {accountData.subscriptionPlan}
                     {accountData.subscriptionPrice && accountData.subscriptionPrice !== '$0' && (
@@ -62,8 +79,12 @@ const SignUpConfirmation = () => {
                   </p>
                 </div>
                 <div>
+                  <p className="text-sm text-gray-600">Subscription Type</p>
+                  <p className="font-semibold text-purple-600">{formatSubscriptionType(accountData.subscriptionType)}</p>
+                </div>
+                <div>
                   <p className="text-sm text-gray-600">Account ID</p>
-                  <p className="font-mono text-sm bg-gray-100 p-2 rounded">{accountData.accountId}</p>
+                  <p className="font-mono text-sm bg-gray-100 p-2 rounded">{accountData.producerId}</p>
                 </div>
               </CardContent>
             </Card>

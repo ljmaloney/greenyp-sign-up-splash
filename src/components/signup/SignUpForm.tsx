@@ -2,6 +2,7 @@
 import React from 'react';
 import { Form } from "@/components/ui/form";
 import { useSubscriptions } from '@/hooks/useSubscriptions';
+import { useCategories } from '@/hooks/useCategories';
 import { useSignUpForm } from '@/hooks/useSignUpForm';
 import BusinessInformationCard from './BusinessInformationCard';
 import ContactInformationCard from './ContactInformationCard';
@@ -18,13 +19,14 @@ interface SignUpFormProps {
 
 const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
   const { data: subscriptions } = useSubscriptions();
+  const { data: categories } = useCategories();
   const { form, loading, onSubmit, error, isSystemError } = useSignUpForm(selectedPlan);
 
   // Find the selected subscription to display its name
   const selectedSubscription = subscriptions?.find(sub => sub.subscriptionId === selectedPlan);
 
   const handleSubmit = (data: any) => {
-    onSubmit(data, selectedSubscription);
+    onSubmit(data, selectedSubscription, categories);
   };
 
   // Show system error page for 500-series errors

@@ -53,7 +53,7 @@ export const useSignUpForm = (selectedPlan: string) => {
     }
   }, [emailAddress, userName, form]);
 
-  const onSubmit = async (data: SignUpFormSchema, selectedSubscription: any) => {
+  const onSubmit = async (data: SignUpFormSchema, selectedSubscription: any, categories: any[]) => {
     setLoading(true);
     setError(null);
     setIsSystemError(false);
@@ -121,17 +121,26 @@ export const useSignUpForm = (selectedPlan: string) => {
 
       // Handle success responses (200 or 201)
       if (response.status === 200 || response.status === 201) {
+        const responseData = await response.json();
+        console.log('Success response data:', responseData);
+        
         toast.success("Account created successfully! Welcome to GreenYP!");
         
-        // Redirect to confirmation page with account data
+        // Find the selected category name
+        const selectedCategory = categories?.find(cat => cat.lineOfBusinessId === data.lineOfBusinessId);
+        
+        // Redirect to confirmation page with account data from API response
         const confirmationParams = new URLSearchParams({
-          businessName: data.businessName,
+          businessName: responseData.response.producer.businessName,
           plan: selectedSubscription?.displayName || 'Selected Plan',
           planPrice: selectedSubscription?.formattedMonthlyPrice || '',
-          email: data.emailAddress,
-          phone: data.phoneNumber,
-          location: `${data.city}, ${data.state}`,
-          website: data.websiteUrl || ''
+          subscriptionType: responseData.response.producer.subscriptionType,
+          lineOfBusiness: selectedCategory?.lineOfBusinessName || 'Business Category',
+          email: responseData.response.primaryUserCredentials.emailAddress,
+          phone: responseData.response.contacts[0]?.phoneNumber || data.phoneNumber,
+          location: `${responseData.response.primaryLocation.city}, ${responseData.response.primaryLocation.state}`,
+          website: responseData.response.producer.websiteUrl || '',
+          producerId: responseData.response.producer.producerId
         });
         
         navigate(`/subscriber/signup/confirmation?${confirmationParams.toString()}`);
