@@ -83,7 +83,7 @@ const AccountCredentialsCard = ({ control }: AccountCredentialsCardProps) => {
             name="cellPhoneNumber"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Cell Phone</FormLabel>
+                <FormLabel>Cell Phone *</FormLabel>
                 <FormControl>
                   <Input 
                     placeholder="(555) 123-4567" 
@@ -92,6 +92,7 @@ const AccountCredentialsCard = ({ control }: AccountCredentialsCardProps) => {
                       const formatted = formatPhoneNumber(e.target.value);
                       field.onChange(formatted);
                     }}
+                    required 
                   />
                 </FormControl>
                 <FormMessage />

@@ -35,8 +35,8 @@ export const signUpFormSchema = z.object({
     .min(1, 'Business phone is required')
     .regex(/^\(\d{3}\) \d{3}-\d{4}$/, 'Please enter a valid US phone number'),
   cellPhoneNumber: z.string()
-    .regex(/^(\(\d{3}\) \d{3}-\d{4})?$/, 'Please enter a valid US phone number')
-    .optional(),
+    .min(1, 'Cell phone is required')
+    .regex(/^\(\d{3}\) \d{3}-\d{4}$/, 'Please enter a valid US phone number'),
   emailAddress: z.string()
     .min(1, 'Email address is required')
     .email('Please enter a valid email address'),
