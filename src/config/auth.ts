@@ -25,8 +25,6 @@ const getAuthConfig = (): UserManagerSettings => {
     client_authentication: 'client_secret_post',
     // Add extra query params to help with debugging
     extraQueryParams: {},
-    // Increase timeout for metadata loading
-    clockSkew: 300, // 5 minutes tolerance for clock skew
     // Add metadata URLs explicitly if discovery fails
     metadata: {
       // These will be automatically discovered from authority + .well-known/openid_configuration
