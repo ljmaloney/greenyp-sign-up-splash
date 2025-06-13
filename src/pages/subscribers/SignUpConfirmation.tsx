@@ -102,24 +102,73 @@ const SignUpConfirmation = () => {
               </CardContent>
             </Card>
 
-            {/* Listing Details */}
+            {/* Your Listing Details - now includes location and contact info */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl text-green-800">Your Listing Details</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <Mail className="h-4 w-4 text-gray-500" />
-                  <span>{accountData.email}</span>
+              <CardContent className="space-y-6">
+                {/* Contact Information Section */}
+                <div className="space-y-3">
+                  <h3 className="font-semibold text-gray-900 flex items-center">
+                    <User className="h-4 w-4 mr-2 text-gray-500" />
+                    Contact Information
+                  </h3>
+                  <div className="pl-6 space-y-2">
+                    <div>
+                      <p className="text-sm text-gray-600">Primary Contact</p>
+                      <p className="font-semibold">
+                        {accountData.contactName || `${accountData.firstName} ${accountData.lastName}`.trim()}
+                      </p>
+                    </div>
+                    {accountData.title && (
+                      <div>
+                        <p className="text-sm text-gray-600">Title</p>
+                        <p className="font-semibold">{accountData.title}</p>
+                      </div>
+                    )}
+                    <div className="flex items-center space-x-3">
+                      <Mail className="h-4 w-4 text-gray-500" />
+                      <span>{accountData.email}</span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <Phone className="h-4 w-4 text-gray-500" />
+                      <span>{accountData.phone}</span>
+                    </div>
+                    {accountData.cellPhone && (
+                      <div className="flex items-center space-x-3">
+                        <Phone className="h-4 w-4 text-gray-500" />
+                        <span>{accountData.cellPhone} (Cell)</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div className="flex items-center space-x-3">
-                  <Phone className="h-4 w-4 text-gray-500" />
-                  <span>{accountData.phone}</span>
+
+                {/* Location Information Section */}
+                <div className="space-y-3">
+                  <h3 className="font-semibold text-gray-900 flex items-center">
+                    <MapPin className="h-4 w-4 mr-2 text-gray-500" />
+                    Location Information
+                  </h3>
+                  <div className="pl-6 space-y-2">
+                    {accountData.locationName && (
+                      <div>
+                        <p className="text-sm text-gray-600">Location Name</p>
+                        <p className="font-semibold">{accountData.locationName}</p>
+                      </div>
+                    )}
+                    <div>
+                      <p className="text-sm text-gray-600">Address</p>
+                      <div className="font-semibold">
+                        {accountData.addressLine1 && <p>{accountData.addressLine1}</p>}
+                        {accountData.addressLine2 && <p>{accountData.addressLine2}</p>}
+                        <p>{accountData.city}, {accountData.state} {accountData.postalCode}</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center space-x-3">
-                  <MapPin className="h-4 w-4 text-gray-500" />
-                  <span>{accountData.location}</span>
-                </div>
+
+                {/* Website Information */}
                 {accountData.website && (
                   <div className="flex items-center space-x-3">
                     <Globe className="h-4 w-4 text-gray-500" />
@@ -129,72 +178,6 @@ const SignUpConfirmation = () => {
               </CardContent>
             </Card>
           </div>
-
-          {/* Location Information */}
-          <Card className="mt-8">
-            <CardHeader>
-              <CardTitle className="text-xl text-green-800 flex items-center">
-                <MapPin className="h-5 w-5 mr-2" />
-                Location Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {accountData.locationName && (
-                <div>
-                  <p className="text-sm text-gray-600">Location Name</p>
-                  <p className="font-semibold">{accountData.locationName}</p>
-                </div>
-              )}
-              <div>
-                <p className="text-sm text-gray-600">Address</p>
-                <div className="font-semibold">
-                  {accountData.addressLine1 && <p>{accountData.addressLine1}</p>}
-                  {accountData.addressLine2 && <p>{accountData.addressLine2}</p>}
-                  <p>{accountData.city}, {accountData.state} {accountData.postalCode}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Contact Information */}
-          <Card className="mt-8">
-            <CardHeader>
-              <CardTitle className="text-xl text-green-800 flex items-center">
-                <User className="h-5 w-5 mr-2" />
-                Contact Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <p className="text-sm text-gray-600">Primary Contact</p>
-                <p className="font-semibold">
-                  {accountData.contactName || `${accountData.firstName} ${accountData.lastName}`.trim()}
-                </p>
-              </div>
-              {accountData.title && (
-                <div>
-                  <p className="text-sm text-gray-600">Title</p>
-                  <p className="font-semibold">{accountData.title}</p>
-                </div>
-              )}
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <p className="text-sm text-gray-600">Business Phone</p>
-                  <p className="font-semibold">{accountData.phone}</p>
-                </div>
-                {accountData.cellPhone && (
-                  <div>
-                    <p className="text-sm text-gray-600">Cell Phone</p>
-                    <p className="font-semibold">{accountData.cellPhone}</p>
-                  </div>
-                )}
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Email</p>
-                <p className="font-semibold">{accountData.email}</p>
-              </div>
-            </CardContent>
-          </Card>
 
           {/* Next Steps */}
           <Card className="mt-8">
