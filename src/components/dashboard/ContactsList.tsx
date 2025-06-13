@@ -178,8 +178,6 @@ const ContactsList = () => {
                       <h4 className="font-semibold text-gray-700 mb-2">Display Settings</h4>
                       <div className="text-sm space-y-1">
                         <p><span className="text-gray-600">Display Type:</span> {getDisplayTypeDisplay(contact.displayContactType)}</p>
-                        <p><span className="text-gray-600">Contact ID:</span> {contact.contactId}</p>
-                        <p><span className="text-gray-600">Location ID:</span> {contact.producerLocationId}</p>
                       </div>
                     </div>
                   </div>
