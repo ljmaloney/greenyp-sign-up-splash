@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,6 +11,8 @@ import { getApiUrl } from '@/config/api';
 import AddContactDialog from './AddContactDialog';
 import EditContactDialog from './EditContactDialog';
 import DeleteContactDialog from './DeleteContactDialog';
+import type { Contact as ServiceContact } from '@/services/contactService';
+import type { Contact as ComponentContact } from '@/types/contact';
 
 const ContactsList = () => {
   const [searchParams] = useSearchParams();
@@ -24,7 +25,7 @@ const ContactsList = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedContact, setSelectedContact] = useState(null);
+  const [selectedContact, setSelectedContact] = useState<ServiceContact | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
   console.log('👥 ContactsList - producerId:', producerId);
@@ -36,12 +37,12 @@ const ContactsList = () => {
     setIsAddDialogOpen(true);
   };
 
-  const handleEditContact = (contact) => {
+  const handleEditContact = (contact: ServiceContact) => {
     setSelectedContact(contact);
     setIsEditDialogOpen(true);
   };
 
-  const handleDeleteContact = (contact) => {
+  const handleDeleteContact = (contact: ServiceContact) => {
     setSelectedContact(contact);
     setIsDeleteDialogOpen(true);
   };
@@ -85,6 +86,32 @@ const ContactsList = () => {
 
   const handleContactUpdated = () => {
     refetch();
+  };
+
+  // Transform service contact to component contact format
+  const transformContactForDialog = (contact: ServiceContact): ComponentContact => {
+    return {
+      id: contact.contactId,
+      producerLocationId: contact.producerLocationId,
+      producerContactType: contact.producerContactType,
+      displayContactType: contact.displayContactType,
+      genericContactName: contact.genericContactName,
+      firstName: contact.firstName,
+      lastName: contact.lastName,
+      title: contact.title,
+      phoneNumber: contact.phoneNumber,
+      cellPhoneNumber: contact.cellPhoneNumber,
+      emailAddress: contact.emailAddress,
+      name: `${contact.firstName} ${contact.lastName}`,
+      email: contact.emailAddress,
+      phone: contact.phoneNumber,
+      isPrimary: contact.producerContactType === 'PRIMARY'
+    };
+  };
+
+  // Transform service contacts to component contacts format for validation
+  const transformContactsForValidation = (serviceContacts: ServiceContact[]): ComponentContact[] => {
+    return serviceContacts.map(transformContactForDialog);
   };
 
   if (isLoading) {
@@ -289,7 +316,7 @@ const ContactsList = () => {
             locationName: loc.locationName
           }))}
           onContactAdded={handleContactAdded}
-          existingContacts={contacts}
+          existingContacts={contacts ? transformContactsForValidation(contacts) : []}
         />
       )}
 
@@ -300,29 +327,13 @@ const ContactsList = () => {
             setIsEditDialogOpen(false);
             setSelectedContact(null);
           }}
-          contact={{
-            id: selectedContact.contactId,
-            producerLocationId: selectedContact.producerLocationId,
-            producerContactType: selectedContact.producerContactType,
-            displayContactType: selectedContact.displayContactType,
-            genericContactName: selectedContact.genericContactName,
-            firstName: selectedContact.firstName,
-            lastName: selectedContact.lastName,
-            title: selectedContact.title,
-            phoneNumber: selectedContact.phoneNumber,
-            cellPhoneNumber: selectedContact.cellPhoneNumber,
-            emailAddress: selectedContact.emailAddress,
-            name: `${selectedContact.firstName} ${selectedContact.lastName}`,
-            email: selectedContact.emailAddress,
-            phone: selectedContact.phoneNumber,
-            isPrimary: selectedContact.producerContactType === 'PRIMARY'
-          }}
+          contact={transformContactForDialog(selectedContact)}
           locations={locations.map(loc => ({
             id: loc.locationId,
             locationName: loc.locationName
           }))}
           onContactUpdated={handleContactUpdated}
-          existingContacts={contacts}
+          existingContacts={contacts ? transformContactsForValidation(contacts) : []}
         />
       )}
 
