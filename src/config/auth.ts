@@ -18,19 +18,25 @@ const getAuthConfig = (): UserManagerSettings => {
     silent_redirect_uri: `${baseUrl}/auth/silent-callback`,
     filterProtocolClaims: true,
     loadUserInfo: true,
+    // Add client authentication method for confidential clients
+    client_authentication: 'client_secret_post'
   };
 
   // Add client secret if available (for confidential clients)
   const clientSecret = import.meta.env.VITE_OIDC_CLIENT_SECRET;
   if (clientSecret) {
     config.client_secret = clientSecret;
+  } else {
+    // For development, try to use a public client configuration
+    config.client_authentication = undefined;
   }
 
   console.log('OIDC Config:', {
     authority: config.authority,
     client_id: config.client_id,
     redirect_uri: config.redirect_uri,
-    has_client_secret: !!clientSecret
+    has_client_secret: !!clientSecret,
+    client_authentication: config.client_authentication
   });
 
   return config;
