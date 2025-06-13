@@ -1,20 +1,12 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Navigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import {ChevronRight, Leaf, Loader2} from 'lucide-react';
+import { ChevronRight, Leaf } from 'lucide-react';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  
   const { login, isAuthenticated } = useAuth();
   const location = useLocation();
   
@@ -26,19 +18,8 @@ const Login = () => {
     return <Navigate to={from} replace />;
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setIsLoading(true);
-
-    try {
-      await login(email, password);
-      // Navigation will happen automatically due to auth state change
-    } catch (err) {
-      setError('Invalid email or password');
-    } finally {
-      setIsLoading(false);
-    }
+  const handleLogin = () => {
+    login();
   };
 
   return (
@@ -51,73 +32,31 @@ const Login = () => {
           <CardTitle className="text-2xl font-bold">Sign in to your account</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
-              <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-            
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                placeholder="Enter your email"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                placeholder="Enter your password"
-              />
-            </div>
-
+          <div className="space-y-4">
             <Button 
-              type="submit" 
+              onClick={handleLogin}
               className="w-full" 
-              disabled={isLoading}
             >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Signing in...
-                </>
-              ) : (
-                'Sign in'
-              )}
+              Sign in with OpenID Connect
             </Button>
-          </form>
-        <div className="flex justify-center">
-          <Link
-              to={`/subscriber/signup`}
-              className="mt-6 inline-flex items-center text-greenyp-600 hover:text-greenyp-800 font-medium"
-              aria-label={`Create subscriber account`}
-          >
-            List Your Business
-          </Link>
-          <br/>
-          <Link
-              to={`/subscriber`}
-              className="mt-6 inline-flex items-center text-greenyp-600 hover:text-greenyp-800 font-medium"
-              aria-label={`Show more information for subscribers`}
-          >
-            More Information
-          </Link>
-        </div>
-          <div className="mt-4 text-center text-sm text-gray-600">
-            <p>Demo credentials:</p>
-            <p>User: user@example.com / Admin: admin@example.com</p>
-            <p>Password: any password</p>
+          </div>
+          
+          <div className="flex justify-center">
+            <Link
+                to={`/subscriber/signup`}
+                className="mt-6 inline-flex items-center text-greenyp-600 hover:text-greenyp-800 font-medium"
+                aria-label={`Create subscriber account`}
+            >
+              List Your Business
+            </Link>
+            <br/>
+            <Link
+                to={`/subscriber`}
+                className="mt-6 inline-flex items-center text-greenyp-600 hover:text-greenyp-800 font-medium"
+                aria-label={`Show more information for subscribers`}
+            >
+              More Information
+            </Link>
           </div>
         </CardContent>
       </Card>

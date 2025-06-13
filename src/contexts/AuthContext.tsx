@@ -1,5 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { oidcService, UserInfo } from '@/services/oidcService';
 
 interface User {
   id: string;
@@ -12,7 +13,7 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: () => void;
   logout: () => Promise<void>;
   hasRole: (role: string) => boolean;
 }
@@ -36,73 +37,38 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is already authenticated (e.g., from localStorage or token)
     checkAuthStatus();
   }, []);
 
   const checkAuthStatus = async () => {
     try {
-      // This is where you'd integrate with FusionAuth or your backend
-      // For now, we'll check localStorage for a mock implementation
-      const token = localStorage.getItem('authToken');
-      const userData = localStorage.getItem('userData');
+      const tokens = oidcService.getStoredTokens();
+      const storedUser = localStorage.getItem('oidc_user');
       
-      if (token && userData) {
-        setUser(JSON.parse(userData));
+      if (tokens && storedUser) {
+        setUser(JSON.parse(storedUser));
       }
     } catch (error) {
       console.error('Auth check failed:', error);
+      oidcService.clearStoredTokens();
     } finally {
       setIsLoading(false);
     }
   };
 
-  const login = async (email: string, password: string) => {
-    try {
-      setIsLoading(true);
-      // This is where you'd call your FusionAuth login endpoint
-      // For mock purposes, we'll simulate a successful login
-      
-      // Mock API call - replace with actual FusionAuth integration
-      const mockUser: User = {
-        id: '1',
-        email,
-        name: 'User Name',
-        roles: (() => {
-          // Mock role assignment based on email for testing
-          if (email.includes('admin@')) {
-            return ['GreenPages-Admin', 'Greepages-Subscriber'];
-          } else if (email.includes('sysadmin@')) {
-            return ['SysAdmin', 'GreenPages-Admin', 'Greepages-Subscriber'];
-          } else if (email.includes('subadmin@')) {
-            return ['Greepages-SubscriberAdmin', 'Greepages-Subscriber'];
-          } else {
-            return ['Greepages-Subscriber'];
-          }
-        })()
-      };
-      
-      // Store auth data
-      localStorage.setItem('authToken', 'mock-jwt-token');
-      localStorage.setItem('userData', JSON.stringify(mockUser));
-      
-      setUser(mockUser);
-    } catch (error) {
-      console.error('Login failed:', error);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
+  const login = () => {
+    const authUrl = oidcService.generateAuthUrl();
+    window.location.href = authUrl;
   };
 
   const logout = async () => {
     try {
-      // Call your logout endpoint here
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('userData');
+      await oidcService.logout();
       setUser(null);
     } catch (error) {
       console.error('Logout failed:', error);
+      oidcService.clearStoredTokens();
+      setUser(null);
     }
   };
 

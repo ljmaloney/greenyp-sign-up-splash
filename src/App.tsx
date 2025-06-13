@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -38,6 +37,7 @@ import AdminSubscribers from "./pages/admin/Subscribers";
 import AdminInvoices from "./pages/admin/Invoices";
 import AdminPermissions from "./pages/admin/Permissions";
 import AdminSettings from "./pages/admin/Settings";
+import AuthCallback from "./pages/auth/AuthCallback";
 
 const queryClient = new QueryClient();
 
@@ -67,6 +67,7 @@ const App = () => (
             
             {/* Auth routes */}
             <Route path="/login" element={<Login />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
             
             {/* Protected dashboard routes - require Greepages-Subscriber or Greepages-SubscriberAdmin */}
