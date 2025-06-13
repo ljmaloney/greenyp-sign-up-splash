@@ -58,6 +58,20 @@ const AccountCredentialsCard = ({ control }: AccountCredentialsCardProps) => {
 
           <FormField
             control={control}
+            name="emailAddress"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email Address *</FormLabel>
+                <FormControl>
+                  <Input type="email" placeholder="Enter your email" {...field} required />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={control}
             name="phoneNumber"
             render={({ field }) => (
               <FormItem>
@@ -120,8 +134,6 @@ const AccountCredentialsCard = ({ control }: AccountCredentialsCardProps) => {
               </FormItem>
             )}
           />
-
-          <div></div>
 
           <FormField
             control={control}

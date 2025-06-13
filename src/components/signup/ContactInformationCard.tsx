@@ -133,19 +133,7 @@ const ContactInformationCard = ({ control }: ContactInformationCardProps) => {
             )}
           />
 
-          <FormField
-            control={control}
-            name="emailAddress"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email Address *</FormLabel>
-                <FormControl>
-                  <Input type="email" placeholder="Enter your email" {...field} required />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div></div>
 
           <FormField
             control={control}
