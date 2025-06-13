@@ -38,6 +38,38 @@ class OIDCService {
   async login(): Promise<void> {
     try {
       console.log('Starting OIDC login...');
+      
+      // First, let's try to get the metadata to debug the issue
+      const settings = this.userManager.settings;
+      console.log('OIDC Settings:', {
+        authority: settings.authority,
+        client_id: settings.client_id,
+        redirect_uri: settings.redirect_uri
+      });
+
+      // Test if the discovery document is accessible
+      const wellKnownUrl = `${settings.authority}/.well-known/openid_configuration`;
+      console.log('Trying to fetch OIDC discovery document from:', wellKnownUrl);
+      
+      try {
+        const response = await fetch(wellKnownUrl);
+        if (response.ok) {
+          const metadata = await response.json();
+          console.log('OIDC Discovery document:', metadata);
+          
+          if (!metadata.authorization_endpoint) {
+            console.error('Discovery document missing authorization_endpoint');
+            throw new Error('OIDC server configuration is incomplete - missing authorization_endpoint');
+          }
+        } else {
+          console.error('Failed to fetch discovery document:', response.status, response.statusText);
+          throw new Error(`OIDC discovery document not accessible: ${response.status} ${response.statusText}`);
+        }
+      } catch (fetchError) {
+        console.error('Network error fetching discovery document:', fetchError);
+        throw new Error('Cannot connect to OIDC server. Please check the server URL and network connectivity.');
+      }
+
       await this.userManager.signinRedirect();
     } catch (error) {
       console.error('Login failed:', error);
