@@ -4,8 +4,8 @@ import { UserManagerSettings } from 'oidc-client-ts';
 const getAuthConfig = (): UserManagerSettings => {
   const isDevelopment = window.location.hostname === 'localhost';
   
-  // Use specific ports for development vs production
-  const baseUrl = isDevelopment ? 'http://localhost:9011' : window.location.origin;
+  // Use the current origin for the app, not the auth server
+  const baseUrl = window.location.origin;
   
   return {
     authority: isDevelopment ? 'http://localhost:9011' : 'https://auth.greenyp.com',
