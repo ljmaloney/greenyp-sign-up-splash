@@ -86,11 +86,14 @@ class OIDCService {
 
   // Helper method to transform OIDC user to our User format
   transformUser(oidcUser: User): UserInfo {
+    const userRoles = oidcUser.profile.roles;
+    const roles: string[] = Array.isArray(userRoles) ? userRoles : ['Greepages-Subscriber'];
+    
     return {
       sub: oidcUser.profile.sub,
       email: oidcUser.profile.email || '',
       name: oidcUser.profile.name || '',
-      roles: oidcUser.profile.roles || ['Greepages-Subscriber']
+      roles: roles
     };
   }
 }
