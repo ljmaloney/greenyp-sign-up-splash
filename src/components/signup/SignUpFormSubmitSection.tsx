@@ -12,7 +12,7 @@ const SignUpFormSubmitSection = ({ loading }: SignUpFormSubmitSectionProps) => {
       <div className="flex justify-center pt-6">
         <Button 
           type="submit" 
-          className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 text-lg"
+          className="bg-greenyp-600 hover:bg-greenyp-700 text-white px-8 py-3 text-lg"
           disabled={loading}
         >
           {loading ? "Creating Account..." : "Create Account"}
@@ -21,9 +21,9 @@ const SignUpFormSubmitSection = ({ loading }: SignUpFormSubmitSectionProps) => {
 
       <p className="text-xs text-gray-500 text-center">
         By creating an account, you agree to our{' '}
-        <a href="/terms" className="underline hover:text-green-600">Terms of Service</a>{' '}
+        <a href="/terms" className="underline hover:text-greenyp-600">Terms of Service</a>{' '}
         and{' '}
-        <a href="/privacy" className="underline hover:text-green-600">Privacy Policy</a>
+        <a href="/privacy" className="underline hover:text-greenyp-600">Privacy Policy</a>
       </p>
     </>
   );
