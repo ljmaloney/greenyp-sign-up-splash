@@ -7,7 +7,8 @@ import { useToast } from "@/hooks/use-toast";
 import { getApiUrl } from "@/config/api";
 import { useLocationForm } from "@/hooks/useLocationForm";
 import LocationFormFields from "./LocationFormFields";
-import { Location, LocationFormData } from "@/types/location";
+import { Location } from "@/services/locationService";
+import { LocationFormData } from "@/types/location";
 
 interface EditLocationDialogProps {
   isOpen: boolean;
@@ -19,8 +20,8 @@ interface EditLocationDialogProps {
 const EditLocationDialog = ({ isOpen, onClose, location, onLocationUpdated }: EditLocationDialogProps) => {
   const [isDisableDialogOpen, setIsDisableDialogOpen] = useState(false);
   const { formData, handleChange } = useLocationForm({
-    locationId: location.id,
-    locationName: location.name,
+    locationId: location.locationId,
+    locationName: location.locationName,
     locationType: location.locationType,
     locationDisplayType: location.locationDisplayType,
     active: location.active,
@@ -112,7 +113,7 @@ const EditLocationDialog = ({ isOpen, onClose, location, onLocationUpdated }: Ed
     }
   };
 
-  const canDisableLocation = location.active && !location.isPrimary;
+  const canDisableLocation = location.active && location.locationType !== 'HOME_OFFICE_PRIMARY';
 
   return (
     <>
@@ -158,7 +159,7 @@ const EditLocationDialog = ({ isOpen, onClose, location, onLocationUpdated }: Ed
           <AlertDialogHeader>
             <AlertDialogTitle>Disable Location</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to disable "{location.name}"? This will make the location inactive and it will no longer be visible to customers. You can re-enable it later if needed.
+              Are you sure you want to disable "{location.locationName}"? This will make the location inactive and it will no longer be visible to customers. You can re-enable it later if needed.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
