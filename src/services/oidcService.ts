@@ -65,6 +65,17 @@ class OIDCService {
     }
   }
 
+  async handleSilentCallback(): Promise<void> {
+    try {
+      console.log('Handling silent callback...');
+      await this.userManager.signinSilentCallback();
+      console.log('Silent callback completed successfully');
+    } catch (error) {
+      console.error('Silent callback failed:', error);
+      throw error;
+    }
+  }
+
   async logout(): Promise<void> {
     try {
       await this.userManager.signoutRedirect();

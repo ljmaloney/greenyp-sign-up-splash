@@ -6,10 +6,9 @@ const SilentCallback = () => {
   useEffect(() => {
     const handleSilentCallback = async () => {
       try {
-        await oidcService.userManager.signinSilentCallback();
-        console.log('Silent callback completed successfully');
+        await oidcService.handleSilentCallback();
       } catch (error) {
-        console.error('Silent callback failed:', error);
+        console.error('Silent callback processing failed:', error);
       }
     };
 
