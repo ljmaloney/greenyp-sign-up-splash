@@ -35,7 +35,7 @@ const Login = () => {
           <div className="space-y-4">
             <Button 
               onClick={handleLogin}
-              className="w-full" 
+              className="w-full bg-greenyp-600 hover:bg-greenyp-700 text-white" 
             >
               Sign in with OpenID Connect
             </Button>
