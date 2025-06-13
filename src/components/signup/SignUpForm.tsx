@@ -9,6 +9,8 @@ import LocationInformationCard from './LocationInformationCard';
 import AccountCredentialsCard from './AccountCredentialsCard';
 import SignUpFormHeader from './SignUpFormHeader';
 import SignUpFormSubmitSection from './SignUpFormSubmitSection';
+import SystemErrorCard from './SystemErrorCard';
+import ErrorMessage from './ErrorMessage';
 
 interface SignUpFormProps {
   selectedPlan: string;
@@ -16,7 +18,7 @@ interface SignUpFormProps {
 
 const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
   const { data: subscriptions } = useSubscriptions();
-  const { form, loading, onSubmit } = useSignUpForm(selectedPlan);
+  const { form, loading, onSubmit, error, isSystemError } = useSignUpForm(selectedPlan);
 
   // Find the selected subscription to display its name
   const selectedSubscription = subscriptions?.find(sub => sub.subscriptionId === selectedPlan);
@@ -25,9 +27,20 @@ const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
     onSubmit(data, selectedSubscription);
   };
 
+  // Show system error page for 500-series errors
+  if (isSystemError) {
+    return (
+      <div className="bg-white rounded-lg shadow-lg p-8">
+        <SystemErrorCard />
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-lg p-8">
       <SignUpFormHeader selectedSubscription={selectedSubscription} />
+
+      {error && <ErrorMessage message={error} />}
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
@@ -39,6 +52,8 @@ const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
           <SignUpFormSubmitSection loading={loading} />
         </form>
       </Form>
+
+      {error && <ErrorMessage message={error} />}
     </div>
   );
 };

@@ -9,6 +9,8 @@ import { signUpFormSchema, SignUpFormSchema } from '@/utils/signUpValidation';
 
 export const useSignUpForm = (selectedPlan: string) => {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isSystemError, setIsSystemError] = useState(false);
   const navigate = useNavigate();
 
   const form = useForm<SignUpFormSchema>({
@@ -53,6 +55,8 @@ export const useSignUpForm = (selectedPlan: string) => {
 
   const onSubmit = async (data: SignUpFormSchema, selectedSubscription: any) => {
     setLoading(true);
+    setError(null);
+    setIsSystemError(false);
     
     try {
       const payload = {
@@ -113,7 +117,10 @@ export const useSignUpForm = (selectedPlan: string) => {
         body: JSON.stringify(payload)
       });
 
-      if (response.ok) {
+      console.log('Response status:', response.status);
+
+      // Handle success responses (200 or 201)
+      if (response.status === 200 || response.status === 201) {
         toast.success("Account created successfully! Welcome to GreenYP!");
         
         // Redirect to confirmation page with account data
@@ -128,14 +135,38 @@ export const useSignUpForm = (selectedPlan: string) => {
         });
         
         navigate(`/subscriber/signup/confirmation?${confirmationParams.toString()}`);
-      } else {
-        const errorData = await response.text();
-        console.error('Sign-up error:', errorData);
-        toast.error("Failed to create account. Please try again.");
+        return;
       }
+
+      // Handle 500-series errors (system errors)
+      if (response.status >= 500) {
+        console.error('System error:', response.status);
+        setIsSystemError(true);
+        return;
+      }
+
+      // Handle 400-series errors (client errors)
+      if (response.status >= 400 && response.status < 500) {
+        try {
+          const errorData = await response.json();
+          const errorMessage = errorData.errorMessage || `Request failed with status ${response.status}`;
+          console.error('Client error:', errorData);
+          setError(errorMessage);
+        } catch (parseError) {
+          console.error('Failed to parse error response:', parseError);
+          setError(`Request failed with status ${response.status}`);
+        }
+        return;
+      }
+
+      // Handle any other unexpected status codes
+      const errorText = await response.text();
+      console.error('Unexpected response:', response.status, errorText);
+      setError(`Unexpected error occurred. Please try again.`);
+
     } catch (error) {
-      console.error('Sign-up error:', error);
-      toast.error("Network error. Please check your connection and try again.");
+      console.error('Network error:', error);
+      setError("Network error. Please check your connection and try again.");
     } finally {
       setLoading(false);
     }
@@ -144,6 +175,8 @@ export const useSignUpForm = (selectedPlan: string) => {
   return {
     form,
     loading,
-    onSubmit
+    onSubmit,
+    error,
+    isSystemError
   };
 };
