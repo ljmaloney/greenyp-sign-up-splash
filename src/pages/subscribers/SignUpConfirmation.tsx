@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { CheckCircle, ArrowRight, Mail, Phone, MapPin, Globe, Building, Package } from 'lucide-react';
+import { CheckCircle, ArrowRight, Mail, Phone, MapPin, Globe, Building, Package, User } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Header from '@/components/Header';
@@ -20,7 +20,20 @@ const SignUpConfirmation = () => {
     phone: searchParams.get('phone') || '(555) 123-4567',
     location: searchParams.get('location') || 'Your City, State',
     website: searchParams.get('website') || '',
-    producerId: searchParams.get('producerId') || 'GYP-' + Math.random().toString(36).substr(2, 9).toUpperCase()
+    producerId: searchParams.get('producerId') || 'GYP-' + Math.random().toString(36).substr(2, 9).toUpperCase(),
+    // Location details from API response
+    locationName: searchParams.get('locationName') || '',
+    addressLine1: searchParams.get('addressLine1') || '',
+    addressLine2: searchParams.get('addressLine2') || '',
+    city: searchParams.get('city') || '',
+    state: searchParams.get('state') || '',
+    postalCode: searchParams.get('postalCode') || '',
+    // Contact details from API response
+    contactName: searchParams.get('contactName') || '',
+    firstName: searchParams.get('firstName') || '',
+    lastName: searchParams.get('lastName') || '',
+    title: searchParams.get('title') || '',
+    cellPhone: searchParams.get('cellPhone') || ''
   };
 
   // Format subscription type for display
@@ -89,7 +102,7 @@ const SignUpConfirmation = () => {
               </CardContent>
             </Card>
 
-            {/* Contact Information */}
+            {/* Listing Details */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl text-green-800">Your Listing Details</CardTitle>
@@ -116,6 +129,72 @@ const SignUpConfirmation = () => {
               </CardContent>
             </Card>
           </div>
+
+          {/* Location Information */}
+          <Card className="mt-8">
+            <CardHeader>
+              <CardTitle className="text-xl text-green-800 flex items-center">
+                <MapPin className="h-5 w-5 mr-2" />
+                Location Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {accountData.locationName && (
+                <div>
+                  <p className="text-sm text-gray-600">Location Name</p>
+                  <p className="font-semibold">{accountData.locationName}</p>
+                </div>
+              )}
+              <div>
+                <p className="text-sm text-gray-600">Address</p>
+                <div className="font-semibold">
+                  {accountData.addressLine1 && <p>{accountData.addressLine1}</p>}
+                  {accountData.addressLine2 && <p>{accountData.addressLine2}</p>}
+                  <p>{accountData.city}, {accountData.state} {accountData.postalCode}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Contact Information */}
+          <Card className="mt-8">
+            <CardHeader>
+              <CardTitle className="text-xl text-green-800 flex items-center">
+                <User className="h-5 w-5 mr-2" />
+                Contact Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <p className="text-sm text-gray-600">Primary Contact</p>
+                <p className="font-semibold">
+                  {accountData.contactName || `${accountData.firstName} ${accountData.lastName}`.trim()}
+                </p>
+              </div>
+              {accountData.title && (
+                <div>
+                  <p className="text-sm text-gray-600">Title</p>
+                  <p className="font-semibold">{accountData.title}</p>
+                </div>
+              )}
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <p className="text-sm text-gray-600">Business Phone</p>
+                  <p className="font-semibold">{accountData.phone}</p>
+                </div>
+                {accountData.cellPhone && (
+                  <div>
+                    <p className="text-sm text-gray-600">Cell Phone</p>
+                    <p className="font-semibold">{accountData.cellPhone}</p>
+                  </div>
+                )}
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Email</p>
+                <p className="font-semibold">{accountData.email}</p>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Next Steps */}
           <Card className="mt-8">

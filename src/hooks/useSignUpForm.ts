@@ -140,7 +140,20 @@ export const useSignUpForm = (selectedPlan: string) => {
           phone: responseData.response.contacts[0]?.phoneNumber || data.phoneNumber,
           location: `${responseData.response.primaryLocation.city}, ${responseData.response.primaryLocation.state}`,
           website: responseData.response.producer.websiteUrl || '',
-          producerId: responseData.response.producer.producerId
+          producerId: responseData.response.producer.producerId,
+          // Additional location data
+          locationName: responseData.response.primaryLocation.locationName || '',
+          addressLine1: responseData.response.primaryLocation.addressLine1 || '',
+          addressLine2: responseData.response.primaryLocation.addressLine2 || '',
+          city: responseData.response.primaryLocation.city || '',
+          state: responseData.response.primaryLocation.state || '',
+          postalCode: responseData.response.primaryLocation.postalCode || '',
+          // Additional contact data
+          contactName: responseData.response.contacts[0]?.genericContactName || '',
+          firstName: responseData.response.contacts[0]?.firstName || '',
+          lastName: responseData.response.contacts[0]?.lastName || '',
+          title: responseData.response.contacts[0]?.title || '',
+          cellPhone: responseData.response.contacts[0]?.cellPhoneNumber || ''
         });
         
         navigate(`/subscriber/signup/confirmation?${confirmationParams.toString()}`);
