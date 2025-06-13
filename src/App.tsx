@@ -38,6 +38,7 @@ import AdminInvoices from "./pages/admin/Invoices";
 import AdminPermissions from "./pages/admin/Permissions";
 import AdminSettings from "./pages/admin/Settings";
 import AuthCallback from "./pages/auth/AuthCallback";
+import SilentCallback from "./pages/auth/SilentCallback";
 
 const queryClient = new QueryClient();
 
@@ -68,6 +69,7 @@ const App = () => (
             {/* Auth routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route path="/auth/silent-callback" element={<SilentCallback />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
             
             {/* Protected dashboard routes - require Greepages-Subscriber or Greepages-SubscriberAdmin */}

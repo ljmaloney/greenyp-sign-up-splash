@@ -1,6 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { oidcService, UserInfo } from '@/services/oidcService';
+import { User as OidcUser } from 'oidc-client-ts';
 
 interface User {
   id: string;
@@ -42,23 +43,30 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const checkAuthStatus = async () => {
     try {
-      const tokens = oidcService.getStoredTokens();
-      const storedUser = localStorage.getItem('oidc_user');
+      const oidcUser = await oidcService.getUser();
       
-      if (tokens && storedUser) {
-        setUser(JSON.parse(storedUser));
+      if (oidcUser && !oidcUser.expired) {
+        const userInfo = oidcService.transformUser(oidcUser);
+        const transformedUser: User = {
+          id: userInfo.sub,
+          email: userInfo.email,
+          name: userInfo.name,
+          roles: userInfo.roles || ['Greepages-Subscriber']
+        };
+        setUser(transformedUser);
+      } else {
+        setUser(null);
       }
     } catch (error) {
       console.error('Auth check failed:', error);
-      oidcService.clearStoredTokens();
+      setUser(null);
     } finally {
       setIsLoading(false);
     }
   };
 
   const login = () => {
-    const authUrl = oidcService.generateAuthUrl();
-    window.location.href = authUrl;
+    oidcService.login();
   };
 
   const logout = async () => {
@@ -67,7 +75,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setUser(null);
     } catch (error) {
       console.error('Logout failed:', error);
-      oidcService.clearStoredTokens();
+      await oidcService.removeUser();
       setUser(null);
     }
   };

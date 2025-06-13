@@ -1,51 +1,25 @@
 
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { oidcService } from '@/services/oidcService';
 import { Card, CardContent } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 
 const AuthCallback = () => {
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const handleCallback = async () => {
       try {
-        const code = searchParams.get('code');
-        const state = searchParams.get('state');
-        const errorParam = searchParams.get('error');
-
-        if (errorParam) {
-          setError(`Authentication error: ${errorParam}`);
-          return;
-        }
-
-        if (!code || !state) {
-          setError('Missing authorization code or state');
-          return;
-        }
-
-        // Exchange code for tokens
-        const tokens = await oidcService.exchangeCodeForTokens(code, state);
-        oidcService.storeTokens(tokens);
-
-        // Get user info
-        const userInfo = await oidcService.getUserInfo(tokens.access_token);
+        const user = await oidcService.handleCallback();
         
-        // Transform to our User format
-        const user = {
-          id: userInfo.sub,
-          email: userInfo.email,
-          name: userInfo.name,
-          roles: userInfo.roles || ['Greepages-Subscriber']
-        };
-
-        localStorage.setItem('oidc_user', JSON.stringify(user));
-
-        // Redirect to dashboard
-        navigate('/dashboard');
+        if (user) {
+          // Redirect to dashboard
+          navigate('/dashboard');
+        } else {
+          setError('Authentication failed - no user returned');
+        }
       } catch (error) {
         console.error('Auth callback error:', error);
         setError('Authentication failed. Please try again.');
@@ -54,7 +28,7 @@ const AuthCallback = () => {
     };
 
     handleCallback();
-  }, [searchParams, navigate]);
+  }, [navigate]);
 
   if (error) {
     return (
