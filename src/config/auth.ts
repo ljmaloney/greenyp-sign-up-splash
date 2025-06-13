@@ -7,8 +7,11 @@ const getAuthConfig = (): UserManagerSettings => {
   // Use the current origin for the app, not the auth server
   const baseUrl = window.location.origin;
   
+  // Ensure the authority URL doesn't have a trailing slash
+  const authority = isDevelopment ? 'http://localhost:9011' : 'https://auth.greenyp.com';
+  
   const config: UserManagerSettings = {
-    authority: isDevelopment ? 'http://localhost:9011' : 'https://auth.greenyp.com',
+    authority: authority,
     client_id: import.meta.env.VITE_OIDC_CLIENT_ID || 'greenyp-client',
     redirect_uri: `${baseUrl}/auth/callback`,
     post_logout_redirect_uri: baseUrl,
@@ -17,13 +20,15 @@ const getAuthConfig = (): UserManagerSettings => {
     automaticSilentRenew: true,
     silent_redirect_uri: `${baseUrl}/auth/silent-callback`,
     filterProtocolClaims: true,
-    loadUserInfo: true, // Re-enable now that we'll configure CORS
+    loadUserInfo: false, // Temporarily disable until CORS is configured
     // Add client authentication method for confidential clients
     client_authentication: 'client_secret_post',
-    // Additional metadata for CORS configuration
+    // Add extra query params to help with debugging
+    extraQueryParams: {},
+    // Add metadata URLs explicitly if discovery fails
     metadata: {
-      // These will be automatically discovered, but we can override if needed
-      // userinfo_endpoint: isDevelopment ? 'http://localhost:9011/oauth2/userinfo' : 'https://auth.greenyp.com/oauth2/userinfo'
+      // These will be automatically discovered from authority + .well-known/openid_configuration
+      // But we can override if needed
     }
   };
 
@@ -43,7 +48,8 @@ const getAuthConfig = (): UserManagerSettings => {
     has_client_secret: !!clientSecret,
     client_authentication: config.client_authentication,
     loadUserInfo: config.loadUserInfo,
-    origin: baseUrl
+    origin: baseUrl,
+    wellKnownUrl: `${authority}/.well-known/openid_configuration`
   });
 
   return config;
