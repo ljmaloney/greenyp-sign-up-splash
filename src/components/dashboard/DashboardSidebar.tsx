@@ -15,6 +15,8 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useSubscriptions } from '@/hooks/useSubscriptions';
+import { useAuth } from '@/contexts/AuthContext';
+import { useAccountData } from '@/hooks/useAccountData';
 
 interface DashboardSidebarProps {
   isOpen: boolean;
@@ -23,7 +25,9 @@ interface DashboardSidebarProps {
 
 const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
   const location = useLocation();
+  const { user } = useAuth();
   const { data: subscriptions, isLoading, error } = useSubscriptions();
+  const { data: accountData } = useAccountData(user?.id || null);
 
   // Mock current user's subscription ID - in a real app, this would come from user context
   const currentSubscriptionId = 'basic-listing-001'; // This would come from auth context
@@ -36,6 +40,8 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
   console.log('Current subscription:', currentSubscription);
   console.log('Subscriptions loading:', isLoading);
   console.log('Subscriptions error:', error);
+  console.log('Account data:', accountData);
+  console.log('Producer ID:', accountData?.producer?.producerId);
   
   // Check if subscription includes Products or Services features
   const hasProductsFeature = currentSubscription?.features.some(feature => 
@@ -47,6 +53,9 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
   console.log('Has Services Feature:', hasServicesFeature);
   console.log('Current subscription features:', currentSubscription?.features);
 
+  // Get the producerId from account data
+  const producerId = accountData?.producer?.producerId;
+
   const menuItems = [
     {
       label: 'Business Profile',
@@ -57,25 +66,25 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
     {
       label: 'Locations',
       icon: MapPin,
-      href: '/dashboard/locations',
+      href: producerId ? `/dashboard/locations?producerId=${producerId}` : '/dashboard/locations',
       enabled: true
     },
     {
       label: 'Contacts',
       icon: Users,
-      href: '/dashboard/contacts',
+      href: producerId ? `/dashboard/contacts?producerId=${producerId}` : '/dashboard/contacts',
       enabled: true
     },
     {
       label: 'Authorized Users',
       icon: Users,
-      href: '/dashboard/authorized-users',
+      href: producerId ? `/dashboard/authorized-users?producerId=${producerId}` : '/dashboard/authorized-users',
       enabled: true
     },
     {
       label: 'Products',
       icon: Package,
-      href: '/dashboard/products',
+      href: producerId ? `/dashboard/products?producerId=${producerId}` : '/dashboard/products',
       enabled: hasProductsFeature,
       upgradeHref: '/dashboard/upgrade',
       isPremium: true
@@ -83,7 +92,7 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
     {
       label: 'Services',
       icon: Wrench,
-      href: '/dashboard/services',
+      href: producerId ? `/dashboard/services?producerId=${producerId}` : '/dashboard/services',
       enabled: hasServicesFeature,
       upgradeHref: '/dashboard/upgrade',
       isPremium: true
@@ -109,7 +118,7 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
   ];
 
   const MenuItem = ({ item }: { item: typeof menuItems[0] }) => {
-    const isActive = location.pathname === item.href;
+    const isActive = location.pathname === item.href.split('?')[0]; // Compare base path without query params
     
     if (!item.enabled) {
       return (
