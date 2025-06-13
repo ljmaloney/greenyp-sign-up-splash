@@ -28,10 +28,16 @@ class OIDCService {
     this.userManager.events.addAccessTokenExpired(() => {
       console.log('Access token expired');
     });
+
+    // Add error event handler
+    this.userManager.events.addAccessTokenExpiring(() => {
+      console.log('Access token expiring');
+    });
   }
 
   async login(): Promise<void> {
     try {
+      console.log('Starting OIDC login...');
       await this.userManager.signinRedirect();
     } catch (error) {
       console.error('Login failed:', error);
@@ -41,10 +47,20 @@ class OIDCService {
 
   async handleCallback(): Promise<User> {
     try {
+      console.log('Handling OIDC callback...');
+      console.log('Current URL:', window.location.href);
+      console.log('URL search params:', window.location.search);
+      
       const user = await this.userManager.signinRedirectCallback();
+      console.log('Callback successful, user:', user);
       return user;
     } catch (error) {
       console.error('Callback handling failed:', error);
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
       throw error;
     }
   }
@@ -60,7 +76,9 @@ class OIDCService {
 
   async getUser(): Promise<User | null> {
     try {
-      return await this.userManager.getUser();
+      const user = await this.userManager.getUser();
+      console.log('Retrieved user:', user ? 'User found' : 'No user');
+      return user;
     } catch (error) {
       console.error('Get user failed:', error);
       return null;

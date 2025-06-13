@@ -7,7 +7,7 @@ const getAuthConfig = (): UserManagerSettings => {
   // Use the current origin for the app, not the auth server
   const baseUrl = window.location.origin;
   
-  return {
+  const config: UserManagerSettings = {
     authority: isDevelopment ? 'http://localhost:9011' : 'https://auth.greenyp.com',
     client_id: import.meta.env.VITE_OIDC_CLIENT_ID || 'greenyp-client',
     redirect_uri: `${baseUrl}/auth/callback`,
@@ -19,6 +19,21 @@ const getAuthConfig = (): UserManagerSettings => {
     filterProtocolClaims: true,
     loadUserInfo: true,
   };
+
+  // Add client secret if available (for confidential clients)
+  const clientSecret = import.meta.env.VITE_OIDC_CLIENT_SECRET;
+  if (clientSecret) {
+    config.client_secret = clientSecret;
+  }
+
+  console.log('OIDC Config:', {
+    authority: config.authority,
+    client_id: config.client_id,
+    redirect_uri: config.redirect_uri,
+    has_client_secret: !!clientSecret
+  });
+
+  return config;
 };
 
 export { getAuthConfig };
