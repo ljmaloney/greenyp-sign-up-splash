@@ -17,9 +17,14 @@ const getAuthConfig = (): UserManagerSettings => {
     automaticSilentRenew: true,
     silent_redirect_uri: `${baseUrl}/auth/silent-callback`,
     filterProtocolClaims: true,
-    loadUserInfo: false, // Disable to avoid CORS issues
+    loadUserInfo: true, // Re-enable now that we'll configure CORS
     // Add client authentication method for confidential clients
-    client_authentication: 'client_secret_post'
+    client_authentication: 'client_secret_post',
+    // Additional metadata for CORS configuration
+    metadata: {
+      // These will be automatically discovered, but we can override if needed
+      // userinfo_endpoint: isDevelopment ? 'http://localhost:9011/oauth2/userinfo' : 'https://auth.greenyp.com/oauth2/userinfo'
+    }
   };
 
   // Add client secret if available (for confidential clients)
@@ -37,7 +42,8 @@ const getAuthConfig = (): UserManagerSettings => {
     redirect_uri: config.redirect_uri,
     has_client_secret: !!clientSecret,
     client_authentication: config.client_authentication,
-    loadUserInfo: config.loadUserInfo
+    loadUserInfo: config.loadUserInfo,
+    origin: baseUrl
   });
 
   return config;
