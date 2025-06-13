@@ -7,7 +7,8 @@ const getAuthConfig = (): UserManagerSettings => {
   // Use the current origin for the app, not the auth server
   const baseUrl = window.location.origin;
   
-  // Ensure the authority URL doesn't have a trailing slash
+  // FusionAuth typically uses the tenant ID in the URL or a specific issuer format
+  // Try different authority formats for FusionAuth
   const authority = isDevelopment ? 'http://localhost:9011' : 'https://auth.greenyp.com';
   
   const config: UserManagerSettings = {
@@ -20,15 +21,22 @@ const getAuthConfig = (): UserManagerSettings => {
     automaticSilentRenew: true,
     silent_redirect_uri: `${baseUrl}/auth/silent-callback`,
     filterProtocolClaims: true,
-    loadUserInfo: false, // Temporarily disable until CORS is configured
-    // Add client authentication method for confidential clients
+    loadUserInfo: false, // Keep disabled until CORS is configured
+    // FusionAuth specific configuration
     client_authentication: 'client_secret_post',
     // Add extra query params to help with debugging
     extraQueryParams: {},
-    // Add metadata URLs explicitly if discovery fails
+    // Explicitly set metadata URLs for FusionAuth
     metadata: {
-      // These will be automatically discovered from authority + .well-known/openid_configuration
-      // But we can override if needed
+      // FusionAuth discovery document might be at a different path
+      issuer: authority,
+      authorization_endpoint: `${authority}/oauth2/authorize`,
+      token_endpoint: `${authority}/oauth2/token`,
+      userinfo_endpoint: `${authority}/oauth2/userinfo`,
+      end_session_endpoint: `${authority}/oauth2/logout`,
+      jwks_uri: `${authority}/.well-known/jwks`,
+      // Add revocation endpoint
+      revocation_endpoint: `${authority}/oauth2/revoke`
     }
   };
 
@@ -41,7 +49,7 @@ const getAuthConfig = (): UserManagerSettings => {
     config.client_authentication = undefined;
   }
 
-  console.log('OIDC Config:', {
+  console.log('OIDC Config for FusionAuth:', {
     authority: config.authority,
     client_id: config.client_id,
     redirect_uri: config.redirect_uri,
@@ -49,7 +57,13 @@ const getAuthConfig = (): UserManagerSettings => {
     client_authentication: config.client_authentication,
     loadUserInfo: config.loadUserInfo,
     origin: baseUrl,
-    wellKnownUrl: `${authority}/.well-known/openid_configuration`
+    wellKnownUrl: `${authority}/.well-known/openid_configuration`,
+    alternativeWellKnownUrls: [
+      `${authority}/.well-known/openid-configuration`,
+      `${authority}/.well-known/openid_connect_configuration`,
+      `${authority}/oauth2/.well-known/openid_configuration`
+    ],
+    explicitMetadata: config.metadata
   });
 
   return config;

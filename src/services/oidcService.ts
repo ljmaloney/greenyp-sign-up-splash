@@ -1,4 +1,3 @@
-
 import { UserManager, User, UserManagerSettings } from 'oidc-client-ts';
 import { getAuthConfig } from '@/config/auth';
 
@@ -39,7 +38,6 @@ class OIDCService {
     try {
       console.log('Starting OIDC login...');
       
-      // First, let's try to get the metadata to debug the issue
       const settings = this.userManager.settings;
       console.log('OIDC Settings:', {
         authority: settings.authority,
@@ -47,29 +45,53 @@ class OIDCService {
         redirect_uri: settings.redirect_uri
       });
 
-      // Test if the discovery document is accessible
-      const wellKnownUrl = `${settings.authority}/.well-known/openid_configuration`;
-      console.log('Trying to fetch OIDC discovery document from:', wellKnownUrl);
-      
-      try {
-        const response = await fetch(wellKnownUrl);
-        if (response.ok) {
-          const metadata = await response.json();
-          console.log('OIDC Discovery document:', metadata);
-          
-          if (!metadata.authorization_endpoint) {
-            console.error('Discovery document missing authorization_endpoint');
-            throw new Error('OIDC server configuration is incomplete - missing authorization_endpoint');
+      // Test multiple possible FusionAuth discovery document URLs
+      const possibleUrls = [
+        `${settings.authority}/.well-known/openid_configuration`,
+        `${settings.authority}/.well-known/openid-configuration`, 
+        `${settings.authority}/.well-known/openid_connect_configuration`,
+        `${settings.authority}/oauth2/.well-known/openid_configuration`,
+        `${settings.authority}/.well-known/oauth-authorization-server`
+      ];
+
+      console.log('Testing FusionAuth discovery document URLs...');
+      let discoveryDoc = null;
+      let workingUrl = null;
+
+      for (const url of possibleUrls) {
+        try {
+          console.log(`Trying: ${url}`);
+          const response = await fetch(url);
+          if (response.ok) {
+            discoveryDoc = await response.json();
+            workingUrl = url;
+            console.log(`✅ Found discovery document at: ${url}`, discoveryDoc);
+            break;
+          } else {
+            console.log(`❌ ${url} returned ${response.status} ${response.statusText}`);
           }
-        } else {
-          console.error('Failed to fetch discovery document:', response.status, response.statusText);
-          throw new Error(`OIDC discovery document not accessible: ${response.status} ${response.statusText}`);
+        } catch (fetchError) {
+          console.log(`❌ ${url} failed with network error:`, fetchError);
         }
-      } catch (fetchError) {
-        console.error('Network error fetching discovery document:', fetchError);
-        throw new Error('Cannot connect to OIDC server. Please check the server URL and network connectivity.');
       }
 
+      if (!discoveryDoc) {
+        console.error('❌ No FusionAuth discovery document found at any expected URL');
+        console.log('🔍 Debugging suggestions:');
+        console.log('1. Check if FusionAuth is fully started (try accessing http://localhost:9011/admin)');
+        console.log('2. Verify the application is configured with OpenID Connect enabled');
+        console.log('3. Check if a tenant is configured and might affect the URL structure');
+        console.log('4. Verify the application issuer matches the authority URL');
+        
+        throw new Error(`FusionAuth discovery document not found. Tried ${possibleUrls.length} URLs. Please check FusionAuth configuration.`);
+      }
+
+      if (!discoveryDoc.authorization_endpoint) {
+        console.error('Discovery document missing authorization_endpoint:', discoveryDoc);
+        throw new Error('FusionAuth discovery document is incomplete - missing authorization_endpoint');
+      }
+
+      console.log('✅ FusionAuth discovery successful, proceeding with login...');
       await this.userManager.signinRedirect();
     } catch (error) {
       console.error('Login failed:', error);
