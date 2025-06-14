@@ -186,7 +186,7 @@ const AuthorizedUsersList = () => {
                   </div>
                   
                   <div className="text-xs text-gray-500 pt-2 border-t">
-                    <p>Credentials ID: {user.credentialsId}</p>
+                    <p>External Service Ref: {user.externalAuthorizationServiceRef}</p>
                     <p>Producer Contact ID: {user.producerContactId}</p>
                   </div>
                 </div>
