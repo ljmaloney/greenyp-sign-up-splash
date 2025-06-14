@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -15,21 +16,47 @@ interface AddLocationDialogProps {
 }
 
 const AddLocationDialog = ({ isOpen, onClose, onLocationAdded }: AddLocationDialogProps) => {
+  const [searchParams] = useSearchParams();
+  const producerId = searchParams.get('producerId');
   const { formData, handleChange, resetForm } = useLocationForm();
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!producerId) {
+      toast({
+        title: "Error",
+        description: "Producer ID is required to add a location.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     try {
       console.log('Adding new location:', formData);
       
-      const response = await fetch(getApiUrl('/producer/location'), {
+      // Prepare payload matching API specification (exclude locationId for new locations)
+      const payload = {
+        locationName: formData.locationName,
+        locationType: formData.locationType,
+        locationDisplayType: formData.locationDisplayType,
+        active: formData.active,
+        addressLine1: formData.addressLine1,
+        addressLine2: formData.addressLine2,
+        addressLine3: formData.addressLine3,
+        city: formData.city,
+        state: formData.state,
+        postalCode: formData.postalCode,
+        websiteUrl: formData.websiteUrl
+      };
+      
+      const response = await fetch(getApiUrl(`/producer/${producerId}/location`), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {

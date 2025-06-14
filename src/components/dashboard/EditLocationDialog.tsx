@@ -44,12 +44,30 @@ const EditLocationDialog = ({ isOpen, onClose, location, onLocationUpdated }: Ed
     try {
       console.log('Updating location:', formData);
       
+      // Prepare payload matching API specification
+      const payload = {
+        locationId: formData.locationId,
+        locationName: formData.locationName,
+        locationType: formData.locationType,
+        locationDisplayType: formData.locationDisplayType,
+        active: formData.active,
+        addressLine1: formData.addressLine1,
+        addressLine2: formData.addressLine2,
+        addressLine3: formData.addressLine3,
+        city: formData.city,
+        state: formData.state,
+        postalCode: formData.postalCode,
+        latitude: parseFloat(formData.latitude) || 0,
+        longitude: parseFloat(formData.longitude) || 0,
+        websiteUrl: formData.websiteUrl
+      };
+      
       const response = await fetch(getApiUrl('/producer/location'), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
@@ -81,12 +99,30 @@ const EditLocationDialog = ({ isOpen, onClose, location, onLocationUpdated }: Ed
       
       console.log('Disabling location:', updatedFormData);
       
+      // Prepare payload matching API specification
+      const payload = {
+        locationId: updatedFormData.locationId,
+        locationName: updatedFormData.locationName,
+        locationType: updatedFormData.locationType,
+        locationDisplayType: updatedFormData.locationDisplayType,
+        active: updatedFormData.active,
+        addressLine1: updatedFormData.addressLine1,
+        addressLine2: updatedFormData.addressLine2,
+        addressLine3: updatedFormData.addressLine3,
+        city: updatedFormData.city,
+        state: updatedFormData.state,
+        postalCode: updatedFormData.postalCode,
+        latitude: parseFloat(updatedFormData.latitude) || 0,
+        longitude: parseFloat(updatedFormData.longitude) || 0,
+        websiteUrl: updatedFormData.websiteUrl
+      };
+
       const response = await fetch(getApiUrl('/producer/location'), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(updatedFormData),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
