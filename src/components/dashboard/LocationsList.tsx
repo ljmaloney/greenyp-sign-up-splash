@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,8 +14,8 @@ import LocationHoursDisplay from './LocationHoursDisplay';
 const LocationsList = () => {
   const [searchParams] = useSearchParams();
   const producerId = searchParams.get('producerId');
-  const { userDetails } = useAuth();
-  const externalUserRef = userDetails?.sub || null;
+  const { user } = useAuth();
+  const externalUserRef = user?.id || null;
   
   const { data: accountData } = useAccountData(externalUserRef);
   const { data: locations, isLoading, error, refetch } = useLocations(producerId);
