@@ -36,43 +36,22 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [cachedUser, setCachedUser] = useState<User | null>(null);
-  const [lastAuthCheck, setLastAuthCheck] = useState<number>(0);
-  const [authCheckInProgress, setAuthCheckInProgress] = useState(false);
-
-  // Cache expiry time: 5 minutes
-  const CACHE_EXPIRY = 5 * 60 * 1000;
+  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    // Only check auth once on mount
-    checkAuthStatus();
-  }, []);
-
-  const checkAuthStatus = async () => {
-    // Prevent multiple simultaneous auth checks
-    if (authCheckInProgress) {
-      console.log('🔄 Auth check already in progress, skipping...');
-      return;
+    // Only run the initial auth check once when the provider mounts
+    if (!initialized) {
+      initializeAuth();
     }
+  }, [initialized]);
 
-    const now = Date.now();
-    
-    // If we have a cached user and it's still fresh, use it
-    if (cachedUser && (now - lastAuthCheck) < CACHE_EXPIRY) {
-      console.log('✅ Using cached user data, no need to check auth service');
-      setUser(cachedUser);
-      setIsLoading(false);
-      return;
-    }
-
+  const initializeAuth = async () => {
     try {
-      console.log('🔍 Checking auth status (cache expired or no cached user)...');
-      setAuthCheckInProgress(true);
-      setLastAuthCheck(now);
+      console.log('🔄 Initializing authentication (one-time check)...');
       
       const oidcUser = await oidcService.getUser();
       
-      console.log('🔍 OIDC user check result:', {
+      console.log('🔍 Initial auth check result:', {
         hasUser: !!oidcUser,
         userDetails: oidcUser ? {
           sub: oidcUser.profile?.sub,
@@ -86,7 +65,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       });
       
       if (oidcUser && !oidcUser.expired) {
-        console.log('✅ Valid user found, transforming and caching...');
+        console.log('✅ Valid user found during initialization');
         const userInfo = oidcService.transformUser(oidcUser);
         const transformedUser: User = {
           id: userInfo.sub,
@@ -95,47 +74,40 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           roles: userInfo.roles || ['Greepages-Subscriber']
         };
         
-        // Cache the user data
-        setCachedUser(transformedUser);
         setUser(transformedUser);
-        console.log('✅ User cached and set in context:', transformedUser);
+        console.log('✅ User set in context:', transformedUser);
       } else {
-        console.log('❌ No valid user found or user expired, clearing cache');
-        setCachedUser(null);
+        console.log('❌ No valid user found during initialization');
         setUser(null);
       }
     } catch (error) {
-      console.error('❌ Auth check failed:', error);
-      setCachedUser(null);
+      console.error('❌ Auth initialization failed:', error);
       setUser(null);
     } finally {
       setIsLoading(false);
-      setAuthCheckInProgress(false);
+      setInitialized(true);
+      console.log('✅ Auth initialization complete');
     }
   };
 
   const login = () => {
     console.log('🚀 Starting login process...');
-    // Clear cache on login attempt
-    setCachedUser(null);
-    setLastAuthCheck(0);
+    setIsLoading(true);
     oidcService.login();
   };
 
   const logout = async () => {
     try {
       console.log('🚪 Starting logout...');
+      setIsLoading(true);
       await oidcService.logout();
-      // Clear cache on logout
-      setCachedUser(null);
-      setLastAuthCheck(0);
       setUser(null);
     } catch (error) {
       console.error('❌ Logout failed:', error);
       await oidcService.removeUser();
-      setCachedUser(null);
-      setLastAuthCheck(0);
       setUser(null);
+    } finally {
+      setIsLoading(false);
     }
   };
 

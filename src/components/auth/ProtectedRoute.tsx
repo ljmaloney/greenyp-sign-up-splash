@@ -19,7 +19,15 @@ const ProtectedRoute = ({
   const { isAuthenticated, isLoading, hasRole } = useAuth();
   const location = useLocation();
 
+  console.log('🛡️ ProtectedRoute check:', {
+    isLoading,
+    isAuthenticated,
+    requiredRole,
+    currentPath: location.pathname
+  });
+
   if (isLoading) {
+    console.log('⏳ Auth still loading, showing loading screen');
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <Card className="w-full max-w-md">
@@ -33,6 +41,7 @@ const ProtectedRoute = ({
   }
 
   if (!isAuthenticated) {
+    console.log('❌ User not authenticated, redirecting to login');
     // Redirect to login with the current location
     return <Navigate to={fallbackPath} state={{ from: location }} replace />;
   }
@@ -54,11 +63,13 @@ const ProtectedRoute = ({
     })();
 
     if (!hasRequiredRole) {
+      console.log('❌ User lacks required role, redirecting to unauthorized');
       // User doesn't have required role, redirect to unauthorized page
       return <Navigate to="/unauthorized" replace />;
     }
   }
 
+  console.log('✅ Authentication checks passed, rendering protected content');
   return <>{children}</>;
 };
 

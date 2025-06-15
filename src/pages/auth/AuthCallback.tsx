@@ -27,9 +27,9 @@ const AuthCallback = () => {
         });
         
         if (user && !user.expired) {
-          console.log('🎯 User is valid, navigating directly to dashboard...');
-          // Navigate immediately without waiting for storage verification
-          navigate('/dashboard', { replace: true });
+          console.log('🎯 User is valid, forcing page reload to refresh auth context...');
+          // Force a full page reload to ensure the AuthContext picks up the new user
+          window.location.href = '/dashboard';
         } else {
           console.error('❌ Invalid user from callback:', user);
           setError('Authentication failed - invalid user session');
@@ -42,7 +42,7 @@ const AuthCallback = () => {
           name: error.name
         });
         setError('Authentication failed. Please try again.');
-        setTimeout(() => navigate('/login'), 3000);
+        setTimeout(() => navigate('/login', { replace: true }), 3000);
       }
     };
 
