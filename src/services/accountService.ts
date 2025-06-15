@@ -9,6 +9,10 @@ export interface Producer {
   websiteUrl?: string;
   primaryCategoryIds: string[];
   subscriptions: Subscription[];
+  narrative?: string;
+  lineOfBusinessId?: string;
+  createDate?: string;
+  lastUpdateDate?: string;
 }
 
 export interface Subscription {
@@ -32,6 +36,10 @@ export interface PrimaryLocation {
   zipCode: string;
   country: string;
   phoneNumber?: string;
+  locationName?: string;
+  addressLine1?: string;
+  addressLine2?: string;
+  postalCode?: string;
 }
 
 export interface Contact {
@@ -63,6 +71,10 @@ const getDummyAccountData = (): AccountData => ({
     businessDescription: "Sustainable organic farming producing fresh vegetables, fruits, and herbs. We pride ourselves on environmentally friendly practices and supporting our local community.",
     websiteUrl: "https://greenvalleyorganic.com",
     primaryCategoryIds: ["organic-farming", "fresh-produce"],
+    narrative: "Green Valley Organic Farm has been a cornerstone of sustainable agriculture in our community for over a decade.",
+    lineOfBusinessId: "agriculture-001",
+    createDate: "2024-01-01T00:00:00Z",
+    lastUpdateDate: "2024-06-01T00:00:00Z",
     subscriptions: [
       {
         subscriptionId: "SUB-001",
@@ -96,7 +108,11 @@ const getDummyAccountData = (): AccountData => ({
     state: "California",
     zipCode: "95123",
     country: "USA",
-    phoneNumber: "(555) 123-4567"
+    phoneNumber: "(555) 123-4567",
+    locationName: "Green Valley Organic Farm - Main Farm",
+    addressLine1: "1234 Farm Road",
+    addressLine2: "",
+    postalCode: "95123"
   },
   contacts: [
     {

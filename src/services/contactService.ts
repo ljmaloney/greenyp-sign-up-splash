@@ -7,12 +7,18 @@ export interface Contact {
   lastName: string;
   emailAddress: string;
   phoneNumber?: string;
+  cellPhoneNumber?: string;
   producerContactType: string;
   streetAddress?: string;
   city?: string;
   state?: string;
   zipCode?: string;
   country?: string;
+  title?: string;
+  emailConfirmed?: boolean;
+  genericContactName?: string;
+  displayContactType?: string;
+  producerLocationId?: string;
 }
 
 // Check if we're in prototyping mode
@@ -28,12 +34,18 @@ const getDummyContacts = (): Contact[] => [
     lastName: "Johnson",
     emailAddress: "sarah@greenvalleyorganic.com",
     phoneNumber: "(555) 123-4567",
+    cellPhoneNumber: "(555) 123-4567",
     producerContactType: "PRIMARY",
     streetAddress: "1234 Farm Road",
     city: "Greenville",
     state: "California", 
     zipCode: "95123",
-    country: "USA"
+    country: "USA",
+    title: "Farm Manager",
+    emailConfirmed: true,
+    genericContactName: "Sarah Johnson",
+    displayContactType: "Primary Contact",
+    producerLocationId: "LOC-001"
   },
   {
     contactId: "CONTACT-002",
@@ -41,12 +53,18 @@ const getDummyContacts = (): Contact[] => [
     lastName: "Chen",
     emailAddress: "mike@greenvalleyorganic.com",
     phoneNumber: "(555) 123-4568",
+    cellPhoneNumber: "(555) 123-4568",
     producerContactType: "ADMIN",
     streetAddress: "1234 Farm Road",
     city: "Greenville",
     state: "California",
     zipCode: "95123", 
-    country: "USA"
+    country: "USA",
+    title: "Operations Manager",
+    emailConfirmed: true,
+    genericContactName: "Mike Chen",
+    displayContactType: "Admin Contact",
+    producerLocationId: "LOC-001"
   },
   {
     contactId: "CONTACT-003",
@@ -54,12 +72,18 @@ const getDummyContacts = (): Contact[] => [
     lastName: "Davis",
     emailAddress: "emma@greenvalleyorganic.com",
     phoneNumber: "(555) 123-4569",
-    producerContactType: "BILLING",
+    cellPhoneNumber: "(555) 123-4569",
+    producerContactType: "SALES",
     streetAddress: "5678 Business Ave",
     city: "San Francisco",
     state: "California",
     zipCode: "94102",
-    country: "USA"
+    country: "USA",
+    title: "Sales Director",
+    emailConfirmed: false,
+    genericContactName: "Emma Davis",
+    displayContactType: "Sales Contact",
+    producerLocationId: "LOC-002"
   },
   {
     contactId: "CONTACT-004",
@@ -67,12 +91,18 @@ const getDummyContacts = (): Contact[] => [
     lastName: "Wilson",
     emailAddress: "james@greenvalleyorganic.com",
     phoneNumber: "(555) 123-4570",
-    producerContactType: "TECHNICAL",
+    cellPhoneNumber: "(555) 123-4570",
+    producerContactType: "ACCOUNTS_PAYABLE",
     streetAddress: "1234 Farm Road",
     city: "Greenville",
     state: "California",
     zipCode: "95123",
-    country: "USA"
+    country: "USA",
+    title: "Accountant",
+    emailConfirmed: true,
+    genericContactName: "James Wilson",
+    displayContactType: "Billing Contact",
+    producerLocationId: "LOC-001"
   }
 ];
 

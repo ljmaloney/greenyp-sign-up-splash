@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { UserPlus, Edit, Mail, User, Clock, Shield, ShieldCheck } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 import { useAuthorizedUsers } from '@/hooks/useAuthorizedUsers';
 import { AuthorizedUserResponse } from '@/services/authorizedUsersService';
 import AddAuthorizedUserDialog from './AddAuthorizedUserDialog';

@@ -3,12 +3,20 @@ import { getApiUrl } from '@/config/api';
 
 export interface Location {
   locationId: string;
-  businessName: string;
-  streetAddress: string;
+  locationName: string;
+  locationType: string;
+  locationDisplayType: string;
+  active: boolean;
+  addressLine1: string;
+  addressLine2?: string;
+  addressLine3?: string;
   city: string;
   state: string;
-  zipCode: string;
-  country: string;
+  postalCode: string;
+  latitude: number;
+  longitude: number;
+  websiteUrl?: string;
+  businessName?: string;
   phoneNumber?: string;
   isPrimary?: boolean;
   businessHours?: BusinessHours[];
@@ -30,12 +38,20 @@ const isPrototyping = () =>
 const getDummyLocations = (): Location[] => [
   {
     locationId: "LOC-001",
-    businessName: "Green Valley Organic Farm - Main Farm",
-    streetAddress: "1234 Farm Road",
+    locationName: "Green Valley Organic Farm - Main Farm",
+    locationType: "HOME_OFFICE_PRIMARY",
+    locationDisplayType: "FULL_ADDRESS",
+    active: true,
+    addressLine1: "1234 Farm Road",
+    addressLine2: "",
+    addressLine3: "",
     city: "Greenville",
     state: "California",
-    zipCode: "95123",
-    country: "USA",
+    postalCode: "95123",
+    latitude: 37.7749,
+    longitude: -122.4194,
+    websiteUrl: "https://greenvalleyorganic.com",
+    businessName: "Green Valley Organic Farm - Main Farm",
     phoneNumber: "(555) 123-4567",
     isPrimary: true,
     businessHours: [
@@ -50,12 +66,20 @@ const getDummyLocations = (): Location[] => [
   },
   {
     locationId: "LOC-002",
-    businessName: "Green Valley Organic Farm - Farmers Market Stand",
-    streetAddress: "456 Market Square",
+    locationName: "Green Valley Organic Farm - Farmers Market Stand",
+    locationType: "RETAIL_SALES_SERVICE",
+    locationDisplayType: "CITY_STATE_ZIP",
+    active: true,
+    addressLine1: "456 Market Square",
+    addressLine2: "",
+    addressLine3: "",
     city: "Downtown Greenville",
     state: "California",
-    zipCode: "95124",
-    country: "USA", 
+    postalCode: "95124",
+    latitude: 37.7849,
+    longitude: -122.4294,
+    websiteUrl: "",
+    businessName: "Green Valley Organic Farm - Farmers Market Stand",
     phoneNumber: "(555) 123-4567",
     isPrimary: false,
     businessHours: [
@@ -70,12 +94,20 @@ const getDummyLocations = (): Location[] => [
   },
   {
     locationId: "LOC-003",
-    businessName: "Green Valley Organic Farm - Processing Facility",
-    streetAddress: "789 Industrial Way",
+    locationName: "Green Valley Organic Farm - Processing Facility",
+    locationType: "WHOLESALE_SALES",
+    locationDisplayType: "NO_DISPLAY",
+    active: false,
+    addressLine1: "789 Industrial Way",
+    addressLine2: "",
+    addressLine3: "",
     city: "Greenville",
     state: "California",
-    zipCode: "95125",
-    country: "USA",
+    postalCode: "95125",
+    latitude: 37.7649,
+    longitude: -122.4094,
+    websiteUrl: "",
+    businessName: "Green Valley Organic Farm - Processing Facility",
     phoneNumber: "(555) 123-4568",
     isPrimary: false,
     businessHours: [
