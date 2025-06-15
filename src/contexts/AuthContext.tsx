@@ -107,7 +107,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const loginAsPrototype = () => {
     console.log('🔧 Starting prototype login...');
     const prototypeUser: User = {
-      id: 'prototype-user-123',
+      id: 'PROD-12345', // Use the same producerId as in dummy data
       email: 'prototype@example.com',
       name: 'Prototype User',
       roles: ['Greepages-Subscriber', 'Greepages-SubscriberAdmin']

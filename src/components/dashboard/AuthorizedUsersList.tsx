@@ -12,7 +12,10 @@ import EditAuthorizedUserDialog from './EditAuthorizedUserDialog';
 
 const AuthorizedUsersList = () => {
   const [searchParams] = useSearchParams();
-  const producerId = searchParams.get('producerId');
+  const { user } = useAuth();
+  
+  // Use producerId from URL params, or fallback to user ID for prototyping
+  const producerId = searchParams.get('producerId') || user?.id;
   
   const { data: authorizedUsers, isLoading, error, refetch } = useAuthorizedUsers(producerId);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);

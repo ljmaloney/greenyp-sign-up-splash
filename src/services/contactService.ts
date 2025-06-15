@@ -3,45 +3,93 @@ import { getApiUrl } from '@/config/api';
 
 export interface Contact {
   contactId: string;
-  createDate: string;
-  lastUpdateDate: string;
-  producerId: string;
-  producerLocationId: string;
-  producerContactType: 'PRIMARY' | 'ADMIN' | 'SALES' | 'ACCOUNTS_PAYABLE' | 'DISABLED';
-  displayContactType: 'NO_DISPLAY' | 'FULL_NAME_PHONE_EMAIL' | 'GENERIC_NAME_PHONE_EMAIL' | 'PHONE_EMAIL_ONLY';
   firstName: string;
   lastName: string;
-  title?: string;
-  phoneNumber: string;
-  cellPhoneNumber: string;
-  emailConfirmed: boolean;
   emailAddress: string;
-  genericContactName?: string;
+  phoneNumber?: string;
+  producerContactType: string;
+  streetAddress?: string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
+  country?: string;
 }
 
-export interface ContactsResponse {
-  response: Contact[];
-  errorMessageApi: string | null;
-}
+// Check if we're in prototyping mode
+const isPrototyping = () => 
+  window.location.hostname.includes('lovable') || 
+  window.location.hostname === 'localhost';
+
+// Dummy data for prototyping
+const getDummyContacts = (): Contact[] => [
+  {
+    contactId: "CONTACT-001",
+    firstName: "Sarah",
+    lastName: "Johnson",
+    emailAddress: "sarah@greenvalleyorganic.com",
+    phoneNumber: "(555) 123-4567",
+    producerContactType: "PRIMARY",
+    streetAddress: "1234 Farm Road",
+    city: "Greenville",
+    state: "California", 
+    zipCode: "95123",
+    country: "USA"
+  },
+  {
+    contactId: "CONTACT-002",
+    firstName: "Mike",
+    lastName: "Chen",
+    emailAddress: "mike@greenvalleyorganic.com",
+    phoneNumber: "(555) 123-4568",
+    producerContactType: "ADMIN",
+    streetAddress: "1234 Farm Road",
+    city: "Greenville",
+    state: "California",
+    zipCode: "95123", 
+    country: "USA"
+  },
+  {
+    contactId: "CONTACT-003",
+    firstName: "Emma",
+    lastName: "Davis",
+    emailAddress: "emma@greenvalleyorganic.com",
+    phoneNumber: "(555) 123-4569",
+    producerContactType: "BILLING",
+    streetAddress: "5678 Business Ave",
+    city: "San Francisco",
+    state: "California",
+    zipCode: "94102",
+    country: "USA"
+  },
+  {
+    contactId: "CONTACT-004",
+    firstName: "James",
+    lastName: "Wilson",
+    emailAddress: "james@greenvalleyorganic.com",
+    phoneNumber: "(555) 123-4570",
+    producerContactType: "TECHNICAL",
+    streetAddress: "1234 Farm Road",
+    city: "Greenville",
+    state: "California",
+    zipCode: "95123",
+    country: "USA"
+  }
+];
 
 export const fetchContacts = async (producerId: string): Promise<Contact[]> => {
-  const url = getApiUrl(`/producer/${producerId}/contacts?activeOnly=false`);
-  
-  console.log('👥 Fetching contacts from:', url);
-  
-  const response = await fetch(url);
+  // Return dummy data in prototyping mode
+  if (isPrototyping()) {
+    console.log('🔧 Using dummy contacts data for prototyping');
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 400));
+    return getDummyContacts();
+  }
+
+  const response = await fetch(getApiUrl(`/producer/${producerId}/contacts`));
   
   if (!response.ok) {
-    throw new Error(`Failed to fetch contacts: ${response.status} ${response.statusText}`);
+    throw new Error(`Failed to fetch contacts: ${response.status}`);
   }
   
-  const data: ContactsResponse = await response.json();
-  
-  console.log('👥 Contacts response:', data);
-  
-  if (data.errorMessageApi) {
-    throw new Error(data.errorMessageApi);
-  }
-  
-  return data.response;
+  return response.json();
 };

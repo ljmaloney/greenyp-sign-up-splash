@@ -3,66 +3,44 @@ import { getApiUrl } from '@/config/api';
 
 export interface Producer {
   producerId: string;
-  createDate: string;
-  lastUpdateDate: string;
   businessName: string;
-  lineOfBusinessId: string;
-  subscriptionType: string;
-  websiteUrl: string;
+  businessType: string;
+  businessDescription: string;
+  websiteUrl?: string;
+  primaryCategoryIds: string[];
   subscriptions: Subscription[];
-  narrative: string;
 }
 
 export interface Subscription {
   subscriptionId: string;
-  producerSubscriptionId: string;
   displayName: string;
   shortDescription: string;
-  invoiceCycleType: string;
   subscriptionType: string;
-  nextInvoiceDate: string;
+  subscriptionAmount: number;
+  invoiceCycleType: string;
   startDate: string;
   endDate: string;
-  subscriptionAmount: number;
+  nextInvoiceDate?: string;
 }
 
 export interface PrimaryLocation {
   locationId: string;
-  producerId: string;
-  createDate: string;
-  lastUpdateDate: string;
-  locationName: string;
-  locationType: string;
-  locationDisplayType: string;
-  active: boolean;
-  addressLine1: string;
-  addressLine2: string;
-  addressLine3: string;
+  businessName: string;
+  streetAddress: string;
   city: string;
   state: string;
-  postalCode: string;
-  latitude: string;
-  longitude: string;
-  websiteUrl: string;
-  locationHours: any[];
+  zipCode: string;
+  country: string;
+  phoneNumber?: string;
 }
 
 export interface Contact {
   contactId: string;
-  createDate: string;
-  lastUpdateDate: string;
-  producerId: string;
-  producerLocationId: string;
-  producerContactType: string;
-  displayContactType: string;
   firstName: string;
   lastName: string;
-  title?: string;
-  phoneNumber: string;
-  cellPhoneNumber: string;
-  emailConfirmed: boolean;
   emailAddress: string;
-  genericContactName?: string;
+  phoneNumber?: string;
+  producerContactType: string;
 }
 
 export interface AccountData {
@@ -71,35 +49,89 @@ export interface AccountData {
   contacts: Contact[];
 }
 
-export interface AccountResponse {
-  response: AccountData;
-  errorMessageApi: null | string;
-}
+// Check if we're in prototyping mode
+const isPrototyping = () => 
+  window.location.hostname.includes('lovable') || 
+  window.location.hostname === 'localhost';
+
+// Dummy data for prototyping
+const getDummyAccountData = (): AccountData => ({
+  producer: {
+    producerId: "PROD-12345",
+    businessName: "Green Valley Organic Farm",
+    businessType: "Agriculture",
+    businessDescription: "Sustainable organic farming producing fresh vegetables, fruits, and herbs. We pride ourselves on environmentally friendly practices and supporting our local community.",
+    websiteUrl: "https://greenvalleyorganic.com",
+    primaryCategoryIds: ["organic-farming", "fresh-produce"],
+    subscriptions: [
+      {
+        subscriptionId: "SUB-001",
+        displayName: "Premium Business Listing",
+        shortDescription: "Enhanced visibility with photo gallery and priority placement",
+        subscriptionType: "LIVE_PAID",
+        subscriptionAmount: 29.99,
+        invoiceCycleType: "MONTHLY",
+        startDate: "2024-01-01T00:00:00Z",
+        endDate: "2025-01-01T00:00:00Z",
+        nextInvoiceDate: "2024-07-01T00:00:00Z"
+      },
+      {
+        subscriptionId: "SUB-002",
+        displayName: "Featured Placement",
+        shortDescription: "Top placement in search results",
+        subscriptionType: "LIVE_PAID",
+        subscriptionAmount: 49.99,
+        invoiceCycleType: "MONTHLY",
+        startDate: "2024-03-01T00:00:00Z",
+        endDate: "2024-12-01T00:00:00Z",
+        nextInvoiceDate: "2024-07-01T00:00:00Z"
+      }
+    ]
+  },
+  primaryLocation: {
+    locationId: "LOC-001",
+    businessName: "Green Valley Organic Farm",
+    streetAddress: "1234 Farm Road",
+    city: "Greenville",
+    state: "California",
+    zipCode: "95123",
+    country: "USA",
+    phoneNumber: "(555) 123-4567"
+  },
+  contacts: [
+    {
+      contactId: "CONTACT-001",
+      firstName: "Sarah",
+      lastName: "Johnson",
+      emailAddress: "sarah@greenvalleyorganic.com",
+      phoneNumber: "(555) 123-4567",
+      producerContactType: "PRIMARY"
+    },
+    {
+      contactId: "CONTACT-002",
+      firstName: "Mike",
+      lastName: "Chen",
+      emailAddress: "mike@greenvalleyorganic.com",
+      phoneNumber: "(555) 123-4568",
+      producerContactType: "ADMIN"
+    }
+  ]
+});
 
 export const fetchAccountData = async (externalUserRef: string): Promise<AccountData> => {
-  console.log(`🔍 Fetching account data for user: ${externalUserRef}`);
-  
-  const url = getApiUrl(`/account/user/${externalUserRef}`);
-  console.log(`📡 API URL: ${url}`);
-  
-  const response = await fetch(url, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
+  // Return dummy data in prototyping mode
+  if (isPrototyping()) {
+    console.log('🔧 Using dummy account data for prototyping');
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return getDummyAccountData();
+  }
 
+  const response = await fetch(getApiUrl(`/producer/${externalUserRef}/account`));
+  
   if (!response.ok) {
-    console.error(`❌ Account API failed: ${response.status} ${response.statusText}`);
-    throw new Error(`Failed to fetch account data: ${response.statusText}`);
+    throw new Error(`Failed to fetch account data: ${response.status}`);
   }
-
-  const data: AccountResponse = await response.json();
-  console.log('✅ Account data received:', data);
-
-  if (data.errorMessageApi) {
-    throw new Error(data.errorMessageApi);
-  }
-
-  return data.response;
+  
+  return response.json();
 };
