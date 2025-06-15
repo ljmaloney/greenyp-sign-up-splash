@@ -5,7 +5,7 @@ import { useAccountData } from '@/hooks/useAccountData';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import BusinessOverviewCard from '@/components/dashboard/BusinessOverviewCard';
 import ActiveSubscriptionsCard from '@/components/dashboard/ActiveSubscriptionsCard';
-import ContactCard from '@/components/dashboard/ContactCard';
+import DashboardContactsCard from '@/components/dashboard/DashboardContactsCard';
 import PrimaryLocationCard from '@/components/dashboard/PrimaryLocationCard';
 import { Card, CardContent } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
@@ -76,11 +76,11 @@ const DashboardIndex = () => {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <BusinessOverviewCard producer={accountData.producer} />
           <ActiveSubscriptionsCard subscriptions={accountData.producer.subscriptions} />
-          <ContactCard contacts={accountData.contacts} />
+          <DashboardContactsCard contacts={accountData.contacts} />
         </div>
 
         <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
-          <PrimaryLocationCard location={accountData.primaryLocation} />
+          <PrimaryLocationCard primaryLocation={accountData.primaryLocation} />
         </div>
       </div>
     </DashboardLayout>
