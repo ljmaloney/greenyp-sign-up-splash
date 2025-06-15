@@ -11,12 +11,13 @@ interface TimePickerProps {
   onChange: (time: string) => void;
   placeholder?: string;
   className?: string;
+  defaultPeriod?: 'AM' | 'PM';
 }
 
-const TimePicker = ({ value, onChange, placeholder = "Select time", className }: TimePickerProps) => {
+const TimePicker = ({ value, onChange, placeholder = "Select time", className, defaultPeriod = 'AM' }: TimePickerProps) => {
   const [hour, setHour] = useState<string>('');
   const [minute, setMinute] = useState<string>('');
-  const [period, setPeriod] = useState<string>('AM');
+  const [period, setPeriod] = useState<string>(defaultPeriod);
 
   // Parse initial value
   useEffect(() => {
@@ -26,14 +27,17 @@ const TimePicker = ({ value, onChange, placeholder = "Select time", className }:
         const [, h, m, p] = match;
         setHour(h);
         setMinute(m);
-        setPeriod(p?.toUpperCase() || 'AM');
+        setPeriod(p?.toUpperCase() || defaultPeriod);
       }
+    } else {
+      // Reset to default period when no value
+      setPeriod(defaultPeriod);
     }
-  }, [value]);
+  }, [value, defaultPeriod]);
 
   // Format and send time when components change
   useEffect(() => {
-    if (hour && minute) {
+    if (hour && minute && period) {
       const formattedTime = `${hour.padStart(2, '0')}:${minute.padStart(2, '0')} ${period}`;
       onChange(formattedTime);
     }
@@ -48,7 +52,7 @@ const TimePicker = ({ value, onChange, placeholder = "Select time", className }:
         <SelectTrigger className="w-16">
           <SelectValue placeholder="Hr" />
         </SelectTrigger>
-        <SelectContent className="z-[200]">
+        <SelectContent className="z-[250]">
           {hours.map(h => (
             <SelectItem key={h} value={h}>{h}</SelectItem>
           ))}
@@ -61,7 +65,7 @@ const TimePicker = ({ value, onChange, placeholder = "Select time", className }:
         <SelectTrigger className="w-16">
           <SelectValue placeholder="Min" />
         </SelectTrigger>
-        <SelectContent className="z-[200]">
+        <SelectContent className="z-[250]">
           {minutes.map(m => (
             <SelectItem key={m} value={m}>{m}</SelectItem>
           ))}
@@ -72,7 +76,7 @@ const TimePicker = ({ value, onChange, placeholder = "Select time", className }:
         <SelectTrigger className="w-16">
           <SelectValue />
         </SelectTrigger>
-        <SelectContent className="z-[200]">
+        <SelectContent className="z-[250]">
           <SelectItem value="AM">AM</SelectItem>
           <SelectItem value="PM">PM</SelectItem>
         </SelectContent>

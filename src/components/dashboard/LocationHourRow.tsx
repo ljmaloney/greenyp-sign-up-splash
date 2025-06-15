@@ -46,6 +46,7 @@ const LocationHourRow = ({
               onChange={setOpenTime}
               placeholder="Open time"
               className="flex-shrink-0"
+              defaultPeriod="AM"
             />
             <span className="text-gray-500 mx-2">to</span>
             <TimePicker
@@ -53,6 +54,7 @@ const LocationHourRow = ({
               onChange={setCloseTime}
               placeholder="Close time"
               className="flex-shrink-0"
+              defaultPeriod="PM"
             />
           </div>
           <div className="flex gap-2 flex-shrink-0">

@@ -63,6 +63,7 @@ const AddLocationHourForm = ({ hours, onAdd, formatDayName, dayOrder }: AddLocat
                   onChange={(time) => setNewHour(prev => ({ ...prev, openTime: time }))}
                   placeholder="Open time"
                   className="flex-shrink-0"
+                  defaultPeriod="AM"
                 />
                 <span className="text-gray-500 mx-2">to</span>
                 <TimePicker
@@ -70,6 +71,7 @@ const AddLocationHourForm = ({ hours, onAdd, formatDayName, dayOrder }: AddLocat
                   onChange={(time) => setNewHour(prev => ({ ...prev, closeTime: time }))}
                   placeholder="Close time"
                   className="flex-shrink-0"
+                  defaultPeriod="PM"
                 />
               </div>
             </div>
