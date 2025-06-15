@@ -60,6 +60,9 @@ const EditBusinessInfoDialog = ({ isOpen, onClose, businessData }: EditBusinessI
       });
       
       onClose();
+      
+      // Reload the page to reflect the changes
+      window.location.reload();
     } catch (error) {
       console.error('Error updating business information:', error);
       toast({
