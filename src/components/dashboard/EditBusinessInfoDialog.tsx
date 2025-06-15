@@ -8,7 +8,6 @@ import { updateBusinessInformation } from '@/services/businessProfileService';
 
 interface BusinessInfoData {
   businessName: string;
-  contactName: string;
   description: string;
   websiteUrl?: string;
   producerId?: string;
@@ -87,17 +86,6 @@ const EditBusinessInfoDialog = ({ isOpen, onClose, businessData }: EditBusinessI
             <Input
               value={formData.businessName}
               onChange={(e) => handleChange('businessName', e.target.value)}
-              required
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Contact Name
-            </label>
-            <Input
-              value={formData.contactName}
-              onChange={(e) => handleChange('contactName', e.target.value)}
               required
             />
           </div>

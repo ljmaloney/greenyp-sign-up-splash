@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -47,7 +46,6 @@ const BusinessOverviewCard = ({ producer }: BusinessOverviewCardProps) => {
 
   const businessData = {
     businessName: producer.businessName,
-    contactName: '', // This would need to come from contacts
     description: producer.narrative,
     websiteUrl: producer.websiteUrl,
     producerId: producer.producerId,
