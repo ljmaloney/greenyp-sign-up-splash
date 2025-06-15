@@ -48,7 +48,7 @@ const TimePicker = ({ value, onChange, placeholder = "Select time", className }:
         <SelectTrigger className="w-16">
           <SelectValue placeholder="Hr" />
         </SelectTrigger>
-        <SelectContent className="z-[100]">
+        <SelectContent className="z-[200]">
           {hours.map(h => (
             <SelectItem key={h} value={h}>{h}</SelectItem>
           ))}
@@ -61,7 +61,7 @@ const TimePicker = ({ value, onChange, placeholder = "Select time", className }:
         <SelectTrigger className="w-16">
           <SelectValue placeholder="Min" />
         </SelectTrigger>
-        <SelectContent className="z-[100]">
+        <SelectContent className="z-[200]">
           {minutes.map(m => (
             <SelectItem key={m} value={m}>{m}</SelectItem>
           ))}
@@ -72,7 +72,7 @@ const TimePicker = ({ value, onChange, placeholder = "Select time", className }:
         <SelectTrigger className="w-16">
           <SelectValue />
         </SelectTrigger>
-        <SelectContent className="z-[100]">
+        <SelectContent className="z-[200]">
           <SelectItem value="AM">AM</SelectItem>
           <SelectItem value="PM">PM</SelectItem>
         </SelectContent>
