@@ -76,20 +76,6 @@ const EditBusinessInfoDialog = ({ isOpen, onClose, businessData }: EditBusinessI
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  // Get current line of business display name
-  const getCurrentLineOfBusinessName = () => {
-    if (!lineOfBusinessData || !formData.lineOfBusinessId) return '';
-    const lob = lineOfBusinessData.find(l => l.lineOfBusinessId === formData.lineOfBusinessId);
-    return lob?.lineOfBusinessName || '';
-  };
-
-  // Get current subscription display name
-  const getCurrentSubscriptionName = () => {
-    if (!subscriptions || !formData.subscriptionId) return '';
-    const subscription = subscriptions.find(s => s.subscriptionId === formData.subscriptionId);
-    return subscription?.displayName || '';
-  };
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl">
@@ -130,9 +116,7 @@ const EditBusinessInfoDialog = ({ isOpen, onClose, businessData }: EditBusinessI
                 onValueChange={(value) => handleChange('lineOfBusinessId', value)}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select line of business">
-                    {getCurrentLineOfBusinessName()}
-                  </SelectValue>
+                  <SelectValue placeholder="Select line of business" />
                 </SelectTrigger>
                 <SelectContent>
                   {lineOfBusinessData?.map((lob) => (
@@ -153,9 +137,7 @@ const EditBusinessInfoDialog = ({ isOpen, onClose, businessData }: EditBusinessI
                 onValueChange={(value) => handleChange('subscriptionId', value)}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select subscription plan">
-                    {getCurrentSubscriptionName()}
-                  </SelectValue>
+                  <SelectValue placeholder="Select subscription plan" />
                 </SelectTrigger>
                 <SelectContent>
                   {subscriptions?.filter(sub => !sub.comingSoon).map((subscription) => (
