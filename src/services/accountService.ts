@@ -1,55 +1,5 @@
+
 import { apiRequest, API_CONFIG } from '@/config/api';
-import { fetchUserData } from './userService';
-
-export interface Producer {
-  producerId: string;
-  businessName: string;
-  businessType: string;
-  businessDescription: string;
-  websiteUrl?: string;
-  primaryCategoryIds: string[];
-  subscriptions: Subscription[];
-  narrative?: string;
-  lineOfBusinessId?: string;
-  createDate?: string;
-  lastUpdateDate?: string;
-  businessPhone?: string;
-  businessEmail?: string;
-  businessWebsite?: string;
-  businessEstablished?: string;
-  businessEmployeeCount?: number;
-  isActive?: boolean;
-  businessLogo?: string | null;
-}
-
-export interface Subscription {
-  subscriptionId: string;
-  displayName: string;
-  shortDescription: string;
-  subscriptionType: string;
-  subscriptionAmount: number;
-  invoiceCycleType: string;
-  startDate: string;
-  endDate: string;
-  nextInvoiceDate?: string;
-}
-
-export interface PrimaryLocation {
-  locationId: string;
-  businessName: string;
-  streetAddress: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  country: string;
-  phoneNumber?: string;
-  locationName?: string;
-  addressLine1?: string;
-  addressLine2?: string;
-  postalCode?: string;
-  locationType?: string;
-  locationDisplayType?: string;
-}
 
 export interface Contact {
   contactId: string;
@@ -57,42 +7,63 @@ export interface Contact {
   lastName: string;
   emailAddress: string;
   phoneNumber?: string;
-  producerContactType: string;
   title?: string;
-  cellPhoneNumber?: string;
-  emailConfirmed?: boolean;
-  genericContactName?: string;
-  displayContactType?: string;
+  producerContactType: 'PRIMARY' | 'SECONDARY' | 'BILLING';
+}
+
+export interface Location {
+  locationId: string;
+  locationName?: string;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  phoneNumber?: string;
+  isPrimary: boolean;
+}
+
+export interface Subscription {
+  subscriptionId: string;
+  displayName: string;
+  shortDescription: string;
+  subscriptionAmount: number;
+  subscriptionType: string;
+  invoiceCycleType: string;
+  startDate: string;
+  endDate: string;
+  nextInvoiceDate?: string;
+}
+
+export interface Producer {
+  producerId: string;
+  businessName: string;
+  narrative?: string;
+  websiteUrl?: string;
+  subscriptions: Subscription[];
 }
 
 export interface AccountData {
   producer: Producer;
-  primaryLocation: PrimaryLocation;
   contacts: Contact[];
+  primaryLocation: Location;
+  locations: Location[];
 }
 
 // Fallback data for development when API is not accessible
 const FALLBACK_ACCOUNT_DATA: AccountData = {
   producer: {
     producerId: 'PROD-12345',
-    businessName: 'Demo Green Services',
-    businessDescription: 'A demonstration landscaping company for development purposes',
-    businessType: 'LLC',
-    businessPhone: '(555) 123-4567',
-    businessEmail: 'demo@example.com',
-    businessWebsite: 'https://demo.example.com',
-    businessEstablished: '2020-01-01',
-    businessEmployeeCount: 15,
-    isActive: true,
-    businessLogo: null,
-    primaryCategoryIds: ['landscaping'],
+    businessName: 'Green Thumb Landscaping',
+    narrative: 'Professional landscaping services for residential and commercial properties.',
+    websiteUrl: 'https://greenthumb.example.com',
     subscriptions: [
       {
-        subscriptionId: 'SUB-001',
-        subscriptionType: 'LIVE_PAID',
-        displayName: 'Premium Business Listing',
-        shortDescription: 'Full business listing with all features',
+        subscriptionId: 'sub-001',
+        displayName: 'Premium Listing',
+        shortDescription: 'Enhanced visibility with featured placement',
         subscriptionAmount: 99.99,
+        subscriptionType: 'LIVE_PAID',
         invoiceCycleType: 'MONTHLY',
         startDate: '2024-01-01',
         endDate: '2024-12-31',
@@ -100,58 +71,61 @@ const FALLBACK_ACCOUNT_DATA: AccountData = {
       }
     ]
   },
-  primaryLocation: {
-    locationId: 'LOC-001',
-    businessName: 'Demo Green Services',
-    streetAddress: '123 Demo Street',
-    city: 'Demo City',
-    state: 'CA',
-    zipCode: '90210',
-    country: 'USA',
-    locationName: 'Main Office',
-    addressLine1: '123 Demo Street',
-    addressLine2: 'Suite 100',
-    postalCode: '90210',
-    locationType: 'HOME_OFFICE_PRIMARY',
-    locationDisplayType: 'CITY_STATE_ZIP'
-  },
   contacts: [
     {
-      contactId: 'CONTACT-001',
+      contactId: 'contact-001',
       firstName: 'John',
       lastName: 'Doe',
-      emailAddress: 'john@demo.com',
+      emailAddress: 'john@greenthumb.example.com',
       phoneNumber: '(555) 123-4567',
-      producerContactType: 'PRIMARY',
       title: 'Owner',
-      genericContactName: 'John Doe',
-      displayContactType: 'FULL_NAME_PHONE_EMAIL'
+      producerContactType: 'PRIMARY'
+    },
+    {
+      contactId: 'contact-002',
+      firstName: 'Jane',
+      lastName: 'Smith',
+      emailAddress: 'jane@greenthumb.example.com',
+      phoneNumber: '(555) 987-6543',
+      title: 'Operations Manager',
+      producerContactType: 'SECONDARY'
+    }
+  ],
+  primaryLocation: {
+    locationId: 'loc-001',
+    locationName: 'Main Office',
+    addressLine1: '123 Garden Street',
+    city: 'Springfield',
+    state: 'IL',
+    postalCode: '62701',
+    phoneNumber: '(555) 123-4567',
+    isPrimary: true
+  },
+  locations: [
+    {
+      locationId: 'loc-001',
+      locationName: 'Main Office',
+      addressLine1: '123 Garden Street',
+      city: 'Springfield',
+      state: 'IL',
+      postalCode: '62701',
+      phoneNumber: '(555) 123-4567',
+      isPrimary: true
     }
   ]
 };
 
 export const fetchAccountData = async (externalUserRef: string): Promise<AccountData> => {
-  console.log('Starting two-step account data fetch for:', externalUserRef);
+  console.log('Fetching account data for:', externalUserRef);
+  console.log('API URL:', `${API_CONFIG.baseUrl}/account/${externalUserRef}`);
   
   try {
-    // Step 1: Get user data to retrieve producerId
-    console.log('Step 1: Fetching user data...');
-    const userData = await fetchUserData(externalUserRef);
-    console.log('✅ User data received:', userData);
-    
-    if (!userData.producerId) {
-      throw new Error('No producerId found in user data');
-    }
-    
-    // Step 2: Get account data using producerId
-    console.log('Step 2: Fetching account data using producerId:', userData.producerId);
-    const accountData = await apiRequest(`/account/${userData.producerId}`);
-    console.log('✅ Account data fetched successfully:', accountData);
-    
-    return accountData;
+    const data = await apiRequest(`/account/${externalUserRef}`);
+    console.log('✅ Account data fetched successfully:', data);
+    return data;
     
   } catch (error) {
-    console.error('Error in two-step account data fetch:', error);
+    console.error('Error fetching account data:', error);
     
     // In development mode, provide fallback data
     if (API_CONFIG.isDevelopment) {
