@@ -43,7 +43,21 @@ const LocationCard = ({ location, onEdit, onEditContact, onDeleteContact }: Loca
     return time;
   };
 
+  const getSortedHours = () => {
+    if (!location.locationHours) return [];
+    
+    // Day order starting with Sunday
+    const dayOrder = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+    
+    return location.locationHours.sort((a, b) => {
+      const aIndex = dayOrder.indexOf(a.dayOfWeek);
+      const bIndex = dayOrder.indexOf(b.dayOfWeek);
+      return aIndex - bIndex;
+    });
+  };
+
   const hasHours = location.locationHours && location.locationHours.length > 0;
+  const sortedHours = getSortedHours();
 
   return (
     <>
@@ -158,7 +172,7 @@ const LocationCard = ({ location, onEdit, onEditContact, onDeleteContact }: Loca
               {isHoursExpanded && hasHours && (
                 <div className="px-4 pb-4 border-t border-gray-200">
                   <div className="space-y-2 pt-4">
-                    {location.locationHours.map((hour) => (
+                    {sortedHours.map((hour) => (
                       <div key={hour.dayOfWeek} className="flex justify-between items-center py-1">
                         <span className="font-medium text-gray-700">{formatDayName(hour.dayOfWeek)}</span>
                         <span className="text-gray-600">

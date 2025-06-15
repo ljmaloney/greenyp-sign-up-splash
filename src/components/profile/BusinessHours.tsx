@@ -10,8 +10,8 @@ interface BusinessHoursProps {
 
 const BusinessHours = ({ profile }: BusinessHoursProps) => {
   const formatHours = () => {
-    // Reorder to start with Monday after Sunday
-    const dayOrder = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
+    // Day order starting with Sunday
+    const dayOrder = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
     const dayNames = {
       'SUNDAY': 'Sunday',
       'MONDAY': 'Monday', 
