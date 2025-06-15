@@ -43,25 +43,25 @@ const TimePicker = ({ value, onChange, placeholder = "Select time", className }:
   const minutes = Array.from({ length: 12 }, (_, i) => (i * 5).toString().padStart(2, '0'));
 
   return (
-    <div className={cn("flex items-center space-x-1", className)}>
+    <div className={cn("flex items-center gap-1", className)}>
       <Select value={hour} onValueChange={setHour}>
         <SelectTrigger className="w-16">
           <SelectValue placeholder="Hr" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="z-[100]">
           {hours.map(h => (
             <SelectItem key={h} value={h}>{h}</SelectItem>
           ))}
         </SelectContent>
       </Select>
       
-      <span className="text-gray-500">:</span>
+      <span className="text-gray-500 px-1">:</span>
       
       <Select value={minute} onValueChange={setMinute}>
         <SelectTrigger className="w-16">
           <SelectValue placeholder="Min" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="z-[100]">
           {minutes.map(m => (
             <SelectItem key={m} value={m}>{m}</SelectItem>
           ))}
@@ -72,7 +72,7 @@ const TimePicker = ({ value, onChange, placeholder = "Select time", className }:
         <SelectTrigger className="w-16">
           <SelectValue />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="z-[100]">
           <SelectItem value="AM">AM</SelectItem>
           <SelectItem value="PM">PM</SelectItem>
         </SelectContent>
