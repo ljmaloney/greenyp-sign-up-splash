@@ -1,6 +1,6 @@
 
-import React, { useEffect } from 'react';
-import { Navigate, useLocation, Link, useNavigate } from 'react-router-dom';
+import React from 'react';
+import { Navigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +9,6 @@ import { ChevronRight, Leaf } from 'lucide-react';
 const Login = () => {
   const { login, isAuthenticated, loginAsPrototype } = useAuth();
   const location = useLocation();
-  const navigate = useNavigate();
   
   // Get the intended destination from location state
   const from = location.state?.from?.pathname || '/dashboard';
@@ -18,17 +17,6 @@ const Login = () => {
   const isPrototyping = window.location.hostname.includes('lovable') || 
                        window.location.hostname === 'localhost';
 
-  // Auto-redirect in prototyping environment
-  useEffect(() => {
-    if (isPrototyping && !isAuthenticated) {
-      console.log('🔧 Prototyping environment detected, auto-redirecting...');
-      loginAsPrototype();
-      setTimeout(() => {
-        navigate(from);
-      }, 100);
-    }
-  }, [isPrototyping, isAuthenticated, loginAsPrototype, navigate, from]);
-
   // If already authenticated, redirect to intended destination
   if (isAuthenticated) {
     return <Navigate to={from} replace />;
@@ -36,11 +24,15 @@ const Login = () => {
 
   const handleLogin = () => {
     if (isPrototyping) {
-      loginAsPrototype();
-      navigate(from);
+      // In prototyping mode, offer both options but don't auto-redirect
+      login(); // Try real OIDC first
     } else {
       login();
     }
+  };
+
+  const handlePrototypeLogin = () => {
+    loginAsPrototype();
   };
 
   return (
@@ -51,11 +43,11 @@ const Login = () => {
             <Leaf className="h-12 w-12 text-green-600" />
           </div>
           <CardTitle className="text-2xl font-bold">
-            {isPrototyping ? 'Prototype Mode' : 'Sign in to your account'}
+            Sign in to your account
           </CardTitle>
           {isPrototyping && (
             <p className="text-sm text-gray-600 mt-2">
-              Running in prototype mode - authentication is simulated
+              Development environment detected
             </p>
           )}
         </CardHeader>
@@ -65,8 +57,31 @@ const Login = () => {
               onClick={handleLogin}
               className="w-full bg-greenyp-600 hover:bg-greenyp-700 text-white" 
             >
-              {isPrototyping ? 'Continue to Dashboard' : 'Sign in with OpenID Connect'}
+              Sign in with OpenID Connect
             </Button>
+            
+            {isPrototyping && (
+              <>
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-gray-50 px-2 text-gray-500">
+                      Or for development
+                    </span>
+                  </div>
+                </div>
+                
+                <Button 
+                  onClick={handlePrototypeLogin}
+                  variant="outline"
+                  className="w-full"
+                >
+                  Continue as Prototype User
+                </Button>
+              </>
+            )}
           </div>
           
           <div className="flex justify-center">
