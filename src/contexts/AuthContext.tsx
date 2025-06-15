@@ -39,6 +39,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   useEffect(() => {
     checkAuthStatus();
+    
+    // Set up a periodic check for authentication changes
+    const interval = setInterval(() => {
+      checkAuthStatus();
+    }, 2000); // Check every 2 seconds
+    
+    return () => clearInterval(interval);
   }, []);
 
   const checkAuthStatus = async () => {
@@ -68,15 +75,32 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           name: userInfo.name,
           roles: userInfo.roles || ['Greepages-Subscriber']
         };
-        console.log('✅ User set in context:', transformedUser);
-        setUser(transformedUser);
+        
+        // Only update state if user actually changed
+        setUser(prevUser => {
+          if (!prevUser || prevUser.id !== transformedUser.id) {
+            console.log('✅ User set in context:', transformedUser);
+            return transformedUser;
+          }
+          return prevUser;
+        });
       } else {
         console.log('❌ No valid user found or user expired');
-        setUser(null);
+        setUser(prevUser => {
+          if (prevUser !== null) {
+            return null;
+          }
+          return prevUser;
+        });
       }
     } catch (error) {
       console.error('❌ Auth check failed:', error);
-      setUser(null);
+      setUser(prevUser => {
+        if (prevUser !== null) {
+          return null;
+        }
+        return prevUser;
+      });
     } finally {
       setIsLoading(false);
     }

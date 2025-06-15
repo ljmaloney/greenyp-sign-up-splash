@@ -27,24 +27,9 @@ const AuthCallback = () => {
         });
         
         if (user && !user.expired) {
-          console.log('🎯 User is valid, checking if properly stored...');
-          
-          // Give a small delay to ensure user is stored properly
-          setTimeout(async () => {
-            const storedUser = await oidcService.getUser();
-            console.log('🔍 Checking stored user after callback:', {
-              hasStoredUser: !!storedUser,
-              storedUserValid: storedUser && !storedUser.expired
-            });
-            
-            if (storedUser && !storedUser.expired) {
-              console.log('✅ User properly stored, redirecting to dashboard');
-              navigate('/dashboard');
-            } else {
-              console.error('❌ User not properly stored after callback');
-              setError('Authentication completed but user session could not be established');
-            }
-          }, 100);
+          console.log('🎯 User is valid, navigating directly to dashboard...');
+          // Navigate immediately without waiting for storage verification
+          navigate('/dashboard', { replace: true });
         } else {
           console.error('❌ Invalid user from callback:', user);
           setError('Authentication failed - invalid user session');

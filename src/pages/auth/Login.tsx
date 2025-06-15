@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Navigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -7,18 +7,44 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChevronRight, Leaf } from 'lucide-react';
 
 const Login = () => {
-  const { login, isAuthenticated } = useAuth();
+  const { login, isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
   
   // Get the intended destination from location state
   const from = location.state?.from?.pathname || '/dashboard';
 
-  // If already authenticated, redirect to intended destination
+  // Add logging to debug authentication state
+  useEffect(() => {
+    console.log('🔍 Login component - Auth state:', {
+      isAuthenticated,
+      isLoading,
+      from,
+      currentPath: location.pathname
+    });
+  }, [isAuthenticated, isLoading, from, location.pathname]);
+
+  // Don't redirect while still loading
+  if (isLoading) {
+    console.log('⏳ Still loading auth state, not redirecting yet');
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <Card className="w-full max-w-md">
+          <CardContent className="flex items-center justify-center p-6">
+            <span>Checking authentication...</span>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // If authenticated and not loading, redirect to intended destination
   if (isAuthenticated) {
+    console.log('✅ User is authenticated, redirecting to:', from);
     return <Navigate to={from} replace />;
   }
 
   const handleLogin = () => {
+    console.log('🚀 Initiating login process...');
     login();
   };
 
