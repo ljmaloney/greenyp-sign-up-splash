@@ -3,7 +3,8 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { MapPin, ChevronDown, ChevronUp, Plus } from 'lucide-react';
-import { Contact, Location } from "@/types/contact";
+import { Location } from "@/types/contact";
+import { Contact } from "@/services/contactService";
 import ContactCard from './ContactCard';
 
 interface LocationGroupProps {
@@ -13,7 +14,7 @@ interface LocationGroupProps {
   isOpen: boolean;
   onToggle: () => void;
   onEditContact: (contact: Contact) => void;
-  onDeleteContact: (contactId: string) => void;
+  onDeleteContact: (contact: Contact) => void;
   onAddContact: (locationId: string) => void;
 }
 
@@ -31,6 +32,12 @@ const LocationGroup = ({
     if (!locationId) return 'No Location';
     const location = locations.find(loc => loc.id === locationId);
     return location ? location.locationName : 'Unknown Location';
+  };
+
+  const getLocationNameById = (locationId: string) => {
+    if (!locations) return locationId;
+    const location = locations.find(loc => loc.id === locationId);
+    return location ? location.locationName : locationId;
   };
 
   const locationName = getLocationName(locationId === 'no-location' ? undefined : locationId);
@@ -68,10 +75,11 @@ const LocationGroup = ({
           <div className="divide-y bg-white">
             {locationContacts.map((contact) => (
               <ContactCard
-                key={contact.id}
+                key={contact.contactId}
                 contact={contact}
                 onEdit={onEditContact}
                 onDelete={onDeleteContact}
+                getLocationName={getLocationNameById}
               />
             ))}
           </div>
