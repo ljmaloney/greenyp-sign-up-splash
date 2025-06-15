@@ -46,6 +46,7 @@ export const apiRequest = async (endpoint: string, options: RequestInit = {}) =>
   console.log(`🌐 API Request: ${url}`);
   console.log(`🔧 Environment: ${API_CONFIG.isDevelopment ? 'Development' : 'Production'}`);
   console.log(`🌍 Origin: ${window.location.origin}`);
+  console.log(`📍 Target: ${API_CONFIG.baseUrl}`);
   
   const requestOptions: RequestInit = {
     ...options,
@@ -88,6 +89,7 @@ export const apiRequest = async (endpoint: string, options: RequestInit = {}) =>
       stack: error.stack,
       isDevelopment: API_CONFIG.isDevelopment,
       origin: window.location.origin,
+      target: API_CONFIG.baseUrl,
       userAgent: navigator.userAgent
     });
     
@@ -95,16 +97,17 @@ export const apiRequest = async (endpoint: string, options: RequestInit = {}) =>
     if (API_CONFIG.isDevelopment) {
       console.log(`🔧 Debug Info:`, {
         possibleIssues: [
-          'CORS policy blocking the request',
           'API server is down or unreachable',
+          'CORS policy blocking the request', 
           'Network connectivity issues',
-          'API endpoint has changed'
+          'API endpoint has changed or does not exist'
         ],
         suggestions: [
-          'Check if the API server is running on port 8080',
+          `Check if the API server is running on ${API_CONFIG.baseUrl}`,
           'Verify CORS configuration on the API server',
           'Try accessing the API directly in a new tab',
-          'Check browser network tab for more details'
+          'Check browser network tab for more details',
+          'Ensure the endpoint exists and accepts the request method'
         ]
       });
     }

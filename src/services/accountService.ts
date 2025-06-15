@@ -1,5 +1,5 @@
-
 import { apiRequest, API_CONFIG } from '@/config/api';
+import { fetchUserData } from './userService';
 
 export interface Producer {
   producerId: string;
@@ -131,16 +131,27 @@ const FALLBACK_ACCOUNT_DATA: AccountData = {
 };
 
 export const fetchAccountData = async (externalUserRef: string): Promise<AccountData> => {
-  console.log('Fetching account data for:', externalUserRef);
-  console.log('API URL:', `${API_CONFIG.baseUrl}/account/${externalUserRef}`);
+  console.log('Starting two-step account data fetch for:', externalUserRef);
   
   try {
-    const data = await apiRequest(`/account/${externalUserRef}`);
-    console.log('✅ Account data fetched successfully:', data);
-    return data;
+    // Step 1: Get user data to retrieve producerId
+    console.log('Step 1: Fetching user data...');
+    const userData = await fetchUserData(externalUserRef);
+    console.log('✅ User data received:', userData);
+    
+    if (!userData.producerId) {
+      throw new Error('No producerId found in user data');
+    }
+    
+    // Step 2: Get account data using producerId
+    console.log('Step 2: Fetching account data using producerId:', userData.producerId);
+    const accountData = await apiRequest(`/account/${userData.producerId}`);
+    console.log('✅ Account data fetched successfully:', accountData);
+    
+    return accountData;
     
   } catch (error) {
-    console.error('Error fetching account data:', error);
+    console.error('Error in two-step account data fetch:', error);
     
     // In development mode, provide fallback data
     if (API_CONFIG.isDevelopment) {
