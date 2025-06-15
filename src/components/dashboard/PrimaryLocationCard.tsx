@@ -3,10 +3,10 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Eye, Building2 } from 'lucide-react';
-import { Location } from '@/services/accountService';
+import { PrimaryLocation } from '@/services/accountService';
 
 interface PrimaryLocationCardProps {
-  primaryLocation: Location;
+  primaryLocation: PrimaryLocation;
 }
 
 const PrimaryLocationCard = ({ primaryLocation }: PrimaryLocationCardProps) => {
@@ -56,36 +56,30 @@ const PrimaryLocationCard = ({ primaryLocation }: PrimaryLocationCardProps) => {
           </div>
 
           <div className="grid gap-3 md:grid-cols-2">
-            {primaryLocation.locationType && (
-              <div className="flex items-start gap-2">
-                <Building2 className="h-4 w-4 text-gray-500 mt-0.5" />
-                <div>
-                  <span className="text-sm text-gray-600">Location Type:</span>
-                  <p className="text-sm font-medium">
-                    {getLocationTypeLabel(primaryLocation.locationType)}
-                  </p>
-                </div>
+            <div className="flex items-start gap-2">
+              <Building2 className="h-4 w-4 text-gray-500 mt-0.5" />
+              <div>
+                <span className="text-sm text-gray-600">Location Type:</span>
+                <p className="text-sm font-medium">
+                  {getLocationTypeLabel(primaryLocation.locationType)}
+                </p>
               </div>
-            )}
+            </div>
 
-            {primaryLocation.locationDisplayType && (
-              <div className="flex items-start gap-2">
-                <Eye className="h-4 w-4 text-gray-500 mt-0.5" />
-                <div>
-                  <span className="text-sm text-gray-600">Display Type:</span>
-                  <p className="text-sm font-medium">
-                    {getLocationDisplayTypeLabel(primaryLocation.locationDisplayType)}
-                  </p>
-                </div>
+            <div className="flex items-start gap-2">
+              <Eye className="h-4 w-4 text-gray-500 mt-0.5" />
+              <div>
+                <span className="text-sm text-gray-600">Display Type:</span>
+                <p className="text-sm font-medium">
+                  {getLocationDisplayTypeLabel(primaryLocation.locationDisplayType)}
+                </p>
               </div>
-            )}
+            </div>
           </div>
 
-          {primaryLocation.locationType && (
-            <Badge variant="outline">
-              {getLocationTypeLabel(primaryLocation.locationType)}
-            </Badge>
-          )}
+          <Badge variant="outline">
+            {getLocationTypeLabel(primaryLocation.locationType)}
+          </Badge>
         </div>
       </CardContent>
     </Card>

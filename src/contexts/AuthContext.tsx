@@ -8,7 +8,6 @@ interface User {
   email: string;
   name: string;
   roles: string[];
-  externalUserRef: string; // Add this field
 }
 
 interface AuthContextType {
@@ -16,7 +15,6 @@ interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   login: () => void;
-  loginAsPrototype: () => void;
   logout: () => Promise<void>;
   hasRole: (role: string) => boolean;
 }
@@ -39,10 +37,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Check if we're in a prototyping environment
-  const isPrototyping = window.location.hostname.includes('lovable') || 
-                       window.location.hostname === 'localhost';
-
   useEffect(() => {
     checkAuthStatus();
   }, []);
@@ -50,18 +44,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const checkAuthStatus = async () => {
     try {
       console.log('🔍 Checking auth status...');
-      
-      // In prototyping mode, check for stored prototype user first
-      if (isPrototyping) {
-        const prototypeUser = localStorage.getItem('prototype-user');
-        if (prototypeUser) {
-          console.log('🔧 Found prototype user in localStorage');
-          setUser(JSON.parse(prototypeUser));
-          setIsLoading(false);
-          return;
-        }
-      }
-
       const oidcUser = await oidcService.getUser();
       
       console.log('🔍 OIDC user check result:', {
@@ -84,8 +66,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           id: userInfo.sub,
           email: userInfo.email,
           name: userInfo.name,
-          roles: userInfo.roles || ['Greepages-Subscriber'],
-          externalUserRef: userInfo.sub // Use sub as externalUserRef
+          roles: userInfo.roles || ['Greepages-Subscriber']
         };
         console.log('✅ User set in context:', transformedUser);
         setUser(transformedUser);
@@ -106,39 +87,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     oidcService.login();
   };
 
-  const loginAsPrototype = () => {
-    console.log('🔧 Starting prototype login...');
-    const prototypeUser: User = {
-      id: 'PROD-12345',
-      email: 'prototype@example.com',
-      name: 'Prototype User',
-      roles: ['Greepages-Subscriber', 'Greepages-SubscriberAdmin'],
-      externalUserRef: 'PROD-12345' // Match the fallback data in accountService
-    };
-    
-    // Store in localStorage for persistence
-    localStorage.setItem('prototype-user', JSON.stringify(prototypeUser));
-    setUser(prototypeUser);
-    console.log('✅ Prototype user logged in:', prototypeUser);
-  };
-
   const logout = async () => {
     try {
       console.log('🚪 Starting logout...');
-      
-      // Clear prototype user if in prototyping mode
-      if (isPrototyping) {
-        localStorage.removeItem('prototype-user');
-        setUser(null);
-        return;
-      }
-
       await oidcService.logout();
       setUser(null);
     } catch (error) {
       console.error('❌ Logout failed:', error);
       await oidcService.removeUser();
-      localStorage.removeItem('prototype-user');
       setUser(null);
     }
   };
@@ -152,7 +108,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     isLoading,
     isAuthenticated: !!user,
     login,
-    loginAsPrototype,
     logout,
     hasRole
   };

@@ -54,10 +54,6 @@ const BusinessOverviewCard = ({ producer }: BusinessOverviewCardProps) => {
     lineOfBusinessId: producer.lineOfBusinessId,
   };
 
-  // Determine subscription status from active subscriptions
-  const hasActiveSubscriptions = producer.subscriptions && producer.subscriptions.length > 0;
-  const subscriptionStatus = hasActiveSubscriptions ? 'LIVE PAID' : 'LIVE UNPAID';
-
   return (
     <>
       <Card>
@@ -90,8 +86,8 @@ const BusinessOverviewCard = ({ producer }: BusinessOverviewCardProps) => {
                 </div>
               )}
             </div>
-            <Badge variant={!hasActiveSubscriptions ? 'destructive' : 'default'}>
-              {subscriptionStatus}
+            <Badge variant={producer.subscriptionType === 'LIVE_UNPAID' ? 'destructive' : 'default'}>
+              {producer.subscriptionType.replace('_', ' ')}
             </Badge>
           </div>
         </CardHeader>

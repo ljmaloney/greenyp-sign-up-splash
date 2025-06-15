@@ -4,7 +4,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Phone, Mail } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAccountData } from '@/hooks/useAccountData';
-import { useContacts } from '@/hooks/useContacts';
 import BusinessOverviewCard from './BusinessOverviewCard';
 import PrimaryLocationCard from './PrimaryLocationCard';
 import ActiveSubscriptionsCard from './ActiveSubscriptionsCard';
@@ -13,7 +12,6 @@ import DashboardContactCard from './DashboardContactCard';
 const BusinessProfile = () => {
   const { user } = useAuth();
   const { data: accountData, isLoading, error } = useAccountData(user?.id || null);
-  const { data: detailedContacts } = useContacts(user?.id);
 
   if (isLoading) {
     return (
@@ -56,10 +54,7 @@ const BusinessProfile = () => {
     );
   }
 
-  const { producer, primaryLocation } = accountData;
-  
-  // Use detailed contacts from contactService if available, fallback to basic account contacts
-  const contacts = detailedContacts || [];
+  const { producer, primaryLocation, contacts } = accountData;
   const primaryContact = contacts.find(contact => contact.producerContactType === 'PRIMARY');
   const adminContact = contacts.find(contact => contact.producerContactType === 'ADMIN');
 
@@ -74,26 +69,24 @@ const BusinessProfile = () => {
       {/* Active Subscriptions - Single Card */}
       <ActiveSubscriptionsCard subscriptions={producer.subscriptions} />
 
-      {/* Contact Information - Only show if we have detailed contacts */}
-      {contacts.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {primaryContact && (
-            <DashboardContactCard 
-              contact={primaryContact} 
-              title="Primary Contact" 
-              icon={Phone} 
-            />
-          )}
+      {/* Contact Information */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {primaryContact && (
+          <DashboardContactCard 
+            contact={primaryContact} 
+            title="Primary Contact" 
+            icon={Phone} 
+          />
+        )}
 
-          {adminContact && adminContact.contactId !== primaryContact?.contactId && (
-            <DashboardContactCard 
-              contact={adminContact} 
-              title="Admin Contact" 
-              icon={Mail} 
-            />
-          )}
-        </div>
-      )}
+        {adminContact && adminContact.contactId !== primaryContact?.contactId && (
+          <DashboardContactCard 
+            contact={adminContact} 
+            title="Admin Contact" 
+            icon={Mail} 
+          />
+        )}
+      </div>
     </div>
   );
 };

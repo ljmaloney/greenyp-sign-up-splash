@@ -5,7 +5,6 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { UserPlus, Edit, Mail, User, Clock, Shield, ShieldCheck } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
 import { useAuthorizedUsers } from '@/hooks/useAuthorizedUsers';
 import { AuthorizedUserResponse } from '@/services/authorizedUsersService';
 import AddAuthorizedUserDialog from './AddAuthorizedUserDialog';
@@ -13,10 +12,7 @@ import EditAuthorizedUserDialog from './EditAuthorizedUserDialog';
 
 const AuthorizedUsersList = () => {
   const [searchParams] = useSearchParams();
-  const { user } = useAuth();
-  
-  // Use producerId from URL params, or fallback to user ID for prototyping
-  const producerId = searchParams.get('producerId') || user?.id;
+  const producerId = searchParams.get('producerId');
   
   const { data: authorizedUsers, isLoading, error, refetch } = useAuthorizedUsers(producerId);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);

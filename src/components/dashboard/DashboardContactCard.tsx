@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Phone, Mail } from 'lucide-react';
-import { Contact } from '@/services/contactService';
+import { Contact } from '@/services/accountService';
 
 interface DashboardContactCardProps {
   contact: Contact;
@@ -74,7 +74,7 @@ const DashboardContactCard = ({ contact, title, icon: Icon }: DashboardContactCa
             <div className="flex items-center gap-2">
               <Mail className="h-4 w-4" />
               <span>{contact.emailAddress}</span>
-              {contact.emailConfirmed === false && (
+              {!contact.emailConfirmed && (
                 <Badge variant="destructive" className="text-xs">Unconfirmed</Badge>
               )}
             </div>
@@ -88,14 +88,12 @@ const DashboardContactCard = ({ contact, title, icon: Icon }: DashboardContactCa
               </p>
             </div>
             
-            {contact.displayContactType && (
-              <div className="text-sm">
-                <span className="font-medium text-gray-700">Display Type:</span>
-                <p className="text-gray-600 text-xs mt-1">
-                  {getDisplayTypeDisplay(contact.displayContactType)}
-                </p>
-              </div>
-            )}
+            <div className="text-sm">
+              <span className="font-medium text-gray-700">Display Type:</span>
+              <p className="text-gray-600 text-xs mt-1">
+                {getDisplayTypeDisplay(contact.displayContactType)}
+              </p>
+            </div>
           </div>
         </div>
       </CardContent>

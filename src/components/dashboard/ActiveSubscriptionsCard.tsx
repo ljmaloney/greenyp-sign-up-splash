@@ -25,68 +25,34 @@ const ActiveSubscriptionsCard = ({ subscriptions }: ActiveSubscriptionsCardProps
     }).format(amount);
   };
 
-  // Show all subscriptions, not just future ones - let the badge indicate status
-  const displaySubscriptions = subscriptions || [];
-  
-  // Check if any subscriptions are LIVE_UNPAID to determine the title
-  const hasUnpaidSubscriptions = displaySubscriptions.some(sub => sub.subscriptionType === 'LIVE_UNPAID');
-  const cardTitle = hasUnpaidSubscriptions ? 'Pending Subscriptions' : 'Active Subscriptions';
-
-  // Function to determine badge variant based on subscription type and dates
-  const getBadgeVariant = (subscription: Subscription) => {
-    if (subscription.subscriptionType === 'LIVE_UNPAID') {
-      return 'destructive';
-    }
-    
-    const endDate = new Date(subscription.endDate);
+  const activeSubscriptions = subscriptions.filter(sub => {
+    const endDate = new Date(sub.endDate);
     const today = new Date();
-    
-    if (endDate < today) {
-      return 'outline'; // Expired
-    }
-    
-    return 'default'; // Active
-  };
-
-  const getBadgeText = (subscription: Subscription) => {
-    const endDate = new Date(subscription.endDate);
-    const today = new Date();
-    
-    if (subscription.subscriptionType === 'LIVE_UNPAID') {
-      return 'PENDING PAYMENT';
-    }
-    
-    if (endDate < today) {
-      return 'EXPIRED';
-    }
-    
-    return subscription.subscriptionType.replace('_', ' ');
-  };
-
-  console.log('Subscriptions data:', displaySubscriptions);
+    return endDate > today;
+  });
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-greenyp-600">
           <Calendar className="h-5 w-5" />
-          {cardTitle}
+          Active Subscriptions
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {displaySubscriptions.length === 0 ? (
-          <p className="text-gray-600">No subscriptions found</p>
+        {activeSubscriptions.length === 0 ? (
+          <p className="text-gray-600">No active subscriptions</p>
         ) : (
           <div className="space-y-4">
-            {displaySubscriptions.map((subscription) => (
+            {activeSubscriptions.map((subscription) => (
               <div key={subscription.subscriptionId} className="border rounded-lg p-4">
                 <div className="flex justify-between items-start mb-3">
                   <div>
                     <h4 className="font-semibold text-lg">{subscription.displayName}</h4>
                     <p className="text-sm text-gray-600">{subscription.shortDescription}</p>
                   </div>
-                  <Badge variant={getBadgeVariant(subscription)}>
-                    {getBadgeText(subscription)}
+                  <Badge variant={subscription.subscriptionType === 'LIVE_UNPAID' ? 'destructive' : 'default'}>
+                    {subscription.subscriptionType.replace('_', ' ')}
                   </Badge>
                 </div>
                 
