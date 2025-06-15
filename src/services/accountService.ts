@@ -1,5 +1,4 @@
-
-import { getApiUrl } from '@/config/api';
+import { apiRequest, API_CONFIG } from '@/config/api';
 
 export interface Producer {
   producerId: string;
@@ -64,97 +63,67 @@ export interface AccountData {
   contacts: Contact[];
 }
 
-// Check if we're in prototyping mode
-const isPrototyping = () => 
-  window.location.hostname.includes('lovable') || 
-  window.location.hostname === 'localhost';
-
-// Dummy data for prototyping
-const getDummyAccountData = (): AccountData => ({
+// Fallback data for development when API is not accessible
+const FALLBACK_ACCOUNT_DATA: AccountData = {
   producer: {
-    producerId: "PROD-12345",
-    businessName: "Green Valley Organic Farm",
-    businessType: "Agriculture",
-    businessDescription: "Sustainable organic farming producing fresh vegetables, fruits, and herbs. We pride ourselves on environmentally friendly practices and supporting our local community.",
-    websiteUrl: "https://greenvalleyorganic.com",
-    primaryCategoryIds: ["organic-farming", "fresh-produce"],
-    narrative: "Green Valley Organic Farm has been a cornerstone of sustainable agriculture in our community for over a decade.",
-    lineOfBusinessId: "agriculture-001",
-    createDate: "2024-01-01T00:00:00Z",
-    lastUpdateDate: "2024-06-01T00:00:00Z",
+    producerId: 'PROD-12345',
+    externalUserRef: 'PROD-12345',
+    businessName: 'Demo Green Services',
+    businessDescription: 'A demonstration landscaping company for development purposes',
+    businessType: 'LLC',
+    businessPhone: '(555) 123-4567',
+    businessEmail: 'demo@example.com',
+    businessWebsite: 'https://demo.example.com',
+    businessEstablished: '2020-01-01',
+    businessEmployeeCount: 15,
+    isActive: true,
+    businessLogo: null,
     subscriptions: [
       {
-        subscriptionId: "SUB-001",
-        displayName: "Premium Business Listing",
-        shortDescription: "Enhanced visibility with photo gallery and priority placement",
-        subscriptionType: "LIVE_PAID",
-        subscriptionAmount: 29.99,
-        invoiceCycleType: "MONTHLY",
-        startDate: "2024-01-01T00:00:00Z",
-        endDate: "2025-01-01T00:00:00Z",
-        nextInvoiceDate: "2024-07-01T00:00:00Z"
-      },
-      {
-        subscriptionId: "SUB-002",
-        displayName: "Featured Placement",
-        shortDescription: "Top placement in search results",
-        subscriptionType: "LIVE_PAID",
-        subscriptionAmount: 49.99,
-        invoiceCycleType: "MONTHLY",
-        startDate: "2024-03-01T00:00:00Z",
-        endDate: "2024-12-01T00:00:00Z",
-        nextInvoiceDate: "2024-07-01T00:00:00Z"
+        subscriptionId: 'SUB-001',
+        subscriptionType: 'LIVE_PAID',
+        displayName: 'Premium Business Listing',
+        shortDescription: 'Full business listing with all features',
+        subscriptionAmount: 99.99,
+        invoiceCycleType: 'MONTHLY',
+        startDate: '2024-01-01',
+        endDate: '2024-12-31',
+        nextInvoiceDate: '2024-07-01'
       }
     ]
   },
   primaryLocation: {
-    locationId: "LOC-001",
-    businessName: "Green Valley Organic Farm",
-    streetAddress: "1234 Farm Road",
-    city: "Greenville",
-    state: "California",
-    zipCode: "95123",
-    country: "USA",
-    phoneNumber: "(555) 123-4567",
-    locationName: "Green Valley Organic Farm - Main Farm",
-    addressLine1: "1234 Farm Road",
-    addressLine2: "",
-    postalCode: "95123"
-  },
-  contacts: [
-    {
-      contactId: "CONTACT-001",
-      firstName: "Sarah",
-      lastName: "Johnson",
-      emailAddress: "sarah@greenvalleyorganic.com",
-      phoneNumber: "(555) 123-4567",
-      producerContactType: "PRIMARY"
-    },
-    {
-      contactId: "CONTACT-002",
-      firstName: "Mike",
-      lastName: "Chen",
-      emailAddress: "mike@greenvalleyorganic.com",
-      phoneNumber: "(555) 123-4568",
-      producerContactType: "ADMIN"
-    }
-  ]
-});
+    locationId: 'LOC-001',
+    locationName: 'Main Office',
+    addressLine1: '123 Demo Street',
+    addressLine2: 'Suite 100',
+    city: 'Demo City',
+    state: 'CA',
+    postalCode: '90210',
+    locationType: 'HOME_OFFICE_PRIMARY',
+    locationDisplayType: 'CITY_STATE_ZIP'
+  }
+};
 
 export const fetchAccountData = async (externalUserRef: string): Promise<AccountData> => {
-  // Return dummy data in prototyping mode
-  if (isPrototyping()) {
-    console.log('🔧 Using dummy account data for prototyping');
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-    return getDummyAccountData();
-  }
-
-  const response = await fetch(getApiUrl(`/producer/${externalUserRef}/account`));
+  console.log('Fetching account data for:', externalUserRef);
+  console.log('API URL:', `${API_CONFIG.baseUrl}/account/${externalUserRef}`);
   
-  if (!response.ok) {
-    throw new Error(`Failed to fetch account data: ${response.status}`);
+  try {
+    const data = await apiRequest(`/account/${externalUserRef}`);
+    console.log('✅ Account data fetched successfully:', data);
+    return data;
+    
+  } catch (error) {
+    console.error('Error fetching account data:', error);
+    
+    // In development mode, provide fallback data
+    if (API_CONFIG.isDevelopment) {
+      console.log('🔧 Using fallback account data for development mode');
+      return FALLBACK_ACCOUNT_DATA;
+    }
+    
+    // In production, re-throw the error
+    throw new Error(`Failed to fetch account data: ${error.message}`);
   }
-  
-  return response.json();
 };
