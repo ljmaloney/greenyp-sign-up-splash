@@ -8,6 +8,7 @@ interface User {
   email: string;
   name: string;
   roles: string[];
+  externalUserRef: string; // Add this field
 }
 
 interface AuthContextType {
@@ -83,7 +84,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           id: userInfo.sub,
           email: userInfo.email,
           name: userInfo.name,
-          roles: userInfo.roles || ['Greepages-Subscriber']
+          roles: userInfo.roles || ['Greepages-Subscriber'],
+          externalUserRef: userInfo.sub // Use sub as externalUserRef
         };
         console.log('✅ User set in context:', transformedUser);
         setUser(transformedUser);
@@ -107,10 +109,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const loginAsPrototype = () => {
     console.log('🔧 Starting prototype login...');
     const prototypeUser: User = {
-      id: 'PROD-12345', // Use the same producerId as in dummy data
+      id: 'PROD-12345',
       email: 'prototype@example.com',
       name: 'Prototype User',
-      roles: ['Greepages-Subscriber', 'Greepages-SubscriberAdmin']
+      roles: ['Greepages-Subscriber', 'Greepages-SubscriberAdmin'],
+      externalUserRef: 'PROD-12345' // Use same value as externalUserRef
     };
     
     // Store in localStorage for persistence
