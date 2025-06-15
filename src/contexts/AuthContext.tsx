@@ -113,7 +113,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       email: 'prototype@example.com',
       name: 'Prototype User',
       roles: ['Greepages-Subscriber', 'Greepages-SubscriberAdmin'],
-      externalUserRef: 'PROD-12345' // Use same value as externalUserRef
+      externalUserRef: 'PROD-12345' // Match the fallback data in accountService
     };
     
     // Store in localStorage for persistence

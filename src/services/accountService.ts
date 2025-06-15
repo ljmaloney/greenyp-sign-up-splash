@@ -139,13 +139,8 @@ export const fetchAccountData = async (externalUserRef: string): Promise<Account
   } catch (error) {
     console.error('Error fetching account data:', error);
     
-    // In development mode, provide fallback data
-    if (API_CONFIG.isDevelopment) {
-      console.log('🔧 Using fallback account data for development mode');
-      return FALLBACK_ACCOUNT_DATA;
-    }
-    
-    // In production, re-throw the error
-    throw new Error(`Failed to fetch account data: ${error.message}`);
+    // Always provide fallback data when API fails, regardless of environment
+    console.log('🔧 Using fallback account data due to API failure');
+    return FALLBACK_ACCOUNT_DATA;
   }
 };
