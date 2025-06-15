@@ -7,7 +7,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Location } from '@/services/locationService';
 import AddLocationDialog from './AddLocationDialog';
 import EditLocationDialog from './EditLocationDialog';
-import LocationHoursDisplay from './LocationHoursDisplay';
 import LocationsHeader from './LocationsHeader';
 import LocationsLoadingState from './LocationsLoadingState';
 import LocationsErrorState from './LocationsErrorState';
@@ -62,18 +61,11 @@ const LocationsList = () => {
       ) : (
         <div className="grid gap-6">
           {locations.map((location) => (
-            <div key={location.locationId} className="space-y-4">
-              <LocationCard 
-                location={location} 
-                onEdit={handleEditLocation}
-              />
-
-              <LocationHoursDisplay 
-                locationId={location.locationId}
-                locationHours={location.locationHours}
-                locationName={location.locationName}
-              />
-            </div>
+            <LocationCard 
+              key={location.locationId}
+              location={location} 
+              onEdit={handleEditLocation}
+            />
           ))}
         </div>
       )}
