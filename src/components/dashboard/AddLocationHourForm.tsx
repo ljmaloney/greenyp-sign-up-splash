@@ -35,41 +35,62 @@ const AddLocationHourForm = ({ hours, onAdd, formatDayName }: AddLocationHourFor
     }
   };
 
+  const availableDays = DAYS_OF_WEEK.filter(day => !hours.some(h => h.dayOfWeek === day));
+
   if (isAddingNew) {
     return (
-      <div className="flex items-center space-x-2 py-2 border-t pt-2">
-        <Select 
-          value={newHour.dayOfWeek} 
-          onValueChange={(value) => setNewHour(prev => ({ ...prev, dayOfWeek: value }))}
-        >
-          <SelectTrigger className="w-32">
-            <SelectValue placeholder="Day" />
-          </SelectTrigger>
-          <SelectContent>
-            {DAYS_OF_WEEK.filter(day => !hours.some(h => h.dayOfWeek === day)).map(day => (
-              <SelectItem key={day} value={day}>
-                {formatDayName(day)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <TimePicker
-          value={newHour.openTime}
-          onChange={(time) => setNewHour(prev => ({ ...prev, openTime: time }))}
-          placeholder="Open time"
-        />
-        <span className="text-gray-500">-</span>
-        <TimePicker
-          value={newHour.closeTime}
-          onChange={(time) => setNewHour(prev => ({ ...prev, closeTime: time }))}
-          placeholder="Close time"
-        />
-        <Button size="sm" onClick={handleAddNew} className="bg-greenyp-600 hover:bg-greenyp-700">
-          Save
-        </Button>
-        <Button size="sm" variant="outline" onClick={() => setIsAddingNew(false)}>
-          Cancel
-        </Button>
+      <div className="bg-gray-50 p-4 rounded-lg border">
+        <h4 className="font-medium text-gray-900 mb-4">Add New Operating Hours</h4>
+        <div className="flex items-center gap-4 flex-wrap">
+          <div className="min-w-[120px]">
+            <Select 
+              value={newHour.dayOfWeek} 
+              onValueChange={(value) => setNewHour(prev => ({ ...prev, dayOfWeek: value }))}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select day" />
+              </SelectTrigger>
+              <SelectContent>
+                {availableDays.map(day => (
+                  <SelectItem key={day} value={day}>
+                    {formatDayName(day)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <TimePicker
+              value={newHour.openTime}
+              onChange={(time) => setNewHour(prev => ({ ...prev, openTime: time }))}
+              placeholder="Open time"
+              className="flex-shrink-0"
+            />
+            <span className="text-gray-500 mx-2">to</span>
+            <TimePicker
+              value={newHour.closeTime}
+              onChange={(time) => setNewHour(prev => ({ ...prev, closeTime: time }))}
+              placeholder="Close time"
+              className="flex-shrink-0"
+            />
+          </div>
+          <div className="flex gap-2 flex-shrink-0">
+            <Button size="sm" onClick={handleAddNew} className="bg-greenyp-600 hover:bg-greenyp-700">
+              Add Hours
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => setIsAddingNew(false)}>
+              Cancel
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (availableDays.length === 0) {
+    return (
+      <div className="text-center py-4 text-gray-500">
+        <p>All days of the week have been configured.</p>
       </div>
     );
   }
@@ -79,10 +100,10 @@ const AddLocationHourForm = ({ hours, onAdd, formatDayName }: AddLocationHourFor
       size="sm" 
       variant="outline" 
       onClick={() => setIsAddingNew(true)}
-      className="mt-2"
+      className="w-full bg-greenyp-50 hover:bg-greenyp-100 border-greenyp-200 text-greenyp-700"
     >
-      <Plus className="w-4 h-4 mr-1" />
-      Add Hours
+      <Plus className="w-4 h-4 mr-2" />
+      Add Operating Hours
     </Button>
   );
 };

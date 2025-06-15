@@ -129,6 +129,7 @@ const LocationCard = ({ location, onEdit, onEditContact, onDeleteContact }: Loca
                 size="sm"
                 variant="outline"
                 onClick={() => setIsHoursDialogOpen(true)}
+                className="bg-greenyp-600 hover:bg-greenyp-700 text-white border-greenyp-600 hover:border-greenyp-700"
               >
                 <Plus className="w-4 h-4 mr-1" />
                 Manage Hours
@@ -164,11 +165,19 @@ const LocationCard = ({ location, onEdit, onEditContact, onDeleteContact }: Loca
       </Card>
 
       <Dialog open={isHoursDialogOpen} onOpenChange={setIsHoursDialogOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Manage Hours of Operation - {location.locationName}</DialogTitle>
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader className="pb-4">
+            <DialogTitle className="text-xl font-semibold text-greenyp-600 flex items-center gap-2">
+              <Clock className="w-5 h-5" />
+              Manage Hours of Operation
+            </DialogTitle>
+            <p className="text-sm text-gray-600 mt-1">
+              Set the operating hours for <span className="font-medium">{location.locationName}</span>
+            </p>
           </DialogHeader>
-          <LocationHoursSection locationId={location.locationId} />
+          <div className="py-4">
+            <LocationHoursSection locationId={location.locationId} />
+          </div>
         </DialogContent>
       </Dialog>
     </>
