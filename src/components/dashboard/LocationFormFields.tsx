@@ -3,11 +3,13 @@ import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { LocationFormData } from "@/types/location";
+import LocationHoursSection from './LocationHoursSection';
 
 interface LocationFormFieldsProps {
   formData: LocationFormData;
   onFieldChange: (field: keyof LocationFormData, value: string | boolean) => void;
   showActiveToggle?: boolean;
+  showHours?: boolean;
 }
 
 const US_STATES_AND_TERRITORIES = [
@@ -22,7 +24,7 @@ const US_STATES_AND_TERRITORIES = [
   'U.S. Virgin Islands'
 ];
 
-const LocationFormFields = ({ formData, onFieldChange, showActiveToggle = false }: LocationFormFieldsProps) => {
+const LocationFormFields = ({ formData, onFieldChange, showActiveToggle = false, showHours = false }: LocationFormFieldsProps) => {
   return (
     <div className="space-y-4">
       <div>
@@ -139,7 +141,7 @@ const LocationFormFields = ({ formData, onFieldChange, showActiveToggle = false 
           <Input
             value={formData.websiteUrl}
             onChange={(e) => onFieldChange('websiteUrl', e.target.value)}
-            placeholder="www.example.com"
+            placeholder="https://www.example.com"
           />
         </div>
         
@@ -165,6 +167,13 @@ const LocationFormFields = ({ formData, onFieldChange, showActiveToggle = false 
           </div>
         </div>
       </div>
+
+      {showHours && formData.locationId && (
+        <div className="mt-6">
+          <h3 className="text-lg font-medium text-gray-900 mb-4">Hours of Operation</h3>
+          <LocationHoursSection locationId={formData.locationId} />
+        </div>
+      )}
     </div>
   );
 };
