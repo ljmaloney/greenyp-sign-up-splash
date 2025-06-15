@@ -55,12 +55,12 @@ const DevApiConfig = () => {
           
           <div className="space-y-2 text-xs">
             <div>
-              <strong>Current:</strong> {API_CONFIG.BASE_URL}
+              <strong>Current:</strong> {API_CONFIG.baseUrl}
             </div>
             
             <div className="flex gap-2">
               <Input
-                placeholder="http://localhost:3000"
+                placeholder="http://localhost:8080"
                 value={customHost}
                 onChange={(e) => setCustomHost(e.target.value)}
                 className="text-xs h-8"

@@ -1,3 +1,4 @@
+
 import { apiRequest, API_CONFIG } from '@/config/api';
 
 export interface Producer {
@@ -12,6 +13,13 @@ export interface Producer {
   lineOfBusinessId?: string;
   createDate?: string;
   lastUpdateDate?: string;
+  businessPhone?: string;
+  businessEmail?: string;
+  businessWebsite?: string;
+  businessEstablished?: string;
+  businessEmployeeCount?: number;
+  isActive?: boolean;
+  businessLogo?: string | null;
 }
 
 export interface Subscription {
@@ -67,7 +75,6 @@ export interface AccountData {
 const FALLBACK_ACCOUNT_DATA: AccountData = {
   producer: {
     producerId: 'PROD-12345',
-    externalUserRef: 'PROD-12345',
     businessName: 'Demo Green Services',
     businessDescription: 'A demonstration landscaping company for development purposes',
     businessType: 'LLC',
@@ -78,6 +85,7 @@ const FALLBACK_ACCOUNT_DATA: AccountData = {
     businessEmployeeCount: 15,
     isActive: true,
     businessLogo: null,
+    primaryCategoryIds: ['landscaping'],
     subscriptions: [
       {
         subscriptionId: 'SUB-001',
@@ -94,15 +102,32 @@ const FALLBACK_ACCOUNT_DATA: AccountData = {
   },
   primaryLocation: {
     locationId: 'LOC-001',
+    businessName: 'Demo Green Services',
+    streetAddress: '123 Demo Street',
+    city: 'Demo City',
+    state: 'CA',
+    zipCode: '90210',
+    country: 'USA',
     locationName: 'Main Office',
     addressLine1: '123 Demo Street',
     addressLine2: 'Suite 100',
-    city: 'Demo City',
-    state: 'CA',
     postalCode: '90210',
     locationType: 'HOME_OFFICE_PRIMARY',
     locationDisplayType: 'CITY_STATE_ZIP'
-  }
+  },
+  contacts: [
+    {
+      contactId: 'CONTACT-001',
+      firstName: 'John',
+      lastName: 'Doe',
+      emailAddress: 'john@demo.com',
+      phoneNumber: '(555) 123-4567',
+      producerContactType: 'PRIMARY',
+      title: 'Owner',
+      genericContactName: 'John Doe',
+      displayContactType: 'FULL_NAME_PHONE_EMAIL'
+    }
+  ]
 };
 
 export const fetchAccountData = async (externalUserRef: string): Promise<AccountData> => {

@@ -5,7 +5,7 @@ const isDevelopment = window.location.hostname === 'localhost' ||
 export const API_CONFIG = {
   // Use different base URLs based on environment
   baseUrl: isDevelopment 
-    ? 'https://services.greenyp.com' // Keep trying the real API first
+    ? 'http://localhost:8080' // Use localhost:8080 for local testing
     : 'https://services.greenyp.com',
   
   // Add timeout and retry logic
@@ -19,9 +19,29 @@ export const API_CONFIG = {
   isDevelopment
 };
 
+// Custom host management for development
+let customHost: string | null = null;
+
+export const setApiHost = (host: string) => {
+  customHost = host;
+  API_CONFIG.baseUrl = host;
+};
+
+export const resetApiHost = () => {
+  customHost = null;
+  API_CONFIG.baseUrl = isDevelopment 
+    ? 'http://localhost:8080'
+    : 'https://services.greenyp.com';
+};
+
+export const getApiUrl = (endpoint: string) => {
+  const baseUrl = customHost || API_CONFIG.baseUrl;
+  return `${baseUrl}${endpoint}`;
+};
+
 // Enhanced fetch wrapper with better error handling
 export const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
-  const url = `${API_CONFIG.baseUrl}${endpoint}`;
+  const url = getApiUrl(endpoint);
   
   console.log(`🌐 API Request: ${url}`);
   console.log(`🔧 Environment: ${API_CONFIG.isDevelopment ? 'Development' : 'Production'}`);
@@ -81,7 +101,7 @@ export const apiRequest = async (endpoint: string, options: RequestInit = {}) =>
           'API endpoint has changed'
         ],
         suggestions: [
-          'Check if the API server is running',
+          'Check if the API server is running on port 8080',
           'Verify CORS configuration on the API server',
           'Try accessing the API directly in a new tab',
           'Check browser network tab for more details'
