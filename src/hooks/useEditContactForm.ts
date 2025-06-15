@@ -4,6 +4,7 @@ import { ContactFormData, Contact } from "@/types/contact";
 import { useToast } from "@/hooks/use-toast";
 import { getApiUrl } from "@/config/api";
 import { validateContactForm } from "@/utils/contactValidation";
+import { normalizePhoneNumber } from "@/utils/phoneUtils";
 
 export const useEditContactForm = (
   contact: Contact,
@@ -55,13 +56,20 @@ export const useEditContactForm = (
     try {
       console.log('Updating contact:', formData);
       
+      // Normalize phone numbers before submitting
+      const submissionData = {
+        ...formData,
+        phoneNumber: normalizePhoneNumber(formData.phoneNumber),
+        cellPhoneNumber: normalizePhoneNumber(formData.cellPhoneNumber)
+      };
+      
       const response = await fetch(getApiUrl('/producer/contact'), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          ...formData,
+          ...submissionData,
           contactId: contact.id
         }),
       });
@@ -77,7 +85,7 @@ export const useEditContactForm = (
         description: "Contact has been successfully updated.",
       });
       
-      onContactUpdated(formData);
+      onContactUpdated(submissionData);
       onClose();
     } catch (error) {
       console.error('Error updating contact:', error);

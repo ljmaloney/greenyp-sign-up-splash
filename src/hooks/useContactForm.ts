@@ -1,8 +1,10 @@
+
 import { useState, useEffect } from 'react';
 import { ContactFormData, Contact } from "@/types/contact";
 import { useToast } from "@/hooks/use-toast";
 import { getApiUrl } from "@/config/api";
 import { validateContactForm } from "@/utils/contactValidation";
+import { normalizePhoneNumber } from "@/utils/phoneUtils";
 
 export const useContactForm = (
   onSuccess: (contact: ContactFormData) => void, 
@@ -76,12 +78,19 @@ export const useContactForm = (
     try {
       console.log('Adding contact:', formData);
       
+      // Normalize phone numbers before submitting
+      const submissionData = {
+        ...formData,
+        phoneNumber: normalizePhoneNumber(formData.phoneNumber),
+        cellPhoneNumber: normalizePhoneNumber(formData.cellPhoneNumber)
+      };
+      
       const response = await fetch(getApiUrl(`/producer/location/${formData.producerLocationId}/contact`), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(submissionData),
       });
 
       if (!response.ok) {
@@ -95,7 +104,7 @@ export const useContactForm = (
         description: "Contact has been successfully added.",
       });
       
-      onSuccess(formData);
+      onSuccess(submissionData);
       onClose();
       resetForm();
     } catch (error) {

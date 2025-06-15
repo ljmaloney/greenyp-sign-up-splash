@@ -36,14 +36,11 @@ export const validateContactForm = (formData: ContactFormData, existingContacts?
     }
   }
 
-  // Validate Generic Contact Name for GENERIC_NAME_PHONE_EMAIL
-  if (formData.displayContactType === 'GENERIC_NAME_PHONE_EMAIL') {
-    if (!formData.genericContactName.trim()) {
-      return {
-        isValid: false,
-        error: "Generic Contact Name is required when Display Type is GENERIC_NAME_PHONE_EMAIL."
-      };
-    }
+  // Conditional validation based on Generic Contact Name
+  const hasGenericName = formData.genericContactName.trim().length > 0;
+  
+  if (hasGenericName) {
+    // If Generic Contact Name is provided, validate it
     if (!validateGenericContactName(formData.genericContactName)) {
       return {
         isValid: false,
@@ -51,11 +48,11 @@ export const validateContactForm = (formData: ContactFormData, existingContacts?
       };
     }
   } else {
-    // For other display types, FirstName and LastName are required
+    // If Generic Contact Name is not provided, First Name and Last Name are required
     if (!formData.firstName.trim() || !formData.lastName.trim()) {
       return {
         isValid: false,
-        error: "First Name and Last Name are required."
+        error: "First Name and Last Name are required when Generic Contact Name is not provided."
       };
     }
   }

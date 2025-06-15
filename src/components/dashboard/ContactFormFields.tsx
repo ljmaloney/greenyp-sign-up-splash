@@ -3,6 +3,7 @@ import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ContactFormData, Location } from "@/types/contact";
+import { normalizePhoneNumber } from "@/utils/phoneUtils";
 
 interface ContactFormFieldsProps {
   formData: ContactFormData;
@@ -11,7 +12,13 @@ interface ContactFormFieldsProps {
 }
 
 const ContactFormFields = ({ formData, locations, onFieldChange }: ContactFormFieldsProps) => {
-  const isGenericNameRequired = formData.displayContactType === 'GENERIC_NAME_PHONE_EMAIL';
+  const hasGenericName = formData.genericContactName.trim().length > 0;
+  const isFirstLastNameRequired = !hasGenericName;
+
+  const handlePhoneChange = (field: 'phoneNumber' | 'cellPhoneNumber', value: string) => {
+    const normalized = normalizePhoneNumber(value);
+    onFieldChange(field, normalized);
+  };
 
   return (
     <div className="grid gap-4 md:grid-cols-2">
@@ -70,36 +77,35 @@ const ContactFormFields = ({ formData, locations, onFieldChange }: ContactFormFi
       
       <div className="md:col-span-2">
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Generic Contact Name {isGenericNameRequired && '*'}
+          Generic Contact Name
         </label>
         <Input
           value={formData.genericContactName}
           onChange={(e) => onFieldChange('genericContactName', e.target.value)}
           placeholder="e.g., Customer Service"
-          required={isGenericNameRequired}
         />
         <p className="text-xs text-gray-500 mt-1">Only A-Z, a-z, space, and & characters allowed</p>
       </div>
       
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          First Name {!isGenericNameRequired && '*'}
+          First Name {isFirstLastNameRequired && '*'}
         </label>
         <Input
           value={formData.firstName}
           onChange={(e) => onFieldChange('firstName', e.target.value)}
-          required={!isGenericNameRequired}
+          required={isFirstLastNameRequired}
         />
       </div>
       
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Last Name {!isGenericNameRequired && '*'}
+          Last Name {isFirstLastNameRequired && '*'}
         </label>
         <Input
           value={formData.lastName}
           onChange={(e) => onFieldChange('lastName', e.target.value)}
-          required={!isGenericNameRequired}
+          required={isFirstLastNameRequired}
         />
       </div>
       
@@ -120,7 +126,7 @@ const ContactFormFields = ({ formData, locations, onFieldChange }: ContactFormFi
         </label>
         <Input
           value={formData.phoneNumber}
-          onChange={(e) => onFieldChange('phoneNumber', e.target.value)}
+          onChange={(e) => handlePhoneChange('phoneNumber', e.target.value)}
           placeholder="(555) 123-4567"
         />
       </div>
@@ -131,7 +137,7 @@ const ContactFormFields = ({ formData, locations, onFieldChange }: ContactFormFi
         </label>
         <Input
           value={formData.cellPhoneNumber}
-          onChange={(e) => onFieldChange('cellPhoneNumber', e.target.value)}
+          onChange={(e) => handlePhoneChange('cellPhoneNumber', e.target.value)}
           placeholder="(555) 123-4567"
         />
       </div>
