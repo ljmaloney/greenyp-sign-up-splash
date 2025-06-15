@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Edit, Globe, Clock, Plus } from 'lucide-react';
+import { MapPin, Edit, Globe, Clock, Plus, ChevronDown, ChevronUp } from 'lucide-react';
 import { Location } from '@/services/locationService';
 import { Contact } from '@/services/contactService';
 import LocationHoursSection from './LocationHoursSection';
@@ -22,6 +22,7 @@ const LocationCard = ({ location, onEdit, onEditContact, onDeleteContact }: Loca
   const [searchParams] = useSearchParams();
   const producerId = searchParams.get('producerId');
   const [isHoursDialogOpen, setIsHoursDialogOpen] = useState(false);
+  const [isHoursExpanded, setIsHoursExpanded] = useState(false);
 
   const formatAddress = (location: Location) => {
     const parts = [
@@ -41,6 +42,8 @@ const LocationCard = ({ location, onEdit, onEditContact, onDeleteContact }: Loca
     if (time === 'Closed' || !time) return 'Closed';
     return time;
   };
+
+  const hasHours = location.locationHours && location.locationHours.length > 0;
 
   return (
     <>
@@ -120,36 +123,59 @@ const LocationCard = ({ location, onEdit, onEditContact, onDeleteContact }: Loca
 
           {/* Hours of Operation Section */}
           <div className="mt-6 pt-6 border-t">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center">
-                <Clock className="w-5 h-5 mr-2 text-greenyp-600" />
-                <h3 className="text-lg font-semibold text-gray-900">Hours of Operation</h3>
-              </div>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => setIsHoursDialogOpen(true)}
-                className="bg-greenyp-600 hover:bg-greenyp-700 text-white border-greenyp-600 hover:border-greenyp-700"
+            <div className="bg-gray-50 rounded-lg border">
+              <div 
+                className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-100 transition-colors"
+                onClick={() => setIsHoursExpanded(!isHoursExpanded)}
               >
-                <Plus className="w-4 h-4 mr-1" />
-                Manage Hours
-              </Button>
-            </div>
-
-            {!location.locationHours || location.locationHours.length === 0 ? (
-              <p className="text-gray-600">No hours of operation set for this location.</p>
-            ) : (
-              <div className="space-y-2">
-                {location.locationHours.map((hour) => (
-                  <div key={hour.dayOfWeek} className="flex justify-between items-center py-1 border-b border-gray-100 last:border-b-0">
-                    <span className="font-medium text-gray-700">{formatDayName(hour.dayOfWeek)}</span>
-                    <span className="text-gray-600">
-                      {hour.closed ? 'Closed' : `${formatTime(hour.openTime)} - ${formatTime(hour.closeTime)}`}
-                    </span>
-                  </div>
-                ))}
+                <div className="flex items-center">
+                  <Clock className="w-4 h-4 mr-2 text-greenyp-600" />
+                  <h3 className="text-lg font-medium text-gray-900">Hours of Operation</h3>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsHoursDialogOpen(true);
+                    }}
+                    className="bg-greenyp-600 hover:bg-greenyp-700 text-white border-greenyp-600 hover:border-greenyp-700"
+                  >
+                    <Plus className="w-4 h-4 mr-1" />
+                    Manage
+                  </Button>
+                  {hasHours ? (
+                    isHoursExpanded ? (
+                      <ChevronUp className="w-4 h-4 text-gray-600" />
+                    ) : (
+                      <ChevronDown className="w-4 h-4 text-gray-600" />
+                    )
+                  ) : null}
+                </div>
               </div>
-            )}
+
+              {isHoursExpanded && hasHours && (
+                <div className="px-4 pb-4 border-t border-gray-200">
+                  <div className="space-y-2 pt-4">
+                    {location.locationHours.map((hour) => (
+                      <div key={hour.dayOfWeek} className="flex justify-between items-center py-1">
+                        <span className="font-medium text-gray-700">{formatDayName(hour.dayOfWeek)}</span>
+                        <span className="text-gray-600">
+                          {hour.closed ? 'Closed' : `${formatTime(hour.openTime)} - ${formatTime(hour.closeTime)}`}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {!hasHours && (
+                <div className="px-4 pb-4">
+                  <p className="text-gray-600 text-sm">No hours of operation set for this location.</p>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Contacts Section */}
