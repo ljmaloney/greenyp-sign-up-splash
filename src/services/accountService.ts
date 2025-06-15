@@ -128,19 +128,26 @@ const FALLBACK_ACCOUNT_DATA: AccountData = {
 };
 
 export const fetchAccountData = async (externalUserRef: string): Promise<AccountData> => {
-  console.log('Fetching account data for:', externalUserRef);
-  console.log('API URL:', `${API_CONFIG.baseUrl}/account/${externalUserRef}`);
+  console.log('🔍 Fetching account data for externalUserRef:', externalUserRef);
+  console.log('🔗 API URL will be:', `${API_CONFIG.baseUrl}/account/${externalUserRef}`);
+  console.log('🔧 Using API base URL:', API_CONFIG.baseUrl);
   
   try {
     const data = await apiRequest(`/account/${externalUserRef}`);
-    console.log('✅ Account data fetched successfully:', data);
+    console.log('✅ Account data fetched successfully from API:', data);
     return data;
     
   } catch (error) {
-    console.error('Error fetching account data:', error);
+    console.error('❌ API call failed for account data:', {
+      externalUserRef,
+      error: error.message,
+      apiBaseUrl: API_CONFIG.baseUrl,
+      fullUrl: `${API_CONFIG.baseUrl}/account/${externalUserRef}`
+    });
     
-    // Always provide fallback data when API fails, regardless of environment
+    // Provide fallback data when API fails
     console.log('🔧 Using fallback account data due to API failure');
+    console.log('📋 Fallback data:', FALLBACK_ACCOUNT_DATA);
     return FALLBACK_ACCOUNT_DATA;
   }
 };

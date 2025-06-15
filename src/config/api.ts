@@ -3,9 +3,9 @@ const isDevelopment = window.location.hostname === 'localhost' ||
                      window.location.hostname.includes('lovable');
 
 export const API_CONFIG = {
-  // Use different base URLs based on environment
+  // Use localhost:8081 for your local REST endpoints
   baseUrl: isDevelopment 
-    ? 'http://localhost:8080' // Use localhost:8080 for local testing
+    ? 'http://localhost:8081' // Updated to match your REST endpoint port
     : 'https://services.greenyp.com',
   
   // Add timeout and retry logic
@@ -30,7 +30,7 @@ export const setApiHost = (host: string) => {
 export const resetApiHost = () => {
   customHost = null;
   API_CONFIG.baseUrl = isDevelopment 
-    ? 'http://localhost:8080'
+    ? 'http://localhost:8081' // Updated to match your REST endpoint port
     : 'https://services.greenyp.com';
 };
 
