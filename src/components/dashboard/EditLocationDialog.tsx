@@ -31,8 +31,8 @@ const EditLocationDialog = ({ isOpen, onClose, location, onLocationUpdated }: Ed
     city: location.city,
     state: location.state,
     postalCode: location.postalCode,
-    latitude: location.latitude,
-    longitude: location.longitude,
+    latitude: location.latitude.toString(),
+    longitude: location.longitude.toString(),
     websiteUrl: location.websiteUrl || ''
   });
   

@@ -40,6 +40,8 @@ export interface PrimaryLocation {
   addressLine1?: string;
   addressLine2?: string;
   postalCode?: string;
+  locationType?: string;
+  locationDisplayType?: string;
 }
 
 export interface Contact {
@@ -49,6 +51,11 @@ export interface Contact {
   emailAddress: string;
   phoneNumber?: string;
   producerContactType: string;
+  title?: string;
+  cellPhoneNumber?: string;
+  emailConfirmed?: boolean;
+  genericContactName?: string;
+  displayContactType?: string;
 }
 
 export interface AccountData {

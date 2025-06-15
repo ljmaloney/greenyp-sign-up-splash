@@ -56,30 +56,36 @@ const PrimaryLocationCard = ({ primaryLocation }: PrimaryLocationCardProps) => {
           </div>
 
           <div className="grid gap-3 md:grid-cols-2">
-            <div className="flex items-start gap-2">
-              <Building2 className="h-4 w-4 text-gray-500 mt-0.5" />
-              <div>
-                <span className="text-sm text-gray-600">Location Type:</span>
-                <p className="text-sm font-medium">
-                  {getLocationTypeLabel(primaryLocation.locationType)}
-                </p>
+            {primaryLocation.locationType && (
+              <div className="flex items-start gap-2">
+                <Building2 className="h-4 w-4 text-gray-500 mt-0.5" />
+                <div>
+                  <span className="text-sm text-gray-600">Location Type:</span>
+                  <p className="text-sm font-medium">
+                    {getLocationTypeLabel(primaryLocation.locationType)}
+                  </p>
+                </div>
               </div>
-            </div>
+            )}
 
-            <div className="flex items-start gap-2">
-              <Eye className="h-4 w-4 text-gray-500 mt-0.5" />
-              <div>
-                <span className="text-sm text-gray-600">Display Type:</span>
-                <p className="text-sm font-medium">
-                  {getLocationDisplayTypeLabel(primaryLocation.locationDisplayType)}
-                </p>
+            {primaryLocation.locationDisplayType && (
+              <div className="flex items-start gap-2">
+                <Eye className="h-4 w-4 text-gray-500 mt-0.5" />
+                <div>
+                  <span className="text-sm text-gray-600">Display Type:</span>
+                  <p className="text-sm font-medium">
+                    {getLocationDisplayTypeLabel(primaryLocation.locationDisplayType)}
+                  </p>
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
-          <Badge variant="outline">
-            {getLocationTypeLabel(primaryLocation.locationType)}
-          </Badge>
+          {primaryLocation.locationType && (
+            <Badge variant="outline">
+              {getLocationTypeLabel(primaryLocation.locationType)}
+            </Badge>
+          )}
         </div>
       </CardContent>
     </Card>

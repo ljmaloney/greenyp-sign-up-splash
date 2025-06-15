@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -93,8 +94,8 @@ const ContactsList = () => {
     return {
       id: contact.contactId,
       producerLocationId: contact.producerLocationId,
-      producerContactType: contact.producerContactType,
-      displayContactType: contact.displayContactType,
+      producerContactType: contact.producerContactType as "PRIMARY" | "ACCOUNTS_PAYABLE" | "ADMIN" | "DISABLED" | "SALES",
+      displayContactType: contact.displayContactType as "NO_DISPLAY" | "FULL_NAME_PHONE_EMAIL" | "GENERIC_NAME_PHONE_EMAIL" | "PHONE_EMAIL_ONLY",
       genericContactName: contact.genericContactName,
       firstName: contact.firstName,
       lastName: contact.lastName,
