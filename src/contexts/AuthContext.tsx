@@ -36,21 +36,28 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [lastCheck, setLastCheck] = useState<number>(0);
 
   useEffect(() => {
     checkAuthStatus();
     
-    // Set up a periodic check for authentication changes
+    // Reduce frequency to every 30 seconds instead of 2 seconds
     const interval = setInterval(() => {
-      checkAuthStatus();
-    }, 2000); // Check every 2 seconds
+      const now = Date.now();
+      // Only check if it's been more than 30 seconds since last check
+      if (now - lastCheck > 30000) {
+        checkAuthStatus();
+      }
+    }, 30000);
     
     return () => clearInterval(interval);
-  }, []);
+  }, [lastCheck]);
 
   const checkAuthStatus = async () => {
     try {
       console.log('🔍 Checking auth status...');
+      setLastCheck(Date.now());
+      
       const oidcUser = await oidcService.getUser();
       
       console.log('🔍 OIDC user check result:', {
