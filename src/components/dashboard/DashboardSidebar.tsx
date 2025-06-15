@@ -11,6 +11,7 @@ import {
   CreditCard,
   Crown,
   Receipt,
+  Image,
   X 
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -43,14 +44,17 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
   console.log('Account data:', accountData);
   console.log('Producer ID:', accountData?.producer?.producerId);
   
-  // Check if subscription includes Products or Services features
+  // Check if subscription includes Products, Services, or Photo Gallery features
   const hasProductsFeature = currentSubscription?.features.some(feature => 
     feature.toLowerCase().includes('product')) || false;
   const hasServicesFeature = currentSubscription?.features.some(feature => 
     feature.toLowerCase().includes('service')) || false;
+  const hasPhotoGalleryFeature = currentSubscription?.features.some(feature => 
+    feature.toLowerCase().includes('photo gallery')) || false;
 
   console.log('Has Products Feature:', hasProductsFeature);
   console.log('Has Services Feature:', hasServicesFeature);
+  console.log('Has Photo Gallery Feature:', hasPhotoGalleryFeature);
   console.log('Current subscription features:', currentSubscription?.features);
 
   // Get the producerId from account data
@@ -94,6 +98,14 @@ const DashboardSidebar = ({ isOpen, onClose }: DashboardSidebarProps) => {
       icon: Wrench,
       href: producerId ? `/dashboard/services?producerId=${producerId}` : '/dashboard/services',
       enabled: hasServicesFeature,
+      upgradeHref: '/dashboard/upgrade',
+      isPremium: true
+    },
+    {
+      label: 'Photo Gallery',
+      icon: Image,
+      href: producerId ? `/dashboard/photo-gallery?producerId=${producerId}` : '/dashboard/photo-gallery',
+      enabled: hasPhotoGalleryFeature,
       upgradeHref: '/dashboard/upgrade',
       isPremium: true
     },

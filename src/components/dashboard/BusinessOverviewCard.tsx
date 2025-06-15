@@ -1,10 +1,12 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Edit, Calendar, Building, Globe } from 'lucide-react';
+import { Edit, Calendar, Building, Globe, Upload } from 'lucide-react';
 import { Producer } from '@/services/accountService';
 import { useLineOfBusiness } from '@/hooks/useLineOfBusiness';
+import { useSubscriptions } from '@/hooks/useSubscriptions';
 import EditBusinessInfoDialog from './EditBusinessInfoDialog';
 
 interface BusinessOverviewCardProps {
@@ -15,6 +17,7 @@ const BusinessOverviewCard = ({ producer }: BusinessOverviewCardProps) => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isNarrativeExpanded, setIsNarrativeExpanded] = useState(false);
   const { data: lineOfBusinessData, isLoading: lobLoading } = useLineOfBusiness();
+  const { data: subscriptions } = useSubscriptions();
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -39,6 +42,11 @@ const BusinessOverviewCard = ({ producer }: BusinessOverviewCardProps) => {
     return lob?.lineOfBusinessName || 'Unknown';
   };
 
+  // Check if subscription includes Photo gallery feature
+  const currentSubscription = subscriptions?.find(sub => sub.subscriptionId === producer.subscriptionId);
+  const hasPhotoGalleryFeature = currentSubscription?.features.some(feature => 
+    feature.toLowerCase().includes('photo gallery')) || false;
+
   const shouldTruncateNarrative = producer.narrative && producer.narrative.length > 150;
   const displayedNarrative = shouldTruncateNarrative && !isNarrativeExpanded 
     ? producer.narrative.substring(0, 150) + '...'
@@ -50,6 +58,11 @@ const BusinessOverviewCard = ({ producer }: BusinessOverviewCardProps) => {
     websiteUrl: producer.websiteUrl,
     producerId: producer.producerId,
     lineOfBusinessId: producer.lineOfBusinessId,
+  };
+
+  const handleLogoUpload = () => {
+    // TODO: Implement logo upload functionality
+    console.log('Logo upload clicked');
   };
 
   return (
@@ -67,6 +80,16 @@ const BusinessOverviewCard = ({ producer }: BusinessOverviewCardProps) => {
                   className="h-8 w-8 p-0"
                 >
                   <Edit className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={handleLogoUpload}
+                  disabled={!hasPhotoGalleryFeature}
+                  className="h-8 w-8 p-0"
+                  title={hasPhotoGalleryFeature ? "Upload logo" : "Photo gallery feature required"}
+                >
+                  <Upload className="h-4 w-4" />
                 </Button>
               </div>
               
