@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -41,12 +42,21 @@ const BusinessOverviewCard = ({ producer }: BusinessOverviewCardProps) => {
     return lob?.lineOfBusinessName || 'Unknown';
   };
 
+  // Find the TOP_LEVEL subscription from the producer's subscriptions
+  const topLevelSubscription = producer.subscriptions?.find(sub => sub.subscriptionType === 'TOP_LEVEL');
+  const currentSubscriptionId = topLevelSubscription?.subscriptionId;
+  
+  console.log('🔍 Producer subscriptions:', producer.subscriptions);
+  console.log('📋 Found TOP_LEVEL subscription:', topLevelSubscription);
+  console.log('🆔 Current subscription ID:', currentSubscriptionId);
+
   // Check if subscription includes Photo gallery feature
-  // Mock current user's subscription ID - in a real app, this would come from user context
-  const currentSubscriptionId = 'basic-listing-001';
   const currentSubscription = subscriptions?.find(sub => sub.subscriptionId === currentSubscriptionId);
   const hasPhotoGalleryFeature = currentSubscription?.features.some(feature => 
     feature.toLowerCase().includes('photo gallery')) || false;
+
+  console.log('🎯 Current subscription from reference data:', currentSubscription);
+  console.log('📸 Has Photo Gallery Feature:', hasPhotoGalleryFeature);
 
   const shouldTruncateNarrative = producer.narrative && producer.narrative.length > 150;
   const displayedNarrative = shouldTruncateNarrative && !isNarrativeExpanded 
