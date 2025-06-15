@@ -15,7 +15,7 @@ interface BusinessOverviewCardProps {
 const BusinessOverviewCard = ({ producer }: BusinessOverviewCardProps) => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isNarrativeExpanded, setIsNarrativeExpanded] = useState(false);
-  const { data: lineOfBusinessData } = useLineOfBusiness();
+  const { data: lineOfBusinessData, isLoading: lobLoading } = useLineOfBusiness();
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -31,13 +31,13 @@ const BusinessOverviewCard = ({ producer }: BusinessOverviewCardProps) => {
     
     if (!lineOfBusinessData || !lineOfBusinessId) {
       console.log('❌ No line of business data or ID available');
-      return 'Not specified';
+      return lobLoading ? 'Loading...' : 'Not specified';
     }
     
     const lob = lineOfBusinessData.find(item => item.lineOfBusinessId === lineOfBusinessId);
     console.log('✅ Found line of business:', lob);
     
-    return lob?.displayName || 'Unknown';
+    return lob?.lineOfBusinessName || 'Unknown';
   };
 
   const shouldTruncateNarrative = producer.narrative && producer.narrative.length > 150;

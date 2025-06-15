@@ -3,8 +3,16 @@ import { getApiUrl } from '@/config/api';
 
 export interface LineOfBusiness {
   lineOfBusinessId: string;
-  displayName: string;
-  description?: string;
+  createDate: string;
+  lastUpdateDate: string;
+  lineOfBusinessName: string; // Changed from displayName to match API
+  createType: string;
+  createByReference: string;
+  shortDescription: string | null;
+  description: string;
+  enableDistanceRadius: boolean;
+  iconName: string;
+  iconFileName: string | null;
 }
 
 export interface LineOfBusinessResponse {
