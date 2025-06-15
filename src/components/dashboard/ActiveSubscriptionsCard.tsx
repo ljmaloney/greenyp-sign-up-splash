@@ -31,12 +31,16 @@ const ActiveSubscriptionsCard = ({ subscriptions }: ActiveSubscriptionsCardProps
     return endDate > today;
   });
 
+  // Check if any subscriptions are LIVE_UNPAID to determine the title
+  const hasUnpaidSubscriptions = activeSubscriptions.some(sub => sub.subscriptionType === 'LIVE_UNPAID');
+  const cardTitle = hasUnpaidSubscriptions ? 'Pending Subscriptions' : 'Active Subscriptions';
+
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-greenyp-600">
           <Calendar className="h-5 w-5" />
-          Active Subscriptions
+          {cardTitle}
         </CardTitle>
       </CardHeader>
       <CardContent>
