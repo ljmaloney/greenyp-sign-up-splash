@@ -66,8 +66,11 @@ const BusinessProfile = () => {
       {/* Primary Location */}
       <PrimaryLocationCard primaryLocation={primaryLocation} />
 
-      {/* Active Subscriptions - Single Card */}
-      <ActiveSubscriptionsCard subscriptions={producer.subscriptions} />
+      {/* Active Subscriptions - Pass producer subscription type */}
+      <ActiveSubscriptionsCard 
+        subscriptions={producer.subscriptions} 
+        producerSubscriptionType={producer.subscriptionType}
+      />
 
       {/* Contact Information */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
