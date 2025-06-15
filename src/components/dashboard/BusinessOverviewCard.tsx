@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -43,7 +42,9 @@ const BusinessOverviewCard = ({ producer }: BusinessOverviewCardProps) => {
   };
 
   // Check if subscription includes Photo gallery feature
-  const currentSubscription = subscriptions?.find(sub => sub.subscriptionId === producer.subscriptionId);
+  // Mock current user's subscription ID - in a real app, this would come from user context
+  const currentSubscriptionId = 'basic-listing-001';
+  const currentSubscription = subscriptions?.find(sub => sub.subscriptionId === currentSubscriptionId);
   const hasPhotoGalleryFeature = currentSubscription?.features.some(feature => 
     feature.toLowerCase().includes('photo gallery')) || false;
 
