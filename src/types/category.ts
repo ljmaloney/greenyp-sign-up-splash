@@ -14,9 +14,15 @@ export interface APICategory {
 export interface CategoryWithIcon extends APICategory {
   iconComponent: LucideIcon;
   slug: string; // Generated from lineOfBusinessId for URL routing
+  // Legacy fields for backward compatibility
+  lobId?: string;
+  categoryTitle?: string;
+  categorySlug?: string;
+  categoryDescription?: string;
+  serviceCount?: number;
 }
 
-// Service structure for category pages - updated to match API response
+// Service structure for category pages - aligned with API response
 export interface CategoryService {
   lobServiceId: string;
   lineOfBusinessId: string;
@@ -24,6 +30,8 @@ export interface CategoryService {
   createdByType: string;
   serviceName: string;
   serviceDescription: string;
+  // Legacy fields for backward compatibility
+  serviceId?: string;
 }
 
 // Legacy interface for backward compatibility

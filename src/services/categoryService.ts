@@ -1,20 +1,15 @@
 
 import { apiRequest, API_CONFIG } from '@/config/api';
-import { CategoryWithIcon } from '@/types/category';
+import { CategoryWithIcon, CategoryService } from '@/types/category';
 import { Leaf, TreePine, Scissors, Flower } from 'lucide-react';
 
+// Legacy interface for backward compatibility
 export interface Category {
   lobId: string;
   categoryTitle: string;
   categorySlug: string;
   categoryDescription: string;
   serviceCount?: number;
-}
-
-export interface CategoryService {
-  serviceId: string;
-  serviceName: string;
-  serviceDescription: string;
 }
 
 // Icon mapping for categories
@@ -28,70 +23,93 @@ const CATEGORY_ICONS = {
 // Fallback data for development when API is not accessible
 const FALLBACK_CATEGORIES: CategoryWithIcon[] = [
   {
-    lobId: 'landscaping',
-    categoryTitle: 'Landscaping',
-    categorySlug: 'landscaping',
-    categoryDescription: 'Professional landscaping services including design, installation, and maintenance',
-    serviceCount: 15,
     lineOfBusinessId: 'landscaping',
     lineOfBusinessName: 'Landscaping',
     shortDescription: 'Professional landscaping services including design, installation, and maintenance',
+    iconName: 'landscaping',
     slug: 'landscaping',
-    iconComponent: Leaf
+    iconComponent: Leaf,
+    serviceCount: 15,
+    // Legacy compatibility
+    lobId: 'landscaping',
+    categoryTitle: 'Landscaping',
+    categorySlug: 'landscaping',
+    categoryDescription: 'Professional landscaping services including design, installation, and maintenance'
   },
   {
-    lobId: 'lawn-care',
-    categoryTitle: 'Lawn Care',
-    categorySlug: 'lawn-care',
-    categoryDescription: 'Comprehensive lawn care services including mowing, fertilizing, and weed control',
-    serviceCount: 12,
     lineOfBusinessId: 'lawn-care',
     lineOfBusinessName: 'Lawn Care',
     shortDescription: 'Comprehensive lawn care services including mowing, fertilizing, and weed control',
+    iconName: 'lawn-care',
     slug: 'lawn-care',
-    iconComponent: Scissors
+    iconComponent: Scissors,
+    serviceCount: 12,
+    // Legacy compatibility
+    lobId: 'lawn-care',
+    categoryTitle: 'Lawn Care',
+    categorySlug: 'lawn-care',
+    categoryDescription: 'Comprehensive lawn care services including mowing, fertilizing, and weed control'
   },
   {
-    lobId: 'garden-centers',
-    categoryTitle: 'Garden Centers',
-    categorySlug: 'garden-centers',
-    categoryDescription: 'Garden centers and nurseries offering plants, tools, and gardening supplies',
-    serviceCount: 8,
     lineOfBusinessId: 'garden-centers',
     lineOfBusinessName: 'Garden Centers',
     shortDescription: 'Garden centers and nurseries offering plants, tools, and gardening supplies',
+    iconName: 'garden-centers',
     slug: 'garden-centers',
-    iconComponent: Flower
+    iconComponent: Flower,
+    serviceCount: 8,
+    // Legacy compatibility
+    lobId: 'garden-centers',
+    categoryTitle: 'Garden Centers',
+    categorySlug: 'garden-centers',
+    categoryDescription: 'Garden centers and nurseries offering plants, tools, and gardening supplies'
   },
   {
-    lobId: 'tree-services',
-    categoryTitle: 'Tree Services',
-    categorySlug: 'tree-services',
-    categoryDescription: 'Tree removal, trimming, and arborist services',
-    serviceCount: 10,
     lineOfBusinessId: 'tree-services',
     lineOfBusinessName: 'Tree Services',
     shortDescription: 'Tree removal, trimming, and arborist services',
+    iconName: 'tree-services',
     slug: 'tree-services',
-    iconComponent: TreePine
+    iconComponent: TreePine,
+    serviceCount: 10,
+    // Legacy compatibility
+    lobId: 'tree-services',
+    categoryTitle: 'Tree Services',
+    categorySlug: 'tree-services',
+    categoryDescription: 'Tree removal, trimming, and arborist services'
   }
 ];
 
 const FALLBACK_CATEGORY_SERVICES: CategoryService[] = [
   {
-    serviceId: 'service-001',
+    lobServiceId: 'service-001',
+    lineOfBusinessId: 'landscaping',
+    createdByReference: 'system',
+    createdByType: 'SYSTEM',
     serviceName: 'Landscape Design',
-    serviceDescription: 'Custom landscape design services'
+    serviceDescription: 'Custom landscape design services',
+    // Legacy compatibility
+    serviceId: 'service-001'
   },
   {
-    serviceId: 'service-002',
+    lobServiceId: 'service-002',
+    lineOfBusinessId: 'landscaping',
+    createdByReference: 'system',
+    createdByType: 'SYSTEM',
     serviceName: 'Garden Installation',
-    serviceDescription: 'Professional garden installation'
+    serviceDescription: 'Professional garden installation',
+    // Legacy compatibility
+    serviceId: 'service-002'
   },
   {
-    serviceId: 'service-003',
+    lobServiceId: 'service-003',
+    lineOfBusinessId: 'lawn-care',
+    createdByReference: 'system',
+    createdByType: 'SYSTEM',
     serviceName: 'Lawn Maintenance',
-    serviceDescription: 'Regular lawn care and maintenance'
+    serviceDescription: 'Regular lawn care and maintenance',
+    // Legacy compatibility
+    serviceId: 'service-003'
   }
 ];
 
@@ -109,16 +127,18 @@ export const fetchCategories = async (): Promise<CategoryWithIcon[]> => {
     
     // Convert API data to CategoryWithIcon format
     const categoriesWithIcons: CategoryWithIcon[] = data.map((category: any) => ({
-      lobId: category.lobId || category.lineOfBusinessId,
-      categoryTitle: category.categoryTitle || category.lineOfBusinessName,
-      categorySlug: category.categorySlug || category.slug,
-      categoryDescription: category.categoryDescription || category.shortDescription,
-      serviceCount: category.serviceCount,
       lineOfBusinessId: category.lineOfBusinessId || category.lobId,
       lineOfBusinessName: category.lineOfBusinessName || category.categoryTitle,
       shortDescription: category.shortDescription || category.categoryDescription,
-      slug: category.slug || category.categorySlug,
-      iconComponent: CATEGORY_ICONS[category.categorySlug || category.slug] || Leaf
+      iconName: category.iconName || category.categorySlug || category.slug,
+      slug: category.slug || category.categorySlug || category.lineOfBusinessId,
+      iconComponent: CATEGORY_ICONS[category.categorySlug || category.slug || category.lineOfBusinessId] || Leaf,
+      serviceCount: category.serviceCount,
+      // Legacy compatibility
+      lobId: category.lobId || category.lineOfBusinessId,
+      categoryTitle: category.categoryTitle || category.lineOfBusinessName,
+      categorySlug: category.categorySlug || category.slug,
+      categoryDescription: category.categoryDescription || category.shortDescription
     }));
     
     return categoriesWithIcons;
@@ -140,13 +160,21 @@ export const fetchCategories = async (): Promise<CategoryWithIcon[]> => {
 export const fetchCategoryBySlug = async (slug: string): Promise<CategoryWithIcon | null> => {
   try {
     const categories = await fetchCategories();
-    return categories.find(cat => cat.categorySlug === slug || cat.slug === slug) || null;
+    return categories.find(cat => 
+      cat.slug === slug || 
+      cat.lineOfBusinessId === slug ||
+      cat.categorySlug === slug
+    ) || null;
   } catch (error) {
     console.error('Error fetching category by slug:', error);
     
     // Fallback for development
     if (API_CONFIG.isDevelopment) {
-      return FALLBACK_CATEGORIES.find(cat => cat.categorySlug === slug || cat.slug === slug) || null;
+      return FALLBACK_CATEGORIES.find(cat => 
+        cat.slug === slug || 
+        cat.lineOfBusinessId === slug ||
+        cat.categorySlug === slug
+      ) || null;
     }
     
     throw error;
@@ -164,7 +192,19 @@ export const fetchCategoryServices = async (lineOfBusinessId: string): Promise<C
       throw new Error('Invalid data format from API');
     }
     
-    return data;
+    // Convert API data to ensure it matches our interface
+    const services: CategoryService[] = data.map((service: any) => ({
+      lobServiceId: service.lobServiceId || service.serviceId,
+      lineOfBusinessId: service.lineOfBusinessId || lineOfBusinessId,
+      createdByReference: service.createdByReference || 'api',
+      createdByType: service.createdByType || 'API',
+      serviceName: service.serviceName,
+      serviceDescription: service.serviceDescription,
+      // Legacy compatibility
+      serviceId: service.serviceId || service.lobServiceId
+    }));
+    
+    return services;
     
   } catch (error) {
     console.error('Error fetching category services:', error);
@@ -172,7 +212,9 @@ export const fetchCategoryServices = async (lineOfBusinessId: string): Promise<C
     // In development mode, provide fallback data
     if (API_CONFIG.isDevelopment) {
       console.log('🔧 Using fallback category services for development mode');
-      return FALLBACK_CATEGORY_SERVICES;
+      return FALLBACK_CATEGORY_SERVICES.filter(service => 
+        service.lineOfBusinessId === lineOfBusinessId
+      );
     }
     
     // In production, re-throw the error
