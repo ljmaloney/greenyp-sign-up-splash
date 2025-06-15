@@ -1,19 +1,26 @@
 
 import React, { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Edit, Globe, Clock, Plus } from 'lucide-react';
 import { Location } from '@/services/locationService';
+import { Contact } from '@/services/contactService';
 import LocationHoursSection from './LocationHoursSection';
+import LocationContactsList from './LocationContactsList';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface LocationCardProps {
   location: Location;
   onEdit: (location: Location) => void;
+  onEditContact?: (contact: Contact) => void;
+  onDeleteContact?: (contact: Contact) => void;
 }
 
-const LocationCard = ({ location, onEdit }: LocationCardProps) => {
+const LocationCard = ({ location, onEdit, onEditContact, onDeleteContact }: LocationCardProps) => {
+  const [searchParams] = useSearchParams();
+  const producerId = searchParams.get('producerId');
   const [isHoursDialogOpen, setIsHoursDialogOpen] = useState(false);
 
   const formatAddress = (location: Location) => {
@@ -143,6 +150,16 @@ const LocationCard = ({ location, onEdit }: LocationCardProps) => {
               </div>
             )}
           </div>
+
+          {/* Contacts Section */}
+          {producerId && (
+            <LocationContactsList 
+              producerId={producerId}
+              locationId={location.locationId}
+              onEditContact={onEditContact}
+              onDeleteContact={onDeleteContact}
+            />
+          )}
         </CardContent>
       </Card>
 

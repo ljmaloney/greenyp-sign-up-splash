@@ -45,3 +45,25 @@ export const fetchContacts = async (producerId: string): Promise<Contact[]> => {
   
   return data.response;
 };
+
+export const fetchLocationContacts = async (producerId: string, locationId: string): Promise<Contact[]> => {
+  const url = getApiUrl(`/producer/${producerId}/contacts?locationId=${locationId}&activeOnly=false`);
+  
+  console.log('👥 Fetching location contacts from:', url);
+  
+  const response = await fetch(url);
+  
+  if (!response.ok) {
+    throw new Error(`Failed to fetch location contacts: ${response.status} ${response.statusText}`);
+  }
+  
+  const data: ContactsResponse = await response.json();
+  
+  console.log('👥 Location contacts response:', data);
+  
+  if (data.errorMessageApi) {
+    throw new Error(data.errorMessageApi);
+  }
+  
+  return data.response;
+};

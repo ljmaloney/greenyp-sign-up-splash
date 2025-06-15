@@ -114,6 +114,12 @@ const ContactsList = () => {
     return serviceContacts.map(transformContactForDialog);
   };
 
+  const getLocationName = (locationId: string) => {
+    if (!locations) return locationId;
+    const location = locations.find(loc => loc.locationId === locationId);
+    return location ? location.locationName : locationId;
+  };
+
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -294,9 +300,20 @@ const ContactsList = () => {
                   
                   <div className="space-y-3">
                     <div>
-                      <h4 className="font-semibold text-gray-700 mb-2">Display Settings</h4>
+                      <h4 className="font-semibold text-gray-700 mb-2">Location & Display Settings</h4>
                       <div className="text-sm space-y-1">
-                        <p><span className="text-gray-600">Display Type:</span> {getDisplayTypeDisplay(contact.displayContactType)}</p>
+                        <p>
+                          <span className="text-gray-600">Location:</span>{' '}
+                          <span className="text-gray-900">{getLocationName(contact.producerLocationId)}</span>
+                        </p>
+                        <p>
+                          <span className="text-gray-600">Location ID:</span>{' '}
+                          <span className="text-gray-900 font-mono text-xs">{contact.producerLocationId}</span>
+                        </p>
+                        <p>
+                          <span className="text-gray-600">Display Type:</span>{' '}
+                          <span className="text-gray-900">{getDisplayTypeDisplay(contact.displayContactType)}</span>
+                        </p>
                       </div>
                     </div>
                   </div>
