@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -84,6 +84,9 @@ const EditBusinessInfoDialog = ({ isOpen, onClose, businessData }: EditBusinessI
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>Edit Business Information</DialogTitle>
+          <DialogDescription>
+            Update your business details, line of business, and subscription plan.
+          </DialogDescription>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
