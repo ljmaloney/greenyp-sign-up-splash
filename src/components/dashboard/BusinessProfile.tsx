@@ -6,9 +6,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useAccountData } from '@/hooks/useAccountData';
 import BusinessOverviewCard from './BusinessOverviewCard';
 import PrimaryLocationCard from './PrimaryLocationCard';
-import SubscriptionCard from './SubscriptionCard';
-import DashboardContactCard from './DashboardContactCard';
 import ActiveSubscriptionsCard from './ActiveSubscriptionsCard';
+import DashboardContactCard from './DashboardContactCard';
 
 const BusinessProfile = () => {
   const { user } = useAuth();
@@ -67,11 +66,8 @@ const BusinessProfile = () => {
       {/* Primary Location */}
       <PrimaryLocationCard primaryLocation={primaryLocation} />
 
-      {/* Active Subscriptions */}
+      {/* Active Subscriptions - Single Card */}
       <ActiveSubscriptionsCard subscriptions={producer.subscriptions} />
-
-      {/* Subscription Information */}
-      <SubscriptionCard subscriptions={producer.subscriptions} />
 
       {/* Contact Information */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
