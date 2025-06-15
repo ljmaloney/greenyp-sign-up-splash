@@ -2,6 +2,7 @@
 import { getApiUrl } from '@/config/api';
 
 export interface LocationHour {
+  locationHoursId?: string;
   dayOfWeek: string;
   openTime: string;
   closeTime: string;

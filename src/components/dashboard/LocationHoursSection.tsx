@@ -1,13 +1,16 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Edit, Plus, Trash2 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { getApiUrl } from "@/config/api";
+import { useLocations } from "@/hooks/useLocations";
+import { useSearchParams } from 'react-router-dom';
 
 interface LocationHour {
+  locationHoursId?: string;
   dayOfWeek: string;
   openTime: string;
   closeTime: string;
@@ -23,21 +26,31 @@ const DAYS_OF_WEEK = [
 ];
 
 const LocationHoursSection = ({ locationId }: LocationHoursSectionProps) => {
-  const [hours, setHours] = useState<LocationHour[]>([
-    { dayOfWeek: 'MONDAY', openTime: '8:00 AM', closeTime: '6:00 PM' },
-    { dayOfWeek: 'TUESDAY', openTime: '8:00 AM', closeTime: '6:00 PM' },
-    { dayOfWeek: 'WEDNESDAY', openTime: '8:00 AM', closeTime: '6:00 PM' },
-    { dayOfWeek: 'THURSDAY', openTime: '8:00 AM', closeTime: '6:00 PM' },
-    { dayOfWeek: 'FRIDAY', openTime: '8:00 AM', closeTime: '6:00 PM' },
-    { dayOfWeek: 'SATURDAY', openTime: '9:00 AM', closeTime: '4:00 PM' },
-    { dayOfWeek: 'SUNDAY', openTime: 'Closed', closeTime: 'Closed' }
-  ]);
+  const [searchParams] = useSearchParams();
+  const producerId = searchParams.get('producerId');
+  const { data: locations, refetch: refetchLocations } = useLocations(producerId);
   
+  const [hours, setHours] = useState<LocationHour[]>([]);
   const [editingDay, setEditingDay] = useState<string | null>(null);
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [newHour, setNewHour] = useState({ dayOfWeek: '', openTime: '', closeTime: '' });
   
   const { toast } = useToast();
+
+  // Load existing hours from the location data
+  useEffect(() => {
+    if (locations) {
+      const location = locations.find(loc => loc.locationId === locationId);
+      if (location?.locationHours) {
+        setHours(location.locationHours.map(hour => ({
+          locationHoursId: hour.locationHoursId,
+          dayOfWeek: hour.dayOfWeek,
+          openTime: hour.openTime,
+          closeTime: hour.closeTime
+        })));
+      }
+    }
+  }, [locations, locationId]);
 
   const saveHours = async (hourData: LocationHour, isUpdate: boolean = false) => {
     try {
@@ -66,6 +79,9 @@ const LocationHoursSection = ({ locationId }: LocationHoursSectionProps) => {
         title: "Hours Updated",
         description: `Location hours have been successfully ${isUpdate ? 'updated' : 'added'}.`,
       });
+
+      // Refresh the locations data to get the updated hours
+      await refetchLocations();
     } catch (error) {
       console.error('Error saving location hours:', error);
       toast({
@@ -76,11 +92,11 @@ const LocationHoursSection = ({ locationId }: LocationHoursSectionProps) => {
     }
   };
 
-  const deleteHours = async (dayOfWeek: string) => {
+  const deleteHours = async (locationHoursId: string, dayOfWeek: string) => {
     try {
-      console.log('Deleting location hours for:', dayOfWeek);
+      console.log('Deleting location hours for:', dayOfWeek, 'with ID:', locationHoursId);
       
-      const response = await fetch(getApiUrl(`/producer/location/hours/${locationId}`), {
+      const response = await fetch(getApiUrl(`/producer/location/hours/${locationHoursId}`), {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -97,6 +113,9 @@ const LocationHoursSection = ({ locationId }: LocationHoursSectionProps) => {
         title: "Hours Deleted",
         description: "Location hours have been successfully deleted.",
       });
+
+      // Refresh the locations data
+      await refetchLocations();
     } catch (error) {
       console.error('Error deleting location hours:', error);
       toast({
@@ -144,7 +163,7 @@ const LocationHoursSection = ({ locationId }: LocationHoursSectionProps) => {
           isEditing={editingDay === hour.dayOfWeek}
           onEdit={() => handleEdit(hour.dayOfWeek)}
           onSave={handleSave}
-          onDelete={() => deleteHours(hour.dayOfWeek)}
+          onDelete={() => hour.locationHoursId && deleteHours(hour.locationHoursId, hour.dayOfWeek)}
           onCancel={() => setEditingDay(null)}
           formatDayName={formatDayName}
         />
