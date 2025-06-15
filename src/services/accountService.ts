@@ -21,6 +21,8 @@ export interface Location {
   postalCode: string;
   phoneNumber?: string;
   isPrimary: boolean;
+  locationType?: string;
+  locationDisplayType?: string;
 }
 
 export interface Subscription {
@@ -40,6 +42,9 @@ export interface Producer {
   businessName: string;
   narrative?: string;
   websiteUrl?: string;
+  lineOfBusinessId?: string;
+  createDate: string;
+  lastUpdateDate: string;
   subscriptions: Subscription[];
 }
 
@@ -57,6 +62,9 @@ const FALLBACK_ACCOUNT_DATA: AccountData = {
     businessName: 'Green Thumb Landscaping',
     narrative: 'Professional landscaping services for residential and commercial properties.',
     websiteUrl: 'https://greenthumb.example.com',
+    lineOfBusinessId: 'LOB-001',
+    createDate: '2024-01-01T00:00:00Z',
+    lastUpdateDate: '2024-06-01T00:00:00Z',
     subscriptions: [
       {
         subscriptionId: 'sub-001',
@@ -99,7 +107,9 @@ const FALLBACK_ACCOUNT_DATA: AccountData = {
     state: 'IL',
     postalCode: '62701',
     phoneNumber: '(555) 123-4567',
-    isPrimary: true
+    isPrimary: true,
+    locationType: 'HOME_OFFICE_PRIMARY',
+    locationDisplayType: 'FULL_ADDRESS'
   },
   locations: [
     {
@@ -110,7 +120,9 @@ const FALLBACK_ACCOUNT_DATA: AccountData = {
       state: 'IL',
       postalCode: '62701',
       phoneNumber: '(555) 123-4567',
-      isPrimary: true
+      isPrimary: true,
+      locationType: 'HOME_OFFICE_PRIMARY',
+      locationDisplayType: 'FULL_ADDRESS'
     }
   ]
 };

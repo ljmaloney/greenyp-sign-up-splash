@@ -3,10 +3,10 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Eye, Building2 } from 'lucide-react';
-import { PrimaryLocation } from '@/services/accountService';
+import { Location } from '@/services/accountService';
 
 interface PrimaryLocationCardProps {
-  primaryLocation: PrimaryLocation;
+  primaryLocation: Location;
 }
 
 const PrimaryLocationCard = ({ primaryLocation }: PrimaryLocationCardProps) => {
