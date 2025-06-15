@@ -8,6 +8,18 @@ const DevApiConfig = () => {
   const [customHost, setCustomHost] = useState('');
   const [isVisible, setIsVisible] = useState(false);
 
+  const environments = [
+    { name: 'Local', url: 'http://localhost:8081' },
+    { name: 'Production', url: 'https://services.greenyp.com' }
+  ];
+
+  const handleSetEnvironment = (url: string) => {
+    setApiHost(url);
+    console.log('API host updated to:', url);
+    // Reload the page to use new configuration
+    window.location.reload();
+  };
+
   const handleSetCustomHost = () => {
     if (customHost.trim()) {
       setApiHost(customHost.trim());
@@ -53,25 +65,45 @@ const DevApiConfig = () => {
             </Button>
           </div>
           
-          <div className="space-y-2 text-xs">
+          <div className="space-y-3 text-xs">
             <div>
               <strong>Current:</strong> {API_CONFIG.BASE_URL}
             </div>
             
-            <div className="flex gap-2">
-              <Input
-                placeholder="http://localhost:3000"
-                value={customHost}
-                onChange={(e) => setCustomHost(e.target.value)}
-                className="text-xs h-8"
-              />
-              <Button 
-                onClick={handleSetCustomHost}
-                size="sm"
-                className="text-xs px-2 h-8"
-              >
-                Set
-              </Button>
+            <div>
+              <strong>Quick Select:</strong>
+              <div className="flex gap-1 mt-1">
+                {environments.map((env) => (
+                  <Button
+                    key={env.name}
+                    onClick={() => handleSetEnvironment(env.url)}
+                    size="sm"
+                    variant={API_CONFIG.BASE_URL === env.url ? "default" : "outline"}
+                    className="text-xs px-2 h-7 flex-1"
+                  >
+                    {env.name}
+                  </Button>
+                ))}
+              </div>
+            </div>
+            
+            <div>
+              <strong>Custom URL:</strong>
+              <div className="flex gap-2 mt-1">
+                <Input
+                  placeholder="http://localhost:3000"
+                  value={customHost}
+                  onChange={(e) => setCustomHost(e.target.value)}
+                  className="text-xs h-8"
+                />
+                <Button 
+                  onClick={handleSetCustomHost}
+                  size="sm"
+                  className="text-xs px-2 h-8"
+                >
+                  Set
+                </Button>
+              </div>
             </div>
             
             <Button 
