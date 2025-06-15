@@ -16,14 +16,10 @@ interface AddLocationHourFormProps {
   hours: LocationHour[];
   onAdd: (hourData: LocationHour) => void;
   formatDayName: (day: string) => string;
+  dayOrder: string[];
 }
 
-const DAYS_OF_WEEK = [
-  'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 
-  'FRIDAY', 'SATURDAY', 'SUNDAY'
-];
-
-const AddLocationHourForm = ({ hours, onAdd, formatDayName }: AddLocationHourFormProps) => {
+const AddLocationHourForm = ({ hours, onAdd, formatDayName, dayOrder }: AddLocationHourFormProps) => {
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [newHour, setNewHour] = useState({ dayOfWeek: '', openTime: '', closeTime: '' });
 
@@ -35,46 +31,50 @@ const AddLocationHourForm = ({ hours, onAdd, formatDayName }: AddLocationHourFor
     }
   };
 
-  const availableDays = DAYS_OF_WEEK.filter(day => !hours.some(h => h.dayOfWeek === day));
+  const availableDays = dayOrder.filter(day => !hours.some(h => h.dayOfWeek === day));
 
   if (isAddingNew) {
     return (
       <div className="bg-gray-50 p-4 rounded-lg border">
         <h4 className="font-medium text-gray-900 mb-4">Add New Operating Hours</h4>
-        <div className="flex items-center gap-4 flex-wrap">
-          <div className="min-w-[120px]">
-            <Select 
-              value={newHour.dayOfWeek} 
-              onValueChange={(value) => setNewHour(prev => ({ ...prev, dayOfWeek: value }))}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select day" />
-              </SelectTrigger>
-              <SelectContent>
-                {availableDays.map(day => (
-                  <SelectItem key={day} value={day}>
-                    {formatDayName(day)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="lg:col-span-1">
+              <Select 
+                value={newHour.dayOfWeek} 
+                onValueChange={(value) => setNewHour(prev => ({ ...prev, dayOfWeek: value }))}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select day" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableDays.map(day => (
+                    <SelectItem key={day} value={day}>
+                      {formatDayName(day)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="lg:col-span-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                <TimePicker
+                  value={newHour.openTime}
+                  onChange={(time) => setNewHour(prev => ({ ...prev, openTime: time }))}
+                  placeholder="Open time"
+                  className="flex-shrink-0"
+                />
+                <span className="text-gray-500 mx-2">to</span>
+                <TimePicker
+                  value={newHour.closeTime}
+                  onChange={(time) => setNewHour(prev => ({ ...prev, closeTime: time }))}
+                  placeholder="Close time"
+                  className="flex-shrink-0"
+                />
+              </div>
+            </div>
           </div>
-          <div className="flex items-center gap-2 flex-1 min-w-0">
-            <TimePicker
-              value={newHour.openTime}
-              onChange={(time) => setNewHour(prev => ({ ...prev, openTime: time }))}
-              placeholder="Open time"
-              className="flex-shrink-0"
-            />
-            <span className="text-gray-500 mx-2">to</span>
-            <TimePicker
-              value={newHour.closeTime}
-              onChange={(time) => setNewHour(prev => ({ ...prev, closeTime: time }))}
-              placeholder="Close time"
-              className="flex-shrink-0"
-            />
-          </div>
-          <div className="flex gap-2 flex-shrink-0">
+          <div className="flex gap-2 pt-2">
             <Button size="sm" onClick={handleAddNew} className="bg-greenyp-600 hover:bg-greenyp-700">
               Add Hours
             </Button>

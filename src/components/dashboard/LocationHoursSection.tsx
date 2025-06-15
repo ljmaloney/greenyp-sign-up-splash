@@ -26,9 +26,19 @@ const LocationHoursSection = ({ locationId }: LocationHoursSectionProps) => {
     return day.charAt(0) + day.slice(1).toLowerCase();
   };
 
+  // Order days starting with Sunday
+  const dayOrder = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+  
+  // Sort hours by day order
+  const sortedHours = hours.sort((a, b) => {
+    const aIndex = dayOrder.indexOf(a.dayOfWeek);
+    const bIndex = dayOrder.indexOf(b.dayOfWeek);
+    return aIndex - bIndex;
+  });
+
   return (
     <div className="space-y-4">
-      {hours.length === 0 ? (
+      {sortedHours.length === 0 ? (
         <div className="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
           <Clock className="w-12 h-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">No Hours Set</h3>
@@ -41,7 +51,7 @@ const LocationHoursSection = ({ locationId }: LocationHoursSectionProps) => {
             <p className="text-sm text-gray-600 mt-1">Click edit to modify or delete to remove hours for any day</p>
           </div>
           <div className="divide-y">
-            {hours.map((hour) => (
+            {sortedHours.map((hour) => (
               <div key={hour.dayOfWeek} className="px-4">
                 <LocationHourRow
                   hour={hour}
@@ -63,6 +73,7 @@ const LocationHoursSection = ({ locationId }: LocationHoursSectionProps) => {
           hours={hours}
           onAdd={addNewHours}
           formatDayName={formatDayName}
+          dayOrder={dayOrder}
         />
       </div>
     </div>
