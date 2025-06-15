@@ -85,19 +85,19 @@ const LocationContactsList = ({
             {contacts?.map((contact) => (
               <div 
                 key={contact.contactId} 
-                className="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
               >
                 <div className="flex-1 grid grid-cols-3 gap-4">
                   <div>
-                    <span className="font-medium text-gray-900">
+                    <span className="text-sm font-medium text-gray-900">
                       {getDisplayName(contact)}
                     </span>
                   </div>
                   <div>
-                    <span className="text-gray-600">{contact.emailAddress}</span>
+                    <span className="text-sm text-gray-600">{contact.emailAddress}</span>
                   </div>
                   <div>
-                    <span className="text-gray-600">{contact.phoneNumber}</span>
+                    <span className="text-sm text-gray-600">{contact.phoneNumber}</span>
                   </div>
                 </div>
                 <div className="flex gap-1 ml-4">
@@ -106,9 +106,9 @@ const LocationContactsList = ({
                       variant="ghost"
                       size="sm"
                       onClick={() => onEditContact(contact)}
-                      className="h-8 w-8 p-0 text-gray-500 hover:text-gray-700"
+                      className="h-7 w-7 p-0 text-gray-500 hover:text-gray-700"
                     >
-                      <Edit className="h-4 w-4" />
+                      <Edit className="h-3 w-3" />
                     </Button>
                   )}
                   {onDeleteContact && (
@@ -116,9 +116,9 @@ const LocationContactsList = ({
                       variant="ghost"
                       size="sm"
                       onClick={() => onDeleteContact(contact)}
-                      className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
+                      className="h-7 w-7 p-0 text-red-500 hover:text-red-700"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-3 w-3" />
                     </Button>
                   )}
                 </div>
