@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { TimePicker } from "@/components/ui/time-picker";
 import { Edit, Trash2 } from 'lucide-react';
 
 interface LocationHour {
@@ -37,16 +37,16 @@ const LocationHourRow = ({
     return (
       <div className="flex items-center space-x-2 py-2 border-b border-gray-100">
         <span className="font-medium w-20">{formatDayName(hour.dayOfWeek)}</span>
-        <Input
-          className="w-24"
+        <TimePicker
           value={openTime}
-          onChange={(e) => setOpenTime(e.target.value)}
+          onChange={setOpenTime}
+          placeholder="Open time"
         />
         <span className="text-gray-500">-</span>
-        <Input
-          className="w-24"
+        <TimePicker
           value={closeTime}
-          onChange={(e) => setCloseTime(e.target.value)}
+          onChange={setCloseTime}
+          placeholder="Close time"
         />
         <Button 
           size="sm" 

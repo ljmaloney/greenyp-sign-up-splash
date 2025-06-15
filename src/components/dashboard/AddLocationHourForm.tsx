@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { TimePicker } from "@/components/ui/time-picker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus } from 'lucide-react';
 
@@ -53,18 +53,16 @@ const AddLocationHourForm = ({ hours, onAdd, formatDayName }: AddLocationHourFor
             ))}
           </SelectContent>
         </Select>
-        <Input
-          className="w-24"
-          placeholder="Open"
+        <TimePicker
           value={newHour.openTime}
-          onChange={(e) => setNewHour(prev => ({ ...prev, openTime: e.target.value }))}
+          onChange={(time) => setNewHour(prev => ({ ...prev, openTime: time }))}
+          placeholder="Open time"
         />
         <span className="text-gray-500">-</span>
-        <Input
-          className="w-24"
-          placeholder="Close"
+        <TimePicker
           value={newHour.closeTime}
-          onChange={(e) => setNewHour(prev => ({ ...prev, closeTime: e.target.value }))}
+          onChange={(time) => setNewHour(prev => ({ ...prev, closeTime: time }))}
+          placeholder="Close time"
         />
         <Button size="sm" onClick={handleAddNew} className="bg-greenyp-600 hover:bg-greenyp-700">
           Save
