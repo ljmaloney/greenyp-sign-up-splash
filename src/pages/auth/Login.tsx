@@ -70,17 +70,17 @@ const Login = () => {
           
           <Separator className="my-6" />
           
-          <div className="flex flex-col items-center space-y-4">
+          <div className="flex gap-3">
             <Link
                 to={`/subscriber/signup`}
-                className="inline-flex items-center text-greenyp-600 hover:text-greenyp-800 font-medium"
+                className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-white border-2 border-yellow-500 text-yellow-700 hover:bg-yellow-50 font-medium rounded-md transition-colors"
                 aria-label={`Create subscriber account`}
             >
               List Your Business
             </Link>
             <Link
                 to={`/subscriber`}
-                className="inline-flex items-center text-greenyp-600 hover:text-greenyp-800 font-medium"
+                className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-white border-2 border-yellow-500 text-yellow-700 hover:bg-yellow-50 font-medium rounded-md transition-colors"
                 aria-label={`Show more information for subscribers`}
             >
               More Information
