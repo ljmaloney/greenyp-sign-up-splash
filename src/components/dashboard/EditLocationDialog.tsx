@@ -1,14 +1,12 @@
 
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { getApiUrl } from "@/config/api";
 import { useLocationForm } from "@/hooks/useLocationForm";
-import LocationFormFields from "./LocationFormFields";
 import { Location } from "@/services/locationService";
 import { LocationFormData } from "@/types/location";
+import EditLocationForm from "./EditLocationForm";
+import EditLocationActions from "./EditLocationActions";
+import DisableLocationDialog from "./DisableLocationDialog";
 
 interface EditLocationDialogProps {
   isOpen: boolean;
@@ -35,121 +33,14 @@ const EditLocationDialog = ({ isOpen, onClose, location, onLocationUpdated }: Ed
     longitude: location.longitude,
     websiteUrl: location.websiteUrl || ''
   });
-  
-  const { toast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    try {
-      console.log('Updating location:', formData);
-      
-      // Prepare payload matching API specification
-      const payload = {
-        locationId: formData.locationId,
-        locationName: formData.locationName,
-        locationType: formData.locationType,
-        locationDisplayType: formData.locationDisplayType,
-        active: formData.active,
-        addressLine1: formData.addressLine1,
-        addressLine2: formData.addressLine2,
-        addressLine3: formData.addressLine3,
-        city: formData.city,
-        state: formData.state,
-        postalCode: formData.postalCode,
-        latitude: parseFloat(formData.latitude) || 0,
-        longitude: parseFloat(formData.longitude) || 0,
-        websiteUrl: formData.websiteUrl
-      };
-      
-      const response = await fetch(getApiUrl('/producer/location'), {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to update location: ${response.status}`);
-      }
-
-      const result = await response.json();
-      
-      toast({
-        title: "Location Updated",
-        description: "Location has been successfully updated.",
-      });
-      
-      onLocationUpdated(formData);
-      onClose();
-    } catch (error) {
-      console.error('Error updating location:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update location. Please try again.",
-        variant: "destructive",
-      });
-    }
+  const handleDisableDialogOpen = () => {
+    setIsDisableDialogOpen(true);
   };
 
-  const handleDisableLocation = async () => {
-    try {
-      const updatedFormData = { ...formData, active: false };
-      
-      console.log('Disabling location:', updatedFormData);
-      
-      // Prepare payload matching API specification
-      const payload = {
-        locationId: updatedFormData.locationId,
-        locationName: updatedFormData.locationName,
-        locationType: updatedFormData.locationType,
-        locationDisplayType: updatedFormData.locationDisplayType,
-        active: updatedFormData.active,
-        addressLine1: updatedFormData.addressLine1,
-        addressLine2: updatedFormData.addressLine2,
-        addressLine3: updatedFormData.addressLine3,
-        city: updatedFormData.city,
-        state: updatedFormData.state,
-        postalCode: updatedFormData.postalCode,
-        latitude: parseFloat(updatedFormData.latitude) || 0,
-        longitude: parseFloat(updatedFormData.longitude) || 0,
-        websiteUrl: updatedFormData.websiteUrl
-      };
-
-      const response = await fetch(getApiUrl('/producer/location'), {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to disable location: ${response.status}`);
-      }
-
-      const result = await response.json();
-      
-      toast({
-        title: "Location Disabled",
-        description: "Location has been successfully disabled.",
-      });
-      
-      onLocationUpdated(updatedFormData);
-      setIsDisableDialogOpen(false);
-      onClose();
-    } catch (error) {
-      console.error('Error disabling location:', error);
-      toast({
-        title: "Error",
-        description: "Failed to disable location. Please try again.",
-        variant: "destructive",
-      });
-    }
+  const handleDisableDialogClose = () => {
+    setIsDisableDialogOpen(false);
   };
-
-  const canDisableLocation = location.active && location.locationType !== 'HOME_OFFICE_PRIMARY';
 
   return (
     <>
@@ -159,56 +50,30 @@ const EditLocationDialog = ({ isOpen, onClose, location, onLocationUpdated }: Ed
             <DialogTitle>Edit Location</DialogTitle>
           </DialogHeader>
           
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <LocationFormFields
-              formData={formData}
-              onFieldChange={handleChange}
+          <EditLocationForm
+            formData={formData}
+            onFieldChange={handleChange}
+            location={location}
+            onLocationUpdated={onLocationUpdated}
+            onClose={onClose}
+          >
+            <EditLocationActions
+              location={location}
+              onClose={onClose}
+              onDisableLocation={handleDisableDialogOpen}
             />
-            
-            <div className="flex justify-between items-center pt-4 border-t">
-              <div>
-                {canDisableLocation && (
-                  <Button 
-                    type="button" 
-                    variant="destructive" 
-                    onClick={() => setIsDisableDialogOpen(true)}
-                  >
-                    Disable Location
-                  </Button>
-                )}
-              </div>
-              <div className="flex space-x-2">
-                <Button type="button" variant="outline" onClick={onClose}>
-                  Cancel
-                </Button>
-                <Button type="submit" className="bg-greenyp-600 hover:bg-greenyp-700">
-                  Update Location
-                </Button>
-              </div>
-            </div>
-          </form>
+          </EditLocationForm>
         </DialogContent>
       </Dialog>
 
-      <AlertDialog open={isDisableDialogOpen} onOpenChange={setIsDisableDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Disable Location</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to disable "{location.locationName}"? This will make the location inactive and it will no longer be visible to customers. You can re-enable it later if needed.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={handleDisableLocation}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              Disable Location
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DisableLocationDialog
+        isOpen={isDisableDialogOpen}
+        onClose={handleDisableDialogClose}
+        location={location}
+        formData={formData}
+        onLocationUpdated={onLocationUpdated}
+        onDialogClose={onClose}
+      />
     </>
   );
 };
