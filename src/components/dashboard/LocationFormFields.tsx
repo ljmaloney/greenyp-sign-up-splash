@@ -3,24 +3,13 @@ import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { LocationFormData } from "@/types/location";
+import { US_STATES_AND_TERRITORIES } from "@/constants/usStates";
 
 interface LocationFormFieldsProps {
   formData: LocationFormData;
   onFieldChange: (field: keyof LocationFormData, value: string | boolean) => void;
   showActiveToggle?: boolean;
 }
-
-const US_STATES_AND_TERRITORIES = [
-  'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware',
-  'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky',
-  'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi',
-  'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico',
-  'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania',
-  'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont',
-  'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming',
-  'American Samoa', 'District of Columbia', 'Guam', 'Northern Mariana Islands', 'Puerto Rico',
-  'U.S. Virgin Islands'
-];
 
 const LocationFormFields = ({ formData, onFieldChange, showActiveToggle = false }: LocationFormFieldsProps) => {
   return (

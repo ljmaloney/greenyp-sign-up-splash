@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useLocationForm } from "@/hooks/useLocationForm";
 import { Location } from "@/services/locationService";
 import { LocationFormData } from "@/types/location";
+import { STATE_ABBREVIATIONS } from "@/constants/usStates";
 import EditLocationForm from "./EditLocationForm";
 import EditLocationActions from "./EditLocationActions";
 import DisableLocationDialog from "./DisableLocationDialog";
@@ -17,6 +18,10 @@ interface EditLocationDialogProps {
 
 const EditLocationDialog = ({ isOpen, onClose, location, onLocationUpdated }: EditLocationDialogProps) => {
   const [isDisableDialogOpen, setIsDisableDialogOpen] = useState(false);
+  
+  // Convert state abbreviation to full name for display
+  const displayState = STATE_ABBREVIATIONS[location.state] || location.state;
+  
   const { formData, handleChange } = useLocationForm({
     locationId: location.locationId,
     locationName: location.locationName,
@@ -27,7 +32,7 @@ const EditLocationDialog = ({ isOpen, onClose, location, onLocationUpdated }: Ed
     addressLine2: location.addressLine2 || '',
     addressLine3: location.addressLine3 || '',
     city: location.city,
-    state: location.state,
+    state: displayState,
     postalCode: location.postalCode,
     latitude: location.latitude,
     longitude: location.longitude,

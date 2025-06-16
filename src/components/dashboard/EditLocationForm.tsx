@@ -2,6 +2,7 @@
 import React from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { getApiUrl } from "@/config/api";
+import { FULL_NAME_TO_ABBREVIATION } from "@/constants/usStates";
 import LocationFormFields from "./LocationFormFields";
 import { Location } from "@/services/locationService";
 import { LocationFormData } from "@/types/location";
@@ -31,6 +32,9 @@ const EditLocationForm = ({
     try {
       console.log('Updating location:', formData);
       
+      // Convert full state name back to abbreviation for API
+      const stateAbbreviation = FULL_NAME_TO_ABBREVIATION[formData.state] || formData.state;
+      
       // Prepare payload matching API specification
       const payload = {
         locationId: formData.locationId,
@@ -42,7 +46,7 @@ const EditLocationForm = ({
         addressLine2: formData.addressLine2,
         addressLine3: formData.addressLine3,
         city: formData.city,
-        state: formData.state,
+        state: stateAbbreviation,
         postalCode: formData.postalCode,
         latitude: parseFloat(formData.latitude) || 0,
         longitude: parseFloat(formData.longitude) || 0,

@@ -3,6 +3,7 @@ import React from 'react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { getApiUrl } from "@/config/api";
+import { FULL_NAME_TO_ABBREVIATION } from "@/constants/usStates";
 import { Location } from "@/services/locationService";
 import { LocationFormData } from "@/types/location";
 
@@ -31,6 +32,9 @@ const DisableLocationDialog = ({
       
       console.log('Disabling location:', updatedFormData);
       
+      // Convert full state name back to abbreviation for API
+      const stateAbbreviation = FULL_NAME_TO_ABBREVIATION[updatedFormData.state] || updatedFormData.state;
+      
       // Prepare payload matching API specification
       const payload = {
         locationId: updatedFormData.locationId,
@@ -42,7 +46,7 @@ const DisableLocationDialog = ({
         addressLine2: updatedFormData.addressLine2,
         addressLine3: updatedFormData.addressLine3,
         city: updatedFormData.city,
-        state: updatedFormData.state,
+        state: stateAbbreviation,
         postalCode: updatedFormData.postalCode,
         latitude: parseFloat(updatedFormData.latitude) || 0,
         longitude: parseFloat(updatedFormData.longitude) || 0,
