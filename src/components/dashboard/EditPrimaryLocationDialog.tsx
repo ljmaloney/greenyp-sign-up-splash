@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -69,7 +69,7 @@ const EditPrimaryLocationDialog = ({ isOpen, onClose, primaryLocation, producer 
 
       console.log('🚀 Updating primary location with payload:', payload);
       
-      const response = await fetch(getApiUrl('/account/producer'), {
+      const response = await fetch(getApiUrl('/producer/location'), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -111,6 +111,9 @@ const EditPrimaryLocationDialog = ({ isOpen, onClose, primaryLocation, producer 
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>Edit Primary Location</DialogTitle>
+          <DialogDescription>
+            Update your primary location information. This is the main address for your business.
+          </DialogDescription>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
