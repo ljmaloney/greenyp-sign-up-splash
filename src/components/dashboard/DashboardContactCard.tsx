@@ -2,16 +2,18 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Phone, Mail } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Phone, Mail, Edit } from 'lucide-react';
 import { Contact } from '@/services/accountService';
 
 interface DashboardContactCardProps {
   contact: Contact;
   title: string;
   icon: React.ElementType;
+  onEdit?: (contact: Contact) => void;
 }
 
-const DashboardContactCard = ({ contact, title, icon: Icon }: DashboardContactCardProps) => {
+const DashboardContactCard = ({ contact, title, icon: Icon, onEdit }: DashboardContactCardProps) => {
   const getContactTypeDisplay = (contactType: string) => {
     switch (contactType) {
       case 'PRIMARY':
@@ -47,10 +49,22 @@ const DashboardContactCard = ({ contact, title, icon: Icon }: DashboardContactCa
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-greenyp-600">
-          <Icon className="h-5 w-5" />
-          {title}
-        </CardTitle>
+        <div className="flex justify-between items-start">
+          <CardTitle className="flex items-center gap-2 text-greenyp-600">
+            <Icon className="h-5 w-5" />
+            {title}
+          </CardTitle>
+          {onEdit && (
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => onEdit(contact)}
+              className="h-8 w-8 p-0"
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
@@ -60,23 +74,36 @@ const DashboardContactCard = ({ contact, title, icon: Icon }: DashboardContactCa
           
           {contact.title && <p className="text-sm text-gray-600">{contact.title}</p>}
           
-          <div className="space-y-1 text-sm">
-            <div className="flex items-center gap-2">
-              <Phone className="h-4 w-4" />
-              <span>{contact.phoneNumber}</span>
+          <div className="space-y-2 text-sm">
+            <div className="flex items-start">
+              <div className="flex items-center gap-2 min-w-[80px]">
+                <Phone className="h-4 w-4 flex-shrink-0" />
+                <span className="text-gray-600">Phone:</span>
+              </div>
+              <span className="ml-2">{contact.phoneNumber}</span>
             </div>
+            
             {contact.cellPhoneNumber && (
-              <div className="flex items-center gap-2">
-                <Phone className="h-4 w-4" />
-                <span>{contact.cellPhoneNumber}</span>
+              <div className="flex items-start">
+                <div className="flex items-center gap-2 min-w-[80px]">
+                  <Phone className="h-4 w-4 flex-shrink-0" />
+                  <span className="text-gray-600">Cell:</span>
+                </div>
+                <span className="ml-2">{contact.cellPhoneNumber}</span>
               </div>
             )}
-            <div className="flex items-center gap-2">
-              <Mail className="h-4 w-4" />
-              <span>{contact.emailAddress}</span>
-              {!contact.emailConfirmed && (
-                <Badge variant="destructive" className="text-xs">Unconfirmed</Badge>
-              )}
+            
+            <div className="flex items-start">
+              <div className="flex items-center gap-2 min-w-[80px]">
+                <Mail className="h-4 w-4 flex-shrink-0" />
+                <span className="text-gray-600">Email:</span>
+              </div>
+              <div className="ml-2 flex items-center gap-2">
+                <span>{contact.emailAddress}</span>
+                {!contact.emailConfirmed && (
+                  <Badge variant="destructive" className="text-xs">Unconfirmed</Badge>
+                )}
+              </div>
             </div>
           </div>
 

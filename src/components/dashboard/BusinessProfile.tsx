@@ -1,17 +1,19 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Phone, Mail } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAccountData } from '@/hooks/useAccountData';
+import { Contact } from '@/services/accountService';
 import BusinessOverviewCard from './BusinessOverviewCard';
 import PrimaryLocationCard from './PrimaryLocationCard';
 import ActiveSubscriptionsCard from './ActiveSubscriptionsCard';
 import DashboardContactCard from './DashboardContactCard';
+import EditDashboardContactDialog from './EditDashboardContactDialog';
 
 const BusinessProfile = () => {
   const { user } = useAuth();
   const { data: accountData, isLoading, error } = useAccountData(user?.id || null);
+  const [editingContact, setEditingContact] = useState<Contact | null>(null);
 
   if (isLoading) {
     return (
@@ -58,6 +60,10 @@ const BusinessProfile = () => {
   const primaryContact = contacts.find(contact => contact.producerContactType === 'PRIMARY');
   const adminContact = contacts.find(contact => contact.producerContactType === 'ADMIN');
 
+  const handleEditContact = (contact: Contact) => {
+    setEditingContact(contact);
+  };
+
   return (
     <div className="space-y-6">
       {/* Business Overview */}
@@ -78,7 +84,8 @@ const BusinessProfile = () => {
           <DashboardContactCard 
             contact={primaryContact} 
             title="Primary Contact" 
-            icon={Phone} 
+            icon={Phone}
+            onEdit={handleEditContact}
           />
         )}
 
@@ -86,10 +93,21 @@ const BusinessProfile = () => {
           <DashboardContactCard 
             contact={adminContact} 
             title="Admin Contact" 
-            icon={Mail} 
+            icon={Mail}
+            onEdit={handleEditContact}
           />
         )}
       </div>
+
+      {/* Edit Contact Dialog */}
+      {editingContact && (
+        <EditDashboardContactDialog
+          isOpen={true}
+          onClose={() => setEditingContact(null)}
+          contact={editingContact}
+          locationId={primaryLocation.locationId}
+        />
+      )}
     </div>
   );
 };
