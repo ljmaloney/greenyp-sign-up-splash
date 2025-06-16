@@ -1,13 +1,24 @@
 
 import React from 'react';
 import { ChevronRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCategories } from '@/hooks/useCategories';
 import { CategoryWithIcon } from '@/types/category';
 
 const CategorySection = () => {
   const { data: categories, isLoading, error } = useCategories();
+  const navigate = useNavigate();
   
+  const handleCategoryClick = (categoryId: string) => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    navigate(`/subscriber/categories/${categoryId}`);
+  };
+
+  const handleViewAllClick = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    navigate('/subscriber/categories');
+  };
+
   if (isLoading) {
     return (
       <section id="categories" className="py-16 bg-white">
@@ -88,25 +99,26 @@ const CategorySection = () => {
               {renderIcon(category)}
               <h3 className="text-xl font-semibold mb-2 text-gray-800">{category.lineOfBusinessName}</h3>
               <p className="text-gray-600">{category.shortDescription}</p>
-              <Link 
-                to={`/subscriber/categories/${category.lineOfBusinessId}`}
-                className="mt-6 inline-flex items-center text-greenyp-600 hover:text-greenyp-800 font-medium"
+              <button
+                onClick={() => handleCategoryClick(category.lineOfBusinessId)}
+                className="mt-6 inline-flex items-center text-greenyp-600 hover:text-greenyp-800 font-medium cursor-pointer"
                 aria-label={`Show more information about ${category.lineOfBusinessName}`}
               >
                 Show more information
                 <ChevronRight className="w-4 h-4 ml-2" />
-              </Link>
+              </button>
             </div>
           ))}
         </div>
         
         <div className="text-center mt-12">
-          <Link to="/subscriber/categories">
-            <button className="bg-greenyp-600 hover:bg-greenyp-700 text-white px-8 py-3 rounded-lg font-medium inline-flex items-center">
-              View All Categories
-              <ChevronRight className="w-4 h-4 ml-2" />
-            </button>
-          </Link>
+          <button 
+            onClick={handleViewAllClick}
+            className="bg-greenyp-600 hover:bg-greenyp-700 text-white px-8 py-3 rounded-lg font-medium inline-flex items-center"
+          >
+            View All Categories
+            <ChevronRight className="w-4 h-4 ml-2" />
+          </button>
         </div>
       </div>
     </section>
