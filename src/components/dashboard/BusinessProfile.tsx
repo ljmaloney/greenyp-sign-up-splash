@@ -63,8 +63,8 @@ const BusinessProfile = () => {
       {/* Business Overview */}
       <BusinessOverviewCard producer={producer} />
 
-      {/* Primary Location */}
-      <PrimaryLocationCard primaryLocation={primaryLocation} />
+      {/* Primary Location - Now passing producer prop */}
+      <PrimaryLocationCard primaryLocation={primaryLocation} producer={producer} />
 
       {/* Active Subscriptions - Pass producer subscription type */}
       <ActiveSubscriptionsCard 
