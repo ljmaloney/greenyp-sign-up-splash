@@ -4,6 +4,7 @@ import { Navigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 import { ChevronRight, Leaf } from 'lucide-react';
 
 const Login = () => {
@@ -67,18 +68,19 @@ const Login = () => {
             </Button>
           </div>
           
-          <div className="flex justify-center">
+          <Separator className="my-6" />
+          
+          <div className="flex flex-col items-center space-y-4">
             <Link
                 to={`/subscriber/signup`}
-                className="mt-6 inline-flex items-center text-greenyp-600 hover:text-greenyp-800 font-medium"
+                className="inline-flex items-center text-greenyp-600 hover:text-greenyp-800 font-medium"
                 aria-label={`Create subscriber account`}
             >
               List Your Business
             </Link>
-            <br/>
             <Link
                 to={`/subscriber`}
-                className="mt-6 inline-flex items-center text-greenyp-600 hover:text-greenyp-800 font-medium"
+                className="inline-flex items-center text-greenyp-600 hover:text-greenyp-800 font-medium"
                 aria-label={`Show more information for subscribers`}
             >
               More Information
