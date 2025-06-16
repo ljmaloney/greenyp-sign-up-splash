@@ -70,6 +70,18 @@ const ContactsDialogManager = ({
     return serviceContacts.map(transformContactForDialog);
   };
 
+  const handleContactAdded = () => {
+    console.log('🔄 Contact added, refreshing contacts list...');
+    refetch();
+    onContactAdded();
+  };
+
+  const handleContactUpdated = () => {
+    console.log('🔄 Contact updated, refreshing contacts list...');
+    refetch();
+    onContactUpdated();
+  };
+
   const confirmDeleteContact = async () => {
     if (!selectedContact) return;
     
@@ -109,7 +121,7 @@ const ContactsDialogManager = ({
             id: loc.locationId,
             locationName: loc.locationName
           }))}
-          onContactAdded={onContactAdded}
+          onContactAdded={handleContactAdded}
           existingContacts={contacts ? transformContactsForValidation(contacts) : []}
           isDashboardEdit={isDashboardEdit}
         />
@@ -124,7 +136,7 @@ const ContactsDialogManager = ({
             id: loc.locationId,
             locationName: loc.locationName
           }))}
-          onContactUpdated={onContactUpdated}
+          onContactUpdated={handleContactUpdated}
           existingContacts={contacts ? transformContactsForValidation(contacts) : []}
           isDashboardEdit={isDashboardEdit}
         />
