@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Edit, Calendar, Building, Globe, Upload } from 'lucide-react';
+import { Edit, Calendar, Building, Globe, Upload, CreditCard } from 'lucide-react';
 import { Producer } from '@/services/accountService';
 import { useLineOfBusiness } from '@/hooks/useLineOfBusiness';
 import { useSubscriptions } from '@/hooks/useSubscriptions';
@@ -40,6 +40,32 @@ const BusinessOverviewCard = ({ producer }: BusinessOverviewCardProps) => {
     console.log('✅ Found line of business:', lob);
     
     return lob?.lineOfBusinessName || 'Unknown';
+  };
+
+  const getInvoiceCycleTypeDisplay = (invoiceCycleType: string) => {
+    if (!invoiceCycleType || producer.subscriptionType === '-') {
+      return '-';
+    }
+    
+    switch (invoiceCycleType) {
+      case 'MONTHLY':
+        return 'Recurring Monthly';
+      case 'QUARTERLY':
+        return 'Recurring Quarterly';
+      case 'ANNUAL':
+        return 'Recurring Annual';
+      case 'NONRECURRING_ANNUAL':
+        return 'Non-recurring Annual';
+      default:
+        return invoiceCycleType;
+    }
+  };
+
+  const formatBillingDate = (dateString: string) => {
+    if (!dateString || producer.subscriptionType === '-') {
+      return '-';
+    }
+    return formatDate(dateString);
   };
 
   // Find the TOP_LEVEL subscription from the producer's subscriptions
@@ -141,6 +167,14 @@ const BusinessOverviewCard = ({ producer }: BusinessOverviewCardProps) => {
                   {getLineOfBusinessName(producer.lineOfBusinessId)}
                 </span>
               </div>
+
+              <div className="flex items-center gap-2 text-sm">
+                <CreditCard className="h-4 w-4 text-gray-500" />
+                <span className="text-gray-600">Invoice Cycle:</span>
+                <span className="text-gray-900">
+                  {getInvoiceCycleTypeDisplay(producer.invoiceCycleType || '')}
+                </span>
+              </div>
             </div>
             
             <div className="space-y-3">
@@ -157,6 +191,22 @@ const BusinessOverviewCard = ({ producer }: BusinessOverviewCardProps) => {
                 <span className="text-gray-600">Last Updated:</span>
                 <span className="text-gray-900">
                   {formatDate(producer.lastUpdateDate)}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2 text-sm">
+                <Calendar className="h-4 w-4 text-gray-500" />
+                <span className="text-gray-600">Last Bill Date:</span>
+                <span className="text-gray-900">
+                  {formatBillingDate(producer.lastBillDate || '')}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2 text-sm">
+                <Calendar className="h-4 w-4 text-gray-500" />
+                <span className="text-gray-600">Last Bill Paid:</span>
+                <span className="text-gray-900">
+                  {formatBillingDate(producer.lastBillPaidDate || '')}
                 </span>
               </div>
             </div>

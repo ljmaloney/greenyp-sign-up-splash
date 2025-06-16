@@ -1,4 +1,3 @@
-
 import { getApiUrl } from '@/config/api';
 
 export interface Producer {
@@ -11,6 +10,9 @@ export interface Producer {
   websiteUrl: string;
   subscriptions: Subscription[];
   narrative: string;
+  lastBillDate?: string;
+  lastBillPaidDate?: string;
+  invoiceCycleType?: string;
 }
 
 export interface Subscription {
