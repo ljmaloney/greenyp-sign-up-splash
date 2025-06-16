@@ -56,11 +56,11 @@ export const useEditContactForm = (
     try {
       console.log('Updating contact:', formData);
       
-      // Normalize phone numbers before submitting
+      // Normalize phone numbers and send null for empty values
       const submissionData = {
         ...formData,
-        phoneNumber: normalizePhoneNumber(formData.phoneNumber),
-        cellPhoneNumber: normalizePhoneNumber(formData.cellPhoneNumber)
+        phoneNumber: formData.phoneNumber.trim() ? normalizePhoneNumber(formData.phoneNumber) : null,
+        cellPhoneNumber: formData.cellPhoneNumber.trim() ? normalizePhoneNumber(formData.cellPhoneNumber) : null
       };
       
       const response = await fetch(getApiUrl('/producer/contact'), {
@@ -85,7 +85,7 @@ export const useEditContactForm = (
         description: "Contact has been successfully updated.",
       });
       
-      onContactUpdated(submissionData);
+      onContactUpdated(formData);
       onClose();
     } catch (error) {
       console.error('Error updating contact:', error);

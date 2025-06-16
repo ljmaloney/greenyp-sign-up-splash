@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from '@tanstack/react-query';
 import { getApiUrl } from '@/config/api';
 import { Contact } from '@/services/accountService';
+import { normalizePhoneNumber } from "@/utils/phoneUtils";
 
 interface ContactFormData {
   contactId: string;
@@ -55,12 +56,19 @@ export const useDashboardContactForm = ({ contact, locationId, onClose }: UseDas
     try {
       console.log('🚀 Updating dashboard contact with payload:', formData);
       
+      // Normalize phone numbers and send null for empty values
+      const submissionData = {
+        ...formData,
+        phoneNumber: formData.phoneNumber.trim() ? normalizePhoneNumber(formData.phoneNumber) : null,
+        cellPhoneNumber: formData.cellPhoneNumber.trim() ? normalizePhoneNumber(formData.cellPhoneNumber) : null
+      };
+      
       const response = await fetch(getApiUrl(`/producer/location/${locationId}/contact`), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(submissionData),
       });
 
       if (!response.ok) {

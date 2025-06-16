@@ -78,11 +78,11 @@ export const useContactForm = (
     try {
       console.log('Adding contact:', formData);
       
-      // Normalize phone numbers before submitting
+      // Normalize phone numbers and send null for empty values
       const submissionData = {
         ...formData,
-        phoneNumber: normalizePhoneNumber(formData.phoneNumber),
-        cellPhoneNumber: normalizePhoneNumber(formData.cellPhoneNumber)
+        phoneNumber: formData.phoneNumber.trim() ? normalizePhoneNumber(formData.phoneNumber) : null,
+        cellPhoneNumber: formData.cellPhoneNumber.trim() ? normalizePhoneNumber(formData.cellPhoneNumber) : null
       };
       
       const response = await fetch(getApiUrl(`/producer/location/${formData.producerLocationId}/contact`), {
@@ -104,7 +104,7 @@ export const useContactForm = (
         description: "Contact has been successfully added.",
       });
       
-      onSuccess(submissionData);
+      onSuccess(formData);
       onClose();
       resetForm();
     } catch (error) {
