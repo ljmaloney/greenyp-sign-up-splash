@@ -1,13 +1,13 @@
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Edit, Calendar, Building, Globe, Upload, CreditCard } from 'lucide-react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Producer } from '@/services/accountService';
 import { useLineOfBusiness } from '@/hooks/useLineOfBusiness';
 import { useSubscriptions } from '@/hooks/useSubscriptions';
 import EditBusinessInfoDialog from './EditBusinessInfoDialog';
+import BusinessHeader from './BusinessHeader';
+import BusinessDescription from './BusinessDescription';
+import BusinessDetails from './BusinessDetails';
 
 interface BusinessOverviewCardProps {
   producer: Producer;
@@ -15,17 +15,8 @@ interface BusinessOverviewCardProps {
 
 const BusinessOverviewCard = ({ producer }: BusinessOverviewCardProps) => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isNarrativeExpanded, setIsNarrativeExpanded] = useState(false);
   const { data: lineOfBusinessData, isLoading: lobLoading } = useLineOfBusiness();
   const { data: subscriptions } = useSubscriptions();
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
 
   const getLineOfBusinessName = (lineOfBusinessId: string) => {
     console.log('🔍 Looking for lineOfBusinessId:', lineOfBusinessId);
@@ -40,32 +31,6 @@ const BusinessOverviewCard = ({ producer }: BusinessOverviewCardProps) => {
     console.log('✅ Found line of business:', lob);
     
     return lob?.lineOfBusinessName || 'Unknown';
-  };
-
-  const getInvoiceCycleTypeDisplay = (invoiceCycleType: string) => {
-    if (!invoiceCycleType || producer.subscriptionType === '-') {
-      return '-';
-    }
-    
-    switch (invoiceCycleType) {
-      case 'MONTHLY':
-        return 'Recurring Monthly';
-      case 'QUARTERLY':
-        return 'Recurring Quarterly';
-      case 'ANNUAL':
-        return 'Recurring Annual';
-      case 'NONRECURRING_ANNUAL':
-        return 'Non-recurring Annual';
-      default:
-        return invoiceCycleType;
-    }
-  };
-
-  const formatBillingDate = (dateString: string) => {
-    if (!dateString || producer.subscriptionType === '-') {
-      return '-';
-    }
-    return formatDate(dateString);
   };
 
   // Find the TOP_LEVEL subscription from the producer's subscriptions
@@ -84,11 +49,6 @@ const BusinessOverviewCard = ({ producer }: BusinessOverviewCardProps) => {
   console.log('🎯 Current subscription from reference data:', currentSubscription);
   console.log('📸 Has Photo Gallery Feature:', hasPhotoGalleryFeature);
 
-  const shouldTruncateNarrative = producer.narrative && producer.narrative.length > 150;
-  const displayedNarrative = shouldTruncateNarrative && !isNarrativeExpanded 
-    ? producer.narrative.substring(0, 150) + '...'
-    : producer.narrative;
-
   const businessData = {
     businessName: producer.businessName,
     description: producer.narrative,
@@ -106,111 +66,20 @@ const BusinessOverviewCard = ({ producer }: BusinessOverviewCardProps) => {
     <>
       <Card>
         <CardHeader>
-          <div className="flex justify-between items-start">
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2">
-                <CardTitle className="text-2xl text-greenyp-600">{producer.businessName}</CardTitle>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => setIsEditDialogOpen(true)}
-                  className="h-8 w-8 p-0"
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={handleLogoUpload}
-                  disabled={!hasPhotoGalleryFeature}
-                  className="h-8 w-8 p-0"
-                  title={hasPhotoGalleryFeature ? "Upload logo" : "Photo gallery feature required"}
-                >
-                  <Upload className="h-4 w-4" />
-                </Button>
-              </div>
-              
-              {producer.narrative && (
-                <div className="text-gray-600 mt-2">
-                  <p>{displayedNarrative}</p>
-                  {shouldTruncateNarrative && (
-                    <button
-                      onClick={() => setIsNarrativeExpanded(!isNarrativeExpanded)}
-                      className="text-greenyp-600 hover:text-greenyp-700 text-sm mt-1"
-                    >
-                      {isNarrativeExpanded ? 'Show less' : 'Read more'}
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
-            <Badge variant={producer.subscriptionType === 'LIVE_UNPAID' ? 'destructive' : 'default'}>
-              {producer.subscriptionType.replace('_', ' ')}
-            </Badge>
-          </div>
+          <BusinessHeader
+            producer={producer}
+            hasPhotoGalleryFeature={hasPhotoGalleryFeature}
+            onEditClick={() => setIsEditDialogOpen(true)}
+            onLogoUpload={handleLogoUpload}
+          />
+          
+          <BusinessDescription narrative={producer.narrative} />
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-sm">
-                <Globe className="h-4 w-4 text-gray-500" />
-                <span className="text-gray-600">Website:</span>
-                <span className="text-gray-900">
-                  {producer.websiteUrl || 'Not provided'}
-                </span>
-              </div>
-              
-              <div className="flex items-center gap-2 text-sm">
-                <Building className="h-4 w-4 text-gray-500" />
-                <span className="text-gray-600">Line of Business:</span>
-                <span className="text-gray-900">
-                  {getLineOfBusinessName(producer.lineOfBusinessId)}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2 text-sm">
-                <CreditCard className="h-4 w-4 text-gray-500" />
-                <span className="text-gray-600">Invoice Cycle:</span>
-                <span className="text-gray-900">
-                  {getInvoiceCycleTypeDisplay(producer.invoiceCycleType || '')}
-                </span>
-              </div>
-            </div>
-            
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-sm">
-                <Calendar className="h-4 w-4 text-gray-500" />
-                <span className="text-gray-600">Profile Created:</span>
-                <span className="text-gray-900">
-                  {formatDate(producer.createDate)}
-                </span>
-              </div>
-              
-              <div className="flex items-center gap-2 text-sm">
-                <Calendar className="h-4 w-4 text-gray-500" />
-                <span className="text-gray-600">Last Updated:</span>
-                <span className="text-gray-900">
-                  {formatDate(producer.lastUpdateDate)}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2 text-sm">
-                <Calendar className="h-4 w-4 text-gray-500" />
-                <span className="text-gray-600">Last Bill Date:</span>
-                <span className="text-gray-900">
-                  {formatBillingDate(producer.lastBillDate || '')}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2 text-sm">
-                <Calendar className="h-4 w-4 text-gray-500" />
-                <span className="text-gray-600">Last Bill Paid:</span>
-                <span className="text-gray-900">
-                  {formatBillingDate(producer.lastBillPaidDate || '')}
-                </span>
-              </div>
-            </div>
-          </div>
+          <BusinessDetails
+            producer={producer}
+            lineOfBusinessName={getLineOfBusinessName(producer.lineOfBusinessId)}
+          />
         </CardContent>
       </Card>
 
