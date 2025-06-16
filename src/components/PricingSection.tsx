@@ -1,8 +1,10 @@
+
 import React, { useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useSubscriptions } from '../hooks/useSubscriptions';
+import BillingToggle from './pricing/BillingToggle';
+import PricingGrid from './pricing/PricingGrid';
+import { getDisplayPrice, getDisplayPeriod, getSavingsText } from '../utils/pricingUtils';
 
 const PricingSection = () => {
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
@@ -23,51 +25,9 @@ const PricingSection = () => {
     navigate(`/subscriber/signup?plan=${subscriptionId}&billing=${billingPeriod}`);
   };
 
-  const getDisplayPrice = (subscription: any) => {
-    if (subscription.comingSoon) {
-      return "";
-    }
-    
-    if (subscription.monthlyAutopayAmount === 0) {
-      return "Free";
-    }
-    
-    if (billingPeriod === 'yearly' && subscription.annualBillAmount) {
-      return `$${subscription.annualBillAmount}`;
-    }
-    
-    return subscription.formattedMonthlyPrice;
-  };
-
-  const getDisplayPeriod = (subscription: any) => {
-    if (subscription.comingSoon) {
-      return "";
-    }
-    
-    if (subscription.monthlyAutopayAmount === 0) {
-      return "for first month";
-    }
-    
-    if (billingPeriod === 'yearly' && subscription.annualBillAmount) {
-      return "/year";
-    }
-    
-    return "/month";
-  };
-
-  const getSavingsText = (subscription: any) => {
-    if (subscription.comingSoon) {
-      return null;
-    }
-    
-    if (billingPeriod === 'yearly' && subscription.annualBillAmount && subscription.monthlyAutopayAmount > 0) {
-      const yearlyTotal = subscription.monthlyAutopayAmount * 12;
-      const savings = yearlyTotal - subscription.annualBillAmount;
-      const savingsPercent = Math.round((savings / yearlyTotal) * 100);
-      return `Save ${savingsPercent}% with annual billing`;
-    }
-    return null;
-  };
+  const getPriceDisplay = (subscription: any) => getDisplayPrice(subscription, billingPeriod);
+  const getPeriodDisplay = (subscription: any) => getDisplayPeriod(subscription, billingPeriod);
+  const getSavingsDisplay = (subscription: any) => getSavingsText(subscription, billingPeriod);
 
   if (isLoading) {
     return (
@@ -100,99 +60,20 @@ const PricingSection = () => {
             The basic listing is free for the first month and takes only a few minutes to set up. For enhanced visibility, consider our premium options.
           </p>
           
-          <div className="inline-flex p-1 rounded-lg bg-gray-100 mb-8">
-            <button
-              className={`px-6 py-2 text-sm font-medium rounded-md transition-colors ${
-                billingPeriod === 'monthly' 
-                  ? 'bg-white text-gray-900 shadow-sm' 
-                  : 'text-gray-700 hover:text-gray-900'
-              }`}
-              onClick={() => setBillingPeriod('monthly')}
-            >
-              Monthly
-            </button>
-            <button
-              className={`px-6 py-2 text-sm font-medium rounded-md transition-colors ${
-                billingPeriod === 'yearly' 
-                  ? 'bg-white text-gray-900 shadow-sm' 
-                  : 'text-gray-700 hover:text-gray-900'
-              }`}
-              onClick={() => setBillingPeriod('yearly')}
-            >
-              Yearly <span className="text-xs text-greenyp-600 font-normal ml-1">Save up to 20%</span>
-            </button>
-          </div>
+          <BillingToggle 
+            billingPeriod={billingPeriod}
+            onBillingChange={setBillingPeriod}
+          />
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {subscriptions?.map((subscription, index) => (
-            <div 
-              key={subscription.subscriptionId}
-              className={`pricing-card relative rounded-lg border p-6 ${
-                subscription.comingSoon 
-                  ? 'border-yellow-400 border-2' 
-                  : subscription.popular 
-                    ? 'border-greenyp-500 md:scale-105 z-10 shadow-lg' 
-                    : 'border-gray-200'
-              }`}
-            >
-              {subscription.popular && !subscription.comingSoon && (
-                <div className="absolute top-0 -translate-y-1/2 bg-greenyp-500 text-white px-4 py-1 rounded-full text-sm font-medium">
-                  Most Popular
-                </div>
-              )}
-              
-              <div className="mb-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
-                  {subscription.displayName}
-                  {subscription.comingSoon && (
-                    <span className="text-yellow-600 text-sm font-normal ml-2">Coming Soon</span>
-                  )}
-                </h3>
-                <p className="text-gray-600 text-sm">{subscription.shortDescription}</p>
-              </div>
-              
-              {!subscription.comingSoon && (
-                <div className="mb-6">
-                  <div className="flex items-end">
-                    <span className="text-4xl font-bold text-gray-900">
-                      {getDisplayPrice(subscription)}
-                    </span>
-                    <span className="text-gray-500 ml-1">
-                      {getDisplayPeriod(subscription)}
-                    </span>
-                  </div>
-                  {getSavingsText(subscription) && (
-                    <p className="text-greenyp-600 text-sm mt-1">{getSavingsText(subscription)}</p>
-                  )}
-                </div>
-              )}
-              
-              <ul className="space-y-3 mb-8 flex-grow">
-                {subscription.formattedFeatures.map((feature) => (
-                  <li key={feature.id} className="flex items-start">
-                    <Check className="h-5 w-5 text-greenyp-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <span className="text-gray-700">{feature.name}</span>
-                  </li>
-                ))}
-              </ul>
-              
-              <Button 
-                className={`w-full ${
-                  subscription.comingSoon
-                    ? 'bg-gray-400 cursor-not-allowed'
-                    : subscription.popular
-                      ? 'bg-greenyp-600 hover:bg-greenyp-700 text-white'
-                      : 'bg-white border-2 border-greenyp-600 text-greenyp-700 hover:bg-greenyp-50'
-                }`}
-                onClick={() => !subscription.comingSoon && handleSubscriptionClick(subscription.subscriptionId)}
-                disabled={subscription.comingSoon}
-              >
-                {subscription.comingSoon ? 'Coming Soon' : 'Start Your Listing'}
-              </Button>
-            </div>
-          ))}
-        </div>
+        <PricingGrid
+          subscriptions={subscriptions}
+          billingPeriod={billingPeriod}
+          onSubscriptionClick={handleSubscriptionClick}
+          getDisplayPrice={getPriceDisplay}
+          getDisplayPeriod={getPeriodDisplay}
+          getSavingsText={getSavingsDisplay}
+        />
       </div>
     </section>
   );
