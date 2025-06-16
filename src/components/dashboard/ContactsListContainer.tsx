@@ -90,6 +90,7 @@ const ContactsListContainer = () => {
         onContactAdded={handleContactAdded}
         onContactUpdated={handleContactUpdated}
         refetch={refetch}
+        isDashboardEdit={false}
       />
     </div>
   );

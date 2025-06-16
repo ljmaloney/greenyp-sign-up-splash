@@ -13,6 +13,7 @@ interface AddContactDialogProps {
   onContactAdded: (contact: ContactFormData) => void;
   preSelectedLocationId?: string;
   existingContacts?: Contact[];
+  isDashboardEdit?: boolean;
 }
 
 const AddContactDialog = ({ 
@@ -21,7 +22,8 @@ const AddContactDialog = ({
   locations, 
   onContactAdded, 
   preSelectedLocationId,
-  existingContacts 
+  existingContacts,
+  isDashboardEdit = false
 }: AddContactDialogProps) => {
   const { formData, handleChange, handleSubmit } = useContactForm(
     onContactAdded, 
@@ -42,6 +44,7 @@ const AddContactDialog = ({
             formData={formData}
             locations={locations}
             onFieldChange={handleChange}
+            isDashboardEdit={isDashboardEdit}
           />
           
           <div className="flex justify-end space-x-2 pt-4">

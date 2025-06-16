@@ -36,11 +36,17 @@ export const validateContactForm = (formData: ContactFormData, existingContacts?
     }
   }
 
-  // Conditional validation based on Generic Contact Name
-  const hasGenericName = formData.genericContactName.trim().length > 0;
-  
-  if (hasGenericName) {
-    // If Generic Contact Name is provided, validate it
+  // Conditional validation based on Display Type
+  if (formData.displayContactType === 'GENERIC_NAME_PHONE_EMAIL') {
+    // When display type is GENERIC_NAME_PHONE_EMAIL, Generic Name is required
+    if (!formData.genericContactName.trim()) {
+      return {
+        isValid: false,
+        error: "Generic Contact Name is required when Display Type is 'Generic name, phone, and email'."
+      };
+    }
+    
+    // Validate Generic Contact Name format
     if (!validateGenericContactName(formData.genericContactName)) {
       return {
         isValid: false,
@@ -48,12 +54,25 @@ export const validateContactForm = (formData: ContactFormData, existingContacts?
       };
     }
   } else {
-    // If Generic Contact Name is not provided, First Name and Last Name are required
-    if (!formData.firstName.trim() || !formData.lastName.trim()) {
-      return {
-        isValid: false,
-        error: "First Name and Last Name are required when Generic Contact Name is not provided."
-      };
+    // For other display types, First Name and Last Name are required if Generic Name is not provided
+    const hasGenericName = formData.genericContactName.trim().length > 0;
+    
+    if (hasGenericName) {
+      // If Generic Contact Name is provided, validate it
+      if (!validateGenericContactName(formData.genericContactName)) {
+        return {
+          isValid: false,
+          error: "Generic Contact Name must contain only A-Z, a-z, space, and & characters."
+        };
+      }
+    } else {
+      // If Generic Contact Name is not provided, First Name and Last Name are required
+      if (!formData.firstName.trim() || !formData.lastName.trim()) {
+        return {
+          isValid: false,
+          error: "First Name and Last Name are required when Generic Contact Name is not provided."
+        };
+      }
     }
   }
 

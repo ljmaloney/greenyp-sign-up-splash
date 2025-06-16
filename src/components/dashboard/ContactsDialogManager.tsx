@@ -23,6 +23,7 @@ interface ContactsDialogManagerProps {
   onContactAdded: () => void;
   onContactUpdated: () => void;
   refetch: () => void;
+  isDashboardEdit?: boolean;
 }
 
 const ContactsDialogManager = ({
@@ -38,7 +39,8 @@ const ContactsDialogManager = ({
   onDeleteDialogClose,
   onContactAdded,
   onContactUpdated,
-  refetch
+  refetch,
+  isDashboardEdit = false
 }: ContactsDialogManagerProps) => {
   const { toast } = useToast();
 
@@ -109,6 +111,7 @@ const ContactsDialogManager = ({
           }))}
           onContactAdded={onContactAdded}
           existingContacts={contacts ? transformContactsForValidation(contacts) : []}
+          isDashboardEdit={isDashboardEdit}
         />
       )}
 
@@ -123,6 +126,7 @@ const ContactsDialogManager = ({
           }))}
           onContactUpdated={onContactUpdated}
           existingContacts={contacts ? transformContactsForValidation(contacts) : []}
+          isDashboardEdit={isDashboardEdit}
         />
       )}
 

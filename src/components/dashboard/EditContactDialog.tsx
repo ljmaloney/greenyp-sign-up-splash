@@ -13,6 +13,7 @@ interface EditContactDialogProps {
   locations: Location[];
   onContactUpdated: (contact: ContactFormData) => void;
   existingContacts?: Contact[];
+  isDashboardEdit?: boolean;
 }
 
 const EditContactDialog = ({ 
@@ -21,7 +22,8 @@ const EditContactDialog = ({
   contact, 
   locations, 
   onContactUpdated,
-  existingContacts 
+  existingContacts,
+  isDashboardEdit = false
 }: EditContactDialogProps) => {
   const { formData, handleChange, handleSubmit } = useEditContactForm(
     contact, 
@@ -42,6 +44,7 @@ const EditContactDialog = ({
             formData={formData}
             locations={locations}
             onFieldChange={handleChange}
+            isDashboardEdit={isDashboardEdit}
           />
           
           <div className="flex justify-end space-x-2 pt-4">
