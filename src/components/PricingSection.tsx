@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Check } from 'lucide-react';
@@ -20,8 +19,8 @@ const PricingSection = () => {
     // Scroll to top before navigation
     window.scrollTo({ top: 0, behavior: 'smooth' });
     
-    // For other plans, navigate to the subscription page with the selected plan
-    navigate(`/subscribe?plan=${subscriptionId}&billing=${billingPeriod}`);
+    // Navigate to the subscriber signup page with the selected plan
+    navigate(`/subscriber/signup?plan=${subscriptionId}&billing=${billingPeriod}`);
   };
 
   const getDisplayPrice = (subscription: any) => {
