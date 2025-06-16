@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { getApiUrl } from "@/config/api";
 import { useLocationForm } from "@/hooks/useLocationForm";
@@ -155,61 +154,39 @@ const EditLocationDialog = ({ isOpen, onClose, location, onLocationUpdated }: Ed
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit Location</DialogTitle>
           </DialogHeader>
           
-          <Tabs defaultValue="details" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="details">Location Details</TabsTrigger>
-              <TabsTrigger value="hours">Hours of Operation</TabsTrigger>
-            </TabsList>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <LocationFormFields
+              formData={formData}
+              onFieldChange={handleChange}
+            />
             
-            <TabsContent value="details" className="space-y-4">
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <LocationFormFields
-                  formData={formData}
-                  onFieldChange={handleChange}
-                />
-                
-                <div className="flex justify-between items-center pt-4 border-t">
-                  <div>
-                    {canDisableLocation && (
-                      <Button 
-                        type="button" 
-                        variant="destructive" 
-                        onClick={() => setIsDisableDialogOpen(true)}
-                      >
-                        Disable Location
-                      </Button>
-                    )}
-                  </div>
-                  <div className="flex space-x-2">
-                    <Button type="button" variant="outline" onClick={onClose}>
-                      Cancel
-                    </Button>
-                    <Button type="submit" className="bg-greenyp-600 hover:bg-greenyp-700">
-                      Update Location
-                    </Button>
-                  </div>
-                </div>
-              </form>
-            </TabsContent>
-            
-            <TabsContent value="hours" className="space-y-4">
-              <LocationFormFields
-                formData={formData}
-                onFieldChange={handleChange}
-                showHours={true}
-              />
-              <div className="flex justify-end space-x-2 pt-4 border-t">
+            <div className="flex justify-between items-center pt-4 border-t">
+              <div>
+                {canDisableLocation && (
+                  <Button 
+                    type="button" 
+                    variant="destructive" 
+                    onClick={() => setIsDisableDialogOpen(true)}
+                  >
+                    Disable Location
+                  </Button>
+                )}
+              </div>
+              <div className="flex space-x-2">
                 <Button type="button" variant="outline" onClick={onClose}>
-                  Close
+                  Cancel
+                </Button>
+                <Button type="submit" className="bg-greenyp-600 hover:bg-greenyp-700">
+                  Update Location
                 </Button>
               </div>
-            </TabsContent>
-          </Tabs>
+            </div>
+          </form>
         </DialogContent>
       </Dialog>
 
