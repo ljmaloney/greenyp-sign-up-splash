@@ -5,6 +5,11 @@ export const validateGenericContactName = (name: string): boolean => {
   return /^[A-Za-z\s&]*$/.test(name);
 };
 
+export const validatePhoneNumber = (phone: string): boolean => {
+  if (!phone.trim()) return true; // Allow empty phone numbers
+  return /^(?:\+1)?\s?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/.test(phone);
+};
+
 export const validateContactForm = (formData: ContactFormData, existingContacts?: Contact[], editingContactId?: string) => {
   if (!formData.producerLocationId) {
     return { isValid: false, error: "Please select a location." };
@@ -34,6 +39,34 @@ export const validateContactForm = (formData: ContactFormData, existingContacts?
         error: "PRIMARY contact must have a display type of PHONE_EMAIL_ONLY, FULL_NAME_PHONE_EMAIL, or GENERIC_NAME_PHONE_EMAIL."
       };
     }
+  }
+
+  // Validate that at least one contact method is provided
+  const hasPhone = formData.phoneNumber.trim().length > 0;
+  const hasCellPhone = formData.cellPhoneNumber.trim().length > 0;
+  const hasEmail = formData.emailAddress.trim().length > 0;
+
+  if (!hasPhone && !hasCellPhone && !hasEmail) {
+    return {
+      isValid: false,
+      error: "At least one contact method is required: phone number, cell phone number, or email address."
+    };
+  }
+
+  // Validate phone number format if provided
+  if (hasPhone && !validatePhoneNumber(formData.phoneNumber)) {
+    return {
+      isValid: false,
+      error: "Phone number format is invalid. Please use a valid US phone number format."
+    };
+  }
+
+  // Validate cell phone number format if provided
+  if (hasCellPhone && !validatePhoneNumber(formData.cellPhoneNumber)) {
+    return {
+      isValid: false,
+      error: "Cell phone number format is invalid. Please use a valid US phone number format."
+    };
   }
 
   // Conditional validation based on Display Type

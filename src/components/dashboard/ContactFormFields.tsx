@@ -148,6 +148,9 @@ const ContactFormFields = ({ formData, locations, onFieldChange, isDashboardEdit
           onChange={(e) => handlePhoneChange('phoneNumber', e.target.value)}
           placeholder="(555) 123-4567"
         />
+        <p className="text-xs text-gray-500 mt-1">
+          At least one contact method required (phone, cell phone, or email)
+        </p>
       </div>
       
       <div>
@@ -163,14 +166,17 @@ const ContactFormFields = ({ formData, locations, onFieldChange, isDashboardEdit
       
       <div className="md:col-span-2">
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Email Address *
+          Email Address
         </label>
         <Input
           type="email"
           value={formData.emailAddress}
           onChange={(e) => onFieldChange('emailAddress', e.target.value)}
-          required
+          placeholder="contact@business.com"
         />
+        <p className="text-xs text-gray-500 mt-1">
+          Optional - but at least one contact method is required
+        </p>
       </div>
     </div>
   );
