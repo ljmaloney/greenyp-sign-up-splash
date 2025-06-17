@@ -72,6 +72,7 @@ const Upgrade = () => {
     
     try {
       const upgradePayload = {
+        producerId: accountData.producer.producerId,
         producerRequest: {
           producerId: accountData.producer.producerId,
           businessName: accountData.producer.businessName,

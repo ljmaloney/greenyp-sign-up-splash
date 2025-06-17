@@ -2,6 +2,7 @@
 import { getApiUrl } from '@/config/api';
 
 interface UpgradeSubscriptionRequest {
+  producerId: string;
   producerRequest: {
     producerId: string;
     businessName: string;
