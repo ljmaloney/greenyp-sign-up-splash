@@ -1,13 +1,14 @@
 
 import { useQuery } from '@tanstack/react-query';
-import { fetchAccountData, AccountData } from '@/services/accountService';
+import { fetchAccountData } from '../services/accountService';
 
-export const useAccountData = (externalUserRef: string | null) => {
-  return useQuery<AccountData, Error>({
-    queryKey: ['accountData', externalUserRef],
-    queryFn: () => fetchAccountData(externalUserRef!),
-    enabled: !!externalUserRef,
+export const useAccountData = () => {
+  return useQuery({
+    queryKey: ['account-data'],
+    queryFn: fetchAccountData,
     staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes (was cacheTime)
+    refetchOnWindowFocus: false,
+    gcTime: 10 * 60 * 1000, // 10 minutes cache time
+    retry: 3,
   });
 };
