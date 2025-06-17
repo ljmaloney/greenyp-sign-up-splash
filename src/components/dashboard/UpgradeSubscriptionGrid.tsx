@@ -10,7 +10,7 @@ interface UpgradeSubscriptionGridProps {
 
 const UpgradeSubscriptionGrid = ({ subscriptions, onUpgrade }: UpgradeSubscriptionGridProps) => {
   return (
-    <div className="grid gap-6 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 justify-items-center">
+    <div className="grid gap-6 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 justify-items-center place-items-center">
       {subscriptions.map((subscription) => (
         <UpgradeSubscriptionCard 
           key={subscription.subscriptionId}
