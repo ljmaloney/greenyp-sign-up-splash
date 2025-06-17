@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from '@tanstack/react-query';
 import { getApiUrl } from '@/config/api';
 import { PrimaryLocation, Producer } from '@/services/accountService';
+import { STATE_ABBREVIATIONS, FULL_NAME_TO_ABBREVIATION } from '@/constants/usStates';
 
 interface UsePrimaryLocationFormProps {
   primaryLocation: PrimaryLocation;
@@ -12,13 +13,16 @@ interface UsePrimaryLocationFormProps {
 }
 
 export const usePrimaryLocationForm = ({ primaryLocation, producer, onClose }: UsePrimaryLocationFormProps) => {
+  // Convert state abbreviation to full name for display
+  const displayState = STATE_ABBREVIATIONS[primaryLocation.state] || primaryLocation.state;
+  
   const [formData, setFormData] = useState({
     locationName: primaryLocation.locationName,
     locationDisplayType: primaryLocation.locationDisplayType,
     addressLine1: primaryLocation.addressLine1,
     addressLine2: primaryLocation.addressLine2 || '',
     city: primaryLocation.city,
-    state: primaryLocation.state,
+    state: displayState,
     postalCode: primaryLocation.postalCode,
     latitude: primaryLocation.latitude,
     longitude: primaryLocation.longitude,
@@ -38,6 +42,9 @@ export const usePrimaryLocationForm = ({ primaryLocation, producer, onClose }: U
     setIsSubmitting(true);
     
     try {
+      // Convert full state name back to abbreviation for API
+      const stateAbbreviation = FULL_NAME_TO_ABBREVIATION[formData.state] || formData.state;
+      
       const payload = {
         locationId: primaryLocation.locationId,
         locationName: formData.locationName,
@@ -47,7 +54,7 @@ export const usePrimaryLocationForm = ({ primaryLocation, producer, onClose }: U
         addressLine1: formData.addressLine1,
         addressLine2: formData.addressLine2,
         city: formData.city,
-        state: formData.state,
+        state: stateAbbreviation,
         postalCode: formData.postalCode,
         latitude: parseFloat(formData.latitude) || 0,
         longitude: parseFloat(formData.longitude) || 0,
