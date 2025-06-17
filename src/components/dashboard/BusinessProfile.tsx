@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Phone, Mail } from 'lucide-react';
@@ -12,7 +13,7 @@ import EditDashboardContactDialog from './EditDashboardContactDialog';
 
 const BusinessProfile = () => {
   const { user } = useAuth();
-  const { data: accountData, isLoading, error } = useAccountData(user?.id || null);
+  const { data: accountData, isLoading, error } = useAccountData();
   const [editingContact, setEditingContact] = useState<Contact | null>(null);
 
   if (isLoading) {

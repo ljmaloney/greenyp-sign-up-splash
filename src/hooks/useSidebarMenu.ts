@@ -17,7 +17,7 @@ import { useAccountData } from '@/hooks/useAccountData';
 export const useSidebarMenu = () => {
   const { user } = useAuth();
   const { data: subscriptions, isLoading, error } = useSubscriptions();
-  const { data: accountData } = useAccountData(user?.id || null);
+  const { data: accountData } = useAccountData();
 
   // Mock current user's subscription ID - in a real app, this would come from user context
   const currentSubscriptionId = 'basic-listing-001'; // This would come from auth context

@@ -17,9 +17,8 @@ const LocationsList = () => {
   const [searchParams] = useSearchParams();
   const producerId = searchParams.get('producerId');
   const { user } = useAuth();
-  const externalUserRef = user?.id || null;
   
-  const { data: accountData } = useAccountData(externalUserRef);
+  const { data: accountData } = useAccountData();
   const { data: locations, isLoading, error, refetch } = useLocations(producerId);
   
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);

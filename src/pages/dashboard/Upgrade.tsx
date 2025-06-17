@@ -42,7 +42,7 @@ const Upgrade = () => {
   }
 
   // Get current subscription ID from account data
-  const currentSubscriptionId = accountData?.account?.subscriptions?.[0]?.subscriptionId;
+  const currentSubscriptionId = accountData?.producer?.subscriptions?.[0]?.subscriptionId;
   console.log('🔍 Current subscription ID:', currentSubscriptionId);
 
   // Filter out current subscription from available plans
