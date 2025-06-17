@@ -71,6 +71,9 @@ const Upgrade = () => {
     setIsUpgrading(true);
     
     try {
+      // Get current subscription data for invoiceCycleType
+      const currentSubscription = accountData.producer.subscriptions?.[0];
+      
       const upgradePayload = {
         producerId: accountData.producer.producerId,
         producerRequest: {
@@ -79,13 +82,13 @@ const Upgrade = () => {
           lineOfBusinessId: accountData.producer.lineOfBusinessId,
           subscriptionId: confirmationDialog.subscriptionId,
           subscriptionType: accountData.producer.subscriptionType,
-          invoiceCycleType: accountData.producer.invoiceCycleType || 'MONTHLY',
+          invoiceCycleType: currentSubscription?.invoiceCycleType || accountData.producer.invoiceCycleType || 'MONTHLY',
           websiteUrl: accountData.producer.websiteUrl || '',
           narrative: accountData.producer.narrative || ''
         }
       };
 
-      console.log('🚀 Upgrade payload with dynamic values:', upgradePayload);
+      console.log('🚀 Upgrade payload with all dynamic values:', upgradePayload);
 
       await upgradeSubscription(upgradePayload);
       
