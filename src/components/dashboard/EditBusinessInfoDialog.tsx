@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { useLineOfBusiness } from '@/hooks/useLineOfBusiness';
 import { useSubscriptions } from '@/hooks/useSubscriptions';
+import { useAccountData } from '@/hooks/useAccountData';
 import { updateBusinessInformation } from '@/services/businessProfileService';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -37,6 +38,7 @@ const EditBusinessInfoDialog = ({ isOpen, onClose, businessData }: EditBusinessI
   const { toast } = useToast();
   const { data: lineOfBusinessData } = useLineOfBusiness();
   const { data: subscriptions } = useSubscriptions();
+  const { data: accountData } = useAccountData();
   const queryClient = useQueryClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -44,8 +46,17 @@ const EditBusinessInfoDialog = ({ isOpen, onClose, businessData }: EditBusinessI
     setIsSubmitting(true);
     
     try {
-      // Get the current subscription (assuming TOP_LEVEL subscription)
-      const currentSubscriptionId = subscriptions?.find(sub => !sub.comingSoon)?.subscriptionId || '';
+      if (!accountData?.producer) {
+        toast({
+          title: "Error",
+          description: "Unable to get account information.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Get current subscription data for invoiceCycleType
+      const currentSubscription = accountData.producer.subscriptions?.[0];
       
       const payload = {
         producerId: businessData.producerId,
@@ -53,15 +64,15 @@ const EditBusinessInfoDialog = ({ isOpen, onClose, businessData }: EditBusinessI
           producerId: businessData.producerId,
           businessName: formData.businessName,
           lineOfBusinessId: formData.lineOfBusinessId,
-          subscriptionId: currentSubscriptionId,
-          subscriptionType: "ADMIN",
-          invoiceCycleType: "MONTHLY",
+          subscriptionId: currentSubscription?.subscriptionId || '',
+          subscriptionType: accountData.producer.subscriptionType,
+          invoiceCycleType: currentSubscription?.invoiceCycleType || accountData.producer.invoiceCycleType || 'MONTHLY',
           websiteUrl: formData.websiteUrl,
           narrative: formData.narrative,
         }
       };
 
-      console.log('🚀 Updating business information with payload:', payload);
+      console.log('🚀 Updating business information with dynamic payload:', payload);
       
       await updateBusinessInformation(payload);
       
