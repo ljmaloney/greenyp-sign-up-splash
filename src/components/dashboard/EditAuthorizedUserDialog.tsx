@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -26,6 +27,9 @@ interface EditAuthorizedUserDialogProps {
 }
 
 const EditAuthorizedUserDialog = ({ isOpen, onClose, user, onUserUpdated }: EditAuthorizedUserDialogProps) => {
+  const [searchParams] = useSearchParams();
+  const producerId = searchParams.get('producerId');
+  
   const [formData, setFormData] = useState<AuthorizedUser>(user);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -38,6 +42,15 @@ const EditAuthorizedUserDialog = ({ isOpen, onClose, user, onUserUpdated }: Edit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!producerId) {
+      toast({
+        title: "Error",
+        description: "Producer ID is required to update authorized user.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     const validation = validatePasswords(password, confirmPassword);
     if (!validation.isValid) {
       toast({
@@ -49,7 +62,7 @@ const EditAuthorizedUserDialog = ({ isOpen, onClose, user, onUserUpdated }: Edit
     }
     
     try {
-      await updateAuthorizedUser(formData, password);
+      await updateAuthorizedUser(formData, password, producerId);
       
       toast({
         title: "User Updated",

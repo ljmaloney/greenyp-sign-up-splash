@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -24,6 +25,9 @@ interface AddAuthorizedUserDialogProps {
 }
 
 const AddAuthorizedUserDialog = ({ isOpen, onClose, onUserAdded }: AddAuthorizedUserDialogProps) => {
+  const [searchParams] = useSearchParams();
+  const producerId = searchParams.get('producerId');
+  
   const [formData, setFormData] = useState<UserFormData>({
     firstName: '',
     lastName: '',
@@ -53,6 +57,15 @@ const AddAuthorizedUserDialog = ({ isOpen, onClose, onUserAdded }: AddAuthorized
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!producerId) {
+      toast({
+        title: "Error",
+        description: "Producer ID is required to add authorized user.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     const validation = validatePasswords(password, confirmPassword);
     if (!validation.isValid) {
       toast({
@@ -64,7 +77,7 @@ const AddAuthorizedUserDialog = ({ isOpen, onClose, onUserAdded }: AddAuthorized
     }
     
     try {
-      await createAuthorizedUser(formData, password);
+      await createAuthorizedUser(formData, password, producerId);
       
       toast({
         title: "User Added",
