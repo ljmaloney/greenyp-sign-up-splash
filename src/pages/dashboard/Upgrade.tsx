@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,10 +7,25 @@ import { Crown, ArrowRight, Check, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useSubscriptions } from '@/hooks/useSubscriptions';
 import { useAccountData } from '@/hooks/useAccountData';
+import UpgradeConfirmationDialog from '@/components/dashboard/UpgradeConfirmationDialog';
+import { upgradeSubscription } from '@/services/upgradeService';
+import { useToast } from '@/hooks/use-toast';
 
 const Upgrade = () => {
   const { data: subscriptions, isLoading: subscriptionsLoading, error: subscriptionsError } = useSubscriptions();
-  const { data: accountData, isLoading: accountLoading, error: accountError } = useAccountData();
+  const { data: accountData, isLoading: accountLoading, error: accountError, refetch } = useAccountData();
+  const { toast } = useToast();
+  
+  const [confirmationDialog, setConfirmationDialog] = useState<{
+    isOpen: boolean;
+    subscriptionId: string;
+    subscriptionName: string;
+  }>({
+    isOpen: false,
+    subscriptionId: '',
+    subscriptionName: ''
+  });
+  const [isUpgrading, setIsUpgrading] = useState(false);
 
   console.log('🔍 Upgrade page - subscriptions:', subscriptions);
   console.log('🔍 Upgrade page - accountData:', accountData);
@@ -59,9 +74,70 @@ const Upgrade = () => {
     }).format(amount);
   };
 
+  const handleUpgradeClick = (subscriptionId: string, subscriptionName: string) => {
+    setConfirmationDialog({
+      isOpen: true,
+      subscriptionId,
+      subscriptionName
+    });
+  };
+
+  const handleConfirmUpgrade = async () => {
+    if (!accountData?.producer) {
+      toast({
+        title: "Error",
+        description: "Unable to get account information for upgrade.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsUpgrading(true);
+    
+    try {
+      const upgradePayload = {
+        producerRequest: {
+          producerId: accountData.producer.producerId,
+          businessName: accountData.producer.businessName,
+          lineOfBusinessId: accountData.producer.lineOfBusinessId,
+          subscriptionId: confirmationDialog.subscriptionId,
+          subscriptionType: accountData.producer.subscriptionType,
+          invoiceCycleType: accountData.producer.invoiceCycleType,
+          websiteUrl: accountData.producer.websiteUrl || '',
+          narrative: accountData.producer.narrative || ''
+        }
+      };
+
+      await upgradeSubscription(upgradePayload);
+      
+      toast({
+        title: "Upgrade Successful",
+        description: `Your subscription has been upgraded to ${confirmationDialog.subscriptionName}.`,
+      });
+
+      // Refetch account data to get updated subscription
+      await refetch();
+      
+      setConfirmationDialog({ isOpen: false, subscriptionId: '', subscriptionName: '' });
+    } catch (error) {
+      console.error('Upgrade error:', error);
+      toast({
+        title: "Upgrade Failed",
+        description: "There was an error upgrading your subscription. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUpgrading(false);
+    }
+  };
+
+  const handleCancelUpgrade = () => {
+    setConfirmationDialog({ isOpen: false, subscriptionId: '', subscriptionName: '' });
+  };
+
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-6 max-w-7xl mx-auto">
         <div className="text-center space-y-4">
           <div className="flex justify-center">
             <Crown className="h-16 w-16 text-yellow-500" />
@@ -81,9 +157,9 @@ const Upgrade = () => {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
+          <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 justify-items-center">
             {availableSubscriptions.map((subscription) => (
-              <Card key={subscription.subscriptionId} className="relative">
+              <Card key={subscription.subscriptionId} className="relative w-full max-w-sm">
                 {subscription.popular && (
                   <div className="absolute top-0 right-0 -mt-3 -mr-3 bg-greenyp-500 text-white text-xs font-bold px-3 py-1 rounded-full">
                     Most Popular
@@ -91,11 +167,11 @@ const Upgrade = () => {
                 )}
                 
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Crown className="h-5 w-5 text-greenyp-600" />
-                    {subscription.displayName}
+                  <CardTitle className="flex items-center gap-2 whitespace-nowrap">
+                    <Crown className="h-5 w-5 text-greenyp-600 flex-shrink-0" />
+                    <span className="truncate">{subscription.displayName}</span>
                     {subscription.comingSoon && (
-                      <span className="text-yellow-600 text-sm font-normal ml-2">Coming Soon</span>
+                      <span className="text-yellow-600 text-sm font-normal ml-2 flex-shrink-0">Coming Soon</span>
                     )}
                   </CardTitle>
                   <p className="text-gray-600 text-sm">{subscription.shortDescription}</p>
@@ -135,7 +211,6 @@ const Upgrade = () => {
                   
                   <div className="pt-4">
                     <Button 
-                      asChild={!subscription.comingSoon}
                       disabled={subscription.comingSoon}
                       className={`w-full ${
                         subscription.comingSoon
@@ -144,14 +219,15 @@ const Upgrade = () => {
                             ? 'bg-greenyp-600 hover:bg-greenyp-700'
                             : 'bg-greenyp-600 hover:bg-greenyp-700'
                       }`}
+                      onClick={() => !subscription.comingSoon && handleUpgradeClick(subscription.subscriptionId, subscription.displayName)}
                     >
                       {subscription.comingSoon ? (
                         'Coming Soon'
                       ) : (
-                        <Link to={`/subscriber/subscribe?plan=${subscription.subscriptionId}`}>
+                        <>
                           Upgrade Now
                           <ArrowRight className="ml-2 h-4 w-4" />
-                        </Link>
+                        </>
                       )}
                     </Button>
                   </div>
@@ -167,6 +243,14 @@ const Upgrade = () => {
           </p>
         </div>
       </div>
+
+      <UpgradeConfirmationDialog
+        isOpen={confirmationDialog.isOpen}
+        onClose={handleCancelUpgrade}
+        onConfirm={handleConfirmUpgrade}
+        subscriptionName={confirmationDialog.subscriptionName}
+        isLoading={isUpgrading}
+      />
     </DashboardLayout>
   );
 };
