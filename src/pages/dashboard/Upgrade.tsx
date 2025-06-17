@@ -79,11 +79,13 @@ const Upgrade = () => {
           lineOfBusinessId: accountData.producer.lineOfBusinessId,
           subscriptionId: confirmationDialog.subscriptionId,
           subscriptionType: accountData.producer.subscriptionType,
-          invoiceCycleType: accountData.producer.invoiceCycleType,
+          invoiceCycleType: accountData.producer.invoiceCycleType || 'MONTHLY',
           websiteUrl: accountData.producer.websiteUrl || '',
           narrative: accountData.producer.narrative || ''
         }
       };
+
+      console.log('🚀 Upgrade payload with dynamic values:', upgradePayload);
 
       await upgradeSubscription(upgradePayload);
       
