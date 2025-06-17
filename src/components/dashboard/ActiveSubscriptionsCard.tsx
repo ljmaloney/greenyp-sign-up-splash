@@ -57,31 +57,27 @@ const ActiveSubscriptionsCard = ({ subscriptions, producerSubscriptionType }: Ac
     }
   };
 
-  // Filter for active/pending subscriptions (not expired)
-  const validSubscriptions = subscriptions.filter(sub => {
-    const endDate = new Date(sub.endDate);
-    const today = new Date();
-    return endDate > today || producerSubscriptionType === 'LIVE_UNPAID';
-  });
+  // Show all subscriptions from the JSON payload, don't filter by expiration for display purposes
+  const displaySubscriptions = subscriptions || [];
 
-  console.log('🔍 ActiveSubscriptionsCard - Subscriptions:', subscriptions);
+  console.log('🔍 ActiveSubscriptionsCard - All Subscriptions from JSON:', subscriptions);
   console.log('🔍 ActiveSubscriptionsCard - Producer Subscription Type:', producerSubscriptionType);
-  console.log('🔍 ActiveSubscriptionsCard - Valid Subscriptions:', validSubscriptions);
+  console.log('🔍 ActiveSubscriptionsCard - Display Subscriptions:', displaySubscriptions);
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-greenyp-600">
           <Calendar className="h-5 w-5" />
-          Active Subscriptions
+          Subscriptions
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {validSubscriptions.length === 0 ? (
-          <p className="text-gray-600">No active subscriptions</p>
+        {displaySubscriptions.length === 0 ? (
+          <p className="text-gray-600">No subscriptions found</p>
         ) : (
           <div className="space-y-4">
-            {validSubscriptions.map((subscription) => {
+            {displaySubscriptions.map((subscription) => {
               const status = getSubscriptionStatus(subscription);
               return (
                 <div key={subscription.subscriptionId} className="border rounded-lg p-4">
