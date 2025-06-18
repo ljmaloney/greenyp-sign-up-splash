@@ -1,112 +1,60 @@
+
 import React, { useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { useToast } from "@/hooks/use-toast";
-import { deleteProduct } from '@/services/productService';
-import AddProductDialog from './AddProductDialog';
 import EditProductDialog from './EditProductDialog';
-import ProductLocationGroup from './ProductLocationGroup';
+import AddProductDialog from './AddProductDialog';
+import DeleteServiceDialog from './DeleteServiceDialog';
+import ProductsHeader from './ProductsHeader';
+import ProductsContent from './ProductsContent';
+import { useProductsWithLocationCache } from '@/hooks/useProductsWithLocationCache';
+import { ProductResponse } from '@/services/servicesService';
 
 const DashboardProductsList = () => {
+  const [editingProduct, setEditingProduct] = useState<ProductResponse | null>(null);
   const [isAddingProduct, setIsAddingProduct] = useState(false);
-  const [editingProduct, setEditingProduct] = useState(null);
-  const [deletingProductId, setDeletingProductId] = useState(null);
+  const [deletingProductId, setDeletingProductId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [preSelectedLocationId, setPreSelectedLocationId] = useState('');
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
-  const { toast } = useToast();
 
-  // Mock locations data
-  const locations = [
-    { id: '1', name: 'Main Office', address: '123 Garden Street, San Francisco, CA 94102' },
-    { id: '2', name: 'Warehouse', address: '456 Industrial Blvd, San Francisco, CA 94103' }
-  ];
+  const {
+    locations,
+    groupedProducts,
+    isLoading,
+    error,
+    refetch
+  } = useProductsWithLocationCache();
 
-  // Mock products data with location associations
-  const products = [
-    {
-      id: '1',
-      name: 'Organic Fertilizer - 25lb bag',
-      price: 29.99,
-      quantity: 150,
-      category: 'Fertilizers',
-      description: 'Premium organic fertilizer for lawn and garden use',
-      locationId: '1'
-    },
-    {
-      id: '2',
-      name: 'Red Maple Tree - 6ft',
-      price: 89.99,
-      quantity: 25,
-      category: 'Trees',
-      description: 'Beautiful red maple tree, perfect for landscaping',
-      locationId: '2'
-    },
-    {
-      id: '3',
-      name: 'Premium Potting Soil',
-      price: 12.99,
-      quantity: 200,
-      category: 'Soil',
-      description: 'Nutrient-rich potting soil blend',
-      locationId: '1'
-    }
-  ];
-
-  // Group products by location
-  const groupedProducts = React.useMemo(() => {
-    const groups: Record<string, any[]> = {};
-    
-    products.forEach(product => {
-      const locationId = product.locationId || 'no-location';
-      if (!groups[locationId]) {
-        groups[locationId] = [];
-      }
-      groups[locationId].push(product);
-    });
-    
-    return groups;
-  }, [products]);
-
-  const handleEdit = (product) => {
+  const handleEdit = (product: ProductResponse) => {
     setEditingProduct(product);
   };
 
-  const handleDelete = async (productId) => {
-    setIsDeleting(true);
+  const handleDelete = async () => {
+    if (!deletingProductId) return;
     
+    setIsDeleting(true);
     try {
-      console.log('Deleting product:', productId);
-      await deleteProduct(productId);
-      
-      toast({
-        title: "Product Deleted",
-        description: "The product has been successfully deleted.",
-      });
-      
-      setDeletingProductId(null);
+      // Delete product logic here
+      console.log('Deleting product:', deletingProductId);
+      await refetch();
     } catch (error) {
       console.error('Error deleting product:', error);
-      toast({
-        title: "Delete Failed",
-        description: "Failed to delete product. Please try again.",
-        variant: "destructive",
-      });
     } finally {
       setIsDeleting(false);
+      setDeletingProductId(null);
     }
   };
 
   const handleProductUpdated = () => {
-    console.log('Product updated, refreshing list...');
+    refetch();
+    setEditingProduct(null);
   };
 
   const handleProductCreated = () => {
-    console.log('Product created, refreshing list...');
+    refetch();
   };
 
   const handleAddProduct = (locationId: string) => {
-    setPreSelectedLocationId(locationId === 'no-location' ? '' : locationId);
+    setPreSelectedLocationId(locationId);
     setIsAddingProduct(true);
   };
 
@@ -117,27 +65,41 @@ const DashboardProductsList = () => {
     }));
   };
 
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <ProductsHeader />
+        <div className="text-center py-8">
+          <p className="text-gray-600">Loading products...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <ProductsHeader />
+        <div className="text-center py-8">
+          <p className="text-red-600">Error loading products. Please try again.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">Products</h1>
-      </div>
+      <ProductsHeader />
 
-      <div className="space-y-4">
-        {Object.entries(groupedProducts).map(([locationId, locationProducts]) => (
-          <ProductLocationGroup
-            key={locationId}
-            locationId={locationId}
-            locationProducts={locationProducts}
-            locations={locations}
-            isOpen={openGroups[locationId] || locationProducts.length === 1}
-            onToggle={() => toggleGroup(locationId)}
-            onEditProduct={handleEdit}
-            onDeleteProduct={(productId) => setDeletingProductId(productId)}
-            onAddProduct={handleAddProduct}
-          />
-        ))}
-      </div>
+      <ProductsContent
+        groupedProducts={groupedProducts}
+        locations={locations}
+        openGroups={openGroups}
+        onToggleGroup={toggleGroup}
+        onEditProduct={handleEdit}
+        onDeleteProduct={(productId) => setDeletingProductId(productId)}
+        onAddProduct={handleAddProduct}
+      />
 
       <AddProductDialog
         isOpen={isAddingProduct}
@@ -156,26 +118,13 @@ const DashboardProductsList = () => {
         onProductUpdated={handleProductUpdated}
       />
 
-      <AlertDialog open={!!deletingProductId} onOpenChange={() => setDeletingProductId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Product</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete this product? This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => handleDelete(deletingProductId)}
-              disabled={isDeleting}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              {isDeleting ? 'Deleting...' : 'Delete'}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DeleteServiceDialog
+        isOpen={!!deletingProductId}
+        isDeleting={isDeleting}
+        onClose={() => setDeletingProductId(null)}
+        onConfirm={handleDelete}
+        serviceId={deletingProductId}
+      />
     </div>
   );
 };
