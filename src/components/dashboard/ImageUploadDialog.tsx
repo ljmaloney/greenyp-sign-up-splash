@@ -8,16 +8,24 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Upload, X, Image as ImageIcon } from 'lucide-react';
 import { GalleryImage } from './PhotoGalleryContent';
 
 interface ImageUploadDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onUpload: (files: File[]) => void;
+  onUpload: (files: File[], descriptions: string[]) => void;
   maxImages: number;
   isReplacing: boolean;
   replacingImage?: GalleryImage;
+}
+
+interface FileWithDescription {
+  file: File;
+  description: string;
 }
 
 const ImageUploadDialog = ({
@@ -28,7 +36,7 @@ const ImageUploadDialog = ({
   isReplacing,
   replacingImage
 }: ImageUploadDialogProps) => {
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [selectedFiles, setSelectedFiles] = useState<FileWithDescription[]>([]);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -39,10 +47,15 @@ const ImageUploadDialog = ({
       file.type.startsWith('image/')
     );
     
+    const filesWithDescriptions = validFiles.map(file => ({
+      file,
+      description: ''
+    }));
+    
     if (isReplacing) {
-      setSelectedFiles(validFiles.slice(0, 1));
+      setSelectedFiles(filesWithDescriptions.slice(0, 1));
     } else {
-      setSelectedFiles(prev => [...prev, ...validFiles].slice(0, maxImages));
+      setSelectedFiles(prev => [...prev, ...filesWithDescriptions].slice(0, maxImages));
     }
   };
 
@@ -71,9 +84,17 @@ const ImageUploadDialog = ({
     setSelectedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
+  const updateDescription = (index: number, description: string) => {
+    setSelectedFiles(prev => prev.map((item, i) => 
+      i === index ? { ...item, description } : item
+    ));
+  };
+
   const handleUpload = () => {
     if (selectedFiles.length > 0) {
-      onUpload(selectedFiles);
+      const files = selectedFiles.map(item => item.file);
+      const descriptions = selectedFiles.map(item => item.description);
+      onUpload(files, descriptions);
       setSelectedFiles([]);
       onClose();
     }
@@ -86,7 +107,7 @@ const ImageUploadDialog = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {isReplacing ? `Replace ${replacingImage?.title}` : 'Upload Images'}
@@ -132,30 +153,46 @@ const ImageUploadDialog = ({
             />
           </div>
 
-          {/* Selected files preview */}
+          {/* Selected files preview with descriptions */}
           {selectedFiles.length > 0 && (
-            <div className="space-y-2">
+            <div className="space-y-4">
               <h4 className="font-medium text-gray-900">Selected Images:</h4>
-              <div className="space-y-2 max-h-32 overflow-y-auto">
-                {selectedFiles.map((file, index) => (
-                  <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                    <div className="flex items-center space-x-2">
-                      <ImageIcon className="h-4 w-4 text-gray-400" />
-                      <span className="text-sm text-gray-700 truncate max-w-48">
-                        {file.name}
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        ({(file.size / 1024 / 1024).toFixed(1)}MB)
-                      </span>
+              <div className="space-y-4 max-h-64 overflow-y-auto">
+                {selectedFiles.map((item, index) => (
+                  <div key={index} className="p-4 bg-gray-50 rounded-lg space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <ImageIcon className="h-4 w-4 text-gray-400" />
+                        <span className="text-sm text-gray-700 truncate max-w-48">
+                          {item.file.name}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          ({(item.file.size / 1024 / 1024).toFixed(1)}MB)
+                        </span>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeFile(index)}
+                        className="h-6 w-6 p-0"
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeFile(index)}
-                      className="h-6 w-6 p-0"
-                    >
-                      <X className="h-3 w-3" />
-                    </Button>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor={`description-${index}`} className="text-sm font-medium">
+                        Description (optional)
+                      </Label>
+                      <Textarea
+                        id={`description-${index}`}
+                        placeholder="Add a description for this image..."
+                        value={item.description}
+                        onChange={(e) => updateDescription(index, e.target.value)}
+                        className="resize-none"
+                        rows={2}
+                      />
+                    </div>
                   </div>
                 ))}
               </div>

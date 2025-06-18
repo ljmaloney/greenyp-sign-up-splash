@@ -16,6 +16,7 @@ const mockGalleryImages = [
     url: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=300&fit=crop',
     thumbnail: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=200&h=150&fit=crop',
     title: 'Woman with laptop',
+    description: 'Professional woman working on laptop in modern office',
     uploadDate: '2024-01-15'
   },
   {
@@ -23,6 +24,7 @@ const mockGalleryImages = [
     url: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=300&fit=crop',
     thumbnail: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=200&h=150&fit=crop',
     title: 'Gray laptop computer',
+    description: 'Modern laptop computer on wooden desk',
     uploadDate: '2024-01-10'
   },
   {
@@ -30,6 +32,7 @@ const mockGalleryImages = [
     url: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=300&fit=crop',
     thumbnail: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=200&h=150&fit=crop',
     title: 'Circuit board',
+    description: 'Close-up view of electronic circuit board',
     uploadDate: '2024-01-08'
   }
 ];
@@ -39,6 +42,7 @@ export interface GalleryImage {
   url: string;
   thumbnail: string;
   title: string;
+  description?: string;
   uploadDate: string;
 }
 
@@ -63,7 +67,7 @@ const PhotoGalleryContent = () => {
   console.log('Gallery feature:', galleryFeature);
   console.log('Max gallery count:', maxGalleryCount);
 
-  const handleImageUpload = (newImages: File[]) => {
+  const handleImageUpload = (newImages: File[], descriptions: string[]) => {
     // In a real app, you would upload to a server here
     newImages.forEach((file, index) => {
       const newImage: GalleryImage = {
@@ -71,6 +75,7 @@ const PhotoGalleryContent = () => {
         url: URL.createObjectURL(file),
         thumbnail: URL.createObjectURL(file),
         title: file.name,
+        description: descriptions[index] || '',
         uploadDate: new Date().toISOString().split('T')[0]
       };
       
@@ -84,12 +89,13 @@ const PhotoGalleryContent = () => {
     });
   };
 
-  const handleImageReplace = (imageId: string, newFile: File) => {
+  const handleImageReplace = (imageId: string, newFile: File, description: string) => {
     // In a real app, you would upload to a server here
     const newImageData = {
       url: URL.createObjectURL(newFile),
       thumbnail: URL.createObjectURL(newFile),
       title: newFile.name,
+      description: description || '',
       uploadDate: new Date().toISOString().split('T')[0]
     };
 
@@ -166,9 +172,9 @@ const PhotoGalleryContent = () => {
         <ImageUploadDialog
           isOpen={true}
           onClose={() => setReplacingImage(null)}
-          onUpload={(files) => {
+          onUpload={(files, descriptions) => {
             if (files[0]) {
-              handleImageReplace(replacingImage.id, files[0]);
+              handleImageReplace(replacingImage.id, files[0], descriptions[0]);
             }
             setReplacingImage(null);
           }}
