@@ -68,7 +68,7 @@ const BusinessProfile = () => {
   return (
     <div className="space-y-6">
       {/* Business Overview */}
-      <BusinessOverviewCard producer={producer} />
+      <BusinessOverviewCard />
 
       {/* Primary Location - Now passing producer prop */}
       <PrimaryLocationCard primaryLocation={primaryLocation} producer={producer} />
