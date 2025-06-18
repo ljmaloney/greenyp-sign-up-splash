@@ -19,14 +19,15 @@ export const useSidebarMenu = () => {
   const { data: subscriptions, isLoading, error } = useSubscriptions();
   const { data: accountData } = useAccountData();
 
-  // Mock current user's subscription ID - in a real app, this would come from user context
-  const currentSubscriptionId = 'basic-listing-001'; // This would come from auth context
+  // Get current subscription ID from account data
+  const currentSubscriptionId = accountData?.producer?.subscriptions?.[0]?.subscriptionId;
   
   // Find the current subscription details
   const currentSubscription = subscriptions?.find(sub => sub.subscriptionId === currentSubscriptionId);
   
   // Debug logging
   console.log('Subscriptions data:', subscriptions);
+  console.log('Current subscription ID from account:', currentSubscriptionId);
   console.log('Current subscription:', currentSubscription);
   console.log('Subscriptions loading:', isLoading);
   console.log('Subscriptions error:', error);
