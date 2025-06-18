@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { ProductResponse } from '@/services/servicesService';
 
 export interface EditProductFormData {
   productType: string;
@@ -15,21 +16,7 @@ export interface EditProductFormData {
   attributeMap: Record<string, any>;
 }
 
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  category: string;
-  description: string;
-  productType?: string;
-  botanicalGroup?: string;
-  containerSize?: string;
-  availableQuantity?: number;
-  discontinued?: boolean;
-}
-
-export const useEditProductForm = (product: Product | null) => {
+export const useEditProductForm = (product: ProductResponse | null) => {
   const [formData, setFormData] = useState<EditProductFormData>({
     productType: 'BAGGED_MATERIAL',
     botanicalGroup: '',
@@ -48,16 +35,16 @@ export const useEditProductForm = (product: Product | null) => {
     if (product) {
       setFormData({
         productType: product.productType || 'BAGGED_MATERIAL',
-        botanicalGroup: product.botanicalGroup || product.category || '',
+        botanicalGroup: product.botanicalGroup || '',
         name: product.name,
         price: product.price,
-        availableQuantity: product.availableQuantity || product.quantity,
+        availableQuantity: product.availableQuantity,
         containerSize: product.containerSize || '',
         description: product.description,
         discontinued: product.discontinued || false,
-        discontinueDate: '',
-        lastOrderDate: '',
-        attributeMap: {}
+        discontinueDate: product.discontinueDate || '',
+        lastOrderDate: product.lastOrderDate || '',
+        attributeMap: product.attributes || {}
       });
     }
   }, [product]);
