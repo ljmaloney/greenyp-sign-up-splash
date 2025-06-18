@@ -27,6 +27,7 @@ import DashboardLocations from "./pages/dashboard/Locations";
 import DashboardContacts from "./pages/dashboard/Contacts";
 import DashboardProducts from "./pages/dashboard/Products";
 import DashboardServices from "./pages/dashboard/Services";
+import PhotoGallery from "./pages/dashboard/PhotoGallery";
 import DashboardUpgrade from "./pages/dashboard/Upgrade";
 import DashboardSubscription from "./pages/dashboard/Subscription";
 import DashboardPayment from "./pages/dashboard/Payment";
@@ -103,6 +104,11 @@ const App = () => (
             <Route path="/dashboard/services" element={
               <ProtectedRoute requiredRole="Greepages-Subscriber">
                 <DashboardServices />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/photo-gallery" element={
+              <ProtectedRoute requiredRole="Greepages-Subscriber">
+                <PhotoGallery />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/upgrade" element={
