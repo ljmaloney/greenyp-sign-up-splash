@@ -6,10 +6,10 @@ import DeleteServiceDialog from './DeleteServiceDialog';
 import ServicesHeader from './ServicesHeader';
 import ServicesContent from './ServicesContent';
 import { useServicesWithLocationCache } from '@/hooks/useServicesWithLocationCache';
-import { ServiceResponse } from '@/services/servicesService';
+import { ProductResponse } from '@/services/servicesService';
 
 const DashboardServicesList = () => {
-  const [editingService, setEditingService] = useState<ServiceResponse | null>(null);
+  const [editingService, setEditingService] = useState<ProductResponse | null>(null);
   const [isAddingService, setIsAddingService] = useState(false);
   const [deletingServiceId, setDeletingServiceId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -24,7 +24,7 @@ const DashboardServicesList = () => {
     refetch
   } = useServicesWithLocationCache();
 
-  const handleEdit = (service: ServiceResponse) => {
+  const handleEdit = (service: ProductResponse) => {
     setEditingService(service);
   };
 

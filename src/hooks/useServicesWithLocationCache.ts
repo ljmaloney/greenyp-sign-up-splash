@@ -1,7 +1,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { useLocationCache } from './useLocationCache';
-import { fetchAllLocationServices, ServiceResponse } from '@/services/servicesService';
+import { fetchAllLocationServices, ProductResponse } from '@/services/servicesService';
 
 export const useServicesWithLocationCache = () => {
   const { locations, producerId, isLoading: locationsLoading } = useLocationCache();
@@ -20,8 +20,8 @@ export const useServicesWithLocationCache = () => {
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  // Group services by location
-  const groupedServices: Record<string, ServiceResponse[]> = servicesData || {};
+  // Group products by location
+  const groupedServices: Record<string, ProductResponse[]> = servicesData || {};
 
   // Transform locations data for display
   const transformedLocations = locations.map(location => ({
