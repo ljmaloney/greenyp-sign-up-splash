@@ -1,9 +1,7 @@
 
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useLocations } from '@/hooks/useLocations';
-import { useAccountData } from '@/hooks/useAccountData';
-import { useAuth } from '@/contexts/AuthContext';
+import { useLocationCache } from '@/hooks/useLocationCache';
 import { Location } from '@/services/locationService';
 import AddLocationDialog from './AddLocationDialog';
 import EditLocationDialog from './EditLocationDialog';
@@ -16,22 +14,26 @@ import LocationCard from './LocationCard';
 const LocationsList = () => {
   const [searchParams] = useSearchParams();
   const producerId = searchParams.get('producerId');
-  const { user } = useAuth();
   
-  const { data: accountData } = useAccountData();
-  const { data: locations, isLoading, error, refetch } = useLocations(producerId);
+  const { 
+    locations, 
+    isLoading, 
+    error, 
+    invalidateLocationCache,
+    updateLocationCache 
+  } = useLocationCache();
   
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingLocation, setEditingLocation] = useState<Location | null>(null);
 
-  console.log('🏢 Locations data:', locations);
+  console.log('🏢 Cached locations data:', locations);
 
-  const handleLocationAdded = () => {
-    refetch();
+  const handleLocationAdded = (newLocation: Location) => {
+    updateLocationCache(newLocation);
   };
 
-  const handleLocationUpdated = () => {
-    refetch();
+  const handleLocationUpdated = (updatedLocation: Location) => {
+    updateLocationCache(updatedLocation);
     setEditingLocation(null);
   };
 
@@ -48,7 +50,7 @@ const LocationsList = () => {
   }
 
   if (error) {
-    return <LocationsErrorState error={error} onRetry={() => refetch()} />;
+    return <LocationsErrorState error={error} onRetry={() => invalidateLocationCache()} />;
   }
 
   return (
