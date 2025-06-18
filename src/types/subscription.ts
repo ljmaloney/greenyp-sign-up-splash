@@ -1,4 +1,12 @@
 
+export interface APISubscriptionFeature {
+  feature: string;
+  sortOrder: number;
+  display: boolean;
+  featureName: string;
+  configMap: Record<string, any> | null;
+}
+
 export interface SubscriptionFeature {
   id: string;
   name: string;
@@ -22,7 +30,7 @@ export interface APISubscription {
   subscriptionType: string;
   comingSoon: boolean;
   sortOrder: number;
-  features: string[];
+  features: APISubscriptionFeature[];
 }
 
 export interface SubscriptionWithFormatting extends APISubscription {
