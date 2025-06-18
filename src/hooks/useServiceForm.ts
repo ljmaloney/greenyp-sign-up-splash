@@ -6,7 +6,7 @@ export interface ServiceFormData {
   description: string;
   minServicePrice: number;
   maxServicePrice: number;
-  priceUnitsType: string;
+  priceUnitsType: "LOT_SIZE" | "PER_HOUR" | "PER_MILE" | "PER_VISIT" | "FIXED_ESTIMATE";
   serviceTerms: string;
   producerLocationId: string;
 }
@@ -16,7 +16,7 @@ const initialFormData: ServiceFormData = {
   description: '',
   minServicePrice: 0,
   maxServicePrice: 0,
-  priceUnitsType: 'LOT_SIZE',
+  priceUnitsType: 'LOT_SIZE' as const,
   serviceTerms: '',
   producerLocationId: ''
 };
