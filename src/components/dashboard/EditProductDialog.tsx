@@ -6,25 +6,12 @@ import { useToast } from "@/hooks/use-toast";
 import { updateProduct, ProductUpdateRequest } from '@/services/productService';
 import { useEditProductForm } from '@/hooks/useEditProductForm';
 import EditProductFormFields from './EditProductFormFields';
-
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  category: string;
-  description: string;
-  productType?: string;
-  botanicalGroup?: string;
-  containerSize?: string;
-  availableQuantity?: number;
-  discontinued?: boolean;
-}
+import { ProductResponse } from '@/services/servicesService';
 
 interface EditProductDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  product: Product | null;
+  product: ProductResponse | null;
   onProductUpdated: () => void;
 }
 
@@ -41,7 +28,7 @@ const EditProductDialog = ({ isOpen, onClose, product, onProductUpdated }: EditP
     
     try {
       const updateRequest: ProductUpdateRequest = {
-        productId: product.id,
+        productId: product.productId,
         productType: formData.productType,
         botanicalGroup: formData.botanicalGroup,
         name: formData.name,
