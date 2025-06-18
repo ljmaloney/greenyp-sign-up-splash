@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -7,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { updateService, ServiceUpdateRequest } from '@/services/serviceService';
+import { ServiceResponse } from '@/services/servicesService';
 
 interface Service {
   id: string;
@@ -20,19 +20,19 @@ interface Service {
 interface EditServiceDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  service: Service | null;
+  service: ServiceResponse | null;
   onServiceUpdated: () => void;
 }
 
 const EditServiceDialog = ({ isOpen, onClose, service, onServiceUpdated }: EditServiceDialogProps) => {
   const [formData, setFormData] = useState({
-    shortDescription: service?.name || '',
+    shortDescription: service?.shortDescription || '',
     description: service?.description || '',
-    minServicePrice: service?.minPrice || 0,
-    maxServicePrice: service?.maxPrice || 0,
-    priceUnitsType: 'PER_VISIT',
-    serviceTerms: '',
-    producerLocationId: '1' // Default to first location
+    minServicePrice: service?.minServicePrice || 0,
+    maxServicePrice: service?.maxServicePrice || 0,
+    priceUnitsType: service?.priceUnitsType || 'PER_VISIT' as const,
+    serviceTerms: service?.serviceTerms || '',
+    producerLocationId: service?.producerLocationId || '1' // Default to first location
   });
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -46,13 +46,13 @@ const EditServiceDialog = ({ isOpen, onClose, service, onServiceUpdated }: EditS
   React.useEffect(() => {
     if (service) {
       setFormData({
-        shortDescription: service.name,
+        shortDescription: service.shortDescription,
         description: service.description,
-        minServicePrice: service.minPrice,
-        maxServicePrice: service.maxPrice,
-        priceUnitsType: 'PER_VISIT',
-        serviceTerms: '',
-        producerLocationId: '1' // Default to first location
+        minServicePrice: service.minServicePrice,
+        maxServicePrice: service.maxServicePrice,
+        priceUnitsType: service.priceUnitsType,
+        serviceTerms: service.serviceTerms,
+        producerLocationId: service.producerLocationId || '1'
       });
     }
   }, [service]);
@@ -74,7 +74,7 @@ const EditServiceDialog = ({ isOpen, onClose, service, onServiceUpdated }: EditS
     
     try {
       const updateRequest: ServiceUpdateRequest = {
-        producerId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        producerId: service.producerId,
         producerLocationId: formData.producerLocationId,
         minServicePrice: formData.minServicePrice,
         maxServicePrice: formData.maxServicePrice,
@@ -85,7 +85,7 @@ const EditServiceDialog = ({ isOpen, onClose, service, onServiceUpdated }: EditS
       };
 
       console.log('Updating service:', updateRequest);
-      await updateService(service.id, updateRequest);
+      await updateService(service.producerServiceId, updateRequest);
       
       toast({
         title: "Service Updated",

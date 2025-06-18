@@ -9,7 +9,7 @@ export interface ServiceResponse {
   producerLocationId: string;
   minServicePrice: number;
   maxServicePrice: number;
-  priceUnitsType: string;
+  priceUnitsType: "LOT_SIZE" | "PER_HOUR" | "PER_MILE" | "PER_VISIT" | "FIXED_ESTIMATE";
   shortDescription: string;
   description: string;
   serviceTerms: string;

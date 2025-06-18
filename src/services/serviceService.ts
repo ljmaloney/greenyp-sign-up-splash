@@ -1,4 +1,3 @@
-
 import { getApiUrl } from '@/config/api';
 
 export interface ServiceUpdateRequest {
@@ -6,7 +5,7 @@ export interface ServiceUpdateRequest {
   producerLocationId: string;
   minServicePrice: number;
   maxServicePrice: number;
-  priceUnitsType: string;
+  priceUnitsType: "LOT_SIZE" | "PER_HOUR" | "PER_MILE" | "PER_VISIT" | "FIXED_ESTIMATE";
   shortDescription: string;
   description: string;
   serviceTerms: string;
@@ -17,7 +16,7 @@ export interface ServiceCreateRequest {
   producerLocationId: string;
   minServicePrice: number;
   maxServicePrice: number;
-  priceUnitsType: string;
+  priceUnitsType: "LOT_SIZE" | "PER_HOUR" | "PER_MILE" | "PER_VISIT" | "FIXED_ESTIMATE";
   shortDescription: string;
   description: string;
   serviceTerms: string;
