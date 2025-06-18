@@ -20,11 +20,11 @@ const ProfileContent = ({ profile }: ProfileContentProps) => {
   // Find the subscription details
   const currentSubscription = subscriptions?.find(sub => sub.subscriptionId === profile?.subscriptionId);
   
-  // Check if subscription includes Products or Services features
+  // Check if subscription includes Products or Services features using the feature property
   const hasProductsFeature = currentSubscription?.features.some(feature => 
-    feature.toLowerCase().includes('product')) || false;
+    feature.feature === 'products') || false;
   const hasServicesFeature = currentSubscription?.features.some(feature => 
-    feature.toLowerCase().includes('service')) || false;
+    feature.feature === 'services') || false;
 
   return (
     <section className="py-12">

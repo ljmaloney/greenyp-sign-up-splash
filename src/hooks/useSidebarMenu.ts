@@ -33,13 +33,13 @@ export const useSidebarMenu = () => {
   console.log('Account data:', accountData);
   console.log('Producer ID:', accountData?.producer?.producerId);
   
-  // Check if subscription includes Products, Services, or Photo Gallery features
+  // Check if subscription includes Products, Services, or Photo Gallery features using the feature property
   const hasProductsFeature = currentSubscription?.features.some(feature => 
-    feature.toLowerCase().includes('product')) || false;
+    feature.feature === 'products') || false;
   const hasServicesFeature = currentSubscription?.features.some(feature => 
-    feature.toLowerCase().includes('service')) || false;
+    feature.feature === 'services') || false;
   const hasPhotoGalleryFeature = currentSubscription?.features.some(feature => 
-    feature.toLowerCase().includes('photo gallery')) || false;
+    feature.feature === 'gallery') || false;
 
   console.log('Has Products Feature:', hasProductsFeature);
   console.log('Has Services Feature:', hasServicesFeature);

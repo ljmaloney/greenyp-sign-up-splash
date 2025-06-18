@@ -1,94 +1,55 @@
 
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Producer } from '@/services/accountService';
-import { useLineOfBusiness } from '@/hooks/useLineOfBusiness';
+import React from 'react';
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useSubscriptions } from '@/hooks/useSubscriptions';
-import EditBusinessInfoDialog from './EditBusinessInfoDialog';
-import BusinessHeader from './BusinessHeader';
-import BusinessDescription from './BusinessDescription';
-import BusinessDetails from './BusinessDetails';
+import { useAccountData } from '@/hooks/useAccountData';
 
-interface BusinessOverviewCardProps {
-  producer: Producer;
-}
-
-const BusinessOverviewCard = ({ producer }: BusinessOverviewCardProps) => {
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const { data: lineOfBusinessData, isLoading: lobLoading } = useLineOfBusiness();
+const BusinessOverviewCard = () => {
   const { data: subscriptions } = useSubscriptions();
+  const { data: accountData } = useAccountData();
 
-  const getLineOfBusinessName = (lineOfBusinessId: string) => {
-    console.log('🔍 Looking for lineOfBusinessId:', lineOfBusinessId);
-    console.log('📊 Available line of business data:', lineOfBusinessData);
-    
-    if (!lineOfBusinessData || !lineOfBusinessId) {
-      console.log('❌ No line of business data or ID available');
-      return lobLoading ? 'Loading...' : 'Not specified';
-    }
-    
-    const lob = lineOfBusinessData.find(item => item.lineOfBusinessId === lineOfBusinessId);
-    console.log('✅ Found line of business:', lob);
-    
-    return lob?.lineOfBusinessName || 'Unknown';
-  };
-
-  // Find the TOP_LEVEL subscription from the producer's subscriptions
-  const topLevelSubscription = producer.subscriptions?.find(sub => sub.subscriptionType === 'TOP_LEVEL');
-  const currentSubscriptionId = topLevelSubscription?.subscriptionId;
+  // Get current subscription ID from account data
+  const currentSubscriptionId = accountData?.producer?.subscriptions?.[0]?.subscriptionId;
   
-  console.log('🔍 Producer subscriptions:', producer.subscriptions);
-  console.log('📋 Found TOP_LEVEL subscription:', topLevelSubscription);
-  console.log('🆔 Current subscription ID:', currentSubscriptionId);
-
-  // Check if subscription includes Photo gallery feature
+  // Find the current subscription details
   const currentSubscription = subscriptions?.find(sub => sub.subscriptionId === currentSubscriptionId);
+  
+  // Check if subscription includes Products, Services, or Photo Gallery features using the feature property
+  const hasProductsFeature = currentSubscription?.features.some(feature => 
+    feature.feature === 'products') || false;
+  const hasServicesFeature = currentSubscription?.features.some(feature => 
+    feature.feature === 'services') || false;
   const hasPhotoGalleryFeature = currentSubscription?.features.some(feature => 
-    feature.toLowerCase().includes('photo gallery')) || false;
-
-  console.log('🎯 Current subscription from reference data:', currentSubscription);
-  console.log('📸 Has Photo Gallery Feature:', hasPhotoGalleryFeature);
-
-  const businessData = {
-    businessName: producer.businessName,
-    description: producer.narrative,
-    websiteUrl: producer.websiteUrl,
-    producerId: producer.producerId,
-    lineOfBusinessId: producer.lineOfBusinessId,
-  };
-
-  const handleLogoUpload = () => {
-    // TODO: Implement logo upload functionality
-    console.log('Logo upload clicked');
-  };
+    feature.feature === 'gallery') || false;
 
   return (
-    <>
-      <Card>
-        <CardHeader>
-          <BusinessHeader
-            producer={producer}
-            hasPhotoGalleryFeature={hasPhotoGalleryFeature}
-            onEditClick={() => setIsEditDialogOpen(true)}
-            onLogoUpload={handleLogoUpload}
-          />
-          
-          <BusinessDescription narrative={producer.narrative} />
-        </CardHeader>
-        <CardContent>
-          <BusinessDetails
-            producer={producer}
-            lineOfBusinessName={getLineOfBusinessName(producer.lineOfBusinessId)}
-          />
-        </CardContent>
-      </Card>
-
-      <EditBusinessInfoDialog
-        isOpen={isEditDialogOpen}
-        onClose={() => setIsEditDialogOpen(false)}
-        businessData={businessData}
-      />
-    </>
+    <Card>
+      <CardHeader>
+        <CardTitle>Business Overview</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="text-sm">
+            <span className="font-medium">Products:</span>
+            <span className={hasProductsFeature ? "text-green-600 ml-2" : "text-gray-400 ml-2"}>
+              {hasProductsFeature ? "Enabled" : "Disabled"}
+            </span>
+          </div>
+          <div className="text-sm">
+            <span className="font-medium">Services:</span>
+            <span className={hasServicesFeature ? "text-green-600 ml-2" : "text-gray-400 ml-2"}>
+              {hasServicesFeature ? "Enabled" : "Disabled"}
+            </span>
+          </div>
+          <div className="text-sm">
+            <span className="font-medium">Photo Gallery:</span>
+            <span className={hasPhotoGalleryFeature ? "text-green-600 ml-2" : "text-gray-400 ml-2"}>
+              {hasPhotoGalleryFeature ? "Enabled" : "Disabled"}
+            </span>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
