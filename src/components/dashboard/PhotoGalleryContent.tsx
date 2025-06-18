@@ -3,39 +3,13 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus, Upload } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 import { useSubscriptions } from '@/hooks/useSubscriptions';
 import { useAccountData } from '@/hooks/useAccountData';
+import { useGalleryImages, useUploadGalleryImage } from '@/hooks/useGalleryImages';
 import GalleryGrid from './GalleryGrid';
 import ImageUploadDialog from './ImageUploadDialog';
 import ImageEnlargeDialog from './ImageEnlargeDialog';
-
-// Mock gallery images - in a real app, this would come from an API
-const mockGalleryImages = [
-  {
-    id: '1',
-    url: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=300&fit=crop',
-    thumbnail: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=200&h=150&fit=crop',
-    title: 'Woman with laptop',
-    description: 'Professional woman working on laptop in modern office',
-    uploadDate: '2024-01-15'
-  },
-  {
-    id: '2',
-    url: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=300&fit=crop',
-    thumbnail: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=200&h=150&fit=crop',
-    title: 'Gray laptop computer',
-    description: 'Modern laptop computer on wooden desk',
-    uploadDate: '2024-01-10'
-  },
-  {
-    id: '3',
-    url: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=300&fit=crop',
-    thumbnail: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=200&h=150&fit=crop',
-    title: 'Circuit board',
-    description: 'Close-up view of electronic circuit board',
-    uploadDate: '2024-01-08'
-  }
-];
 
 export interface GalleryImage {
   id: string;
@@ -47,9 +21,12 @@ export interface GalleryImage {
 }
 
 const PhotoGalleryContent = () => {
+  const { toast } = useToast();
   const { data: subscriptions } = useSubscriptions();
   const { data: accountData } = useAccountData();
-  const [images, setImages] = useState<GalleryImage[]>(mockGalleryImages);
+  const { data: galleryImages, isLoading: imagesLoading } = useGalleryImages();
+  const uploadImageMutation = useUploadGalleryImage();
+  
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const [enlargedImage, setEnlargedImage] = useState<GalleryImage | null>(null);
   const [replacingImage, setReplacingImage] = useState<GalleryImage | null>(null);
@@ -64,51 +41,92 @@ const PhotoGalleryContent = () => {
   const galleryFeature = currentSubscription?.features.find(feature => feature.feature === 'gallery');
   const maxGalleryCount = galleryFeature?.configMap?.maxGalleryCount || 0;
 
+  // Convert API images to display format
+  const images: GalleryImage[] = galleryImages?.map((img, index) => ({
+    id: `api-${index}`,
+    url: img.url,
+    thumbnail: img.url,
+    title: img.imageName,
+    description: img.description,
+    uploadDate: new Date().toISOString().split('T')[0] // API doesn't provide upload date
+  })) || [];
+
   console.log('Gallery feature:', galleryFeature);
   console.log('Max gallery count:', maxGalleryCount);
+  console.log('Current images:', images);
 
-  const handleImageUpload = (newImages: File[], descriptions: string[]) => {
-    // In a real app, you would upload to a server here
-    newImages.forEach((file, index) => {
-      const newImage: GalleryImage = {
-        id: `new-${Date.now()}-${index}`,
-        url: URL.createObjectURL(file),
-        thumbnail: URL.createObjectURL(file),
-        title: file.name,
-        description: descriptions[index] || '',
-        uploadDate: new Date().toISOString().split('T')[0]
-      };
+  const handleImageUpload = async (newImages: File[], descriptions: string[]) => {
+    try {
+      // Upload images one by one
+      for (let i = 0; i < newImages.length; i++) {
+        const file = newImages[i];
+        const description = descriptions[i] || '';
+        
+        await uploadImageMutation.mutateAsync({ file, description });
+      }
       
-      setImages(prev => {
-        const totalImages = prev.length + 1;
-        if (totalImages <= maxGalleryCount) {
-          return [...prev, newImage];
-        }
-        return prev;
+      toast({
+        title: "Images Uploaded",
+        description: `Successfully uploaded ${newImages.length} image${newImages.length !== 1 ? 's' : ''}`,
       });
-    });
+      
+      setIsUploadDialogOpen(false);
+    } catch (error) {
+      console.error('Error uploading images:', error);
+      toast({
+        title: "Upload Failed",
+        description: "Failed to upload images. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleImageReplace = (imageId: string, newFile: File, description: string) => {
-    // In a real app, you would upload to a server here
-    const newImageData = {
-      url: URL.createObjectURL(newFile),
-      thumbnail: URL.createObjectURL(newFile),
-      title: newFile.name,
-      description: description || '',
-      uploadDate: new Date().toISOString().split('T')[0]
-    };
-
-    setImages(prev => prev.map(img => 
-      img.id === imageId ? { ...img, ...newImageData } : img
-    ));
+  const handleImageReplace = async (imageId: string, newFile: File, description: string) => {
+    try {
+      await uploadImageMutation.mutateAsync({ file: newFile, description });
+      
+      toast({
+        title: "Image Replaced",
+        description: "Image has been successfully replaced",
+      });
+      
+      setReplacingImage(null);
+    } catch (error) {
+      console.error('Error replacing image:', error);
+      toast({
+        title: "Replace Failed",
+        description: "Failed to replace image. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleImageDelete = (imageId: string) => {
-    setImages(prev => prev.filter(img => img.id !== imageId));
+    // TODO: Implement delete functionality when API endpoint is available
+    console.log('Delete image:', imageId);
+    toast({
+      title: "Delete Not Available",
+      description: "Image deletion is not yet implemented",
+      variant: "destructive",
+    });
   };
 
   const canAddMore = images.length < maxGalleryCount;
+
+  if (imagesLoading) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Photo Gallery</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center py-8">Loading images...</div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -118,11 +136,11 @@ const PhotoGalleryContent = () => {
             <CardTitle>Photo Gallery ({images.length}/{maxGalleryCount})</CardTitle>
             <Button 
               onClick={() => setIsUploadDialogOpen(true)}
-              disabled={!canAddMore}
+              disabled={!canAddMore || uploadImageMutation.isPending}
               className="flex items-center gap-2"
             >
               <Plus className="h-4 w-4" />
-              Add Images
+              {uploadImageMutation.isPending ? 'Uploading...' : 'Add Images'}
             </Button>
           </div>
           {maxGalleryCount === 0 && (
@@ -141,9 +159,12 @@ const PhotoGalleryContent = () => {
                 <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No images yet</h3>
                 <p className="text-gray-500 mb-4">Upload your first images to showcase your business</p>
-                <Button onClick={() => setIsUploadDialogOpen(true)}>
+                <Button 
+                  onClick={() => setIsUploadDialogOpen(true)}
+                  disabled={uploadImageMutation.isPending}
+                >
                   <Plus className="h-4 w-4 mr-2" />
-                  Add Images
+                  {uploadImageMutation.isPending ? 'Uploading...' : 'Add Images'}
                 </Button>
               </div>
             ) : (
@@ -176,7 +197,6 @@ const PhotoGalleryContent = () => {
             if (files[0]) {
               handleImageReplace(replacingImage.id, files[0], descriptions[0]);
             }
-            setReplacingImage(null);
           }}
           maxImages={1}
           isReplacing={true}

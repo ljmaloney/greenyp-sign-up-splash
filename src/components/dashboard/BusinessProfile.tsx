@@ -4,6 +4,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Phone, Mail } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAccountData } from '@/hooks/useAccountData';
+import { useLogoUpload } from '@/hooks/useLogoUpload';
+import { useToast } from '@/hooks/use-toast';
 import { Contact } from '@/services/accountService';
 import BusinessOverviewCard from './BusinessOverviewCard';
 import PrimaryLocationCard from './PrimaryLocationCard';
@@ -13,8 +15,27 @@ import EditDashboardContactDialog from './EditDashboardContactDialog';
 
 const BusinessProfile = () => {
   const { user } = useAuth();
+  const { toast } = useToast();
   const { data: accountData, isLoading, error } = useAccountData();
+  const logoUploadMutation = useLogoUpload();
   const [editingContact, setEditingContact] = useState<Contact | null>(null);
+
+  const handleLogoUpload = async (file: File) => {
+    try {
+      await logoUploadMutation.mutateAsync(file);
+      toast({
+        title: "Logo Uploaded",
+        description: "Your business logo has been successfully uploaded",
+      });
+    } catch (error) {
+      console.error('Error uploading logo:', error);
+      toast({
+        title: "Upload Failed",
+        description: "Failed to upload logo. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   if (isLoading) {
     return (
@@ -70,8 +91,13 @@ const BusinessProfile = () => {
       {/* Business Overview */}
       <BusinessOverviewCard />
 
-      {/* Primary Location - Now passing producer prop */}
-      <PrimaryLocationCard primaryLocation={primaryLocation} producer={producer} />
+      {/* Primary Location - Now passing producer prop and logo upload handler */}
+      <PrimaryLocationCard 
+        primaryLocation={primaryLocation} 
+        producer={producer}
+        onLogoUpload={handleLogoUpload}
+        isLogoUploading={logoUploadMutation.isPending}
+      />
 
       {/* Active Subscriptions - Pass producer subscription type */}
       <ActiveSubscriptionsCard 
