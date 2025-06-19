@@ -43,12 +43,6 @@ const BusinessProfileCard = ({
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <FeatureStatusGrid 
-                      hasProductsFeature={hasProductsFeature}
-                      hasServicesFeature={hasServicesFeature}
-                      hasPhotoGalleryFeature={photoGalleryFeature}
-                    />
-
                     {producer.narrative && (
                       <BusinessDescription narrative={producer.narrative} maxLength={80} />
                     )}
@@ -56,6 +50,12 @@ const BusinessProfileCard = ({
                     <BusinessDetails 
                       producer={producer}
                       lineOfBusinessName={lineOfBusinessName}
+                    />
+
+                    <FeatureStatusGrid 
+                      hasProductsFeature={hasProductsFeature}
+                      hasServicesFeature={hasServicesFeature}
+                      hasPhotoGalleryFeature={photoGalleryFeature}
                     />
                   </div>
                 </CardContent>
