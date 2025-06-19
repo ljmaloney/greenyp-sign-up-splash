@@ -10,6 +10,7 @@ export interface Producer {
   websiteUrl: string;
   subscriptions: Subscription[];
   narrative: string;
+  iconLink?: string;  // Added iconLink property
   lastBillDate?: string;
   lastBillPaidDate?: string;
   invoiceCycleType?: string;
