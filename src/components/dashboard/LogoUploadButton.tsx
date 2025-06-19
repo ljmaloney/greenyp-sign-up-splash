@@ -11,27 +11,14 @@ interface LogoUploadButtonProps {
     iconLink?: string;
     businessName: string;
   };
+  onUploadClick: () => void;
 }
 
 const LogoUploadButton = ({ 
-  onLogoUpload, 
-  isLogoUploading, 
   hasLogoFeature, 
-  producer 
+  producer,
+  onUploadClick
 }: LogoUploadButtonProps) => {
-  const handleLogoUpload = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.onchange = (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (file && onLogoUpload) {
-        onLogoUpload(file);
-      }
-    };
-    input.click();
-  };
-
   if (!hasLogoFeature) {
     return null;
   }
@@ -39,17 +26,23 @@ const LogoUploadButton = ({
   return (
     <div className="flex-shrink-0">
       {producer.iconLink ? (
-        <img 
-          src={producer.iconLink} 
-          alt={`${producer.businessName} logo`}
-          className="w-12 h-12 object-cover rounded"
-        />
+        <div className="relative group">
+          <img 
+            src={producer.iconLink} 
+            alt={`${producer.businessName} logo`}
+            className="w-12 h-12 object-cover rounded cursor-pointer"
+            onClick={onUploadClick}
+          />
+          <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity rounded flex items-center justify-center cursor-pointer"
+               onClick={onUploadClick}>
+            <Upload className="h-5 w-5 text-white" />
+          </div>
+        </div>
       ) : (
         <Button 
           variant="ghost" 
           size="sm"
-          onClick={handleLogoUpload}
-          disabled={isLogoUploading}
+          onClick={onUploadClick}
           className="w-12 h-12 p-0 border-2 border-dashed border-gray-300 hover:border-gray-400"
           title="Upload logo"
         >

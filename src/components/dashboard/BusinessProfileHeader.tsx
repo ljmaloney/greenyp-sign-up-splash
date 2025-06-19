@@ -1,11 +1,12 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Edit } from 'lucide-react';
 import { Producer } from '@/services/accountService';
 import LogoUploadButton from './LogoUploadButton';
+import LogoUploadDialog from './LogoUploadDialog';
 
 interface BusinessProfileHeaderProps {
   producer: Producer;
@@ -22,6 +23,8 @@ const BusinessProfileHeader = ({
   hasLogoFeature,
   onEditClick 
 }: BusinessProfileHeaderProps) => {
+  const [isLogoDialogOpen, setIsLogoDialogOpen] = useState(false);
+
   const getBadgeVariant = (subscriptionType: string) => {
     switch (subscriptionType) {
       case 'ADMIN':
@@ -57,37 +60,47 @@ const BusinessProfileHeader = ({
   };
 
   return (
-    <div className="flex justify-between items-start">
-      <div className="flex items-center gap-3 flex-1">
-        <LogoUploadButton 
-          onLogoUpload={onLogoUpload}
-          isLogoUploading={isLogoUploading}
-          hasLogoFeature={hasLogoFeature}
-          producer={producer}
-        />
-        
-        <div className="flex items-center gap-2">
-          <CardTitle className="text-2xl text-greenyp-600 font-semibold leading-none tracking-tight">
-            {producer.businessName}
-          </CardTitle>
-          <Badge 
-            variant={getBadgeVariant(producer.subscriptionType)}
-            className={producer.subscriptionType === 'BETA_TESTER' ? 'border-green-500' : ''}
-          >
-            {getSubscriptionDisplay(producer.subscriptionType)}
-          </Badge>
+    <>
+      <div className="flex justify-between items-start">
+        <div className="flex items-center gap-3 flex-1">
+          <LogoUploadButton 
+            onLogoUpload={onLogoUpload}
+            isLogoUploading={isLogoUploading}
+            hasLogoFeature={hasLogoFeature}
+            producer={producer}
+            onUploadClick={() => setIsLogoDialogOpen(true)}
+          />
+          
+          <div className="flex items-center gap-2">
+            <CardTitle className="text-2xl text-greenyp-600 font-semibold leading-none tracking-tight">
+              {producer.businessName}
+            </CardTitle>
+            <Badge 
+              variant={getBadgeVariant(producer.subscriptionType)}
+              className={producer.subscriptionType === 'BETA_TESTER' ? 'border-green-500' : ''}
+            >
+              {getSubscriptionDisplay(producer.subscriptionType)}
+            </Badge>
+          </div>
         </div>
+        
+        <Button 
+          variant="ghost" 
+          size="sm"
+          onClick={onEditClick}
+          className="h-8 w-8 p-0"
+        >
+          <Edit className="h-4 w-4" />
+        </Button>
       </div>
-      
-      <Button 
-        variant="ghost" 
-        size="sm"
-        onClick={onEditClick}
-        className="h-8 w-8 p-0"
-      >
-        <Edit className="h-4 w-4" />
-      </Button>
-    </div>
+
+      <LogoUploadDialog
+        isOpen={isLogoDialogOpen}
+        onClose={() => setIsLogoDialogOpen(false)}
+        onLogoUpload={onLogoUpload}
+        isLogoUploading={isLogoUploading}
+      />
+    </>
   );
 };
 

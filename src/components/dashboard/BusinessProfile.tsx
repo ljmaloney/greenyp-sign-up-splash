@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Phone, Mail } from 'lucide-react';
@@ -112,8 +111,6 @@ const BusinessProfile = () => {
       <PrimaryLocationCard 
         primaryLocation={primaryLocation} 
         producer={producer}
-        onLogoUpload={handleLogoUpload}
-        isLogoUploading={logoUploadMutation.isPending}
       />
 
       {/* Active Subscriptions */}

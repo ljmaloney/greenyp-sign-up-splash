@@ -3,32 +3,17 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MapPin, Eye, Building2, Edit, Upload } from 'lucide-react';
+import { MapPin, Eye, Building2, Edit } from 'lucide-react';
 import { PrimaryLocation, Producer } from '@/services/accountService';
 import EditPrimaryLocationDialog from './EditPrimaryLocationDialog';
 
 interface PrimaryLocationCardProps {
   primaryLocation: PrimaryLocation;
   producer: Producer;
-  onLogoUpload?: (file: File) => Promise<void>;
-  isLogoUploading?: boolean;
 }
 
-const PrimaryLocationCard = ({ primaryLocation, producer, onLogoUpload, isLogoUploading }: PrimaryLocationCardProps) => {
+const PrimaryLocationCard = ({ primaryLocation, producer }: PrimaryLocationCardProps) => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-
-  const handleLogoUpload = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.onchange = (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (file && onLogoUpload) {
-        onLogoUpload(file);
-      }
-    };
-    input.click();
-  };
 
   const getLocationDisplayTypeLabel = (type: string) => {
     switch (type) {
@@ -65,28 +50,14 @@ const PrimaryLocationCard = ({ primaryLocation, producer, onLogoUpload, isLogoUp
               <MapPin className="h-5 w-5" />
               Primary Location
             </CardTitle>
-            <div className="flex gap-2">
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => setIsEditDialogOpen(true)}
-                className="h-8 w-8 p-0"
-              >
-                <Edit className="h-4 w-4" />
-              </Button>
-              {onLogoUpload && (
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={handleLogoUpload}
-                  disabled={isLogoUploading}
-                  className="h-8 w-8 p-0"
-                  title="Upload logo"
-                >
-                  <Upload className="h-4 w-4" />
-                </Button>
-              )}
-            </div>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => setIsEditDialogOpen(true)}
+              className="h-8 w-8 p-0"
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
           </div>
         </CardHeader>
         <CardContent>
