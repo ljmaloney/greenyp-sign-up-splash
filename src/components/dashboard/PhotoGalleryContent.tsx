@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -29,7 +28,6 @@ const PhotoGalleryContent = () => {
   
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const [enlargedImage, setEnlargedImage] = useState<GalleryImage | null>(null);
-  const [replacingImage, setReplacingImage] = useState<GalleryImage | null>(null);
 
   // Get current subscription ID from account data
   const currentSubscriptionId = accountData?.producer?.subscriptions?.[0]?.subscriptionId;
@@ -76,26 +74,6 @@ const PhotoGalleryContent = () => {
       toast({
         title: "Upload Failed",
         description: "Failed to upload images. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleImageReplace = async (imageId: string, newFile: File, description: string) => {
-    try {
-      await uploadImageMutation.mutateAsync({ file: newFile, description });
-      
-      toast({
-        title: "Image Replaced",
-        description: "Image has been successfully replaced",
-      });
-      
-      setReplacingImage(null);
-    } catch (error) {
-      console.error('Error replacing image:', error);
-      toast({
-        title: "Replace Failed",
-        description: "Failed to replace image. Please try again.",
         variant: "destructive",
       });
     }
@@ -172,7 +150,6 @@ const PhotoGalleryContent = () => {
                 images={images}
                 onImageClick={setEnlargedImage}
                 onImageDelete={handleImageDelete}
-                onImageReplace={setReplacingImage}
               />
             )}
           </CardContent>
@@ -187,22 +164,6 @@ const PhotoGalleryContent = () => {
         maxImages={maxGalleryCount - images.length}
         isReplacing={false}
       />
-
-      {/* Replace Dialog */}
-      {replacingImage && (
-        <ImageUploadDialog
-          isOpen={true}
-          onClose={() => setReplacingImage(null)}
-          onUpload={(files, descriptions) => {
-            if (files[0]) {
-              handleImageReplace(replacingImage.id, files[0], descriptions[0]);
-            }
-          }}
-          maxImages={1}
-          isReplacing={true}
-          replacingImage={replacingImage}
-        />
-      )}
 
       {/* Enlarge Dialog */}
       {enlargedImage && (

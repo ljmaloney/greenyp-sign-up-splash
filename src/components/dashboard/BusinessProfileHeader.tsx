@@ -1,10 +1,11 @@
-
 import React, { useState } from 'react';
 import { CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Edit } from 'lucide-react';
 import { Producer } from '@/services/accountService';
+import { useLogoDelete } from '@/hooks/useLogoDelete';
+import { useToast } from '@/hooks/use-toast';
 import LogoUploadButton from './LogoUploadButton';
 import LogoUploadDialog from './LogoUploadDialog';
 
@@ -24,6 +25,25 @@ const BusinessProfileHeader = ({
   onEditClick 
 }: BusinessProfileHeaderProps) => {
   const [isLogoDialogOpen, setIsLogoDialogOpen] = useState(false);
+  const { toast } = useToast();
+  const logoDeleteMutation = useLogoDelete();
+
+  const handleLogoDelete = async () => {
+    try {
+      await logoDeleteMutation.mutateAsync();
+      toast({
+        title: "Logo Deleted",
+        description: "Your business logo has been successfully deleted",
+      });
+    } catch (error) {
+      console.error('Error deleting logo:', error);
+      toast({
+        title: "Delete Failed",
+        description: "Failed to delete logo. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   const getBadgeVariant = (subscriptionType: string) => {
     switch (subscriptionType) {
@@ -98,7 +118,10 @@ const BusinessProfileHeader = ({
         isOpen={isLogoDialogOpen}
         onClose={() => setIsLogoDialogOpen(false)}
         onLogoUpload={onLogoUpload}
+        onLogoDelete={handleLogoDelete}
         isLogoUploading={isLogoUploading}
+        isLogoDeleting={logoDeleteMutation.isPending}
+        hasExistingLogo={!!producer.iconLink}
       />
     </>
   );

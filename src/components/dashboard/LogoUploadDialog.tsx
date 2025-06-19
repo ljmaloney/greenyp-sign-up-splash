@@ -4,16 +4,27 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Upload, X, Edit2 } from 'lucide-react';
+import { Upload, X, Edit2, Trash2 } from 'lucide-react';
 
 interface LogoUploadDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onLogoUpload?: (file: File) => Promise<void>;
+  onLogoDelete?: () => Promise<void>;
   isLogoUploading?: boolean;
+  isLogoDeleting?: boolean;
+  hasExistingLogo?: boolean;
 }
 
-const LogoUploadDialog = ({ isOpen, onClose, onLogoUpload, isLogoUploading }: LogoUploadDialogProps) => {
+const LogoUploadDialog = ({ 
+  isOpen, 
+  onClose, 
+  onLogoUpload, 
+  onLogoDelete,
+  isLogoUploading,
+  isLogoDeleting,
+  hasExistingLogo
+}: LogoUploadDialogProps) => {
   const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [customFileName, setCustomFileName] = useState('');
@@ -83,6 +94,17 @@ const LogoUploadDialog = ({ isOpen, onClose, onLogoUpload, isLogoUploading }: Lo
     }
   };
 
+  const handleDelete = async () => {
+    if (onLogoDelete) {
+      try {
+        await onLogoDelete();
+        onClose();
+      } catch (error) {
+        console.error('Delete failed:', error);
+      }
+    }
+  };
+
   const handleCancel = () => {
     setSelectedFile(null);
     setCustomFileName('');
@@ -101,7 +123,7 @@ const LogoUploadDialog = ({ isOpen, onClose, onLogoUpload, isLogoUploading }: Lo
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Upload Business Logo</DialogTitle>
+          <DialogTitle>Business Logo</DialogTitle>
         </DialogHeader>
         
         <div className="space-y-4">
@@ -195,6 +217,17 @@ const LogoUploadDialog = ({ isOpen, onClose, onLogoUpload, isLogoUploading }: Lo
           )}
 
           <div className="flex justify-end space-x-2 pt-4">
+            {hasExistingLogo && !selectedFile && (
+              <Button 
+                variant="destructive" 
+                onClick={handleDelete}
+                disabled={isLogoDeleting}
+                className="flex items-center gap-2"
+              >
+                <Trash2 className="h-4 w-4" />
+                {isLogoDeleting ? 'Deleting...' : 'Delete Logo'}
+              </Button>
+            )}
             <Button variant="outline" onClick={handleCancel}>
               Cancel
             </Button>
