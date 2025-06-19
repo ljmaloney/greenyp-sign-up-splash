@@ -2,20 +2,23 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { API_CONFIG, setApiHost, resetApiHost } from '../config/api';
+import { API_CONFIG, setApiHost, resetApiHost, setImageHost, resetImageHost } from '../config/api';
 
 const DevApiConfig = () => {
   const [customHost, setCustomHost] = useState('');
+  const [customImageHost, setCustomImageHost] = useState('');
   const [isVisible, setIsVisible] = useState(false);
 
   const environments = [
-    { name: 'Local', url: 'http://localhost:8081' },
-    { name: 'Production', url: 'https://services.greenyp.com' }
+    { name: 'Local', url: 'http://localhost:8081', imageUrl: 'http://localhost:8081' },
+    { name: 'Production', url: 'https://services.greenyp.com', imageUrl: 'https://services.greenyp.com' }
   ];
 
-  const handleSetEnvironment = (url: string) => {
+  const handleSetEnvironment = (url: string, imageUrl: string) => {
     setApiHost(url);
+    setImageHost(imageUrl);
     console.log('API host updated to:', url);
+    console.log('Image host updated to:', imageUrl);
     // Reload the page to use new configuration
     window.location.reload();
   };
@@ -29,9 +32,19 @@ const DevApiConfig = () => {
     }
   };
 
+  const handleSetCustomImageHost = () => {
+    if (customImageHost.trim()) {
+      setImageHost(customImageHost.trim());
+      console.log('Image host updated to:', customImageHost.trim());
+      // Reload the page to use new configuration
+      window.location.reload();
+    }
+  };
+
   const handleResetHost = () => {
     resetApiHost();
-    console.log('API host reset to default');
+    resetImageHost();
+    console.log('API and Image hosts reset to default');
     // Reload the page to use default configuration
     window.location.reload();
   };
@@ -67,7 +80,10 @@ const DevApiConfig = () => {
           
           <div className="space-y-3 text-xs">
             <div>
-              <strong>Current:</strong> {API_CONFIG.BASE_URL}
+              <strong>API:</strong> {API_CONFIG.BASE_URL}
+            </div>
+            <div>
+              <strong>Images:</strong> {API_CONFIG.IMAGE_BASE_URL}
             </div>
             
             <div>
@@ -76,7 +92,7 @@ const DevApiConfig = () => {
                 {environments.map((env) => (
                   <Button
                     key={env.name}
-                    onClick={() => handleSetEnvironment(env.url)}
+                    onClick={() => handleSetEnvironment(env.url, env.imageUrl)}
                     size="sm"
                     variant={API_CONFIG.BASE_URL === env.url ? "default" : "outline"}
                     className="text-xs px-2 h-7 flex-1"
@@ -88,7 +104,7 @@ const DevApiConfig = () => {
             </div>
             
             <div>
-              <strong>Custom URL:</strong>
+              <strong>Custom API URL:</strong>
               <div className="flex gap-2 mt-1">
                 <Input
                   placeholder="http://localhost:3000"
@@ -98,6 +114,25 @@ const DevApiConfig = () => {
                 />
                 <Button 
                   onClick={handleSetCustomHost}
+                  size="sm"
+                  className="text-xs px-2 h-8"
+                >
+                  Set
+                </Button>
+              </div>
+            </div>
+
+            <div>
+              <strong>Custom Image URL:</strong>
+              <div className="flex gap-2 mt-1">
+                <Input
+                  placeholder="http://localhost:8081"
+                  value={customImageHost}
+                  onChange={(e) => setCustomImageHost(e.target.value)}
+                  className="text-xs h-8"
+                />
+                <Button 
+                  onClick={handleSetCustomImageHost}
                   size="sm"
                   className="text-xs px-2 h-8"
                 >

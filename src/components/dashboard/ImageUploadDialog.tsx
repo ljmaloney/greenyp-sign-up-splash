@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Upload, X, Image as ImageIcon } from 'lucide-react';
+import { Upload, X, Image as ImageIcon, Edit2 } from 'lucide-react';
 import { GalleryImage } from './PhotoGalleryContent';
 
 interface ImageUploadDialogProps {
@@ -26,6 +26,7 @@ interface ImageUploadDialogProps {
 interface FileWithDescription {
   file: File;
   description: string;
+  customName: string;
 }
 
 const ImageUploadDialog = ({
@@ -40,6 +41,16 @@ const ImageUploadDialog = ({
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const getFileExtension = (fileName: string) => {
+    const lastDotIndex = fileName.lastIndexOf('.');
+    return lastDotIndex > 0 ? fileName.substring(lastDotIndex) : '';
+  };
+
+  const getFileNameWithoutExtension = (fileName: string) => {
+    const lastDotIndex = fileName.lastIndexOf('.');
+    return lastDotIndex > 0 ? fileName.substring(0, lastDotIndex) : fileName;
+  };
+
   const handleFiles = (files: FileList | null) => {
     if (!files) return;
     
@@ -49,7 +60,8 @@ const ImageUploadDialog = ({
     
     const filesWithDescriptions = validFiles.map(file => ({
       file,
-      description: ''
+      description: '',
+      customName: getFileNameWithoutExtension(file.name)
     }));
     
     if (isReplacing) {
@@ -90,9 +102,25 @@ const ImageUploadDialog = ({
     ));
   };
 
+  const updateCustomName = (index: number, customName: string) => {
+    setSelectedFiles(prev => prev.map((item, i) => 
+      i === index ? { ...item, customName } : item
+    ));
+  };
+
+  const createRenamedFile = (originalFile: File, newName: string): File => {
+    const extension = getFileExtension(originalFile.name);
+    const finalName = newName + extension;
+    return new File([originalFile], finalName, { type: originalFile.type });
+  };
+
   const handleUpload = () => {
     if (selectedFiles.length > 0) {
-      const files = selectedFiles.map(item => item.file);
+      const files = selectedFiles.map(item => 
+        item.customName.trim() 
+          ? createRenamedFile(item.file, item.customName.trim())
+          : item.file
+      );
       const descriptions = selectedFiles.map(item => item.description);
       onUpload(files, descriptions);
       setSelectedFiles([]);
@@ -153,7 +181,7 @@ const ImageUploadDialog = ({
             />
           </div>
 
-          {/* Selected files preview with descriptions */}
+          {/* Selected files preview with descriptions and renaming */}
           {selectedFiles.length > 0 && (
             <div className="space-y-4">
               <h4 className="font-medium text-gray-900">Selected Images:</h4>
@@ -180,18 +208,43 @@ const ImageUploadDialog = ({
                       </Button>
                     </div>
                     
-                    <div className="space-y-2">
-                      <Label htmlFor={`description-${index}`} className="text-sm font-medium">
-                        Description (optional)
-                      </Label>
-                      <Textarea
-                        id={`description-${index}`}
-                        placeholder="Add a description for this image..."
-                        value={item.description}
-                        onChange={(e) => updateDescription(index, e.target.value)}
-                        className="resize-none"
-                        rows={2}
-                      />
+                    <div className="space-y-3">
+                      <div className="space-y-2">
+                        <Label htmlFor={`fileName-${index}`} className="text-sm font-medium flex items-center gap-2">
+                          <Edit2 className="h-4 w-4" />
+                          Rename File (optional)
+                        </Label>
+                        <div className="flex items-center gap-2">
+                          <Input
+                            id={`fileName-${index}`}
+                            placeholder="Enter new name"
+                            value={item.customName}
+                            onChange={(e) => updateCustomName(index, e.target.value)}
+                            className="flex-1"
+                          />
+                          <span className="text-sm text-gray-500 font-mono">
+                            {getFileExtension(item.file.name)}
+                          </span>
+                        </div>
+                        <p className="text-xs text-gray-500">
+                          Final name: {item.customName.trim() || getFileNameWithoutExtension(item.file.name)}
+                          {getFileExtension(item.file.name)}
+                        </p>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor={`description-${index}`} className="text-sm font-medium">
+                          Description (optional)
+                        </Label>
+                        <Textarea
+                          id={`description-${index}`}
+                          placeholder="Add a description for this image..."
+                          value={item.description}
+                          onChange={(e) => updateDescription(index, e.target.value)}
+                          className="resize-none"
+                          rows={2}
+                        />
+                      </div>
                     </div>
                   </div>
                 ))}

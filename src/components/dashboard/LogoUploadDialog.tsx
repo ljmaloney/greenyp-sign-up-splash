@@ -2,7 +2,9 @@
 import React, { useState, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Upload, X } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Upload, X, Edit2 } from 'lucide-react';
 
 interface LogoUploadDialogProps {
   isOpen: boolean;
@@ -14,6 +16,7 @@ interface LogoUploadDialogProps {
 const LogoUploadDialog = ({ isOpen, onClose, onLogoUpload, isLogoUploading }: LogoUploadDialogProps) => {
   const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [customFileName, setCustomFileName] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDrag = (e: React.DragEvent) => {
@@ -35,21 +38,44 @@ const LogoUploadDialog = ({ isOpen, onClose, onLogoUpload, isLogoUploading }: Lo
       const file = e.dataTransfer.files[0];
       if (file.type.startsWith('image/')) {
         setSelectedFile(file);
+        // Set default custom name without extension
+        const nameWithoutExt = file.name.substring(0, file.name.lastIndexOf('.'));
+        setCustomFileName(nameWithoutExt || file.name);
       }
     }
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setSelectedFile(e.target.files[0]);
+      const file = e.target.files[0];
+      setSelectedFile(file);
+      // Set default custom name without extension
+      const nameWithoutExt = file.name.substring(0, file.name.lastIndexOf('.'));
+      setCustomFileName(nameWithoutExt || file.name);
     }
+  };
+
+  const getFileExtension = (fileName: string) => {
+    const lastDotIndex = fileName.lastIndexOf('.');
+    return lastDotIndex > 0 ? fileName.substring(lastDotIndex) : '';
+  };
+
+  const createRenamedFile = (originalFile: File, newName: string): File => {
+    const extension = getFileExtension(originalFile.name);
+    const finalName = newName + extension;
+    return new File([originalFile], finalName, { type: originalFile.type });
   };
 
   const handleUpload = async () => {
     if (selectedFile && onLogoUpload) {
       try {
-        await onLogoUpload(selectedFile);
+        const fileToUpload = customFileName.trim() 
+          ? createRenamedFile(selectedFile, customFileName.trim())
+          : selectedFile;
+        
+        await onLogoUpload(fileToUpload);
         setSelectedFile(null);
+        setCustomFileName('');
         onClose();
       } catch (error) {
         console.error('Upload failed:', error);
@@ -59,6 +85,7 @@ const LogoUploadDialog = ({ isOpen, onClose, onLogoUpload, isLogoUploading }: Lo
 
   const handleCancel = () => {
     setSelectedFile(null);
+    setCustomFileName('');
     onClose();
   };
 
@@ -116,25 +143,53 @@ const LogoUploadDialog = ({ isOpen, onClose, onLogoUpload, isLogoUploading }: Lo
               />
             </div>
           ) : (
-            <div className="border rounded-lg p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gray-100 rounded flex items-center justify-center">
-                    <Upload className="h-5 w-5 text-gray-500" />
+            <div className="space-y-4">
+              <div className="border rounded-lg p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-gray-100 rounded flex items-center justify-center">
+                      <Upload className="h-5 w-5 text-gray-500" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">{selectedFile.name}</p>
+                      <p className="text-xs text-gray-500">{formatFileSize(selectedFile.size)}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-medium text-sm">{selectedFile.name}</p>
-                    <p className="text-xs text-gray-500">{formatFileSize(selectedFile.size)}</p>
-                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setSelectedFile(null);
+                      setCustomFileName('');
+                    }}
+                    className="h-8 w-8 p-0"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setSelectedFile(null)}
-                  className="h-8 w-8 p-0"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
+
+                <div className="space-y-2">
+                  <Label htmlFor="fileName" className="text-sm font-medium flex items-center gap-2">
+                    <Edit2 className="h-4 w-4" />
+                    Rename File (optional)
+                  </Label>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      id="fileName"
+                      placeholder="Enter new name"
+                      value={customFileName}
+                      onChange={(e) => setCustomFileName(e.target.value)}
+                      className="flex-1"
+                    />
+                    <span className="text-sm text-gray-500 font-mono">
+                      {getFileExtension(selectedFile.name)}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    Final name: {(customFileName.trim() || selectedFile.name.substring(0, selectedFile.name.lastIndexOf('.')))}
+                    {getFileExtension(selectedFile.name)}
+                  </p>
+                </div>
               </div>
             </div>
           )}
