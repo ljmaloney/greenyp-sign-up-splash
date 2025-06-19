@@ -52,7 +52,7 @@ const BusinessProfileCard = ({
     email: '', // This would need to come from contacts
     phone: '', // This would need to come from contacts
     address: '', // This would need to come from primary location
-    website: producer.website || '',
+    website: producer.websiteUrl || '',
     description: producer.narrative || '',
   };
 
