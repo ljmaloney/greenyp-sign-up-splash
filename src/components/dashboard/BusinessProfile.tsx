@@ -8,7 +8,6 @@ import { useLogoUpload } from '@/hooks/useLogoUpload';
 import { useToast } from '@/hooks/use-toast';
 import { useSubscriptions } from '@/hooks/useSubscriptions';
 import { Contact } from '@/services/accountService';
-import BusinessOverviewCard from './BusinessOverviewCard';
 import BusinessProfileCard from './BusinessProfileCard';
 import PrimaryLocationCard from './PrimaryLocationCard';
 import ActiveSubscriptionsCard from './ActiveSubscriptionsCard';
@@ -101,10 +100,7 @@ const BusinessProfile = () => {
 
   return (
     <div className="space-y-6">
-      {/* Business Overview */}
-      <BusinessOverviewCard />
-
-      {/* Business Profile Card - NEW */}
+      {/* Business Profile Card - Updated */}
       <BusinessProfileCard 
         producer={producer}
         onLogoUpload={handleLogoUpload}

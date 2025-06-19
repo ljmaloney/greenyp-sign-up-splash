@@ -3,18 +3,19 @@ import React, { useState } from 'react';
 
 interface BusinessDescriptionProps {
   narrative: string;
+  maxLength?: number;
 }
 
-const BusinessDescription = ({ narrative }: BusinessDescriptionProps) => {
+const BusinessDescription = ({ narrative, maxLength = 150 }: BusinessDescriptionProps) => {
   const [isNarrativeExpanded, setIsNarrativeExpanded] = useState(false);
 
   if (!narrative) {
     return null;
   }
 
-  const shouldTruncateNarrative = narrative.length > 150;
+  const shouldTruncateNarrative = narrative.length > maxLength;
   const displayedNarrative = shouldTruncateNarrative && !isNarrativeExpanded 
-    ? narrative.substring(0, 150) + '...'
+    ? narrative.substring(0, maxLength) + '...'
     : narrative;
 
   return (
@@ -25,7 +26,7 @@ const BusinessDescription = ({ narrative }: BusinessDescriptionProps) => {
           onClick={() => setIsNarrativeExpanded(!isNarrativeExpanded)}
           className="text-greenyp-600 hover:text-greenyp-700 text-sm mt-1"
         >
-          {isNarrativeExpanded ? 'Show less' : 'Read more'}
+          {isNarrativeExpanded ? 'Show less' : 'more'}
         </button>
       )}
     </div>
