@@ -19,7 +19,7 @@ export const uploadGalleryImage = async (
   description: string = ''
 ): Promise<UploadImageResponse> => {
   const formData = new FormData();
-  formData.append('image', file);
+  formData.append('file', file);
 
   const url = getApiUrl(`/producer/${producerId}/gallery`);
   const params = new URLSearchParams({
@@ -44,7 +44,7 @@ export const uploadProducerLogo = async (
   file: File
 ): Promise<UploadImageResponse> => {
   const formData = new FormData();
-  formData.append('logo', file);
+  formData.append('file', file);
 
   const url = getApiUrl(`/producer/${producerId}/logo`);
   const params = new URLSearchParams({
