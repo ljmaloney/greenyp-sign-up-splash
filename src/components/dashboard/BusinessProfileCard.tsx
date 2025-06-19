@@ -40,10 +40,21 @@ const BusinessProfileCard = ({
     input.click();
   };
 
-  // Find the line of business name
+  // Find the line of business name - using correct property name
   const lineOfBusinessName = lineOfBusinessData?.find(
     lob => lob.lineOfBusinessId === producer.lineOfBusinessId
-  )?.businessName || 'Unknown';
+  )?.lineOfBusinessName || 'Unknown';
+
+  // Create businessData object for the edit dialog
+  const businessData = {
+    businessName: producer.businessName || '',
+    contactName: '', // This would need to come from contacts
+    email: '', // This would need to come from contacts
+    phone: '', // This would need to come from contacts
+    address: '', // This would need to come from primary location
+    website: producer.website || '',
+    description: producer.narrative || '',
+  };
 
   return (
     <>
@@ -102,7 +113,7 @@ const BusinessProfileCard = ({
       <EditBusinessProfileDialog
         isOpen={isEditDialogOpen}
         onClose={() => setIsEditDialogOpen(false)}
-        producer={producer}
+        businessData={businessData}
       />
     </>
   );
