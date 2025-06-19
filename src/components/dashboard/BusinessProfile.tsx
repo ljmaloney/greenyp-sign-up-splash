@@ -6,8 +6,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useAccountData } from '@/hooks/useAccountData';
 import { useLogoUpload } from '@/hooks/useLogoUpload';
 import { useToast } from '@/hooks/use-toast';
+import { useSubscriptions } from '@/hooks/useSubscriptions';
 import { Contact } from '@/services/accountService';
 import BusinessOverviewCard from './BusinessOverviewCard';
+import BusinessProfileCard from './BusinessProfileCard';
 import PrimaryLocationCard from './PrimaryLocationCard';
 import ActiveSubscriptionsCard from './ActiveSubscriptionsCard';
 import DashboardContactCard from './DashboardContactCard';
@@ -17,6 +19,7 @@ const BusinessProfile = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const { data: accountData, isLoading, error } = useAccountData();
+  const { data: subscriptions } = useSubscriptions();
   const logoUploadMutation = useLogoUpload();
   const [editingContact, setEditingContact] = useState<Contact | null>(null);
 
@@ -82,6 +85,16 @@ const BusinessProfile = () => {
   const primaryContact = contacts.find(contact => contact.producerContactType === 'PRIMARY');
   const adminContact = contacts.find(contact => contact.producerContactType === 'ADMIN');
 
+  // Get current subscription ID from producer subscriptions
+  const currentSubscriptionId = producer.subscriptions?.[0]?.subscriptionId;
+  
+  // Find the current subscription details from the subscriptions list
+  const currentSubscription = subscriptions?.find(sub => sub.subscriptionId === currentSubscriptionId);
+  
+  // Check if subscription includes Photo Gallery feature
+  const hasPhotoGalleryFeature = currentSubscription?.features.some(feature => 
+    feature.feature === 'gallery') || false;
+
   const handleEditContact = (contact: Contact) => {
     setEditingContact(contact);
   };
@@ -91,7 +104,15 @@ const BusinessProfile = () => {
       {/* Business Overview */}
       <BusinessOverviewCard />
 
-      {/* Primary Location - Now passing producer prop and logo upload handler */}
+      {/* Business Profile Card - NEW */}
+      <BusinessProfileCard 
+        producer={producer}
+        onLogoUpload={handleLogoUpload}
+        isLogoUploading={logoUploadMutation.isPending}
+        hasPhotoGalleryFeature={hasPhotoGalleryFeature}
+      />
+
+      {/* Primary Location */}
       <PrimaryLocationCard 
         primaryLocation={primaryLocation} 
         producer={producer}
@@ -99,7 +120,7 @@ const BusinessProfile = () => {
         isLogoUploading={logoUploadMutation.isPending}
       />
 
-      {/* Active Subscriptions - Pass producer subscription type */}
+      {/* Active Subscriptions */}
       <ActiveSubscriptionsCard 
         subscriptions={producer.subscriptions} 
         producerSubscriptionType={producer.subscriptionType}
