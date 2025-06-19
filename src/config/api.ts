@@ -90,5 +90,19 @@ export const getApiUrl = (endpoint: string): string => {
 
 // Helper function to get full image URL
 export const getImageUrl = (imagePath: string): string => {
-  return `${API_CONFIG.IMAGE_BASE_URL}${imagePath}`;
+  // If the imagePath already has a protocol, return as is
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath;
+  }
+  
+  // If the imagePath doesn't start with a slash, add one
+  const normalizedPath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
+  
+  console.log('Constructing image URL:', {
+    imageHost: API_CONFIG.IMAGE_BASE_URL,
+    imagePath: normalizedPath,
+    finalUrl: `${API_CONFIG.IMAGE_BASE_URL}${normalizedPath}`
+  });
+  
+  return `${API_CONFIG.IMAGE_BASE_URL}${normalizedPath}`;
 };
