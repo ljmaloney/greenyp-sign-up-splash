@@ -1,9 +1,10 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import FileUploadDropZone from './FileUploadDropZone';
 import FilePreviewWithRename from './FilePreviewWithRename';
 import LogoDialogFooter from './LogoDialogFooter';
+import { useLogoUploadDialog } from '@/hooks/useLogoUploadDialog';
 
 interface LogoUploadDialogProps {
   isOpen: boolean;
@@ -24,61 +25,25 @@ const LogoUploadDialog = ({
   isLogoDeleting,
   hasExistingLogo
 }: LogoUploadDialogProps) => {
-  const [dragActive, setDragActive] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [customFileName, setCustomFileName] = useState('');
-
-  const handleDrag = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
-    } else if (e.type === "dragleave") {
-      setDragActive(false);
-    }
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      const file = e.dataTransfer.files[0];
-      if (file.type.startsWith('image/')) {
-        handleFileSelect(file);
-      }
-    }
-  };
-
-  const handleFileSelect = (file: File) => {
-    setSelectedFile(file);
-    // Set default custom name without extension
-    const nameWithoutExt = file.name.substring(0, file.name.lastIndexOf('.'));
-    setCustomFileName(nameWithoutExt || file.name);
-  };
-
-  const getFileExtension = (fileName: string) => {
-    const lastDotIndex = fileName.lastIndexOf('.');
-    return lastDotIndex > 0 ? fileName.substring(lastDotIndex) : '';
-  };
-
-  const createRenamedFile = (originalFile: File, newName: string): File => {
-    const extension = getFileExtension(originalFile.name);
-    const finalName = newName + extension;
-    return new File([originalFile], finalName, { type: originalFile.type });
-  };
+  const {
+    dragActive,
+    selectedFile,
+    customFileName,
+    setCustomFileName,
+    handleDrag,
+    handleDrop,
+    handleFileSelect,
+    handleRemoveFile,
+    resetDialog,
+    getFinalFile,
+  } = useLogoUploadDialog();
 
   const handleUpload = async () => {
-    if (selectedFile && onLogoUpload) {
+    const fileToUpload = getFinalFile();
+    if (fileToUpload && onLogoUpload) {
       try {
-        const fileToUpload = customFileName.trim() 
-          ? createRenamedFile(selectedFile, customFileName.trim())
-          : selectedFile;
-        
         await onLogoUpload(fileToUpload);
-        setSelectedFile(null);
-        setCustomFileName('');
+        resetDialog();
         onClose();
       } catch (error) {
         console.error('Upload failed:', error);
@@ -98,14 +63,8 @@ const LogoUploadDialog = ({
   };
 
   const handleCancel = () => {
-    setSelectedFile(null);
-    setCustomFileName('');
+    resetDialog();
     onClose();
-  };
-
-  const handleRemoveFile = () => {
-    setSelectedFile(null);
-    setCustomFileName('');
   };
 
   return (

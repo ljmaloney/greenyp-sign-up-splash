@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Upload, X, Edit2 } from 'lucide-react';
+import { getFileExtension } from '@/utils/fileUtils';
 
 interface FilePreviewWithRenameProps {
   file: File;
@@ -24,11 +25,6 @@ const FilePreviewWithRename = ({
     const sizes = ['Bytes', 'KB', 'MB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  };
-
-  const getFileExtension = (fileName: string) => {
-    const lastDotIndex = fileName.lastIndexOf('.');
-    return lastDotIndex > 0 ? fileName.substring(lastDotIndex) : '';
   };
 
   return (
