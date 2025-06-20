@@ -6,12 +6,12 @@ import { useToast } from "@/hooks/use-toast";
 import { updateService, ServiceUpdateRequest } from '@/services/serviceService';
 import { useEditServiceForm } from '@/hooks/useEditServiceForm';
 import EditServiceFormFields from './EditServiceFormFields';
-import { ProductResponse } from '@/services/servicesService';
+import { ServiceResponse } from '@/services/servicesService';
 
 interface EditServiceDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  service: ProductResponse | null;
+  service: ServiceResponse | null;
   onServiceUpdated: () => void;
 }
 
@@ -28,7 +28,7 @@ const EditServiceDialog = ({ isOpen, onClose, service, onServiceUpdated }: EditS
     
     try {
       const updateRequest: ServiceUpdateRequest = {
-        serviceId: service.productId,
+        serviceId: service.producerServiceId,
         minServicePrice: formData.minServicePrice,
         maxServicePrice: formData.maxServicePrice,
         priceUnitsType: formData.priceUnitsType,

@@ -1,7 +1,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { useLocationCache } from './useLocationCache';
-import { fetchAllLocationServices, ProductResponse } from '@/services/servicesService';
+import { fetchAllLocationProducts, ProductResponse } from '@/services/servicesService';
 
 export const useProductsWithLocationCache = () => {
   const { locations, producerId, isLoading: locationsLoading } = useLocationCache();
@@ -15,7 +15,7 @@ export const useProductsWithLocationCache = () => {
     refetch
   } = useQuery({
     queryKey: ['all-location-products', producerId, locationIds],
-    queryFn: () => fetchAllLocationServices(producerId!, locationIds),
+    queryFn: () => fetchAllLocationProducts(producerId!, locationIds),
     enabled: !!producerId && locationIds.length > 0,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });

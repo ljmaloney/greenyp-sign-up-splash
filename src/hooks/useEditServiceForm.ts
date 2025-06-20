@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { ProductResponse } from '@/services/servicesService';
+import { ServiceResponse } from '@/services/servicesService';
 
 export interface EditServiceFormData {
   minServicePrice: number;
@@ -11,7 +11,7 @@ export interface EditServiceFormData {
   serviceTerms: string;
 }
 
-export const useEditServiceForm = (service: ProductResponse | null) => {
+export const useEditServiceForm = (service: ServiceResponse | null) => {
   const [formData, setFormData] = useState<EditServiceFormData>({
     minServicePrice: 0,
     maxServicePrice: 0,
@@ -24,12 +24,12 @@ export const useEditServiceForm = (service: ProductResponse | null) => {
   useEffect(() => {
     if (service) {
       setFormData({
-        minServicePrice: service.price || 0,
-        maxServicePrice: service.price || 0,
-        priceUnitsType: "FIXED_ESTIMATE",
-        shortDescription: service.name || '',
+        minServicePrice: service.minServicePrice || 0,
+        maxServicePrice: service.maxServicePrice || 0,
+        priceUnitsType: service.priceUnitsType || "FIXED_ESTIMATE",
+        shortDescription: service.shortDescription || '',
         description: service.description || '',
-        serviceTerms: ''
+        serviceTerms: service.serviceTerms || ''
       });
     }
   }, [service]);
