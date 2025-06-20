@@ -33,6 +33,7 @@ export const useEditProductForm = (product: ProductResponse | null) => {
 
   useEffect(() => {
     if (product) {
+      console.log('useEditProductForm - setting form data from product:', product);
       setFormData({
         productType: product.productType || 'BAGGED_MATERIAL',
         botanicalGroup: product.botanicalGroup || '',
@@ -50,7 +51,12 @@ export const useEditProductForm = (product: ProductResponse | null) => {
   }, [product]);
 
   const handleChange = (field: string, value: string | number | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    console.log('useEditProductForm handleChange:', field, value);
+    setFormData(prev => {
+      const updated = { ...prev, [field]: value };
+      console.log('Updated form data:', updated);
+      return updated;
+    });
   };
 
   return {

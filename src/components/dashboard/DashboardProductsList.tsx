@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import EditProductDialog from './EditProductDialog';
 import AddProductDialog from './AddProductDialog';
 import DeleteServiceDialog from './DeleteServiceDialog';
@@ -24,6 +24,17 @@ const DashboardProductsList = () => {
     refetch,
     producerId
   } = useProductsWithLocationCache();
+
+  // Auto-open all location groups when locations are loaded
+  useEffect(() => {
+    if (locations.length > 0) {
+      const allOpen = locations.reduce((acc, location) => {
+        acc[location.id] = true;
+        return acc;
+      }, {} as Record<string, boolean>);
+      setOpenGroups(allOpen);
+    }
+  }, [locations]);
 
   const handleEdit = (product: ProductResponse) => {
     setEditingProduct(product);

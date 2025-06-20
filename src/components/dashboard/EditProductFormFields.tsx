@@ -25,6 +25,8 @@ const EditProductFormFields = ({ formData, onFieldChange }: EditProductFormField
     { value: 'SOIL_AMENDMENTS', label: 'Soil Amendments - Soil amendments' }
   ];
 
+  console.log('EditProductFormFields render - formData.availableQuantity:', formData.availableQuantity);
+
   return (
     <div className="space-y-4">
       <div>
@@ -100,7 +102,10 @@ const EditProductFormFields = ({ formData, onFieldChange }: EditProductFormField
             type="number"
             step="0.01"
             value={formData.price}
-            onChange={(e) => onFieldChange('price', Number(e.target.value))}
+            onChange={(e) => {
+              console.log('Price field changed:', e.target.value);
+              onFieldChange('price', Number(e.target.value));
+            }}
             required
           />
         </div>
@@ -111,7 +116,10 @@ const EditProductFormFields = ({ formData, onFieldChange }: EditProductFormField
           <Input
             type="number"
             value={formData.availableQuantity}
-            onChange={(e) => onFieldChange('availableQuantity', Number(e.target.value))}
+            onChange={(e) => {
+              console.log('Quantity field changed:', e.target.value);
+              onFieldChange('availableQuantity', Number(e.target.value));
+            }}
             required
           />
         </div>

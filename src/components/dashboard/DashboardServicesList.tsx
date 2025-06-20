@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import EditServiceDialog from './EditServiceDialog';
 import AddServiceDialog from './AddServiceDialog';
 import DeleteServiceDialog from './DeleteServiceDialog';
@@ -23,6 +23,17 @@ const DashboardServicesList = () => {
     error,
     refetch
   } = useServicesWithLocationCache();
+
+  // Auto-open all location groups when locations are loaded
+  useEffect(() => {
+    if (locations.length > 0) {
+      const allOpen = locations.reduce((acc, location) => {
+        acc[location.id] = true;
+        return acc;
+      }, {} as Record<string, boolean>);
+      setOpenGroups(allOpen);
+    }
+  }, [locations]);
 
   const handleEdit = (service: ServiceResponse) => {
     setEditingService(service);
