@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { useGalleryImages, useUploadGalleryImage } from '@/hooks/useGalleryImages';
+import { useGalleryImages, useUploadGalleryImage, useDeleteGalleryImage } from '@/hooks/useGalleryImages';
 import GalleryFeatureChecker from './GalleryFeatureChecker';
 import GalleryStatsHeader from './GalleryStatsHeader';
 import GalleryEmptyState from './GalleryEmptyState';
@@ -25,6 +25,7 @@ const PhotoGalleryContent = () => {
   const { toast } = useToast();
   const { data: galleryImages, isLoading: imagesLoading } = useGalleryImages();
   const uploadImageMutation = useUploadGalleryImage();
+  const deleteImageMutation = useDeleteGalleryImage();
   
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const [enlargedImage, setEnlargedImage] = useState<GalleryImage | null>(null);
@@ -55,14 +56,32 @@ const PhotoGalleryContent = () => {
     }
   };
 
-  const handleImageDelete = (imageId: string) => {
-    // TODO: Implement delete functionality when API endpoint is available
-    console.log('Delete image:', imageId);
-    toast({
-      title: "Delete Not Available",
-      description: "Image deletion is not yet implemented",
-      variant: "destructive",
-    });
+  const handleImageDelete = async (imageId: string) => {
+    // Find the image to get its filename
+    const imageToDelete = images.find(img => img.id === imageId);
+    if (!imageToDelete) {
+      toast({
+        title: "Delete Failed",
+        description: "Image not found",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      await deleteImageMutation.mutateAsync(imageToDelete.title);
+      toast({
+        title: "Image Deleted",
+        description: "Image has been successfully deleted",
+      });
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      toast({
+        title: "Delete Failed",
+        description: "Failed to delete image. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -110,6 +129,7 @@ const PhotoGalleryContent = () => {
                       images={images}
                       onImageClick={setEnlargedImage}
                       onImageDelete={handleImageDelete}
+                      isDeleting={deleteImageMutation.isPending}
                     />
                   )}
                 </CardContent>

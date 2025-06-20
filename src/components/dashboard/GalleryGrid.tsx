@@ -1,16 +1,17 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Loader2 } from 'lucide-react';
 import { GalleryImage } from './PhotoGalleryContent';
 
 interface GalleryGridProps {
   images: GalleryImage[];
   onImageClick: (image: GalleryImage) => void;
   onImageDelete: (imageId: string) => void;
+  isDeleting?: boolean;
 }
 
-const GalleryGrid = ({ images, onImageClick, onImageDelete }: GalleryGridProps) => {
+const GalleryGrid = ({ images, onImageClick, onImageDelete, isDeleting }: GalleryGridProps) => {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {images.map((image) => (
@@ -36,9 +37,14 @@ const GalleryGrid = ({ images, onImageClick, onImageDelete }: GalleryGridProps) 
                   e.stopPropagation();
                   onImageDelete(image.id);
                 }}
+                disabled={isDeleting}
                 className="h-8 w-8 p-0"
               >
-                <Trash2 className="h-4 w-4" />
+                {isDeleting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Trash2 className="h-4 w-4" />
+                )}
               </Button>
             </div>
           </div>

@@ -39,6 +39,26 @@ export const uploadGalleryImage = async (
   return { success: true };
 };
 
+export const deleteGalleryImage = async (
+  producerId: string, 
+  imageFilename: string
+): Promise<UploadImageResponse> => {
+  const url = getApiUrl(`/producer/${producerId}/gallery`);
+  const params = new URLSearchParams({
+    imageFilename: imageFilename
+  });
+
+  const response = await fetch(`${url}?${params.toString()}`, {
+    method: 'DELETE',
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to delete image: ${response.status}`);
+  }
+
+  return { success: true };
+};
+
 export const uploadProducerLogo = async (
   producerId: string, 
   file: File
