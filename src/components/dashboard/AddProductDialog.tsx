@@ -18,18 +18,21 @@ interface AddProductDialogProps {
   onClose: () => void;
   onProductCreated: () => void;
   preSelectedLocationId?: string;
+  locations: Location[];
+  producerId: string;
 }
 
-const AddProductDialog = ({ isOpen, onClose, onProductCreated, preSelectedLocationId }: AddProductDialogProps) => {
+const AddProductDialog = ({ 
+  isOpen, 
+  onClose, 
+  onProductCreated, 
+  preSelectedLocationId,
+  locations,
+  producerId
+}: AddProductDialogProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const { formData, handleChange, resetForm } = useProductForm(preSelectedLocationId);
-
-  // Mock locations data
-  const locations: Location[] = [
-    { id: '1', name: 'Main Office', address: '123 Garden Street, San Francisco, CA 94102' },
-    { id: '2', name: 'Warehouse', address: '456 Industrial Blvd, San Francisco, CA 94103' }
-  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +50,7 @@ const AddProductDialog = ({ isOpen, onClose, onProductCreated, preSelectedLocati
     
     try {
       const createRequest: ProductCreateRequest = {
-        producerId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        producerId: producerId,
         producerLocationId: formData.producerLocationId,
         productType: formData.productType,
         botanicalGroup: formData.botanicalGroup,

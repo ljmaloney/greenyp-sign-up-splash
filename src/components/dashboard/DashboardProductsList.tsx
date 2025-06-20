@@ -21,7 +21,8 @@ const DashboardProductsList = () => {
     groupedProducts,
     isLoading,
     error,
-    refetch
+    refetch,
+    producerId
   } = useProductsWithLocationCache();
 
   const handleEdit = (product: ProductResponse) => {
@@ -109,6 +110,8 @@ const DashboardProductsList = () => {
         }}
         onProductCreated={handleProductCreated}
         preSelectedLocationId={preSelectedLocationId}
+        locations={locations}
+        producerId={producerId || ''}
       />
 
       <EditProductDialog
