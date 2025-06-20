@@ -1,14 +1,14 @@
 
 import React from 'react';
 import ServiceLocationGroup from './ServiceLocationGroup';
-import { ProductResponse } from '@/services/servicesService';
+import { ServiceResponse } from '@/services/servicesService';
 
 interface ServicesContentProps {
-  groupedServices: Record<string, ProductResponse[]>;
+  groupedServices: Record<string, ServiceResponse[]>;
   locations: { id: string; name: string; address: string }[];
   openGroups: Record<string, boolean>;
   onToggleGroup: (locationId: string) => void;
-  onEditService: (service: ProductResponse) => void;
+  onEditService: (service: ServiceResponse) => void;
   onDeleteService: (serviceId: string) => void;
   onAddService: (locationId: string) => void;
 }

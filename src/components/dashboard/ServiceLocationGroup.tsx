@@ -3,15 +3,15 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { MapPin, ChevronDown, ChevronUp, Plus, Edit, Trash2 } from 'lucide-react';
-import { ProductResponse } from '@/services/servicesService';
+import { ServiceResponse } from '@/services/servicesService';
 
 interface ServiceLocationGroupProps {
   locationId: string;
-  locationServices: ProductResponse[];
+  locationServices: ServiceResponse[];
   locations: { id: string; name: string; address: string }[];
   isOpen: boolean;
   onToggle: () => void;
-  onEditService: (service: ProductResponse) => void;
+  onEditService: (service: ServiceResponse) => void;
   onDeleteService: (serviceId: string) => void;
   onAddService: (locationId: string) => void;
   hasServices: boolean;
@@ -37,21 +37,16 @@ const ServiceLocationGroup = ({
   const locationName = getLocationName(locationId === 'no-location' ? undefined : locationId);
   const hasMultipleServices = locationServices.length > 1;
 
-  const getProductTypeDisplay = (productType: string): string => {
+  const getPriceUnitsDisplay = (priceUnitsType: string): string => {
     const mappings: Record<string, string> = {
-      'BAGGED_MATERIAL': 'Bagged Material',
-      'BOTANICAL': 'Plants, Trees & Shrubs',
-      'BULK_MATERIAL': 'Bulk Material',
-      'CONTAINERS': 'Pots & Containers',
-      'DECORATIVE_STONE': 'Decorative Stone',
-      'HARDWARE': 'Hardware',
-      'LANDSCAPE_PRODUCTS': 'Landscape Products',
-      'LANDSCAPE_TOOLS': 'Landscaping Tools',
-      'POND_MAINTENANCE': 'Pond Maintenance',
-      'SOIL_AMENDMENTS': 'Soil Amendments'
+      'LOT_SIZE': 'per lot size',
+      'PER_HOUR': 'per hour',
+      'PER_MILE': 'per mile',
+      'PER_VISIT': 'per visit',
+      'FIXED_ESTIMATE': 'fixed estimate'
     };
     
-    return mappings[productType] || productType;
+    return mappings[priceUnitsType] || priceUnitsType.toLowerCase().replace('_', ' ');
   };
 
   return (
@@ -92,35 +87,32 @@ const ServiceLocationGroup = ({
               </div>
             ) : (
               locationServices.map((service) => (
-                <div key={service.productId} className="p-4">
+                <div key={service.producerServiceId} className="p-4">
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <div className="flex justify-between items-start mb-2">
-                        <h4 className="font-medium text-gray-900">{service.name}</h4>
-                        <span className="text-lg font-semibold text-greenyp-600">
-                          ${service.price}
-                        </span>
+                        <h4 className="font-medium text-gray-900">{service.shortDescription}</h4>
+                        <div className="text-right">
+                          {service.minServicePrice === service.maxServicePrice ? (
+                            <span className="text-lg font-semibold text-greenyp-600">
+                              ${service.minServicePrice}
+                            </span>
+                          ) : (
+                            <span className="text-lg font-semibold text-greenyp-600">
+                              ${service.minServicePrice} - ${service.maxServicePrice}
+                            </span>
+                          )}
+                          <div className="text-xs text-gray-500 mt-1">
+                            {getPriceUnitsDisplay(service.priceUnitsType)}
+                          </div>
+                        </div>
                       </div>
                       {service.description && (
                         <p className="text-gray-600 text-sm mb-2">{service.description}</p>
                       )}
-                      <div className="flex flex-wrap gap-4 text-xs text-gray-500">
-                        <span>Type: {getProductTypeDisplay(service.productType)}</span>
-                        {service.containerSize && (
-                          <span>Size: {service.containerSize}</span>
-                        )}
-                        {service.availableQuantity > 0 ? (
-                          <span>Available: {service.availableQuantity}</span>
-                        ) : (
-                          <span className="text-red-600">Out of Stock</span>
-                        )}
-                        {service.botanicalGroup && (
-                          <span>Group: {service.botanicalGroup}</span>
-                        )}
-                        {service.discontinued && (
-                          <span className="text-red-600">Discontinued</span>
-                        )}
-                      </div>
+                      {service.serviceTerms && (
+                        <p className="text-gray-500 text-xs">Terms: {service.serviceTerms}</p>
+                      )}
                     </div>
                     <div className="flex space-x-2 ml-4">
                       <Button
@@ -134,7 +126,7 @@ const ServiceLocationGroup = ({
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => onDeleteService(service.productId)}
+                        onClick={() => onDeleteService(service.producerServiceId)}
                         className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
                       >
                         <Trash2 className="w-4 h-4" />
