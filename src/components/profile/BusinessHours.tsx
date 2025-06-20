@@ -45,13 +45,25 @@ const BusinessHours = ({ profile }: BusinessHoursProps) => {
       </CardHeader>
       <CardContent>
         {hasValidHours ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {formatHours().map((dayHours, index) => (
-              <div key={index} className="flex justify-between">
-                <span className="font-medium text-gray-700">{dayHours.day}:</span>
-                <span className="text-gray-600">{dayHours.hours}</span>
-              </div>
-            ))}
+          <div className="grid grid-cols-2 gap-8">
+            {/* First column: Sunday - Wednesday */}
+            <div className="space-y-3">
+              {formatHours().slice(0, 4).map((dayHours, index) => (
+                <div key={index} className="flex justify-between">
+                  <span className="font-medium text-gray-700">{dayHours.day}:</span>
+                  <span className="text-gray-600">{dayHours.hours}</span>
+                </div>
+              ))}
+            </div>
+            {/* Second column: Thursday - Saturday */}
+            <div className="space-y-3">
+              {formatHours().slice(4, 7).map((dayHours, index) => (
+                <div key={index + 4} className="flex justify-between">
+                  <span className="font-medium text-gray-700">{dayHours.day}:</span>
+                  <span className="text-gray-600">{dayHours.hours}</span>
+                </div>
+              ))}
+            </div>
           </div>
         ) : (
           <p className="text-gray-600">
