@@ -4,6 +4,7 @@ import ProfileHeader from './ProfileHeader';
 import ContactInformation from './ContactInformation';
 import LocationCard from './LocationCard';
 import BusinessHours from './BusinessHours';
+import ProfileGallery from './ProfileGallery';
 import ActionButtons from './ActionButtons';
 import ProductsList from './ProductsList';
 import ServicesList from './ServicesList';
@@ -41,6 +42,11 @@ const ProfileContent = ({ profile }: ProfileContentProps) => {
           {/* Business Hours */}
           <div className="mb-8">
             <BusinessHours profile={profile} />
+          </div>
+
+          {/* Photo Gallery */}
+          <div className="mb-8">
+            <ProfileGallery profile={profile} />
           </div>
 
           {/* Products and Services */}
