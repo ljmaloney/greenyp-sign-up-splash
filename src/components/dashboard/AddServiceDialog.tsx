@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { createService, ServiceCreateRequest } from '@/services/serviceService';
 import { useServiceForm } from '@/hooks/useServiceForm';
 import { useLocationCache } from '@/hooks/useLocationCache';
+import { useAccountData } from '@/hooks/useAccountData';
 import ServiceFormFields from './ServiceFormFields';
 
 interface AddServiceDialogProps {
@@ -19,7 +20,11 @@ const AddServiceDialog = ({ isOpen, onClose, onServiceCreated, preSelectedLocati
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const { locations, isLoading: locationsLoading } = useLocationCache();
+  const { data: accountData } = useAccountData();
   const { formData, handleChange, resetForm } = useServiceForm(preSelectedLocationId);
+
+  // Get producerId from account data
+  const producerId = accountData?.producer?.producerId;
 
   // Auto-select location if there's only one and no pre-selected location
   useEffect(() => {
@@ -38,6 +43,15 @@ const AddServiceDialog = ({ isOpen, onClose, onServiceCreated, preSelectedLocati
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!producerId) {
+      toast({
+        title: "Profile Required",
+        description: "Producer profile not found. Please ensure you're logged in.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     if (!formData.producerLocationId) {
       toast({
         title: "Location Required",
@@ -51,7 +65,7 @@ const AddServiceDialog = ({ isOpen, onClose, onServiceCreated, preSelectedLocati
     
     try {
       const createRequest: ServiceCreateRequest = {
-        producerId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        producerId: producerId,
         producerLocationId: formData.producerLocationId,
         minServicePrice: formData.minServicePrice,
         maxServicePrice: formData.maxServicePrice,
