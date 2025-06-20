@@ -41,7 +41,7 @@ export const fetchProducts = async (locationId: string): Promise<ProductsRespons
 };
 
 export const createProduct = async (productData: ProductCreateRequest): Promise<any> => {
-  const response = await fetch('https://services.greenyp.com/producer/location/product', {
+  const response = await fetch(getApiUrl('/producer/location/product'), {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -57,7 +57,7 @@ export const createProduct = async (productData: ProductCreateRequest): Promise<
 };
 
 export const updateProduct = async (productData: ProductUpdateRequest): Promise<any> => {
-  const response = await fetch('https://services.greenyp.com/producer/location/product', {
+  const response = await fetch(getApiUrl('/producer/location/product'), {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
