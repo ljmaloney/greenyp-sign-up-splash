@@ -56,7 +56,7 @@ const PhotoGalleryContent = () => {
     }
   };
 
-  const handleImageDelete = async (imageId: string) => {
+  const handleImageDelete = async (imageId: string, images: GalleryImage[]) => {
     // Find the image to get its filename
     const imageToDelete = images.find(img => img.id === imageId);
     if (!imageToDelete) {
@@ -128,7 +128,7 @@ const PhotoGalleryContent = () => {
                     <GalleryGrid
                       images={images}
                       onImageClick={setEnlargedImage}
-                      onImageDelete={handleImageDelete}
+                      onImageDelete={(imageId) => handleImageDelete(imageId, images)}
                       isDeleting={deleteImageMutation.isPending}
                     />
                   )}
