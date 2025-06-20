@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import ProfileHeader from './ProfileHeader';
 import ContactInformation from './ContactInformation';
 import LocationCard from './LocationCard';
@@ -10,6 +11,7 @@ import ProductsList from './ProductsList';
 import ServicesList from './ServicesList';
 import { ProfileData } from '@/types/profile';
 import { useSubscriptions } from '@/hooks/useSubscriptions';
+import { Package, Wrench } from 'lucide-react';
 
 interface ProfileContentProps {
   profile: ProfileData;
@@ -32,6 +34,30 @@ const ProfileContent = ({ profile }: ProfileContentProps) => {
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           <ProfileHeader profile={profile} />
+
+          {/* Product and Service Links */}
+          {(hasProductsFeature || hasServicesFeature) && (
+            <div className="flex flex-wrap gap-4 mb-8">
+              {hasProductsFeature && (
+                <Link
+                  to={`/profile/${profile.producerId}/products`}
+                  className="inline-flex items-center px-4 py-2 bg-greenyp-600 text-white rounded-lg hover:bg-greenyp-700 transition-colors"
+                >
+                  <Package className="w-4 h-4 mr-2" />
+                  View Products
+                </Link>
+              )}
+              {hasServicesFeature && (
+                <Link
+                  to={`/profile/${profile.producerId}/services`}
+                  className="inline-flex items-center px-4 py-2 bg-greenyp-600 text-white rounded-lg hover:bg-greenyp-700 transition-colors"
+                >
+                  <Wrench className="w-4 h-4 mr-2" />
+                  View Services
+                </Link>
+              )}
+            </div>
+          )}
 
           {/* Contact and Location Information */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
