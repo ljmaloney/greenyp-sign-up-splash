@@ -52,6 +52,37 @@ const createMockLocationHours = (producerId: string, locationId: string): Locati
   }));
 };
 
+// Create mock profile data from URL parameters when API fails
+const createMockProfileFromParams = (producerId: string, searchParams: URLSearchParams): ProfileData => {
+  const businessName = searchParams.get('businessName') || 'Business Profile';
+  const locationId = searchParams.get('locationId') || `location-${producerId}`;
+  
+  return {
+    producerId,
+    businessName: decodeURIComponent(businessName),
+    narrative: `Welcome to ${decodeURIComponent(businessName)}. We are committed to providing excellent service and quality products to our community. Our experienced team is dedicated to meeting your needs with professional expertise and reliable service.`,
+    locationName: 'Main Location',
+    locationType: 'OFFICE',
+    locationDisplayType: 'BUSINESS_ADDRESS',
+    active: true,
+    addressLine1: '123 Business Street',
+    addressLine2: '',
+    addressLine3: '',
+    city: 'Phoenix',
+    state: 'AZ',
+    postalCode: '85001',
+    latitude: '33.4484',
+    longitude: '-112.0740',
+    websiteUrl: '',
+    contactName: 'Business Owner',
+    phoneNumber: '(602) 555-1234',
+    cellPhoneNumber: '',
+    subscriptionId: 'featured-business-001',
+    locationId,
+    locationHours: createMockLocationHours(producerId, locationId)
+  };
+};
+
 // Mock profile data based on the providers from CategoryPage
 const getMockProfileData = (producerId: string): ProfileData => {
   const mockProfiles: Record<string, ProfileData> = {
@@ -147,11 +178,17 @@ export const useProfileData = () => {
   if (producerProfileResponse?.response && !producerProfileResponse.errorMessageApi) {
     profile = convertProducerProfileToProfileData(producerProfileResponse.response);
   } else if (producerId) {
-    // Use mock data as fallback
-    profile = getMockProfileData(producerId);
+    // Check if we have hardcoded mock data for this producer ID
+    const mockProfiles = ['producer-001', 'producer-002', 'producer-003'];
+    if (mockProfiles.includes(producerId)) {
+      profile = getMockProfileData(producerId);
+    } else {
+      // Create mock data from URL parameters for unknown producer IDs
+      profile = createMockProfileFromParams(producerId, searchParams);
+    }
   }
 
-  console.log('Profile data:', { producerLocationId, profile, isLoading, error });
+  console.log('Profile data:', { producerId, producerLocationId, profile, isLoading, error });
 
   return {
     profile,
