@@ -35,7 +35,6 @@ const ServiceLocationGroup = ({
   };
 
   const locationName = getLocationName(locationId === 'no-location' ? undefined : locationId);
-  const hasMultipleServices = locationServices.length > 1;
 
   const getPriceUnitsDisplay = (priceUnitsType: string): string => {
     const mappings: Record<string, string> = {
@@ -51,21 +50,19 @@ const ServiceLocationGroup = ({
 
   return (
     <div className="bg-white border rounded-lg overflow-hidden shadow-sm">
-      <Collapsible open={isOpen} onOpenChange={() => hasMultipleServices && onToggle()}>
+      <Collapsible open={isOpen} onOpenChange={onToggle}>
         <div className="bg-greenyp-50 p-4 border-b border-greenyp-100">
           <div className="flex items-center justify-between">
             <CollapsibleTrigger asChild>
-              <div className={`flex items-center flex-1 ${hasMultipleServices ? 'cursor-pointer' : 'cursor-default'}`}>
+              <div className="flex items-center flex-1 cursor-pointer">
                 <MapPin className="w-4 h-4 mr-2 text-greenyp-600" />
                 <h3 className="font-semibold text-gray-900">{locationName}</h3>
                 <span className="ml-2 text-sm text-gray-500">
                   ({locationServices.length} service{locationServices.length !== 1 ? 's' : ''})
                 </span>
-                {hasMultipleServices && (
-                  <div className="ml-2">
-                    {isOpen ? <ChevronUp className="w-4 h-4 text-gray-600" /> : <ChevronDown className="w-4 h-4 text-gray-600" />}
-                  </div>
-                )}
+                <div className="ml-2">
+                  {isOpen ? <ChevronUp className="w-4 h-4 text-gray-600" /> : <ChevronDown className="w-4 h-4 text-gray-600" />}
+                </div>
               </div>
             </CollapsibleTrigger>
             <Button 
