@@ -18,47 +18,53 @@ const ContactInformation = ({ profile }: ContactInformationProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
-        <div>
-          <span className="font-medium text-gray-700">Contact: </span>
-          <span className="text-gray-600">
+        <div className="flex justify-between">
+          <span className="font-medium text-gray-700">Contact:</span>
+          <span className="text-gray-600 text-right">
             {profile.contactName || '-'}
           </span>
         </div>
-        <div>
-          <span className="font-medium text-gray-700">Phone: </span>
-          {profile.phoneNumber ? (
-            <a href={`tel:${profile.phoneNumber}`} className="text-greenyp-600 hover:underline">
-              {profile.phoneNumber}
-            </a>
-          ) : (
-            <span className="text-gray-600">-</span>
-          )}
+        <div className="flex justify-between">
+          <span className="font-medium text-gray-700">Phone:</span>
+          <div className="text-right">
+            {profile.phoneNumber ? (
+              <a href={`tel:${profile.phoneNumber}`} className="text-greenyp-600 hover:underline">
+                {profile.phoneNumber}
+              </a>
+            ) : (
+              <span className="text-gray-600">-</span>
+            )}
+          </div>
         </div>
-        <div>
-          <span className="font-medium text-gray-700">Cell: </span>
-          {profile.cellPhoneNumber ? (
-            <a href={`tel:${profile.cellPhoneNumber}`} className="text-greenyp-600 hover:underline">
-              {profile.cellPhoneNumber}
-            </a>
-          ) : (
-            <span className="text-gray-600">-</span>
-          )}
+        <div className="flex justify-between">
+          <span className="font-medium text-gray-700">Cell:</span>
+          <div className="text-right">
+            {profile.cellPhoneNumber ? (
+              <a href={`tel:${profile.cellPhoneNumber}`} className="text-greenyp-600 hover:underline">
+                {profile.cellPhoneNumber}
+              </a>
+            ) : (
+              <span className="text-gray-600">-</span>
+            )}
+          </div>
         </div>
-        <div>
-          <span className="font-medium text-gray-700">Email: </span>
-          <span className="text-gray-600">-</span>
+        <div className="flex justify-between">
+          <span className="font-medium text-gray-700">Email:</span>
+          <span className="text-gray-600 text-right">-</span>
         </div>
-        <div>
-          <span className="font-medium text-gray-700">Website: </span>
-          {profile.websiteUrl ? (
-            <a href={profile.websiteUrl} target="_blank" rel="noopener noreferrer" 
-               className="text-greenyp-600 hover:underline inline-flex items-center">
-              <Globe className="w-4 h-4 mr-1" />
-              Visit Website
-            </a>
-          ) : (
-            <span className="text-gray-600">-</span>
-          )}
+        <div className="flex justify-between">
+          <span className="font-medium text-gray-700">Website:</span>
+          <div className="text-right">
+            {profile.websiteUrl ? (
+              <a href={profile.websiteUrl} target="_blank" rel="noopener noreferrer" 
+                 className="text-greenyp-600 hover:underline inline-flex items-center">
+                <Globe className="w-4 h-4 mr-1" />
+                Visit Website
+              </a>
+            ) : (
+              <span className="text-gray-600">-</span>
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>

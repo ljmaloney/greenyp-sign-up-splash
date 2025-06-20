@@ -13,7 +13,7 @@ const ProfileHeader = ({ profile }: ProfileHeaderProps) => {
       
       {profile.narrative && (
         <div className="bg-greenyp-50 p-6 rounded-lg border border-greenyp-200 mb-8">
-          <p className="text-gray-700 text-lg leading-relaxed">{profile.narrative}</p>
+          <p className="text-gray-700 text-lg leading-relaxed text-justify">{profile.narrative}</p>
         </div>
       )}
     </div>

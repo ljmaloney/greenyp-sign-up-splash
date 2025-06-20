@@ -25,16 +25,10 @@ const LocationCard = ({ profile }: LocationCardProps) => {
       <CardHeader>
         <CardTitle className="flex items-center">
           <MapPin className="w-5 h-5 mr-2 text-greenyp-600" />
-          Location
+          {profile.locationName || 'Location'}
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {profile.locationName && (
-          <div className="mb-3">
-            <span className="font-medium text-gray-700">Location Name: </span>
-            <span className="text-gray-600">{profile.locationName}</span>
-          </div>
-        )}
         <div className="text-gray-600 mb-4">
           {formatAddress()}
         </div>
