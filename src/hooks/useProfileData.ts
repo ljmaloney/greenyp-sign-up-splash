@@ -174,15 +174,21 @@ export const useProfileData = () => {
   console.log('Profile data params:', { producerId, locationId, searchParams: Object.fromEntries(searchParams) });
   
   // Use the producer profile hook with locationId
-  const { data: producerProfileResponse, isLoading, error } = useProducerProfile(locationId || '');
+  const { data: producerProfileResponse, isLoading: apiLoading, error: apiError } = useProducerProfile(locationId || '');
   
   // Convert producer profile to profile data format if available
   let profile: ProfileData | null = null;
+  let isLoading = false;
+  let error: Error | null = null;
+
   if (producerProfileResponse?.response && !producerProfileResponse.errorMessageApi) {
+    // API returned valid data
     profile = convertProducerProfileToProfileData(producerProfileResponse.response);
+    isLoading = apiLoading;
+    error = apiError;
     console.log('Using API response data');
   } else if (locationId) {
-    // Check if we have hardcoded mock data for this location ID
+    // API failed or returned error, use mock data
     const mockProfiles = ['producer-001', 'producer-002', 'producer-003'];
     if (mockProfiles.includes(locationId)) {
       profile = getMockProfileData(locationId);
@@ -192,6 +198,14 @@ export const useProfileData = () => {
       profile = createMockProfileFromParams(locationId, searchParams);
       console.log('Using generated mock data from URL params');
     }
+    
+    // When using mock data, we're not loading and there's no error for the user
+    isLoading = false;
+    error = null;
+  } else {
+    // No locationId available
+    isLoading = apiLoading;
+    error = apiError;
   }
 
   console.log('Profile data result:', { locationId, profile, isLoading, error });
