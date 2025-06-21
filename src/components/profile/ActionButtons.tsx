@@ -10,7 +10,7 @@ interface ActionButtonsProps {
 
 const ActionButtons = ({ profile }: ActionButtonsProps) => {
   return (
-    <div className="mt-8 flex flex-wrap gap-4">
+    <div className="mt-8 flex flex-wrap gap-4 justify-center items-center">
       <Button className="bg-greenyp-600 hover:bg-greenyp-700 text-white">
         Get Quote
       </Button>
