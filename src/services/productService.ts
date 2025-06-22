@@ -1,3 +1,4 @@
+
 import { ProductsResponse } from '@/types/profile';
 import { getApiUrl } from '@/config/api';
 
@@ -94,7 +95,7 @@ export const deleteProduct = async (productId: string): Promise<any> => {
 };
 
 export const discontinueProduct = async (productData: ProductDiscontinueRequest): Promise<any> => {
-  const response = await fetch(getApiUrl('/producer/location/product'), {
+  const response = await fetch(getApiUrl('/producer/location/product/discontinue'), {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
