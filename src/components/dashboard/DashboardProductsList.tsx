@@ -1,7 +1,9 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import EditProductDialog from './EditProductDialog';
 import AddProductDialog from './AddProductDialog';
 import DeleteServiceDialog from './DeleteServiceDialog';
+import DiscontinueProductDialog from './DiscontinueProductDialog';
 import ProductsHeader from './ProductsHeader';
 import ProductsContent from './ProductsContent';
 import { useProductsWithLocationCache } from '@/hooks/useProductsWithLocationCache';
@@ -11,6 +13,7 @@ const DashboardProductsList = () => {
   const [editingProduct, setEditingProduct] = useState<ProductResponse | null>(null);
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [deletingProductId, setDeletingProductId] = useState<string | null>(null);
+  const [discontinuingProduct, setDiscontinuingProduct] = useState<ProductResponse | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [preSelectedLocationId, setPreSelectedLocationId] = useState('');
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
@@ -58,6 +61,11 @@ const DashboardProductsList = () => {
   const handleProductUpdated = () => {
     refetch();
     setEditingProduct(null);
+  };
+
+  const handleProductDiscontinued = () => {
+    refetch();
+    setDiscontinuingProduct(null);
   };
 
   const handleProductCreated = () => {
@@ -108,7 +116,12 @@ const DashboardProductsList = () => {
         openGroups={openGroups}
         onToggleGroup={toggleGroup}
         onEditProduct={handleEdit}
-        onDeleteProduct={(productId) => setDeletingProductId(productId)}
+        onDeleteProduct={(productId) => {
+          const product = Object.values(groupedProducts).flat().find(p => p.productId === productId);
+          if (product) {
+            setDiscontinuingProduct(product);
+          }
+        }}
         onAddProduct={handleAddProduct}
       />
 
@@ -129,6 +142,14 @@ const DashboardProductsList = () => {
         onClose={() => setEditingProduct(null)}
         product={editingProduct}
         onProductUpdated={handleProductUpdated}
+      />
+
+      <DiscontinueProductDialog
+        isOpen={!!discontinuingProduct}
+        onClose={() => setDiscontinuingProduct(null)}
+        productId={discontinuingProduct?.productId || null}
+        productName={discontinuingProduct?.name}
+        onProductDiscontinued={handleProductDiscontinued}
       />
 
       <DeleteServiceDialog

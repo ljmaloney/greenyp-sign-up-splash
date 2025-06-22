@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -137,15 +136,27 @@ const EditProductFormFields = ({ formData, onFieldChange }: EditProductFormField
       </div>
 
       {formData.discontinued && (
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Discontinue Date
-          </label>
-          <Input
-            type="date"
-            value={formData.discontinueDate}
-            onChange={(e) => onFieldChange('discontinueDate', e.target.value)}
-          />
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Discontinue Date
+            </label>
+            <Input
+              type="date"
+              value={formData.discontinueDate}
+              onChange={(e) => onFieldChange('discontinueDate', e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Last Order Date
+            </label>
+            <Input
+              type="date"
+              value={formData.lastOrderDate}
+              onChange={(e) => onFieldChange('lastOrderDate', e.target.value)}
+            />
+          </div>
         </div>
       )}
     </div>

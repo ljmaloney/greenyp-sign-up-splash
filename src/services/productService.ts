@@ -1,4 +1,3 @@
-
 import { ProductsResponse } from '@/types/profile';
 import { getApiUrl } from '@/config/api';
 
@@ -28,6 +27,12 @@ export interface ProductUpdateRequest {
   discontinueDate?: string;
   lastOrderDate?: string;
   attributeMap: Record<string, any>;
+}
+
+export interface ProductDiscontinueRequest {
+  productId: string;
+  discontinueDate: string;
+  lastOrderDate: string;
 }
 
 export const fetchProducts = async (locationId: string): Promise<ProductsResponse> => {
@@ -83,6 +88,22 @@ export const deleteProduct = async (productId: string): Promise<any> => {
 
   if (!response.ok) {
     throw new Error(`Failed to delete product: ${response.status}`);
+  }
+
+  return response.json();
+};
+
+export const discontinueProduct = async (productData: ProductDiscontinueRequest): Promise<any> => {
+  const response = await fetch(getApiUrl('/producer/location/product'), {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(productData),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to discontinue product: ${response.status}`);
   }
 
   return response.json();
