@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import EditServiceDialog from './EditServiceDialog';
 import AddServiceDialog from './AddServiceDialog';
-import DeleteServiceDialog from './DeleteServiceDialog';
+import DiscontinueServiceDialog from './DiscontinueServiceDialog';
 import ServicesHeader from './ServicesHeader';
 import ServicesContent from './ServicesContent';
 import { useServicesWithLocationCache } from '@/hooks/useServicesWithLocationCache';
@@ -11,8 +11,7 @@ import { ServiceResponse } from '@/services/servicesService';
 const DashboardServicesList = () => {
   const [editingService, setEditingService] = useState<ServiceResponse | null>(null);
   const [isAddingService, setIsAddingService] = useState(false);
-  const [deletingServiceId, setDeletingServiceId] = useState<string | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [discontinuingService, setDiscontinuingService] = useState<ServiceResponse | null>(null);
   const [preSelectedLocationId, setPreSelectedLocationId] = useState('');
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
 
@@ -39,25 +38,14 @@ const DashboardServicesList = () => {
     setEditingService(service);
   };
 
-  const handleDelete = async () => {
-    if (!deletingServiceId) return;
-    
-    setIsDeleting(true);
-    try {
-      // Delete service logic here
-      console.log('Deleting service:', deletingServiceId);
-      await refetch();
-    } catch (error) {
-      console.error('Error deleting service:', error);
-    } finally {
-      setIsDeleting(false);
-      setDeletingServiceId(null);
-    }
-  };
-
   const handleServiceUpdated = () => {
     refetch();
     setEditingService(null);
+  };
+
+  const handleServiceDiscontinued = () => {
+    refetch();
+    setDiscontinuingService(null);
   };
 
   const handleServiceCreated = () => {
@@ -108,7 +96,12 @@ const DashboardServicesList = () => {
         openGroups={openGroups}
         onToggleGroup={toggleGroup}
         onEditService={handleEdit}
-        onDeleteService={(serviceId) => setDeletingServiceId(serviceId)}
+        onDeleteService={(serviceId) => {
+          const service = Object.values(groupedServices).flat().find(s => s.producerServiceId === serviceId);
+          if (service) {
+            setDiscontinuingService(service);
+          }
+        }}
         onAddService={handleAddService}
       />
 
@@ -129,12 +122,12 @@ const DashboardServicesList = () => {
         onServiceUpdated={handleServiceUpdated}
       />
 
-      <DeleteServiceDialog
-        isOpen={!!deletingServiceId}
-        isDeleting={isDeleting}
-        onClose={() => setDeletingServiceId(null)}
-        onConfirm={handleDelete}
-        serviceId={deletingServiceId}
+      <DiscontinueServiceDialog
+        isOpen={!!discontinuingService}
+        onClose={() => setDiscontinuingService(null)}
+        serviceId={discontinuingService?.producerServiceId || null}
+        serviceName={discontinuingService?.shortDescription}
+        onServiceDiscontinued={handleServiceDiscontinued}
       />
     </div>
   );

@@ -1,4 +1,3 @@
-
 import { getApiUrl } from '@/config/api';
 
 export interface ServiceCreateRequest {
@@ -20,6 +19,11 @@ export interface ServiceUpdateRequest {
   shortDescription: string;
   description: string;
   serviceTerms: string;
+}
+
+export interface ServiceDiscontinueRequest {
+  serviceId: string;
+  discontinueDate: string;
 }
 
 export const createService = async (serviceData: ServiceCreateRequest): Promise<any> => {
@@ -65,6 +69,22 @@ export const deleteService = async (serviceId: string): Promise<any> => {
 
   if (!response.ok) {
     throw new Error(`Failed to delete service: ${response.status}`);
+  }
+
+  return response.json();
+};
+
+export const discontinueService = async (serviceData: ServiceDiscontinueRequest): Promise<any> => {
+  const response = await fetch(getApiUrl('/producer/location/service/discontinue'), {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(serviceData),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to discontinue service: ${response.status}`);
   }
 
   return response.json();
