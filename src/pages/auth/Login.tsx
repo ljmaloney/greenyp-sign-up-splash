@@ -72,14 +72,14 @@ const Login = () => {
           
           <div className="flex gap-6 justify-center">
             <Link
-                to={`/subscriber/signup`}
+                to={`/subscribers/signup`}
                 className="text-yellow-600 hover:text-yellow-700 text-sm font-medium transition-colors"
                 aria-label={`Create subscriber account`}
             >
               List Your Business
             </Link>
             <Link
-                to={`/subscriber`}
+                to={`/subscribers`}
                 className="text-yellow-600 hover:text-yellow-700 text-sm font-medium transition-colors"
                 aria-label={`Show more information for subscribers`}
             >
