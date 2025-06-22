@@ -1,7 +1,7 @@
 
 import React, { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import Header from '@/components/Header';
+import SignUpHeader from '@/components/SignUpHeader';
 import Footer from '@/components/Footer';
 import SignUpForm from '@/components/signup/SignUpForm';
 
@@ -16,7 +16,7 @@ const SignUp = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <SignUpHeader />
       <main className="flex-grow bg-gray-50 py-12">
         <div className="container mx-auto px-4 max-w-4xl">
           <SignUpForm selectedPlan={selectedPlan} />
