@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -65,13 +65,12 @@ const DiscontinueProductDialog = ({
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>Discontinue Product</DialogTitle>
+          <DialogDescription>
+            Are you sure you want to discontinue "{productName}"? This action cannot be undone.
+          </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-4">
-          <p className="text-sm text-gray-600">
-            Are you sure you want to discontinue "{productName}"? This action cannot be undone.
-          </p>
-          
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
