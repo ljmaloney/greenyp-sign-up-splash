@@ -21,8 +21,13 @@ const PublicHeader = () => {
       </div>
 
       <div className="flex items-center space-x-4">
+        <Link to="/subscribers">
+          <Button variant="outline" className="border-greenyp-600 text-greenyp-600 hover:bg-greenyp-50">
+            Subscribers
+          </Button>
+        </Link>
         <Link to="/dashboard">
-          <Button className="bg-greenyp-600 hover:bg-greenyp-700 text-white">Subscriber Login</Button>
+          <Button className="bg-greenyp-600 hover:bg-greenyp-700 text-white">Login</Button>
         </Link>
       </div>
     </header>
