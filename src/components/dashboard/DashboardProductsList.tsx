@@ -24,22 +24,16 @@ const DashboardProductsList = () => {
     producerId
   } = useProductsWithLocationCache();
 
-  // Memoize the location IDs to prevent infinite re-renders
-  const locationIds = useMemo(() => 
-    locations.map(location => location.id),
-    [locations]
-  );
-
   // Auto-open all location groups when locations are loaded
   useEffect(() => {
-    if (locationIds.length > 0) {
-      const allOpen = locationIds.reduce((acc, locationId) => {
-        acc[locationId] = true;
+    if (locations.length > 0) {
+      const allOpen = locations.reduce((acc, location) => {
+        acc[location.id] = true;
         return acc;
       }, {} as Record<string, boolean>);
       setOpenGroups(allOpen);
     }
-  }, [locationIds]);
+  }, [locations.length]); // Only depend on the length, not the entire array
 
   const handleEdit = (product: ProductResponse) => {
     setEditingProduct(product);
