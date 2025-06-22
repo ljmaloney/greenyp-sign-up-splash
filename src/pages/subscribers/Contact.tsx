@@ -9,7 +9,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/components/ui/sonner";
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Mail, Clock } from 'lucide-react';
 
 interface ContactFormData {
   name: string;
@@ -106,43 +105,11 @@ const Contact = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Contact Information */}
+            {/* Quick Links - moved to top */}
             <div className="space-y-8">
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-2xl text-greenyp-800">Get in Touch</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="flex items-start space-x-4">
-                    <div className="bg-greenyp-100 p-3 rounded-full">
-                      <Mail className="h-6 w-6 text-greenyp-600" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">Email</h3>
-                      <p className="text-gray-600">info@greenyp.com</p>
-                      <p className="text-gray-600">sales@greenyp.com</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start space-x-4">
-                    <div className="bg-greenyp-100 p-3 rounded-full">
-                      <Clock className="h-6 w-6 text-greenyp-600" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">Business Hours</h3>
-                      <p className="text-gray-600">
-                        Monday - Friday: 9:00 AM - 6:00 PM EST<br />
-                        Saturday: 10:00 AM - 4:00 PM EST<br />
-                        Sunday: Closed
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-xl text-greenyp-800">Quick Links</CardTitle>
+                  <CardTitle className="text-xl text-greenyp-800 text-left">Quick Links</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div>
@@ -170,15 +137,27 @@ const Contact = () => {
                       </a>
                     </p>
                   </div>
+                  <div className="pt-4 border-t">
+                    <h4 className="font-semibold text-gray-900 mb-2">Contact Information</h4>
+                    <p className="text-gray-600 text-sm mb-1">
+                      <strong>Email:</strong> info@greenyp.com | sales@greenyp.com
+                    </p>
+                    <p className="text-gray-600 text-sm">
+                      <strong>Business Hours:</strong><br />
+                      Monday - Friday: 9:00 AM - 6:00 PM EST<br />
+                      Saturday: 10:00 AM - 4:00 PM EST<br />
+                      Sunday: Closed
+                    </p>
+                  </div>
                 </CardContent>
               </Card>
             </div>
 
-            {/* Contact Form */}
+            {/* Send us a Message - moved below Quick Links */}
             <div>
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-2xl text-greenyp-800">Send us a Message</CardTitle>
+                  <CardTitle className="text-2xl text-greenyp-800 text-left">Send us a Message</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <Form {...form}>
@@ -188,7 +167,7 @@ const Contact = () => {
                         name="name"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Full Name *</FormLabel>
+                            <FormLabel className="text-left block">Full Name *</FormLabel>
                             <FormControl>
                               <Input placeholder="Enter your full name" {...field} required />
                             </FormControl>
@@ -202,7 +181,7 @@ const Contact = () => {
                         name="email"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Email Address *</FormLabel>
+                            <FormLabel className="text-left block">Email Address *</FormLabel>
                             <FormControl>
                               <Input type="email" placeholder="Enter your email" {...field} required />
                             </FormControl>
@@ -216,7 +195,7 @@ const Contact = () => {
                         name="subject"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Subject *</FormLabel>
+                            <FormLabel className="text-left block">Subject *</FormLabel>
                             <FormControl>
                               <Input placeholder="What's this about?" {...field} required />
                             </FormControl>
@@ -230,7 +209,7 @@ const Contact = () => {
                         name="message"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Message *</FormLabel>
+                            <FormLabel className="text-left block">Message *</FormLabel>
                             <FormControl>
                               <Textarea 
                                 placeholder="Tell us how we can help you..."
