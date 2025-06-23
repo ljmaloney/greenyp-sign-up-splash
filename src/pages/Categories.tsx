@@ -77,14 +77,16 @@ const Categories = () => {
           {categories?.map((category, index) => (
             <div 
               key={index}
-              className="bg-white rounded-xl p-8 text-center transition-all hover:shadow-md border-4 border-greenyp-600 hover:border-yellow-500 w-full max-w-sm sm:w-80 lg:w-72"
+              className="bg-white rounded-xl p-8 text-center transition-all hover:shadow-md border-4 border-greenyp-600 hover:border-yellow-500 w-full max-w-sm sm:w-80 lg:w-72 flex flex-col"
             >
-              {renderIcon(category)}
-              <h3 className="text-xl font-semibold mb-2 text-gray-800">{category.lineOfBusinessName}</h3>
-              <p className="text-gray-600">{category.shortDescription}</p>
+              <div className="flex-grow">
+                {renderIcon(category)}
+                <h3 className="text-xl font-semibold mb-2 text-gray-800">{category.lineOfBusinessName}</h3>
+                <p className="text-gray-600">{category.shortDescription}</p>
+              </div>
               <Link 
                 to={`/categories/${category.lineOfBusinessId}`}
-                className="mt-6 inline-flex items-center text-greenyp-600 hover:text-greenyp-800 font-medium"
+                className="mt-6 inline-flex items-center justify-center text-greenyp-600 hover:text-greenyp-800 font-medium"
                 aria-label={`Show more information about ${category.lineOfBusinessName}`}
               >
                 View Providers
