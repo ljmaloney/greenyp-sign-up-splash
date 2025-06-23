@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import ProfileHeader from './ProfileHeader';
 import ContactInformation from './ContactInformation';
 import LocationCard from './LocationCard';
@@ -18,11 +18,13 @@ interface ProfileContentProps {
 }
 
 const ProfileContent = ({ profile }: ProfileContentProps) => {
+  const params = useParams<{ producerId: string }>();
   const { data: subscriptions } = useSubscriptions();
   
   console.log('ProfileContent - Profile data:', profile);
   console.log('ProfileContent - Profile subscriptionIds:', profile.subscriptionIds);
   console.log('ProfileContent - Available subscriptions:', subscriptions);
+  console.log('ProfileContent - URL producerId param:', params.producerId);
   
   // Check if any of the profile's subscriptionIds have the specified feature
   const hasFeature = (featureName: string): boolean => {
@@ -45,6 +47,9 @@ const ProfileContent = ({ profile }: ProfileContentProps) => {
   console.log('ProfileContent - Features:', { hasProductsFeature, hasServicesFeature });
   console.log('ProfileContent - Using profile producerId:', profile.producerId, 'locationId:', profile.locationId);
 
+  // Use the URL parameter for navigation links
+  const urlProducerId = params.producerId;
+
   return (
     <section className="py-12">
       <div className="container mx-auto px-4">
@@ -56,7 +61,7 @@ const ProfileContent = ({ profile }: ProfileContentProps) => {
             <div className="flex flex-wrap gap-4 mb-8">
               {hasProductsFeature && (
                 <Link
-                  to={`/profile/${profile.producerId}/products`}
+                  to={`/profile/${urlProducerId}/products`}
                   className="inline-flex items-center px-4 py-2 bg-greenyp-600 text-white rounded-lg hover:bg-greenyp-700 transition-colors"
                 >
                   <Package className="w-4 h-4 mr-2" />
@@ -65,7 +70,7 @@ const ProfileContent = ({ profile }: ProfileContentProps) => {
               )}
               {hasServicesFeature && (
                 <Link
-                  to={`/profile/${profile.producerId}/services`}
+                  to={`/profile/${urlProducerId}/services`}
                   className="inline-flex items-center px-4 py-2 bg-greenyp-600 text-white rounded-lg hover:bg-greenyp-700 transition-colors"
                 >
                   <Wrench className="w-4 h-4 mr-2" />
