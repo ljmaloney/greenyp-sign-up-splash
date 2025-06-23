@@ -3,6 +3,8 @@ import React from 'react';
 import type { ProducerProfile } from '@/types/profile';
 import ProfileHeader from './ProfileHeader';
 import ProfileGallery from './ProfileGallery';
+import ContactInfoCard from './ContactInfoCard';
+import HoursCard from './HoursCard';
 
 interface ProfileContentProps {
   profile: ProducerProfile;
@@ -13,6 +15,13 @@ const ProfileContent = ({ profile }: ProfileContentProps) => {
     <div className="container mx-auto px-4 py-8 max-w-6xl">
       <div className="space-y-6">
         <ProfileHeader profile={profile} />
+        
+        {/* Contact and Hours Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <ContactInfoCard profile={profile} />
+          <HoursCard profile={profile} />
+        </div>
+        
         <ProfileGallery profile={profile} />
       </div>
     </div>
