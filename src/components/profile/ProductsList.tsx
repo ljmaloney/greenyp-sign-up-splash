@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -8,6 +7,7 @@ import { useProducts } from '@/hooks/useProducts';
 import { Product } from '@/types/profile';
 
 interface ProductsListProps {
+  producerId: string;
   locationId: string;
   maxItems?: number;
 }
@@ -190,8 +190,8 @@ const ProductCard = ({ product }: { product: Product }) => (
   </div>
 );
 
-const ProductsList = ({ locationId, maxItems = 3 }: ProductsListProps) => {
-  const { data: productsResponse, isLoading, error } = useProducts(locationId);
+const ProductsList = ({ producerId, locationId, maxItems = 3 }: ProductsListProps) => {
+  const { data: productsResponse, isLoading, error } = useProducts(producerId, locationId);
 
   if (isLoading) {
     return (

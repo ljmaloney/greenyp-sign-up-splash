@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Package } from 'lucide-react';
@@ -31,7 +30,7 @@ const ProfileProductsPage = () => {
   const { producerId } = useParams<{ producerId: string }>();
   const [searchParams] = useSearchParams();
   const { profile, isLoading: profileLoading, error: profileError } = useProfileData();
-  const { data: productsResponse, isLoading: productsLoading, error: productsError } = useProducts(profile?.locationId);
+  const { data: productsResponse, isLoading: productsLoading, error: productsError } = useProducts(profile?.producerId, profile?.locationId);
 
   if (profileLoading) {
     return <ProfileLoadingState />;

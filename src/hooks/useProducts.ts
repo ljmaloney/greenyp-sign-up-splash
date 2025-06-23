@@ -2,10 +2,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchProducts } from '@/services/productService';
 
-export const useProducts = (locationId: string | undefined) => {
+export const useProducts = (producerId: string | undefined, locationId: string | undefined) => {
   return useQuery({
-    queryKey: ['products', locationId],
-    queryFn: () => fetchProducts(locationId!),
-    enabled: !!locationId,
+    queryKey: ['products', producerId, locationId],
+    queryFn: () => fetchProducts(producerId!, locationId!),
+    enabled: !!producerId && !!locationId,
   });
 };

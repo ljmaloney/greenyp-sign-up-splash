@@ -1,3 +1,4 @@
+
 import { ProducerProfile, ProfileData, LocationHours } from '@/types/profile';
 
 export const createMockLocationHours = (producerId: string, locationId: string): LocationHours[] => {
@@ -132,8 +133,8 @@ export const createMockProfileFromParams = (producerId: string, searchParams: UR
     contactName: 'Business Owner',
     phoneNumber: phone,
     cellPhoneNumber: '',
-    subscriptionId: 'featured-business-001',
-    subscriptionIds: ['featured-business-001'],
+    subscriptionId: '900e7344-0470-46ab-82e0-b85afe11cd81', // Use the Featured Business Listing subscription ID that has products and services features
+    subscriptionIds: ['900e7344-0470-46ab-82e0-b85afe11cd81'],
     locationId: `location-${producerId}`,
     locationHours: mockHours
   };

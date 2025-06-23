@@ -93,7 +93,7 @@ const ProfileContent = ({ profile }: ProfileContentProps) => {
           {(hasProductsFeature || hasServicesFeature) && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               {hasProductsFeature && profile.locationId && (
-                <ProductsList locationId={profile.locationId} maxItems={7} />
+                <ProductsList producerId={profile.producerId} locationId={profile.locationId} maxItems={7} />
               )}
               {hasServicesFeature && profile.locationId && (
                 <ServicesList producerId={profile.producerId} locationId={profile.locationId} maxItems={7} />

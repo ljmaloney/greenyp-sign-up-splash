@@ -36,8 +36,8 @@ export interface ProductDiscontinueRequest {
   lastOrderDate: string;
 }
 
-export const fetchProducts = async (locationId: string): Promise<ProductsResponse> => {
-  const response = await fetch(getApiUrl(`/producer/location/${locationId}/products`));
+export const fetchProducts = async (producerId: string, locationId: string): Promise<ProductsResponse> => {
+  const response = await fetch(getApiUrl(`/producer/${producerId}/location/${locationId}/products`));
   
   if (!response.ok) {
     throw new Error(`Failed to fetch products: ${response.status}`);
