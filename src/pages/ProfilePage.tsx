@@ -9,7 +9,7 @@ import ProfileErrorState from '@/components/profile/ProfileErrorState';
 
 const ProfilePage = () => {
   const { producerId, producerLocationId } = useParams<{ 
-    producerId: string; 
+    producerId: string;
     producerLocationId: string; 
   }>();
   

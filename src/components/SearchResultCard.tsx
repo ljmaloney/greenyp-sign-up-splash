@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Card, CardContent } from "@/components/ui/card";
@@ -36,9 +37,9 @@ const generateMapUrl = (latitude: string, longitude: string, businessName: strin
   return `https://maps.googleapis.com/maps/api/staticmap?center=${latitude},${longitude}&zoom=15&size=200x150&markers=color:red%7C${latitude},${longitude}&key=YOUR_GOOGLE_MAPS_API_KEY`;
 };
 
-// Helper function to create profile URL with the exact format specified
+// Helper function to create profile URL with the desired format
 const createProfileUrl = (result: SearchResult) => {
-  return `/profile/${result.producerLocationId}`;
+  return `/profile/${result.producerId}/${result.producerLocationId}`;
 };
 
 const SearchResultCard = ({ result, isNarrativeExpanded, onToggleNarrative }: SearchResultCardProps) => {

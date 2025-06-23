@@ -44,8 +44,8 @@ const ProfileHours = ({ hours }: ProfileHoursProps) => {
       <CardContent>
         {sortedHours.length > 0 ? (
           <div className="space-y-2">
-            {sortedHours.map((hour) => (
-              <div key={hour.locationHoursId} className="flex justify-between">
+            {sortedHours.map((hour, index) => (
+              <div key={hour.locationHoursId || `${hour.dayOfWeek}-${index}`} className="flex justify-between">
                 <span className="font-medium text-gray-900">
                   {formatDayName(hour.dayOfWeek)}
                 </span>
