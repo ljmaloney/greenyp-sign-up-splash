@@ -48,7 +48,7 @@ const ContactInfoCard = ({ profile }: ContactInfoCardProps) => {
         <div className="flex items-center gap-3">
           <Mail className="w-5 h-5 text-greenyp-600 flex-shrink-0" />
           <div>
-            <p className="font-medium text-gray-900">Email Address: - </p>
+            <p className="font-medium text-gray-900">Email Address: {profile.emailAddress || '-'}</p>
           </div>
         </div>
 
@@ -66,7 +66,7 @@ const ContactInfoCard = ({ profile }: ContactInfoCardProps) => {
                 {profile.websiteUrl}
               </a>
             ) : (
-              <p className="text-gray-600">-</p>
+              <span className="text-gray-600">-</span>
             )}</p>
           </div>
         </div>

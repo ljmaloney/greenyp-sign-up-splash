@@ -1,3 +1,4 @@
+
 export interface LocationHours {
   locationHoursId: string;
   createDate: string;
@@ -30,6 +31,7 @@ export interface ProducerProfile {
   cellPhone: string;
   latitude: string;
   longitude: string;
+  emailAddress: string;
   websiteUrl: string;
   businessNarrative: string;
   iconLink: string;
