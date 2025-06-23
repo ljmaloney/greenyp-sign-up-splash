@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Package } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -29,6 +29,7 @@ const getProductTypeDisplay = (productType: string): string => {
 
 const ProfileProductsPage = () => {
   const { producerId } = useParams<{ producerId: string }>();
+  const [searchParams] = useSearchParams();
   const { profile, isLoading: profileLoading, error: profileError } = useProfileData();
   const { data: productsResponse, isLoading: productsLoading, error: productsError } = useProducts(profile?.locationId);
 
@@ -46,6 +47,9 @@ const ProfileProductsPage = () => {
 
   const products = productsResponse?.response || [];
 
+  // Preserve search parameters when navigating back to profile
+  const backToProfileUrl = `/profile/${producerId}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
+
   return (
     <ProfilePageLayout>
       <section className="py-12">
@@ -53,7 +57,7 @@ const ProfileProductsPage = () => {
           <div className="max-w-4xl mx-auto">
             {/* Back Link */}
             <Link
-              to={`/profile/${producerId}`}
+              to={backToProfileUrl}
               className="inline-flex items-center text-greenyp-600 hover:text-greenyp-700 mb-6"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
