@@ -3,7 +3,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Button } from "@/components/ui/button";
 import { ChevronRight } from 'lucide-react';
 import { useCategories } from '@/hooks/useCategories';
 import { CategoryWithIcon } from '@/types/category';
@@ -82,28 +81,27 @@ const SubscriberCategories = () => {
               Industry Categories
             </h1>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Find qualified green industry professionals in your area by category
+              Get listed in your industry category and connect with customers actively searching for your services
             </p>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="flex flex-wrap justify-center gap-8">
             {categories?.map((category, index) => (
               <div 
                 key={index}
-                className="bg-white rounded-xl p-8 text-center transition-all hover:shadow-md hover:bg-gray-50 border border-greenyp-100 flex flex-col"
+                className="bg-white rounded-xl p-8 text-center transition-all hover:shadow-md hover:bg-gray-50 border-2 border-greenyp-600 hover:border-yellow-500 w-full max-w-sm sm:w-80 lg:w-72 flex flex-col"
               >
                 <div className="flex-grow">
                   {renderIcon(category)}
                   <h3 className="text-xl font-semibold mb-2 text-gray-800">{category.lineOfBusinessName}</h3>
                   <p className="text-gray-600 mb-6">{category.shortDescription}</p>
                 </div>
-                <Link to={`/subscribers/categories/${category.lineOfBusinessId}`}>
-                  <Button 
-                    className="bg-greenyp-600 hover:bg-greenyp-700 text-white inline-flex items-center"
-                  >
-                    Show more information
-                    <ChevronRight className="w-4 h-4 ml-2" />
-                  </Button>
+                <Link 
+                  to={`/subscribers/categories/${category.lineOfBusinessId}`}
+                  className="inline-flex items-center justify-center text-greenyp-600 hover:text-greenyp-800 font-medium"
+                >
+                  Show more information
+                  <ChevronRight className="w-4 h-4 ml-2" />
                 </Link>
               </div>
             ))}
