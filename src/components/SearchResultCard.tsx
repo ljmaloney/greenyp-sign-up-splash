@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Phone, Globe, Eye, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
 import type { SearchResult } from '../types/search';
@@ -42,6 +43,8 @@ const generateMapUrl = (latitude: string, longitude: string, businessName: strin
 };
 
 const SearchResultCard = ({ result, isNarrativeExpanded, onToggleNarrative }: SearchResultCardProps) => {
+  const location = useLocation();
+
   return (
     <Card className="overflow-hidden">
       <CardContent className="p-6">
@@ -63,6 +66,7 @@ const SearchResultCard = ({ result, isNarrativeExpanded, onToggleNarrative }: Se
                 )}
                 <Link 
                   to={createProfileUrl(result)}
+                  state={{ from: location.pathname + location.search }}
                   className="text-xl font-semibold text-gray-900 hover:text-greenyp-600 transition-colors"
                 >
                   {result.businessName}
@@ -70,6 +74,7 @@ const SearchResultCard = ({ result, isNarrativeExpanded, onToggleNarrative }: Se
               </div>
               <Link 
                 to={createProfileUrl(result)}
+                state={{ from: location.pathname + location.search }}
                 className="flex items-center text-greenyp-600 hover:text-greenyp-700 text-sm font-medium"
               >
                 <Eye className="w-4 h-4 mr-1" />
