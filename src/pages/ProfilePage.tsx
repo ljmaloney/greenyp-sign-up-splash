@@ -31,25 +31,39 @@ const ProfilePage = () => {
       setError(null);
 
       try {
-        // Fetch profile data using the correct API configuration
-        const profileUrl = getApiUrl(`/profile/${producerId}/location/${producerLocationId}`);
+        // First, let's check if the main API host is working for profile
+        // Since search works at localhost:8081, let's try the profile endpoint there
+        const profileUrl = `http://localhost:8081/profile/${producerId}/location/${producerLocationId}`;
         console.log('Fetching profile from:', profileUrl);
         
-        const profileResponse = await fetch(profileUrl);
+        const profileResponse = await fetch(profileUrl, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        
         if (!profileResponse.ok) {
           throw new Error(`Failed to fetch profile: ${profileResponse.status}`);
         }
         
         const profileData: ProducerProfileResponse = await profileResponse.json();
+        console.log('Profile data received:', profileData);
         setProfile(profileData);
 
         // Fetch products if feature exists
         if (hasFeature('products')) {
           try {
-            const productsUrl = getApiUrl(`/producer/${producerId}/location/${producerLocationId}/products`);
+            const productsUrl = `http://localhost:8081/producer/${producerId}/location/${producerLocationId}/products`;
             console.log('Fetching products from:', productsUrl);
             
-            const productsResponse = await fetch(productsUrl);
+            const productsResponse = await fetch(productsUrl, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            });
+            
             if (productsResponse.ok) {
               const productsData: ProductsResponse = await productsResponse.json();
               setProducts(productsData);
@@ -62,10 +76,16 @@ const ProfilePage = () => {
         // Fetch services if feature exists
         if (hasFeature('services')) {
           try {
-            const servicesUrl = getApiUrl(`/producer/${producerId}/location/${producerLocationId}/services`);
+            const servicesUrl = `http://localhost:8081/producer/${producerId}/location/${producerLocationId}/services`;
             console.log('Fetching services from:', servicesUrl);
             
-            const servicesResponse = await fetch(servicesUrl);
+            const servicesResponse = await fetch(servicesUrl, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            });
+            
             if (servicesResponse.ok) {
               const servicesData: ServicesResponse = await servicesResponse.json();
               setServices(servicesData);
