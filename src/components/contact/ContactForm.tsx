@@ -11,6 +11,7 @@ import { toast } from "@/components/ui/sonner";
 interface ContactFormData {
   name: string;
   email: string;
+  phone: string;
   subject: string;
   message: string;
 }
@@ -22,6 +23,7 @@ const ContactForm = () => {
     defaultValues: {
       name: '',
       email: '',
+      phone: '',
       subject: '',
       message: ''
     }
@@ -38,6 +40,11 @@ const ContactForm = () => {
 
   const validateSubject = (subject: string): boolean => {
     return /^[A-Za-z\s]+$/.test(subject);
+  };
+
+  const validatePhone = (phone: string): boolean => {
+    if (!phone.trim()) return true; // Optional field
+    return /^(?:\+1)?\s?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/.test(phone);
   };
 
   const onSubmit = async (data: ContactFormData) => {
@@ -57,12 +64,18 @@ const ContactForm = () => {
       return;
     }
 
+    if (!validatePhone(data.phone)) {
+      toast.error("Please enter a valid phone number format.");
+      return;
+    }
+
     setLoading(true);
     
     try {
       const payload = {
         contactName: data.name,
         emailAddress: data.email,
+        phoneNumber: data.phone || null,
         subject: data.subject,
         message: data.message
       };
@@ -118,6 +131,20 @@ const ContactForm = () => {
                   <FormLabel className="text-left block">Email Address *</FormLabel>
                   <FormControl>
                     <Input type="email" placeholder="Enter your email" {...field} required />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-left block">Phone Number</FormLabel>
+                  <FormControl>
+                    <Input type="tel" placeholder="Enter your phone number (optional)" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
