@@ -2,6 +2,7 @@
 import React from 'react';
 import { MapPin, Phone, Globe, ExternalLink, Building2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import Map from '@/components/Map';
 import type { ProducerProfile } from '@/types/profile';
 
 interface ProfileHeaderProps {
@@ -19,34 +20,44 @@ const ProfileHeader = ({ profile }: ProfileHeaderProps) => {
   return (
     <Card>
       <CardContent className="p-8">
-        <div className="flex items-center mb-6">
-          {profile.iconLink ? (
-            <img 
-              src={profile.iconLink} 
-              alt={`${profile.businessName} icon`}
-              className="w-16 h-16 mr-4 rounded-lg object-cover"
-              onError={(e) => {
-                const target = e.currentTarget as HTMLImageElement;
-                target.style.display = 'none';
-                const fallback = target.nextElementSibling as HTMLElement;
-                if (fallback) {
-                  fallback.style.display = 'block';
-                }
-              }}
-            />
-          ) : (
-            <Building2 className="w-16 h-16 mr-4 text-greenyp-600" />
-          )}
-          {profile.iconLink && (
-            <Building2 className="w-16 h-16 mr-4 text-greenyp-600 hidden" />
-          )}
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              {profile.businessName}
-            </h1>
-            {profile.locationName && profile.locationName !== profile.businessName && (
-              <p className="text-lg text-gray-600 mb-2 text-left">{profile.locationName}</p>
+        <div className="flex justify-between items-start mb-6">
+          <div className="flex items-center flex-1">
+            {profile.iconLink ? (
+              <img 
+                src={profile.iconLink} 
+                alt={`${profile.businessName} icon`}
+                className="w-16 h-16 mr-4 rounded-lg object-cover"
+                onError={(e) => {
+                  const target = e.currentTarget as HTMLImageElement;
+                  target.style.display = 'none';
+                  const fallback = target.nextElementSibling as HTMLElement;
+                  if (fallback) {
+                    fallback.style.display = 'block';
+                  }
+                }}
+              />
+            ) : (
+              <Building2 className="w-16 h-16 mr-4 text-greenyp-600" />
             )}
+            {profile.iconLink && (
+              <Building2 className="w-16 h-16 mr-4 text-greenyp-600 hidden" />
+            )}
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                {profile.businessName}
+              </h1>
+              {profile.locationName && profile.locationName !== profile.businessName && (
+                <p className="text-lg text-gray-600 mb-2 text-left">{profile.locationName}</p>
+              )}
+            </div>
+          </div>
+          
+          <div className="ml-6">
+            <Map 
+              latitude={profile.latitude} 
+              longitude={profile.longitude} 
+              businessName={profile.businessName}
+            />
           </div>
         </div>
 

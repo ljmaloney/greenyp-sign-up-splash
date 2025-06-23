@@ -9,26 +9,20 @@ interface MapProps {
 }
 
 const Map = ({ latitude, longitude, businessName }: MapProps) => {
-  // For now, we'll create a placeholder map component
-  // In a real implementation, you would integrate with Google Maps, Mapbox, or similar
-  const mapUrl = `https://www.google.com/maps?q=${latitude},${longitude}&z=15&output=embed`;
+  const handleMapClick = () => {
+    const mapUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
+    window.open(mapUrl, '_blank', 'noopener,noreferrer');
+  };
   
   return (
-    <div className="mt-4">
-      <div className="bg-gray-100 border border-gray-200 rounded-lg p-4 text-center">
-        <MapPin className="w-8 h-8 mx-auto text-greenyp-600 mb-2" />
-        <p className="text-sm text-gray-600 mb-3">Map Location for {businessName}</p>
-        <div className="bg-white border rounded p-2 text-xs text-gray-500">
-          Coordinates: {latitude}, {longitude}
-        </div>
-        <a 
-          href={`https://www.google.com/maps?q=${latitude},${longitude}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-block mt-2 text-greenyp-600 hover:text-greenyp-700 text-sm underline"
-        >
-          View on Google Maps
-        </a>
+    <div 
+      className="w-32 h-24 bg-gray-100 border border-gray-200 rounded-lg p-2 cursor-pointer hover:bg-gray-50 transition-colors"
+      onClick={handleMapClick}
+      title={`View ${businessName} on Google Maps`}
+    >
+      <div className="flex flex-col items-center justify-center h-full text-center">
+        <MapPin className="w-6 h-6 text-greenyp-600 mb-1" />
+        <p className="text-xs text-gray-600 leading-tight">Click to view map</p>
       </div>
     </div>
   );
