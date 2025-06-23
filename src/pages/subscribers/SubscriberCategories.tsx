@@ -25,10 +25,10 @@ const SubscriberCategories = () => {
               {[...Array(6)].map((_, index) => (
                 <div 
                   key={index}
-                  className="bg-white rounded-xl p-6 text-center transition-all border border-greenyp-100 animate-pulse h-48 max-w-xs mx-auto"
+                  className="bg-white rounded-xl p-8 text-center transition-all border border-greenyp-100 animate-pulse"
                 >
-                  <div className="w-8 h-8 bg-gray-200 rounded-full mx-auto mb-3"></div>
-                  <div className="h-5 bg-gray-200 rounded w-3/4 mx-auto mb-2"></div>
+                  <div className="w-12 h-12 bg-gray-200 rounded-full mx-auto mb-4"></div>
+                  <div className="h-6 bg-gray-200 rounded w-3/4 mx-auto mb-2"></div>
                   <div className="h-4 bg-gray-200 rounded w-full mx-auto"></div>
                 </div>
               ))}
@@ -67,7 +67,7 @@ const SubscriberCategories = () => {
 
   const renderIcon = (category: CategoryWithIcon) => {
     const IconComponent = category.iconComponent;
-    return <IconComponent className="w-8 h-8 text-greenyp-500 mx-auto mb-3" />;
+    return <IconComponent className="w-12 h-12 text-greenyp-500 mx-auto mb-4" />;
   };
 
   return (
@@ -77,35 +77,31 @@ const SubscriberCategories = () => {
         <div className="container mx-auto px-4 md:px-8">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              Supported Categories
+              Industry Categories
             </h1>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              List your business in one of our supported categories and connect with customers today.
+              Get listed in your industry category and connect with customers actively searching for your services
             </p>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-4xl mx-auto">
+          <div className="flex flex-wrap justify-center gap-8">
             {categories?.map((category, index) => (
               <div 
                 key={index}
-                className="bg-white rounded-xl transition-all hover:shadow-md border-2 border-greenyp-600 hover:border-yellow-500 w-64 h-64 mx-auto flex flex-col"
+                className="bg-white rounded-xl p-8 text-center transition-all hover:shadow-md border-2 border-greenyp-600 hover:border-yellow-500 w-full max-w-sm sm:w-80 lg:w-72 flex flex-col"
               >
-                <div className="p-6 flex-grow flex flex-col text-center">
-                  <div className="mb-3">
-                    {renderIcon(category)}
-                  </div>
-                  <h3 className="text-xl font-semibold mb-3 text-gray-800 h-14 flex items-center justify-center">{category.lineOfBusinessName}</h3>
-                  <p className="text-sm text-gray-600 flex-grow overflow-hidden">{category.shortDescription}</p>
+                <div className="flex-grow">
+                  {renderIcon(category)}
+                  <h3 className="text-xl font-semibold mb-2 text-gray-800">{category.lineOfBusinessName}</h3>
+                  <p className="text-gray-600 mb-6">{category.shortDescription}</p>
                 </div>
-                <div className="p-6 pt-0">
-                  <Link 
-                    to={`/subscribers/categories/${category.lineOfBusinessId}`}
-                    className="inline-flex items-center justify-center text-greenyp-600 hover:text-greenyp-800 font-medium text-sm w-full"
-                  >
-                    Show more information
-                    <ChevronRight className="w-4 h-4 ml-1" />
-                  </Link>
-                </div>
+                <Link 
+                  to={`/subscribers/categories/${category.lineOfBusinessId}`}
+                  className="mt-6 inline-flex items-center justify-center text-greenyp-600 hover:text-greenyp-800 font-medium"
+                >
+                  Show more information
+                  <ChevronRight className="w-4 h-4 ml-2" />
+                </Link>
               </div>
             ))}
           </div>
