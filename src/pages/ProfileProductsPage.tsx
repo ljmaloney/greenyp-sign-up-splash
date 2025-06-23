@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Package } from 'lucide-react';
@@ -27,6 +28,7 @@ const getProductTypeDisplay = (productType: string): string => {
 };
 
 const ProfileProductsPage = () => {
+  const params = useParams<{ producerId: string }>();
   const [searchParams] = useSearchParams();
   const { profile, isLoading: profileLoading, error: profileError } = useProfileData();
   
@@ -52,11 +54,9 @@ const ProfileProductsPage = () => {
 
   const products = productsResponse?.response || [];
   
-  // Extract producerId from the first product if available, fallback to profile producerId
-  const backProducerId = products.length > 0 ? products[0].producerId : profile.producerId;
-  
-  // Use the extracted producerId for the back URL, preserving search parameters
-  const backToProfileUrl = `/profile/${backProducerId}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
+  // Use the producerLocationId from URL params for the back URL, preserving search parameters
+  const producerLocationId = params.producerId; // This is actually the producerLocationId
+  const backToProfileUrl = `/profile/${producerLocationId}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
 
   return (
     <ProfilePageLayout>

@@ -24,6 +24,7 @@ const getPriceUnitsDisplay = (priceUnitsType: string): string => {
 };
 
 const ProfileServicesPage = () => {
+  const params = useParams<{ producerId: string }>();
   const [searchParams] = useSearchParams();
   const { profile, isLoading: profileLoading, error: profileError } = useProfileData();
   const { data: servicesResponse, isLoading: servicesLoading, error: servicesError } = useServices(profile?.producerId, profile?.locationId);
@@ -42,11 +43,9 @@ const ProfileServicesPage = () => {
 
   const services = servicesResponse?.response || [];
   
-  // Extract producerId from the first service if available, fallback to profile producerId
-  const backProducerId = services.length > 0 ? services[0].producerId : profile.producerId;
-  
-  // Use the extracted producerId for the back URL, preserving search parameters
-  const backToProfileUrl = `/profile/${backProducerId}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
+  // Use the producerLocationId from URL params for the back URL, preserving search parameters
+  const producerLocationId = params.producerId; // This is actually the producerLocationId
+  const backToProfileUrl = `/profile/${producerLocationId}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
 
   return (
     <ProfilePageLayout>
