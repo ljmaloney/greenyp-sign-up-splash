@@ -13,16 +13,16 @@ import { useCategories } from '@/hooks/useCategories';
 import { useCategoryServices } from '@/hooks/useCategoryServices';
 
 const CategoryPage = () => {
-  const { slug } = useParams<{ slug: string }>();
+  const { lineOfBusinessId } = useParams<{ lineOfBusinessId: string }>();
   
   // Fetch all categories using the same service as the CategorySection
   const { data: categories, isLoading: categoriesLoading, error: categoriesError } = useCategories();
   
-  // Find the specific category based on the lineOfBusinessId (slug)
-  const category = categories?.find(cat => cat.lineOfBusinessId === slug);
+  // Find the specific category based on the lineOfBusinessId
+  const category = categories?.find(cat => cat.lineOfBusinessId === lineOfBusinessId);
   
   // Fetch services for this category
-  const { data: services, isLoading: servicesLoading, error: servicesError } = useCategoryServices(slug || '');
+  const { data: services, isLoading: servicesLoading, error: servicesError } = useCategoryServices(lineOfBusinessId || '');
   
   useEffect(() => {
     // Update document title for SEO
@@ -73,7 +73,7 @@ const CategoryPage = () => {
         
         {/* Recent Listings Section - This will show empty state if API fails */}
         <RecentListings 
-          lineOfBusinessId={slug || ''} 
+          lineOfBusinessId={lineOfBusinessId || ''} 
           categoryName={category.lineOfBusinessName} 
         />
         
