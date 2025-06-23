@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -89,16 +88,16 @@ const SubscriberCategories = () => {
             {categories?.map((category, index) => (
               <div 
                 key={index}
-                className="bg-white rounded-xl p-6 text-center transition-all hover:shadow-md border-2 border-greenyp-600 hover:border-yellow-500 h-48 max-w-xs mx-auto flex flex-col justify-between"
+                className="bg-white rounded-xl p-6 text-center transition-all hover:shadow-md border-2 border-greenyp-600 hover:border-yellow-500 h-56 max-w-xs mx-auto flex flex-col"
               >
-                <div>
+                <div className="flex-grow">
                   {renderIcon(category)}
                   <h3 className="text-xl font-semibold mb-2 text-gray-800">{category.lineOfBusinessName}</h3>
-                  <p className="text-sm text-gray-600 mb-4 line-clamp-2">{category.shortDescription}</p>
+                  <p className="text-sm text-gray-600 mb-4 line-clamp-3">{category.shortDescription}</p>
                 </div>
                 <Link 
                   to={`/subscribers/categories/${category.lineOfBusinessId}`}
-                  className="inline-flex items-center justify-center text-greenyp-600 hover:text-greenyp-800 font-medium text-sm"
+                  className="inline-flex items-center justify-center text-greenyp-600 hover:text-greenyp-800 font-medium text-sm mt-auto"
                 >
                   Show more information
                   <ChevronRight className="w-4 h-4 ml-1" />
