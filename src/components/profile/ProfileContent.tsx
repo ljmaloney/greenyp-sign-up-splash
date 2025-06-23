@@ -47,8 +47,10 @@ const ProfileContent = ({ profile }: ProfileContentProps) => {
   console.log('ProfileContent - Features:', { hasProductsFeature, hasServicesFeature });
   console.log('ProfileContent - Using profile producerId:', profile.producerId, 'locationId:', profile.locationId);
 
-  // Use the producerLocationId from URL parameter for navigation links (same as what we use for API calls)
-  const producerLocationId = params.producerId;
+  // Use the EXACT same URL parameter for navigation links
+  const urlProducerId = params.producerId;
+  
+  console.log('ProfileContent - URL parameter for links:', urlProducerId);
 
   return (
     <section className="py-12">
@@ -61,8 +63,11 @@ const ProfileContent = ({ profile }: ProfileContentProps) => {
             <div className="flex flex-wrap gap-4 mb-8">
               {hasProductsFeature && (
                 <Link
-                  to={`/profile/${producerLocationId}/products`}
+                  to={`/profile/${urlProducerId}/products`}
                   className="inline-flex items-center px-4 py-2 bg-greenyp-600 text-white rounded-lg hover:bg-greenyp-700 transition-colors"
+                  onClick={() => {
+                    console.log('ProfileContent - Products link clicked, navigating to:', `/profile/${urlProducerId}/products`);
+                  }}
                 >
                   <Package className="w-4 h-4 mr-2" />
                   View Products
@@ -70,8 +75,11 @@ const ProfileContent = ({ profile }: ProfileContentProps) => {
               )}
               {hasServicesFeature && (
                 <Link
-                  to={`/profile/${producerLocationId}/services`}
+                  to={`/profile/${urlProducerId}/services`}
                   className="inline-flex items-center px-4 py-2 bg-greenyp-600 text-white rounded-lg hover:bg-greenyp-700 transition-colors"
+                  onClick={() => {
+                    console.log('ProfileContent - Services link clicked, navigating to:', `/profile/${urlProducerId}/services`);
+                  }}
                 >
                   <Wrench className="w-4 h-4 mr-2" />
                   View Services

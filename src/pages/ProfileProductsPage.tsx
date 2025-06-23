@@ -32,6 +32,8 @@ const ProfileProductsPage = () => {
   const [searchParams] = useSearchParams();
   const { profile, isLoading: profileLoading, error: profileError } = useProfileData();
   
+  console.log('ProfileProductsPage - URL params:', params);
+  console.log('ProfileProductsPage - Search params:', Object.fromEntries(searchParams));
   console.log('ProfileProductsPage - Profile data:', profile);
   
   // Use the locationId from the profile data, not computed separately
@@ -54,11 +56,13 @@ const ProfileProductsPage = () => {
 
   const products = productsResponse?.response || [];
   
-  // Use the producerLocationId from URL params for the back link (this is what we use for the API call)
-  const producerLocationId = params.producerId;
-  const backToProfileUrl = `/profile/${producerLocationId}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
+  // Use the EXACT same URL parameter that was used to access this page
+  const urlProducerId = params.producerId;
+  const backToProfileUrl = `/profile/${urlProducerId}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
 
+  console.log('ProfileProductsPage - URL producerId:', urlProducerId);
   console.log('ProfileProductsPage - Back URL:', backToProfileUrl);
+  console.log('ProfileProductsPage - Current location:', window.location.href);
 
   return (
     <ProfilePageLayout>
@@ -69,6 +73,9 @@ const ProfileProductsPage = () => {
             <Link
               to={backToProfileUrl}
               className="inline-flex items-center text-greenyp-600 hover:text-greenyp-700 mb-6"
+              onClick={() => {
+                console.log('ProfileProductsPage - Back link clicked, navigating to:', backToProfileUrl);
+              }}
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Profile

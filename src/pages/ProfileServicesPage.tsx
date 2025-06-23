@@ -29,6 +29,10 @@ const ProfileServicesPage = () => {
   const { profile, isLoading: profileLoading, error: profileError } = useProfileData();
   const { data: servicesResponse, isLoading: servicesLoading, error: servicesError } = useServices(profile?.producerId, profile?.locationId);
 
+  console.log('ProfileServicesPage - URL params:', params);
+  console.log('ProfileServicesPage - Search params:', Object.fromEntries(searchParams));
+  console.log('ProfileServicesPage - Profile data:', profile);
+
   if (profileLoading) {
     return <ProfileLoadingState />;
   }
@@ -43,11 +47,13 @@ const ProfileServicesPage = () => {
 
   const services = servicesResponse?.response || [];
   
-  // Use the producerLocationId from URL params for the back link (this is what we use for the API call)
-  const producerLocationId = params.producerId;
-  const backToProfileUrl = `/profile/${producerLocationId}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
+  // Use the EXACT same URL parameter that was used to access this page
+  const urlProducerId = params.producerId;
+  const backToProfileUrl = `/profile/${urlProducerId}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
 
+  console.log('ProfileServicesPage - URL producerId:', urlProducerId);
   console.log('ProfileServicesPage - Back URL:', backToProfileUrl);
+  console.log('ProfileServicesPage - Current location:', window.location.href);
 
   return (
     <ProfilePageLayout>
@@ -58,6 +64,9 @@ const ProfileServicesPage = () => {
             <Link
               to={backToProfileUrl}
               className="inline-flex items-center text-greenyp-600 hover:text-greenyp-700 mb-6"
+              onClick={() => {
+                console.log('ProfileServicesPage - Back link clicked, navigating to:', backToProfileUrl);
+              }}
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Profile
