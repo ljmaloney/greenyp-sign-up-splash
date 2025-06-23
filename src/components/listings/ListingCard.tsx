@@ -1,8 +1,6 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { MapPin, Phone, Globe, ExternalLink, Building2 } from 'lucide-react';
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { ProducerListing } from '@/services/producerProfileService';
 
@@ -11,15 +9,6 @@ interface ListingCardProps {
 }
 
 const ListingCard = ({ listing }: ListingCardProps) => {
-  // Helper function to create profile URL
-  const createProfileUrl = (listing: ProducerListing) => {
-    const params = new URLSearchParams({
-      locationId: listing.producerLocationId,
-      businessName: listing.businessName
-    });
-    return `/profile/${listing.producerId}?${params.toString()}`;
-  };
-
   return (
     <Card className="hover:shadow-md transition-shadow">
       <CardContent className="p-6">
@@ -81,11 +70,9 @@ const ListingCard = ({ listing }: ListingCardProps) => {
           )}
         </div>
         
-        <Link to={createProfileUrl(listing)}>
-          <Button className="w-full bg-greenyp-600 hover:bg-greenyp-700 text-white">
-            View Profile
-          </Button>
-        </Link>
+        <div className="text-center text-gray-500 py-4">
+          Profile page temporarily unavailable
+        </div>
       </CardContent>
     </Card>
   );

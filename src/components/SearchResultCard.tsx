@@ -1,8 +1,7 @@
 
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, Phone, Globe, Eye, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
+import { MapPin, Phone, Globe, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
 import type { SearchResult } from '../types/search';
 
 interface SearchResultCardProps {
@@ -31,11 +30,6 @@ const truncateNarrative = (narrative: string, maxLength: number = 150) => {
   return narrative.substring(0, maxLength) + '...';
 };
 
-// Helper function to create profile URL with the exact format specified
-const createProfileUrl = (result: SearchResult) => {
-  return `/profile/${result.producerId}/location/${result.producerLocationId}`;
-};
-
 const generateMapUrl = (latitude: string, longitude: string, businessName: string) => {
   // Using Google Maps static API for small map images
   const encodedName = encodeURIComponent(businessName);
@@ -43,8 +37,6 @@ const generateMapUrl = (latitude: string, longitude: string, businessName: strin
 };
 
 const SearchResultCard = ({ result, isNarrativeExpanded, onToggleNarrative }: SearchResultCardProps) => {
-  const location = useLocation();
-
   return (
     <Card className="overflow-hidden">
       <CardContent className="p-6">
@@ -64,22 +56,10 @@ const SearchResultCard = ({ result, isNarrativeExpanded, onToggleNarrative }: Se
                     }}
                   />
                 )}
-                <Link 
-                  to={createProfileUrl(result)}
-                  state={{ from: location.pathname + location.search }}
-                  className="text-xl font-semibold text-gray-900 hover:text-greenyp-600 transition-colors"
-                >
+                <h3 className="text-xl font-semibold text-gray-900">
                   {result.businessName}
-                </Link>
+                </h3>
               </div>
-              <Link 
-                to={createProfileUrl(result)}
-                state={{ from: location.pathname + location.search }}
-                className="flex items-center text-greenyp-600 hover:text-greenyp-700 text-sm font-medium"
-              >
-                <Eye className="w-4 h-4 mr-1" />
-                View Profile
-              </Link>
             </div>
             
             <div className="space-y-2 mb-4">

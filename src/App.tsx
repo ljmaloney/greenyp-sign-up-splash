@@ -10,7 +10,6 @@ import PublicIndex from '@/pages/PublicIndex';
 import Categories from '@/pages/Categories';
 import CategoryPage from '@/pages/CategoryPage';
 import SearchResults from '@/pages/SearchResults';
-import ProfilePage from '@/pages/ProfilePage';
 
 // Auth pages
 import Login from '@/pages/auth/Login';
@@ -75,7 +74,6 @@ function App() {
               <Route path="/categories" element={<Categories />} />
               <Route path="/categories/:lineOfBusinessId" element={<CategoryPage />} />
               <Route path="/search" element={<SearchResults />} />
-              <Route path="/profile/:producerId/location/:producerLocationId" element={<ProfilePage />} />
 
               {/* Auth routes */}
               <Route path="/login" element={<Login />} />
