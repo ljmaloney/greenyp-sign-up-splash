@@ -20,6 +20,7 @@ interface ProfileContentProps {
 const ProfileContent = ({ profile }: ProfileContentProps) => {
   const { data: subscriptions } = useSubscriptions();
   
+  console.log('ProfileContent - Profile data:', profile);
   console.log('ProfileContent - Profile subscriptionIds:', profile.subscriptionIds);
   console.log('ProfileContent - Available subscriptions:', subscriptions);
   
@@ -42,6 +43,7 @@ const ProfileContent = ({ profile }: ProfileContentProps) => {
   const hasServicesFeature = hasFeature('services');
   
   console.log('ProfileContent - Features:', { hasProductsFeature, hasServicesFeature });
+  console.log('ProfileContent - Using profile producerId:', profile.producerId, 'locationId:', profile.locationId);
 
   return (
     <section className="py-12">
