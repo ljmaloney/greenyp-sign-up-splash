@@ -14,13 +14,13 @@ interface SearchFormProps {
 
 const SearchForm = ({ showHeading = true }: SearchFormProps) => {
   const [searchParams] = useSearchParams();
-  const { slug } = useParams<{ slug?: string }>();
+  const { lineOfBusinessId } = useParams<{ lineOfBusinessId?: string }>();
   const navigate = useNavigate();
   
-  // Get initial values from URL parameters or slug
+  // Get initial values from URL parameters or lineOfBusinessId from category page
   const initialZipCode = searchParams.get('zipCode') || '';
   const initialDistance = searchParams.get('distance') || '25';
-  const initialCategory = searchParams.get('category') || slug || '';
+  const initialCategory = searchParams.get('category') || lineOfBusinessId || '';
   const initialSearchText = searchParams.get('searchText') || '';
   
   const [zipCode, setZipCode] = useState(initialZipCode);
@@ -43,12 +43,12 @@ const SearchForm = ({ showHeading = true }: SearchFormProps) => {
     }
   }, [initialDistance]);
 
-  // Update selected category when slug changes (for category pages)
+  // Update selected category when lineOfBusinessId changes (for category pages)
   useEffect(() => {
-    if (slug && slug !== selectedCategory) {
-      setSelectedCategory(slug);
+    if (lineOfBusinessId && lineOfBusinessId !== selectedCategory) {
+      setSelectedCategory(lineOfBusinessId);
     }
-  }, [slug, selectedCategory]);
+  }, [lineOfBusinessId, selectedCategory]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
