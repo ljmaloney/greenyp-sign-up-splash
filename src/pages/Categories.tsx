@@ -73,11 +73,11 @@ const Categories = () => {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
+        <div className="flex flex-wrap justify-center gap-8">
           {categories?.map((category, index) => (
             <div 
               key={index}
-              className="bg-gray-50 rounded-xl p-8 text-center transition-all hover:shadow-md hover:bg-gray-100 border border-greenyp-100 w-full max-w-sm"
+              className="bg-white rounded-xl p-8 text-center transition-all hover:shadow-md hover:bg-gray-50 border border-greenyp-100 w-full max-w-sm sm:w-80 lg:w-72"
             >
               {renderIcon(category)}
               <h3 className="text-xl font-semibold mb-2 text-gray-800">{category.lineOfBusinessName}</h3>
