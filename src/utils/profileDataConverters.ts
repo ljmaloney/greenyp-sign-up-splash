@@ -111,7 +111,9 @@ export const createMockProfileFromParams = (producerId: string, searchParams: UR
   const postalCode = searchParams.get('postalCode') || '85001';
   const phone = searchParams.get('phone') || '(602) 555-1234';
 
-  const mockHours: LocationHours[] = createMockLocationHours(producerId, `location-${producerId}`);
+  // Use the producerId directly as locationId instead of constructing it
+  const locationId = producerId;
+  const mockHours: LocationHours[] = createMockLocationHours(producerId, locationId);
 
   return {
     producerId,
@@ -135,7 +137,7 @@ export const createMockProfileFromParams = (producerId: string, searchParams: UR
     cellPhoneNumber: '',
     subscriptionId: '900e7344-0470-46ab-82e0-b85afe11cd81', // Use the Featured Business Listing subscription ID that has products and services features
     subscriptionIds: ['900e7344-0470-46ab-82e0-b85afe11cd81'],
-    locationId: `location-${producerId}`,
+    locationId: locationId, // Use producerId directly as locationId
     locationHours: mockHours
   };
 };

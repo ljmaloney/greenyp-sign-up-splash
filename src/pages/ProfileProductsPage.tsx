@@ -28,7 +28,6 @@ const getProductTypeDisplay = (productType: string): string => {
 };
 
 const ProfileProductsPage = () => {
-  const { producerId } = useParams<{ producerId: string }>();
   const [searchParams] = useSearchParams();
   const { profile, isLoading: profileLoading, error: profileError } = useProfileData();
   
@@ -54,8 +53,8 @@ const ProfileProductsPage = () => {
 
   const products = productsResponse?.response || [];
 
-  // Preserve search parameters when navigating back to profile
-  const backToProfileUrl = `/profile/${producerId}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
+  // Use the profile's producerId for the back URL, preserving search parameters
+  const backToProfileUrl = `/profile/${profile.producerId}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
 
   return (
     <ProfilePageLayout>
