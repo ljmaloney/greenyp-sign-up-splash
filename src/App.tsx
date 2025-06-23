@@ -75,7 +75,7 @@ function App() {
               {/* Public routes */}
               <Route path="/" element={<PublicIndex />} />
               <Route path="/categories" element={<Categories />} />
-              <Route path="/category/:lineOfBusinessId" element={<CategoryPage />} />
+              <Route path="/categories/:lineOfBusinessId" element={<CategoryPage />} />
               <Route path="/search" element={<SearchResults />} />
               <Route path="/profile/:producerId" element={<ProfilePage />} />
               <Route path="/profile/:producerId/products" element={<ProfileProductsPage />} />
@@ -109,7 +109,7 @@ function App() {
               <Route path="/admin/permissions" element={<ProtectedRoute><AdminPermissions /></ProtectedRoute>} />
               <Route path="/admin/settings" element={<ProtectedRoute><AdminSettings /></ProtectedRoute>} />
 
-              {/* Subscribers routes - Fixed the route to use plural 'categories' */}
+              {/* Subscribers routes */}
               <Route path="/subscribers" element={<SubscribersIndex />} />
               <Route path="/subscribers/categories" element={<SubscriberCategories />} />
               <Route path="/subscribers/categories/:lineOfBusinessId" element={<SubscriberCategoryPage />} />

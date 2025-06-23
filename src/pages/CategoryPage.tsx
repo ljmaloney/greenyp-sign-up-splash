@@ -12,16 +12,16 @@ import { useCategoryServices } from '@/hooks/useCategoryServices';
 import { CategoryWithIcon } from '@/types/category';
 
 const CategoryPage = () => {
-  const { slug } = useParams<{ slug: string }>();
+  const { lineOfBusinessId } = useParams<{ lineOfBusinessId: string }>();
   
   // Fetch all categories using the same service as the CategorySection
   const { data: categories, isLoading: categoriesLoading, error: categoriesError } = useCategories();
   
-  // Find the specific category based on the lineOfBusinessId (slug)
-  const category = categories?.find(cat => cat.lineOfBusinessId === slug);
+  // Find the specific category based on the lineOfBusinessId
+  const category = categories?.find(cat => cat.lineOfBusinessId === lineOfBusinessId);
   
   // Fetch services for this category
-  const { data: services, isLoading: servicesLoading, error: servicesError } = useCategoryServices(slug || '');
+  const { data: services, isLoading: servicesLoading, error: servicesError } = useCategoryServices(lineOfBusinessId || '');
   
   useEffect(() => {
     // Scroll to top when page loads
@@ -47,11 +47,11 @@ const CategoryPage = () => {
   }, [category]);
 
   const handleListBusinessClick = () => {
-    console.log('List Your Business button clicked - navigating to /subscriber/signup');
+    console.log('List Your Business button clicked - navigating to /subscribers/signup');
   };
 
   const handleLearnMoreClick = () => {
-    console.log('Learn More button clicked - navigating to /subscriber');
+    console.log('Learn More button clicked - navigating to /subscribers');
   };
   
   if (categoriesLoading) {
@@ -73,7 +73,7 @@ const CategoryPage = () => {
         <main className="flex-grow container mx-auto px-4 py-16 text-center">
           <h1 className="text-3xl font-bold mb-4">Category Not Found</h1>
           <p className="mb-8">We couldn't find the category you're looking for.</p>
-          <Link to="/subscriber">
+          <Link to="/">
             <Button>Return to Home</Button>
           </Link>
         </main>
@@ -139,7 +139,7 @@ const CategoryPage = () => {
         
         {/* Recent Listings Section - This calls the real API */}
         <RecentListings 
-          lineOfBusinessId={slug || ''} 
+          lineOfBusinessId={lineOfBusinessId || ''} 
           categoryName={category.lineOfBusinessName} 
         />
         
@@ -154,12 +154,12 @@ const CategoryPage = () => {
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Button asChild className="bg-greenyp-600 hover:bg-greenyp-700 text-white">
-                <Link to="/subscriber/signup" onClick={handleListBusinessClick}>
+                <Link to="/subscribers/signup" onClick={handleListBusinessClick}>
                   List Your Business
                 </Link>
               </Button>
               <Button asChild variant="outline" className="border-greenyp-600 text-greenyp-700">
-                <Link to="/subscriber" onClick={handleLearnMoreClick}>
+                <Link to="/subscribers" onClick={handleLearnMoreClick}>
                   Learn More
                 </Link>
               </Button>
