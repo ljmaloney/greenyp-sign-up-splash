@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -88,20 +89,24 @@ const SubscriberCategories = () => {
             {categories?.map((category, index) => (
               <div 
                 key={index}
-                className="bg-white rounded-xl p-6 text-center transition-all hover:shadow-md border-2 border-greenyp-600 hover:border-yellow-500 h-56 max-w-xs mx-auto flex flex-col"
+                className="bg-white rounded-xl transition-all hover:shadow-md border-2 border-greenyp-600 hover:border-yellow-500 w-80 h-64 mx-auto flex flex-col"
               >
-                <div className="flex-grow">
-                  {renderIcon(category)}
-                  <h3 className="text-xl font-semibold mb-2 text-gray-800">{category.lineOfBusinessName}</h3>
-                  <p className="text-sm text-gray-600 mb-4 line-clamp-3">{category.shortDescription}</p>
+                <div className="p-6 flex-grow flex flex-col text-center">
+                  <div className="mb-3">
+                    {renderIcon(category)}
+                  </div>
+                  <h3 className="text-xl font-semibold mb-3 text-gray-800 h-14 flex items-center justify-center">{category.lineOfBusinessName}</h3>
+                  <p className="text-sm text-gray-600 flex-grow overflow-hidden">{category.shortDescription}</p>
                 </div>
-                <Link 
-                  to={`/subscribers/categories/${category.lineOfBusinessId}`}
-                  className="inline-flex items-center justify-center text-greenyp-600 hover:text-greenyp-800 font-medium text-sm mt-auto"
-                >
-                  Show more information
-                  <ChevronRight className="w-4 h-4 ml-1" />
-                </Link>
+                <div className="p-6 pt-0">
+                  <Link 
+                    to={`/subscribers/categories/${category.lineOfBusinessId}`}
+                    className="inline-flex items-center justify-center text-greenyp-600 hover:text-greenyp-800 font-medium text-sm w-full"
+                  >
+                    Show more information
+                    <ChevronRight className="w-4 h-4 ml-1" />
+                  </Link>
+                </div>
               </div>
             ))}
           </div>
