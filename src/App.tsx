@@ -109,10 +109,10 @@ function App() {
               <Route path="/admin/permissions" element={<ProtectedRoute><AdminPermissions /></ProtectedRoute>} />
               <Route path="/admin/settings" element={<ProtectedRoute><AdminSettings /></ProtectedRoute>} />
 
-              {/* Subscribers routes */}
+              {/* Subscribers routes - Fixed the route to use plural 'categories' */}
               <Route path="/subscribers" element={<SubscribersIndex />} />
               <Route path="/subscribers/categories" element={<SubscriberCategories />} />
-              <Route path="/subscribers/category/:lineOfBusinessId" element={<SubscriberCategoryPage />} />
+              <Route path="/subscribers/categories/:lineOfBusinessId" element={<SubscriberCategoryPage />} />
               <Route path="/subscribers/contact" element={<SubscriberContact />} />
               <Route path="/subscribers/signup" element={<SubscriberSignUp />} />
               <Route path="/subscribers/signup/confirmation" element={<SubscriberSignUpConfirmation />} />

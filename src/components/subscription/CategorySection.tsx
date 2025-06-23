@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ChevronRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -11,12 +10,12 @@ const CategorySection = () => {
   
   const handleCategoryClick = (categoryId: string) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    navigate(`/subscriber/categories/${categoryId}`);
+    navigate(`/subscribers/categories/${categoryId}`);
   };
 
   const handleViewAllClick = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    navigate('/subscriber/categories');
+    navigate('/subscribers/categories');
   };
 
   if (isLoading) {
