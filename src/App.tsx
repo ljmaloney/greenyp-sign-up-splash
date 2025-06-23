@@ -10,9 +10,6 @@ import PublicIndex from '@/pages/PublicIndex';
 import Categories from '@/pages/Categories';
 import CategoryPage from '@/pages/CategoryPage';
 import SearchResults from '@/pages/SearchResults';
-import ProfilePage from '@/pages/ProfilePage';
-import ProfileProductsPage from '@/pages/ProfileProductsPage';
-import ProfileServicesPage from '@/pages/ProfileServicesPage';
 
 // Auth pages
 import Login from '@/pages/auth/Login';
@@ -77,9 +74,6 @@ function App() {
               <Route path="/categories" element={<Categories />} />
               <Route path="/categories/:lineOfBusinessId" element={<CategoryPage />} />
               <Route path="/search" element={<SearchResults />} />
-              <Route path="/profile/:producerId" element={<ProfilePage />} />
-              <Route path="/profile/:producerId/products" element={<ProfileProductsPage />} />
-              <Route path="/profile/:producerId/services" element={<ProfileServicesPage />} />
 
               {/* Auth routes */}
               <Route path="/login" element={<Login />} />
