@@ -93,7 +93,7 @@ const SubscriberCategories = () => {
               >
                 <div>
                   {renderIcon(category)}
-                  <h3 className="text-lg font-semibold mb-2 text-gray-800">{category.lineOfBusinessName}</h3>
+                  <h3 className="text-xl font-semibold mb-2 text-gray-800">{category.lineOfBusinessName}</h3>
                   <p className="text-sm text-gray-600 mb-4 line-clamp-2">{category.shortDescription}</p>
                 </div>
                 <Link 
