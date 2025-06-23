@@ -90,11 +90,13 @@ const SubscriberCategories = () => {
             {categories?.map((category, index) => (
               <div 
                 key={index}
-                className="bg-white rounded-xl p-8 text-center transition-all hover:shadow-md hover:bg-gray-50 border border-greenyp-100"
+                className="bg-white rounded-xl p-8 text-center transition-all hover:shadow-md hover:bg-gray-50 border border-greenyp-100 flex flex-col"
               >
-                {renderIcon(category)}
-                <h3 className="text-xl font-semibold mb-2 text-gray-800">{category.lineOfBusinessName}</h3>
-                <p className="text-gray-600 mb-6">{category.shortDescription}</p>
+                <div className="flex-grow">
+                  {renderIcon(category)}
+                  <h3 className="text-xl font-semibold mb-2 text-gray-800">{category.lineOfBusinessName}</h3>
+                  <p className="text-gray-600 mb-6">{category.shortDescription}</p>
+                </div>
                 <Link to={`/subscribers/categories/${category.lineOfBusinessId}`}>
                   <Button 
                     className="bg-greenyp-600 hover:bg-greenyp-700 text-white inline-flex items-center"
