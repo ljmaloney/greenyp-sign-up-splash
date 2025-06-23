@@ -46,50 +46,24 @@ const ProfileHeader = ({ profile }: ProfileHeaderProps) => {
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
                 {profile.businessName}
               </h1>
-              {profile.locationName && profile.locationName !== profile.businessName && (
-                <p className="text-lg text-gray-600 mb-2 text-left">{profile.locationName}</p>
-              )}
+              <div>
+                {profile.locationName && profile.locationName !== profile.businessName && (
+                    <p className="text-lg text-gray-600 mb-2 text-left">{profile.locationName}</p>
+                )}
+              </div>
+              <div>
+                    <p className="text-sm text-gray-600 mb-2 text-left">{profile.businessNarrative}</p>
+              </div>
             </div>
           </div>
-          
-          <div className="ml-6">
-            <Map 
-              latitude={profile.latitude} 
-              longitude={profile.longitude} 
+
+          <div className="ml-8">
+            <Map
+              latitude={profile.latitude}
+              longitude={profile.longitude}
               businessName={profile.businessName}
             />
           </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="flex items-center text-gray-600">
-            <MapPin className="w-5 h-5 mr-3 flex-shrink-0 text-greenyp-600" />
-            <span>{fullAddress}</span>
-          </div>
-          
-          {profile.phone && (
-            <div className="flex items-center text-gray-600">
-              <Phone className="w-5 h-5 mr-3 flex-shrink-0 text-greenyp-600"  />
-              <a href={`tel:${profile.phone}`} className="hover:text-greenyp-600">
-                {profile.phone}
-              </a>
-            </div>
-          )}
-          
-          {profile.websiteUrl && (
-            <div className="flex items-center text-gray-600 md:col-span-2">
-              <Globe className="w-5 h-5 mr-3 flex-shrink-0 text-greenyp-600" />
-              <a 
-                href={profile.websiteUrl} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="hover:text-greenyp-600 flex items-center"
-              >
-                {profile.websiteUrl}
-                <ExternalLink className="w-4 h-4 ml-2" />
-              </a>
-            </div>
-          )}
         </div>
       </CardContent>
     </Card>
