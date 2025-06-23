@@ -1,4 +1,3 @@
-
 export interface LocationHours {
   locationHoursId: string;
   createDate: string;
@@ -15,6 +14,7 @@ export interface ProducerProfile {
   producerId: string;
   createDate: string;
   lastUpdateDate: string;
+  subscriptionIds: string[];
   businessName: string;
   locationName: string;
   locationType: string;
@@ -68,6 +68,7 @@ export interface SubscriberProfile {
   cellPhoneNumber: string;
   locationHours: LocationHours[];
   subscriptionId?: string;
+  subscriptionIds?: string[];
   locationId?: string;
 }
 

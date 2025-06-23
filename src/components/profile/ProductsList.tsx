@@ -9,6 +9,7 @@ import { Product } from '@/types/profile';
 
 interface ProductsListProps {
   locationId: string;
+  maxItems?: number;
 }
 
 // Product type mappings for better display
@@ -119,6 +120,42 @@ const mockProducts: Product[] = [
     discontinueDate: '2024-03-01',
     lastOrderDate: '2024-02-28',
     attributes: {}
+  },
+  {
+    productId: 'prod-006',
+    createDate: '2024-04-01',
+    lastUpdateDate: '2024-06-01',
+    producerId: 'producer-001',
+    producerLocationId: 'location-001',
+    productType: 'CONTAINERS',
+    botanicalGroup: 'Containers',
+    name: 'Ceramic Planter - Large',
+    price: 79.99,
+    availableQuantity: 15,
+    containerSize: '20 inch',
+    description: 'Elegant ceramic planter perfect for patios and indoor plants.',
+    discontinued: false,
+    discontinueDate: '',
+    lastOrderDate: '2024-05-30',
+    attributes: {}
+  },
+  {
+    productId: 'prod-007',
+    createDate: '2024-05-01',
+    lastUpdateDate: '2024-06-15',
+    producerId: 'producer-001',
+    producerLocationId: 'location-001',
+    productType: 'BULK_MATERIAL',
+    botanicalGroup: 'Mulch',
+    name: 'Shredded Bark Mulch',
+    price: 35.99,
+    availableQuantity: 100,
+    containerSize: '3 cubic yards',
+    description: 'Natural shredded bark mulch for moisture retention and weed control.',
+    discontinued: false,
+    discontinueDate: '',
+    lastOrderDate: '2024-06-10',
+    attributes: {}
   }
 ];
 
@@ -153,7 +190,7 @@ const ProductCard = ({ product }: { product: Product }) => (
   </div>
 );
 
-const ProductsList = ({ locationId }: ProductsListProps) => {
+const ProductsList = ({ locationId, maxItems = 3 }: ProductsListProps) => {
   const { data: productsResponse, isLoading, error } = useProducts(locationId);
 
   if (isLoading) {
@@ -191,8 +228,8 @@ const ProductsList = ({ locationId }: ProductsListProps) => {
     );
   }
 
-  const displayedProducts = products.slice(0, 3);
-  const hasMoreProducts = products.length > 3;
+  const displayedProducts = products.slice(0, maxItems);
+  const hasMoreProducts = products.length > maxItems;
 
   return (
     <Card>

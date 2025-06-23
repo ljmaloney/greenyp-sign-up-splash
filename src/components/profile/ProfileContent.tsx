@@ -20,14 +20,28 @@ interface ProfileContentProps {
 const ProfileContent = ({ profile }: ProfileContentProps) => {
   const { data: subscriptions } = useSubscriptions();
   
-  // Find the subscription details
-  const currentSubscription = subscriptions?.find(sub => sub.subscriptionId === profile?.subscriptionId);
+  console.log('ProfileContent - Profile subscriptionIds:', profile.subscriptionIds);
+  console.log('ProfileContent - Available subscriptions:', subscriptions);
   
-  // Check if subscription includes Products or Services features using the feature property
-  const hasProductsFeature = currentSubscription?.features.some(feature => 
-    feature.feature === 'products') || false;
-  const hasServicesFeature = currentSubscription?.features.some(feature => 
-    feature.feature === 'services') || false;
+  // Check if any of the profile's subscriptionIds have the specified feature
+  const hasFeature = (featureName: string): boolean => {
+    if (!profile.subscriptionIds || !subscriptions) return false;
+    
+    return profile.subscriptionIds.some(subscriptionId => {
+      const subscription = subscriptions.find(sub => sub.subscriptionId === subscriptionId);
+      const hasFeatureInSubscription = subscription?.features?.some(feature => 
+        feature.feature === featureName
+      ) || false;
+      
+      console.log(`ProfileContent - Checking subscription ${subscriptionId} for feature ${featureName}:`, hasFeatureInSubscription);
+      return hasFeatureInSubscription;
+    });
+  };
+  
+  const hasProductsFeature = hasFeature('products');
+  const hasServicesFeature = hasFeature('services');
+  
+  console.log('ProfileContent - Features:', { hasProductsFeature, hasServicesFeature });
 
   return (
     <section className="py-12">
@@ -79,10 +93,10 @@ const ProfileContent = ({ profile }: ProfileContentProps) => {
           {(hasProductsFeature || hasServicesFeature) && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               {hasProductsFeature && profile.locationId && (
-                <ProductsList locationId={profile.locationId} />
+                <ProductsList locationId={profile.locationId} maxItems={7} />
               )}
               {hasServicesFeature && profile.locationId && (
-                <ServicesList producerId={profile.producerId} locationId={profile.locationId} />
+                <ServicesList producerId={profile.producerId} locationId={profile.locationId} maxItems={7} />
               )}
             </div>
           )}
