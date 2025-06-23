@@ -104,15 +104,16 @@ export const convertProducerProfileToProfileData = (producerProfile: ProducerPro
   };
 };
 
-export const createMockProfileFromParams = (producerId: string, searchParams: URLSearchParams): ProfileData => {
+export const createMockProfileFromParams = (producerLocationId: string, searchParams: URLSearchParams): ProfileData => {
   const businessName = searchParams.get('businessName') || 'Business Profile';
   const city = searchParams.get('city') || 'Phoenix';
   const state = searchParams.get('state') || 'AZ';
   const postalCode = searchParams.get('postalCode') || '85001';
   const phone = searchParams.get('phone') || '(602) 555-1234';
 
-  // Use the producerId directly as locationId instead of constructing it
-  const locationId = producerId;
+  // For mock data, use the producerLocationId as both producerId and locationId
+  const producerId = producerLocationId;
+  const locationId = producerLocationId;
   const mockHours: LocationHours[] = createMockLocationHours(producerId, locationId);
 
   return {
@@ -137,7 +138,7 @@ export const createMockProfileFromParams = (producerId: string, searchParams: UR
     cellPhoneNumber: '',
     subscriptionId: '900e7344-0470-46ab-82e0-b85afe11cd81', // Use the Featured Business Listing subscription ID that has products and services features
     subscriptionIds: ['900e7344-0470-46ab-82e0-b85afe11cd81'],
-    locationId: locationId, // Use producerId directly as locationId
+    locationId: locationId, // Use producerLocationId as locationId
     locationHours: mockHours
   };
 };

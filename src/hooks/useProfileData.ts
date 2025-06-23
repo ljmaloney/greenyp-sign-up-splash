@@ -9,22 +9,22 @@ export const useProfileData = () => {
   const params = useParams<{ producerId: string }>();
   const [searchParams] = useSearchParams();
   
-  // Get the producer ID from URL parameters
-  const producerId = params.producerId;
+  // The producerId from the URL is actually the producerLocationId for the API
+  const producerLocationId = params.producerId;
   
-  // Get the locationId from URL search parameters, fallback to producerId
-  const locationId = searchParams.get('locationId') || producerId;
+  // Get the locationId from URL search parameters, fallback to producerLocationId
+  const locationId = searchParams.get('locationId') || producerLocationId;
   
-  console.log('Profile data params (fixed):', { 
+  console.log('Profile data params (corrected):', { 
     params,
-    producerId,
+    producerLocationId,
     locationIdFromParams: searchParams.get('locationId'),
     finalLocationId: locationId,
     searchParams: Object.fromEntries(searchParams) 
   });
   
-  // Use the producer profile hook with the cleaned locationId
-  const { data: producerProfileResponse, isLoading: apiLoading, error: apiError } = useProducerProfile(locationId || '');
+  // Use the producer profile hook with the producerLocationId
+  const { data: producerProfileResponse, isLoading: apiLoading, error: apiError } = useProducerProfile(producerLocationId || '');
   
   // Convert producer profile to profile data format if available
   let profile: ProfileData | null = null;
@@ -37,14 +37,14 @@ export const useProfileData = () => {
     isLoading = apiLoading;
     error = apiError;
     console.log('Using API response data');
-  } else if (locationId) {
+  } else if (producerLocationId) {
     // API failed or returned error, use mock data
-    if (MOCK_PROFILE_IDS.includes(locationId)) {
-      profile = getMockProfileData(locationId);
+    if (MOCK_PROFILE_IDS.includes(producerLocationId)) {
+      profile = getMockProfileData(producerLocationId);
       console.log('Using hardcoded mock data');
     } else {
       // Create mock data from URL parameters for unknown location IDs
-      profile = createMockProfileFromParams(producerId || locationId, searchParams);
+      profile = createMockProfileFromParams(producerLocationId, searchParams);
       console.log('Using generated mock data from URL params');
     }
     
@@ -52,12 +52,12 @@ export const useProfileData = () => {
     isLoading = false;
     error = null;
   } else {
-    // No locationId available
+    // No producerLocationId available
     isLoading = apiLoading;
     error = apiError;
   }
 
-  console.log('Profile data result:', { producerId, locationId, profile, isLoading, error });
+  console.log('Profile data result:', { producerLocationId, locationId, profile, isLoading, error });
 
   return {
     profile,
