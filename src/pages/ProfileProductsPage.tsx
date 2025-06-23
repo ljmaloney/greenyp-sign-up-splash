@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Package } from 'lucide-react';
@@ -47,7 +46,7 @@ const ProfileProductsPage = () => {
     return <ProfileErrorState />;
   }
 
-  if (!product) {
+  if (!profile) {
     return <ProfileErrorState />;
   }
 
