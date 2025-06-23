@@ -11,19 +11,15 @@ const Contact = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-grow bg-gray-50 py-12">
-        <div className="container mx-auto px-4 max-w-6xl">
+        <div className="container mx-auto px-4 max-w-4xl">
           <ContactPageHeader />
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Quick Links - moved to top */}
-            <div className="space-y-8">
-              <QuickLinksCard />
-            </div>
+          <div className="space-y-8">
+            {/* Quick Links at the top */}
+            <QuickLinksCard />
 
-            {/* Send us a Message - moved below Quick Links */}
-            <div>
-              <ContactForm />
-            </div>
+            {/* Send us a Message below */}
+            <ContactForm />
           </div>
         </div>
       </main>
