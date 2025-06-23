@@ -24,13 +24,39 @@ const CategoryHeroSection = ({ category, services, servicesLoading, servicesErro
           {renderIcon(category)}
           <h1 className="text-3xl md:text-4xl font-bold ml-2 text-gray-900">{category.lineOfBusinessName}</h1>
         </div>
-        <p className="text-xl text-gray-700 max-w-3xl">{category.shortDescription}</p>
-        
+        <p className="text-xl text-gray-700 max-w-3xl text-left">{category.shortDescription}</p>
+        <div className="mt-6 p-6 bg-white rounded-lg border border-greenyp-200">
         {category.description && (
-          <div className="mt-6 p-6 bg-white rounded-lg border border-greenyp-200">
-            <p className="text-gray-700">{category.description}</p>
-          </div>
+
+            <p className="text-gray-700 text-left">{category.description}</p>
+
         )}
+        {/* Services with green checkmarks */}
+        <br/><br/>
+        {services && services.length > 0 && !servicesLoading && (
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-2 text-left">Available Services:</h3>
+              <ul className="space-y-1 text-gray-700">
+                {services.map((service) => (
+                    <li key={service.lobServiceId} className="text-sm flex items-start text-left">
+                      <Check className="w-4 h-4 text-greenyp-600 mr-2 mt-0.5 flex-shrink-0" />
+                      <span>
+                            <span className="font-medium">{service.serviceName}</span> - {service.serviceDescription}
+                          </span>
+                    </li>
+                ))}
+              </ul>
+            </div>
+        )}
+
+        {servicesLoading && (
+            <div className="text-sm text-gray-600 text-left">Loading services...</div>
+        )}
+
+        {servicesError && (
+            <div className="text-sm text-red-600 text-left">Error loading services. Please try again later.</div>
+        )}
+      </div>
       </div>
     </section>
   );

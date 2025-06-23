@@ -62,14 +62,7 @@ const CategoryPage = () => {
           servicesLoading={servicesLoading}
           servicesError={servicesError}
         />
-        
-        {/* Services Section */}
-        <CategoryServicesSection 
-          services={services}
-          servicesLoading={servicesLoading}
-          servicesError={servicesError}
-        />
-        
+
         {/* Recent Listings Section - This will show empty state if API fails */}
         <RecentListings 
           lineOfBusinessId={lineOfBusinessId || ''} 
