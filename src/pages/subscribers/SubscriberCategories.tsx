@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -89,7 +88,7 @@ const SubscriberCategories = () => {
             {categories?.map((category, index) => (
               <div 
                 key={index}
-                className="bg-white rounded-xl p-8 text-center transition-all hover:shadow-md hover:bg-gray-50 border-2 border-greenyp-600 hover:border-yellow-500 w-full max-w-sm sm:w-80 lg:w-72 flex flex-col"
+                className="bg-white rounded-xl p-8 text-center transition-all hover:shadow-md border-2 border-greenyp-600 hover:border-yellow-500 w-full max-w-sm sm:w-80 lg:w-72 flex flex-col"
               >
                 <div className="flex-grow">
                   {renderIcon(category)}
