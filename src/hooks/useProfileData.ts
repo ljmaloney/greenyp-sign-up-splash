@@ -6,20 +6,24 @@ import { convertProducerProfileToProfileData, createMockProfileFromParams } from
 import { getMockProfileData, MOCK_PROFILE_IDS } from '@/data/mockProfileData';
 
 export const useProfileData = () => {
-  const { producerId } = useParams<{ producerId: string }>();
+  const { producerId: rawProducerId } = useParams<{ producerId: string }>();
   const [searchParams] = useSearchParams();
   
-  // Get the locationId from URL search parameters - this is what we need for the API call
+  // Clean up the producer ID - remove any colon prefix if present
+  const producerId = rawProducerId?.startsWith(':') ? rawProducerId.slice(1) : rawProducerId;
+  
+  // Get the locationId from URL search parameters, fallback to producerId
   const locationId = searchParams.get('locationId') || producerId;
   
-  console.log('Profile data params:', { 
-    producerId, 
+  console.log('Profile data params (fixed):', { 
+    rawProducerId,
+    cleanedProducerId: producerId,
     locationIdFromParams: searchParams.get('locationId'),
     finalLocationId: locationId,
     searchParams: Object.fromEntries(searchParams) 
   });
   
-  // Use the producer profile hook with the locationId from search params
+  // Use the producer profile hook with the cleaned locationId
   const { data: producerProfileResponse, isLoading: apiLoading, error: apiError } = useProducerProfile(locationId || '');
   
   // Convert producer profile to profile data format if available
