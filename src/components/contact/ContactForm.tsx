@@ -48,11 +48,14 @@ const ContactForm = () => {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <RequestTypeField control={form.control} />
-            <CompanyNameField control={form.control} />
-            <NameField control={form.control} />
-            <EmailField control={form.control} />
-            <PhoneField control={form.control} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <RequestTypeField control={form.control} />
+              <CompanyNameField control={form.control} />
+              <NameField control={form.control} />
+              <EmailField control={form.control} />
+              <PhoneField control={form.control} />
+            </div>
+            
             <SubjectField control={form.control} />
             <MessageField control={form.control} />
 
