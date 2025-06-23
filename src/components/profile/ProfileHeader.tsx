@@ -45,20 +45,20 @@ const ProfileHeader = ({ profile }: ProfileHeaderProps) => {
               {profile.businessName}
             </h1>
             {profile.locationName && profile.locationName !== profile.businessName && (
-              <p className="text-lg text-gray-600 mb-2">{profile.locationName}</p>
+              <p className="text-lg text-gray-600 mb-2 text-left">{profile.locationName}</p>
             )}
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex items-center text-gray-600">
-            <MapPin className="w-5 h-5 mr-3 flex-shrink-0" />
+            <MapPin className="w-5 h-5 mr-3 flex-shrink-0 text-greenyp-600" />
             <span>{fullAddress}</span>
           </div>
           
           {profile.phone && (
             <div className="flex items-center text-gray-600">
-              <Phone className="w-5 h-5 mr-3 flex-shrink-0" />
+              <Phone className="w-5 h-5 mr-3 flex-shrink-0 text-greenyp-600"  />
               <a href={`tel:${profile.phone}`} className="hover:text-greenyp-600">
                 {profile.phone}
               </a>
@@ -67,7 +67,7 @@ const ProfileHeader = ({ profile }: ProfileHeaderProps) => {
           
           {profile.websiteUrl && (
             <div className="flex items-center text-gray-600 md:col-span-2">
-              <Globe className="w-5 h-5 mr-3 flex-shrink-0" />
+              <Globe className="w-5 h-5 mr-3 flex-shrink-0 text-greenyp-600" />
               <a 
                 href={profile.websiteUrl} 
                 target="_blank" 
