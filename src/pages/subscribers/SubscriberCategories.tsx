@@ -18,31 +18,12 @@ const CategoryCard = ({ category }: { category: CategoryWithIcon }) => {
 
   return (
     <div 
-      className="bg-white rounded-xl p-8 text-center transition-all hover:shadow-md border-4 border-greenyp-600 hover:border-yellow-500 w-full max-w-sm sm:w-80 lg:w-72 flex flex-col"
+      className="bg-white rounded-xl p-8 text-center transition-all hover:shadow-md border-2 border-greenyp-600 hover:border-yellow-500 w-full max-w-sm sm:w-80 lg:w-72 flex flex-col"
     >
       <div className="flex-grow">
         {renderIcon(category)}
-        <h3 className="text-xl font-semibold mb-2 text-gray-800 text-left">{category.lineOfBusinessName}</h3>
-        <p className="text-gray-600 mb-4 text-left">{category.shortDescription}</p>
-        
-        {services && services.length > 0 && (
-          <div className="text-left">
-            <h4 className="font-bold text-gray-800 mb-2">Available Services:</h4>
-            <div className="space-y-1">
-              {services.slice(0, 3).map((service, index) => (
-                <div key={index} className="flex items-center text-sm text-gray-600">
-                  <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                  <span>{service.serviceName}</span>
-                </div>
-              ))}
-              {services.length > 3 && (
-                <div className="text-sm text-gray-500 mt-1">
-                  +{services.length - 3} more services
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+        <h3 className="text-xl font-semibold mb-2 text-gray-800 text-center">{category.lineOfBusinessName}</h3>
+        <p className="text-gray-600 mb-4 text-center">{category.shortDescription}</p>
       </div>
       <Link 
         to={`/subscribers/categories/${category.lineOfBusinessId}`}
