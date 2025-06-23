@@ -26,7 +26,7 @@ const SubscriberCategories = () => {
               {[...Array(6)].map((_, index) => (
                 <div 
                   key={index}
-                  className="bg-white rounded-xl p-6 text-center transition-all border border-greenyp-100 animate-pulse aspect-square max-w-xs mx-auto"
+                  className="bg-white rounded-xl p-6 text-center transition-all border border-greenyp-100 animate-pulse h-48 max-w-xs mx-auto"
                 >
                   <div className="w-8 h-8 bg-gray-200 rounded-full mx-auto mb-3"></div>
                   <div className="h-5 bg-gray-200 rounded w-3/4 mx-auto mb-2"></div>
@@ -85,13 +85,13 @@ const SubscriberCategories = () => {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-4xl mx-auto">
             {categories?.map((category, index) => (
               <div 
                 key={index}
-                className="bg-white rounded-xl p-6 text-center transition-all hover:shadow-md border-2 border-greenyp-600 hover:border-yellow-500 aspect-square max-w-xs mx-auto flex flex-col justify-between"
+                className="bg-white rounded-xl p-6 text-center transition-all hover:shadow-md border-2 border-greenyp-600 hover:border-yellow-500 h-48 max-w-xs mx-auto flex flex-col justify-between"
               >
-                <div className="flex-grow flex flex-col justify-center">
+                <div>
                   {renderIcon(category)}
                   <h3 className="text-lg font-semibold mb-2 text-gray-800">{category.lineOfBusinessName}</h3>
                   <p className="text-sm text-gray-600 mb-4 line-clamp-2">{category.shortDescription}</p>
