@@ -8,7 +8,8 @@ import ProfileLoadingState from '@/components/profile/ProfileLoadingState';
 import ProfileErrorState from '@/components/profile/ProfileErrorState';
 
 const ProfilePage = () => {
-  const { producerLocationId } = useParams<{ 
+  const { producerId, producerLocationId } = useParams<{ 
+    producerId: string;
     producerLocationId: string; 
   }>();
   

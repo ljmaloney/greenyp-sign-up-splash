@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Phone, Globe, ExternalLink, Building2 } from 'lucide-react';
@@ -10,9 +11,9 @@ interface ListingCardProps {
 }
 
 const ListingCard = ({ listing }: ListingCardProps) => {
-  // Helper function to create profile URL
+  // Helper function to create profile URL with the desired format
   const createProfileUrl = (listing: ProducerListing) => {
-    return `/profile/${listing.producerLocationId}`;
+    return `/profile/${listing.producerId}/${listing.producerLocationId}`;
   };
 
   return (
