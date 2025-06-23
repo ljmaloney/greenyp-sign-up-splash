@@ -1,3 +1,4 @@
+
 import { getApiUrl } from '@/config/api';
 
 export interface ProductResponse {
@@ -55,6 +56,7 @@ export const fetchServices = async (producerId: string, locationId: string): Pro
   const url = getApiUrl(`/producer/${producerId}/location/${locationId}/services`);
   
   console.log('🔧 Fetching services from:', url);
+  console.log('🔧 Producer ID:', producerId, 'Location ID:', locationId);
   
   const response = await fetch(url);
   
