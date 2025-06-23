@@ -77,7 +77,7 @@ const Categories = () => {
           {categories?.map((category, index) => (
             <div 
               key={index}
-              className="bg-white rounded-xl p-8 text-center transition-all hover:shadow-md hover:bg-gray-50 border border-greenyp-100 w-full max-w-sm sm:w-80 lg:w-72"
+              className="bg-white rounded-xl p-8 text-center transition-all hover:shadow-md hover:bg-gray-50 border-4 border-greenyp-100 w-full max-w-sm sm:w-80 lg:w-72"
             >
               {renderIcon(category)}
               <h3 className="text-xl font-semibold mb-2 text-gray-800">{category.lineOfBusinessName}</h3>
