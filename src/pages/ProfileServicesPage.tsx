@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Wrench } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -24,7 +24,7 @@ const getPriceUnitsDisplay = (priceUnitsType: string): string => {
 };
 
 const ProfileServicesPage = () => {
-  const { producerId } = useParams<{ producerId: string }>();
+  const [searchParams] = useSearchParams();
   const { profile, isLoading: profileLoading, error: profileError } = useProfileData();
   const { data: servicesResponse, isLoading: servicesLoading, error: servicesError } = useServices(profile?.producerId, profile?.locationId);
 
@@ -41,6 +41,12 @@ const ProfileServicesPage = () => {
   }
 
   const services = servicesResponse?.response || [];
+  
+  // Extract producerId from the first service if available, fallback to profile producerId
+  const backProducerId = services.length > 0 ? services[0].producerId : profile.producerId;
+  
+  // Use the extracted producerId for the back URL, preserving search parameters
+  const backToProfileUrl = `/profile/${backProducerId}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
 
   return (
     <ProfilePageLayout>
@@ -49,7 +55,7 @@ const ProfileServicesPage = () => {
           <div className="max-w-4xl mx-auto">
             {/* Back Link */}
             <Link
-              to={`/profile/${producerId}`}
+              to={backToProfileUrl}
               className="inline-flex items-center text-greenyp-600 hover:text-greenyp-700 mb-6"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />

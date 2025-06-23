@@ -47,14 +47,17 @@ const ProfileProductsPage = () => {
     return <ProfileErrorState />;
   }
 
-  if (!profile) {
+  if (!product) {
     return <ProfileErrorState />;
   }
 
   const products = productsResponse?.response || [];
-
-  // Use the profile's producerId for the back URL, preserving search parameters
-  const backToProfileUrl = `/profile/${profile.producerId}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
+  
+  // Extract producerId from the first product if available, fallback to profile producerId
+  const backProducerId = products.length > 0 ? products[0].producerId : profile.producerId;
+  
+  // Use the extracted producerId for the back URL, preserving search parameters
+  const backToProfileUrl = `/profile/${backProducerId}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
 
   return (
     <ProfilePageLayout>
