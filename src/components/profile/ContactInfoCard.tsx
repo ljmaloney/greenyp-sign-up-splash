@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MapPin, Phone, Smartphone, Mail, Globe } from 'lucide-react';
@@ -9,14 +8,21 @@ interface ContactInfoCardProps {
 }
 
 const ContactInfoCard = ({ profile }: ContactInfoCardProps) => {
-  const fullAddress = [
-    profile.addressLine1,
-    profile.addressLine2,
-    profile.addressLine3
-  ].filter(Boolean).join(', ');
-
-  const cityStateZip = `${profile.city}, ${profile.state} ${profile.postalCode}`;
-  const completeAddress = fullAddress ? `${fullAddress}\n${cityStateZip}` : cityStateZip;
+  const getAddressDisplay = () => {
+    if (profile.locationDisplayType === 'CITY_STATE_ZIP') {
+      return `${profile.city}, ${profile.state} ${profile.postalCode}`;
+    } else if (profile.locationDisplayType === 'FULL_ADDRESS') {
+      const fullAddress = [
+        profile.addressLine1,
+        profile.addressLine2,
+        profile.addressLine3
+      ].filter(Boolean).join(', ');
+      
+      const cityStateZip = `${profile.city}, ${profile.state} ${profile.postalCode}`;
+      return fullAddress ? `${fullAddress}\n${cityStateZip}` : cityStateZip;
+    }
+    return '-';
+  };
 
   return (
     <Card>
@@ -27,7 +33,7 @@ const ContactInfoCard = ({ profile }: ContactInfoCardProps) => {
         <div className="flex items-start gap-3">
           <MapPin className="w-5 h-5 text-greenyp-600 mt-0.5 flex-shrink-0" />
           <div>
-            <p className="font-medium text-gray-900">Address: {completeAddress || '-'}</p>
+            <p className="font-medium text-gray-900">Address: {getAddressDisplay()}</p>
           </div>
         </div>
 
