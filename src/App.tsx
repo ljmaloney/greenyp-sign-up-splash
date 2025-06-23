@@ -1,3 +1,4 @@
+
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/toaster';
@@ -74,7 +75,7 @@ function App() {
               <Route path="/categories" element={<Categories />} />
               <Route path="/categories/:lineOfBusinessId" element={<CategoryPage />} />
               <Route path="/search" element={<SearchResults />} />
-              <Route path="/profile/:producerId/:producerLocationId" element={<ProfilePage />} />
+              <Route path="/profile/:producerLocationId" element={<ProfilePage />} />
 
               {/* Auth routes */}
               <Route path="/login" element={<Login />} />
