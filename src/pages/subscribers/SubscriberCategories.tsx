@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -25,10 +26,10 @@ const SubscriberCategories = () => {
               {[...Array(6)].map((_, index) => (
                 <div 
                   key={index}
-                  className="bg-white rounded-xl p-8 text-center transition-all border border-greenyp-100 animate-pulse"
+                  className="bg-white rounded-xl p-6 text-center transition-all border border-greenyp-100 animate-pulse aspect-square max-w-xs mx-auto"
                 >
-                  <div className="w-12 h-12 bg-gray-200 rounded-full mx-auto mb-4"></div>
-                  <div className="h-6 bg-gray-200 rounded w-3/4 mx-auto mb-2"></div>
+                  <div className="w-8 h-8 bg-gray-200 rounded-full mx-auto mb-3"></div>
+                  <div className="h-5 bg-gray-200 rounded w-3/4 mx-auto mb-2"></div>
                   <div className="h-4 bg-gray-200 rounded w-full mx-auto"></div>
                 </div>
               ))}
@@ -67,7 +68,7 @@ const SubscriberCategories = () => {
 
   const renderIcon = (category: CategoryWithIcon) => {
     const IconComponent = category.iconComponent;
-    return <IconComponent className="w-12 h-12 text-greenyp-500 mx-auto mb-4" />;
+    return <IconComponent className="w-8 h-8 text-greenyp-500 mx-auto mb-3" />;
   };
 
   return (
@@ -84,23 +85,23 @@ const SubscriberCategories = () => {
             </p>
           </div>
           
-          <div className="flex flex-wrap justify-center gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-6xl mx-auto">
             {categories?.map((category, index) => (
               <div 
                 key={index}
-                className="bg-white rounded-xl p-8 text-center transition-all hover:shadow-md border-2 border-greenyp-600 hover:border-yellow-500 w-full max-w-sm sm:w-80 lg:w-72 flex flex-col"
+                className="bg-white rounded-xl p-6 text-center transition-all hover:shadow-md border-2 border-greenyp-600 hover:border-yellow-500 aspect-square max-w-xs mx-auto flex flex-col justify-between"
               >
-                <div className="flex-grow">
+                <div className="flex-grow flex flex-col justify-center">
                   {renderIcon(category)}
-                  <h3 className="text-xl font-semibold mb-2 text-gray-800">{category.lineOfBusinessName}</h3>
-                  <p className="text-gray-600 mb-6">{category.shortDescription}</p>
+                  <h3 className="text-lg font-semibold mb-2 text-gray-800">{category.lineOfBusinessName}</h3>
+                  <p className="text-sm text-gray-600 mb-4 line-clamp-2">{category.shortDescription}</p>
                 </div>
                 <Link 
                   to={`/subscribers/categories/${category.lineOfBusinessId}`}
-                  className="mt-6 inline-flex items-center justify-center text-greenyp-600 hover:text-greenyp-800 font-medium"
+                  className="inline-flex items-center justify-center text-greenyp-600 hover:text-greenyp-800 font-medium text-sm"
                 >
                   Show more information
-                  <ChevronRight className="w-4 h-4 ml-2" />
+                  <ChevronRight className="w-4 h-4 ml-1" />
                 </Link>
               </div>
             ))}
