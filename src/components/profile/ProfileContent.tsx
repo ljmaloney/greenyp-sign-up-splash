@@ -20,15 +20,15 @@ const ProfileContent = ({ profile }: ProfileContentProps) => {
         
         {/* Contact and Hours Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <ContactInfoCard profile={profile} />
-          <HoursCard profile={profile} />
+          <div className="space-y-6">
+            <ContactInfoCard profile={profile} />
+            <ProfileProductsCard profile={profile} />
+          </div>
+          <div className="space-y-6">
+            <HoursCard profile={profile} />
+            <ProfileServicesCard profile={profile} />
+          </div>
         </div>
-        
-        {/* Products Card */}
-        <ProfileProductsCard profile={profile} />
-        
-        {/* Services Card */}
-        <ProfileServicesCard profile={profile} />
         
         <ProfileGallery profile={profile} />
       </div>
