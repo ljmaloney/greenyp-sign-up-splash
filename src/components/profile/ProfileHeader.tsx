@@ -21,7 +21,7 @@ const ProfileHeader = ({ profile }: ProfileHeaderProps) => {
     <Card>
       <CardContent className="p-8">
         <div className="flex justify-between items-start mb-6">
-          <div className="flex items-center flex-1">
+          <div className="flex items-start flex-1">
             {profile.iconLink ? (
               <img 
                 src={profile.iconLink} 
