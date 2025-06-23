@@ -3,9 +3,58 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Check } from 'lucide-react';
 import { useCategories } from '@/hooks/useCategories';
+import { useCategoryServices } from '@/hooks/useCategoryServices';
 import { CategoryWithIcon } from '@/types/category';
+
+const CategoryCard = ({ category }: { category: CategoryWithIcon }) => {
+  const { data: services } = useCategoryServices(category.lineOfBusinessId);
+  
+  const renderIcon = (category: CategoryWithIcon) => {
+    const IconComponent = category.iconComponent;
+    return <IconComponent className="w-12 h-12 text-greenyp-500 mx-auto mb-4" />;
+  };
+
+  return (
+    <div 
+      className="bg-white rounded-xl p-8 text-center transition-all hover:shadow-md border-4 border-greenyp-600 hover:border-yellow-500 w-full max-w-sm sm:w-80 lg:w-72 flex flex-col"
+    >
+      <div className="flex-grow">
+        {renderIcon(category)}
+        <h3 className="text-xl font-semibold mb-2 text-gray-800 text-left">{category.lineOfBusinessName}</h3>
+        <p className="text-gray-600 mb-4 text-left">{category.shortDescription}</p>
+        
+        {services && services.length > 0 && (
+          <div className="text-left">
+            <h4 className="font-bold text-gray-800 mb-2">Available Services:</h4>
+            <div className="space-y-1">
+              {services.slice(0, 3).map((service, index) => (
+                <div key={index} className="flex items-center text-sm text-gray-600">
+                  <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                  <span>{service.serviceName}</span>
+                </div>
+              ))}
+              {services.length > 3 && (
+                <div className="text-sm text-gray-500 mt-1">
+                  +{services.length - 3} more services
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+      <Link 
+        to={`/subscribers/categories/${category.lineOfBusinessId}`}
+        className="mt-6 inline-flex items-center justify-center text-greenyp-600 hover:text-greenyp-800 font-medium"
+        aria-label={`Show more information about ${category.lineOfBusinessName}`}
+      >
+        Show more information
+        <ChevronRight className="w-4 h-4 ml-2" />
+      </Link>
+    </div>
+  );
+};
 
 const SubscriberCategories = () => {
   const { data: categories, isLoading, error } = useCategories();
@@ -54,11 +103,6 @@ const SubscriberCategories = () => {
     );
   }
 
-  const renderIcon = (category: CategoryWithIcon) => {
-    const IconComponent = category.iconComponent;
-    return <IconComponent className="w-12 h-12 text-greenyp-500 mx-auto mb-4" />;
-  };
-
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -74,24 +118,7 @@ const SubscriberCategories = () => {
         
         <div className="flex flex-wrap justify-center gap-8">
           {categories?.map((category, index) => (
-            <div 
-              key={index}
-              className="bg-white rounded-xl p-8 text-center transition-all hover:shadow-md border-4 border-greenyp-600 hover:border-yellow-500 w-full max-w-sm sm:w-80 lg:w-72 flex flex-col"
-            >
-              <div className="flex-grow">
-                {renderIcon(category)}
-                <h3 className="text-xl font-semibold mb-2 text-gray-800">{category.lineOfBusinessName}</h3>
-                <p className="text-gray-600">{category.shortDescription}</p>
-              </div>
-              <Link 
-                to={`/subscribers/categories/${category.lineOfBusinessId}`}
-                className="mt-6 inline-flex items-center justify-center text-greenyp-600 hover:text-greenyp-800 font-medium"
-                aria-label={`Show more information about ${category.lineOfBusinessName}`}
-              >
-                Show more information
-                <ChevronRight className="w-4 h-4 ml-2" />
-              </Link>
-            </div>
+            <CategoryCard key={index} category={category} />
           ))}
         </div>
       </main>
