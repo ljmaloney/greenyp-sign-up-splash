@@ -1,5 +1,79 @@
-
 import { ProducerProfile, ProfileData, LocationHours } from '@/types/profile';
+
+export const createMockLocationHours = (producerId: string, locationId: string): LocationHours[] => {
+  return [
+    {
+      locationHoursId: `hours-${producerId}-0`,
+      createDate: '2023-01-01T00:00:00Z',
+      lastUpdateDate: '2023-01-01T00:00:00Z',
+      producerId,
+      producerLocationId: locationId,
+      dayOfWeek: 'MONDAY',
+      openTime: '7:00 AM',
+      closeTime: '6:00 PM'
+    },
+    {
+      locationHoursId: `hours-${producerId}-1`,
+      createDate: '2023-01-01T00:00:00Z',
+      lastUpdateDate: '2023-01-01T00:00:00Z',
+      producerId,
+      producerLocationId: locationId,
+      dayOfWeek: 'TUESDAY',
+      openTime: '7:00 AM',
+      closeTime: '6:00 PM'
+    },
+    {
+      locationHoursId: `hours-${producerId}-2`,
+      createDate: '2023-01-01T00:00:00Z',
+      lastUpdateDate: '2023-01-01T00:00:00Z',
+      producerId,
+      producerLocationId: locationId,
+      dayOfWeek: 'WEDNESDAY',
+      openTime: '7:00 AM',
+      closeTime: '6:00 PM'
+    },
+    {
+      locationHoursId: `hours-${producerId}-3`,
+      createDate: '2023-01-01T00:00:00Z',
+      lastUpdateDate: '2023-01-01T00:00:00Z',
+      producerId,
+      producerLocationId: locationId,
+      dayOfWeek: 'THURSDAY',
+      openTime: '7:00 AM',
+      closeTime: '6:00 PM'
+    },
+    {
+      locationHoursId: `hours-${producerId}-4`,
+      createDate: '2023-01-01T00:00:00Z',
+      lastUpdateDate: '2023-01-01T00:00:00Z',
+      producerId,
+      producerLocationId: locationId,
+      dayOfWeek: 'FRIDAY',
+      openTime: '7:00 AM',
+      closeTime: '6:00 PM'
+    },
+    {
+      locationHoursId: `hours-${producerId}-5`,
+      createDate: '2023-01-01T00:00:00Z',
+      lastUpdateDate: '2023-01-01T00:00:00Z',
+      producerId,
+      producerLocationId: locationId,
+      dayOfWeek: 'SATURDAY',
+      openTime: '8:00 AM',
+      closeTime: '4:00 PM'
+    },
+    {
+      locationHoursId: `hours-${producerId}-6`,
+      createDate: '2023-01-01T00:00:00Z',
+      lastUpdateDate: '2023-01-01T00:00:00Z',
+      producerId,
+      producerLocationId: locationId,
+      dayOfWeek: 'SUNDAY',
+      openTime: '',
+      closeTime: ''
+    }
+  ];
+};
 
 export const convertProducerProfileToProfileData = (producerProfile: ProducerProfile): ProfileData => {
   return {
@@ -36,78 +110,7 @@ export const createMockProfileFromParams = (producerId: string, searchParams: UR
   const postalCode = searchParams.get('postalCode') || '85001';
   const phone = searchParams.get('phone') || '(602) 555-1234';
 
-  const mockHours: LocationHours[] = [
-    {
-      locationHoursId: `hours-${producerId}-0`,
-      createDate: '2023-01-01T00:00:00Z',
-      lastUpdateDate: '2023-01-01T00:00:00Z',
-      producerId,
-      producerLocationId: `location-${producerId}`,
-      dayOfWeek: 'MONDAY',
-      openTime: '7:00 AM',
-      closeTime: '6:00 PM'
-    },
-    {
-      locationHoursId: `hours-${producerId}-1`,
-      createDate: '2023-01-01T00:00:00Z',
-      lastUpdateDate: '2023-01-01T00:00:00Z',
-      producerId,
-      producerLocationId: `location-${producerId}`,
-      dayOfWeek: 'TUESDAY',
-      openTime: '7:00 AM',
-      closeTime: '6:00 PM'
-    },
-    {
-      locationHoursId: `hours-${producerId}-2`,
-      createDate: '2023-01-01T00:00:00Z',
-      lastUpdateDate: '2023-01-01T00:00:00Z',
-      producerId,
-      producerLocationId: `location-${producerId}`,
-      dayOfWeek: 'WEDNESDAY',
-      openTime: '7:00 AM',
-      closeTime: '6:00 PM'
-    },
-    {
-      locationHoursId: `hours-${producerId}-3`,
-      createDate: '2023-01-01T00:00:00Z',
-      lastUpdateDate: '2023-01-01T00:00:00Z',
-      producerId,
-      producerLocationId: `location-${producerId}`,
-      dayOfWeek: 'THURSDAY',
-      openTime: '7:00 AM',
-      closeTime: '6:00 PM'
-    },
-    {
-      locationHoursId: `hours-${producerId}-4`,
-      createDate: '2023-01-01T00:00:00Z',
-      lastUpdateDate: '2023-01-01T00:00:00Z',
-      producerId,
-      producerLocationId: `location-${producerId}`,
-      dayOfWeek: 'FRIDAY',
-      openTime: '7:00 AM',
-      closeTime: '6:00 PM'
-    },
-    {
-      locationHoursId: `hours-${producerId}-5`,
-      createDate: '2023-01-01T00:00:00Z',
-      lastUpdateDate: '2023-01-01T00:00:00Z',
-      producerId,
-      producerLocationId: `location-${producerId}`,
-      dayOfWeek: 'SATURDAY',
-      openTime: '8:00 AM',
-      closeTime: '4:00 PM'
-    },
-    {
-      locationHoursId: `hours-${producerId}-6`,
-      createDate: '2023-01-01T00:00:00Z',
-      lastUpdateDate: '2023-01-01T00:00:00Z',
-      producerId,
-      producerLocationId: `location-${producerId}`,
-      dayOfWeek: 'SUNDAY',
-      openTime: '',
-      closeTime: ''
-    }
-  ];
+  const mockHours: LocationHours[] = createMockLocationHours(producerId, `location-${producerId}`);
 
   return {
     producerId,
