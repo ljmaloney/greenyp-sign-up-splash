@@ -76,10 +76,6 @@ const ListingCard = ({ listing }: ListingCardProps) => {
           )}
         </div>
         
-        <div className="text-center text-gray-500 py-4">
-          Profile page temporarily unavailable
-        </div>
-        
         <Link to={createProfileUrl(listing)}>
           <Button className="w-full bg-greenyp-600 hover:bg-greenyp-700 text-white">
             View Profile
