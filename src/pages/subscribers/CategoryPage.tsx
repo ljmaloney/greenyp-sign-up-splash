@@ -4,7 +4,6 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RecentListings from '@/components/RecentListings';
 import CategoryHeroSection from '@/components/category/CategoryHeroSection';
-import CategoryServicesSection from '@/components/category/CategoryServicesSection';
 import CategoryCTASection from '@/components/category/CategoryCTASection';
 import CategoryPageLoadingState from '@/components/category/CategoryPageLoadingState';
 import CategoryPageErrorState from '@/components/category/CategoryPageErrorState';
