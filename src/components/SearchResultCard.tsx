@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent } from "@/components/ui/card";
@@ -31,13 +30,9 @@ const truncateNarrative = (narrative: string, maxLength: number = 150) => {
   return narrative.substring(0, maxLength) + '...';
 };
 
-// Helper function to create profile URL with location ID and business name
+// Helper function to create profile URL with the exact format specified
 const createProfileUrl = (result: SearchResult) => {
-  const params = new URLSearchParams({
-    locationId: result.producerLocationId,
-    businessName: result.businessName
-  });
-  return `/profile/${result.producerId}?${params.toString()}`;
+  return `/profile/${result.producerId}/location/${result.producerLocationId}`;
 };
 
 const generateMapUrl = (latitude: string, longitude: string, businessName: string) => {
