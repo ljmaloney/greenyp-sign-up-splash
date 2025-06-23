@@ -6,18 +6,18 @@ import { convertProducerProfileToProfileData, createMockProfileFromParams } from
 import { getMockProfileData, MOCK_PROFILE_IDS } from '@/data/mockProfileData';
 
 export const useProfileData = () => {
-  const { producerId: rawProducerId } = useParams<{ producerId: string }>();
+  const params = useParams<{ producerId: string }>();
   const [searchParams] = useSearchParams();
   
-  // Clean up the producer ID - remove any colon prefix if present
-  const producerId = rawProducerId?.startsWith(':') ? rawProducerId.slice(1) : rawProducerId;
+  // Get the producer ID from URL parameters
+  const producerId = params.producerId;
   
   // Get the locationId from URL search parameters, fallback to producerId
   const locationId = searchParams.get('locationId') || producerId;
   
   console.log('Profile data params (fixed):', { 
-    rawProducerId,
-    cleanedProducerId: producerId,
+    params,
+    producerId,
     locationIdFromParams: searchParams.get('locationId'),
     finalLocationId: locationId,
     searchParams: Object.fromEntries(searchParams) 
