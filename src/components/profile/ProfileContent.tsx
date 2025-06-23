@@ -24,11 +24,11 @@ const ProfileContent = ({ profile }: ProfileContentProps) => {
           <HoursCard profile={profile} />
         </div>
         
-        {/* Products Card */}
-        <ProfileProductsCard profile={profile} />
-        
-        {/* Services Card */}
-        <ProfileServicesCard profile={profile} />
+        {/* Products and Services Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <ProfileProductsCard profile={profile} />
+          <ProfileServicesCard profile={profile} />
+        </div>
         
         <ProfileGallery profile={profile} />
       </div>
