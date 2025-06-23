@@ -12,10 +12,10 @@ export const useProfileData = () => {
   // The producerId from the URL is actually the producerLocationId for the API
   const producerLocationId = params.producerId;
   
-  // Get the locationId from URL search parameters, fallback to producerLocationId
-  const locationId = searchParams.get('locationId') || producerLocationId;
+  // Get the locationId from URL search parameters - do NOT use producerLocationId as fallback
+  const locationId = searchParams.get('locationId');
   
-  console.log('Profile data params (corrected):', { 
+  console.log('Profile data params (fixed):', { 
     params,
     producerLocationId,
     locationIdFromParams: searchParams.get('locationId'),
