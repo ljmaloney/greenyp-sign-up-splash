@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -32,7 +31,7 @@ const ProfilePage = () => {
       setError(null);
 
       try {
-        // Fetch profile data
+        // Fetch profile data using the correct API configuration
         const profileUrl = getApiUrl(`/profile/${producerId}/location/${producerLocationId}`);
         console.log('Fetching profile from:', profileUrl);
         
