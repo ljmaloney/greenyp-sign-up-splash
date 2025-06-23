@@ -5,6 +5,8 @@ import ProfileHeader from './ProfileHeader';
 import ProfileGallery from './ProfileGallery';
 import ContactInfoCard from './ContactInfoCard';
 import HoursCard from './HoursCard';
+import ProfileProductsCard from './ProfileProductsCard';
+import ProfileServicesCard from './ProfileServicesCard';
 
 interface ProfileContentProps {
   profile: ProducerProfile;
@@ -21,6 +23,12 @@ const ProfileContent = ({ profile }: ProfileContentProps) => {
           <ContactInfoCard profile={profile} />
           <HoursCard profile={profile} />
         </div>
+        
+        {/* Products Card */}
+        <ProfileProductsCard profile={profile} />
+        
+        {/* Services Card */}
+        <ProfileServicesCard profile={profile} />
         
         <ProfileGallery profile={profile} />
       </div>
