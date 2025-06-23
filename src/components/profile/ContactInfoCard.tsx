@@ -27,39 +27,35 @@ const ContactInfoCard = ({ profile }: ContactInfoCardProps) => {
         <div className="flex items-start gap-3">
           <MapPin className="w-5 h-5 text-greenyp-600 mt-0.5 flex-shrink-0" />
           <div>
-            <p className="font-medium text-gray-900">Address:</p>
-            <p className="text-gray-600 whitespace-pre-line">{completeAddress || '-'}</p>
+            <p className="font-medium text-gray-900">Address: {completeAddress || '-'}</p>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
           <Phone className="w-5 h-5 text-greenyp-600 flex-shrink-0" />
           <div>
-            <p className="font-medium text-gray-900">Phone:</p>
-            <p className="text-gray-600">{profile.phone || '-'}</p>
+            <p className="font-medium text-gray-900">Phone: {profile.phone || '-'}</p>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
           <Smartphone className="w-5 h-5 text-greenyp-600 flex-shrink-0" />
           <div>
-            <p className="font-medium text-gray-900">Cell Phone:</p>
-            <p className="text-gray-600">{profile.cellPhone || '-'}</p>
+            <p className="font-medium text-gray-900">Cell Phone: {profile.cellPhone || '-'}</p>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
           <Mail className="w-5 h-5 text-greenyp-600 flex-shrink-0" />
           <div>
-            <p className="font-medium text-gray-900">Email Address:</p>
-            <p className="text-gray-600">-</p>
+            <p className="font-medium text-gray-900">Email Address: - </p>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
           <Globe className="w-5 h-5 text-greenyp-600 flex-shrink-0" />
           <div>
-            <p className="font-medium text-gray-900">Website URL:</p>
+            <p className="font-medium text-gray-900">Website URL :&nbsp;
             {profile.websiteUrl ? (
               <a 
                 href={profile.websiteUrl} 
@@ -71,7 +67,7 @@ const ContactInfoCard = ({ profile }: ContactInfoCardProps) => {
               </a>
             ) : (
               <p className="text-gray-600">-</p>
-            )}
+            )}</p>
           </div>
         </div>
       </CardContent>
