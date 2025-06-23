@@ -5,10 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/components/ui/sonner";
 
 interface ContactFormData {
+  requestType: string;
+  companyName: string;
   name: string;
   email: string;
   phone: string;
@@ -21,6 +24,8 @@ const ContactForm = () => {
   
   const form = useForm<ContactFormData>({
     defaultValues: {
+      requestType: '',
+      companyName: '',
       name: '',
       email: '',
       phone: '',
@@ -47,8 +52,22 @@ const ContactForm = () => {
     return /^(?:\+1)?\s?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/.test(phone);
   };
 
+  const validateCompanyName = (companyName: string): boolean => {
+    return /^[A-Za-z\s]+$/.test(companyName);
+  };
+
   const onSubmit = async (data: ContactFormData) => {
     // Validate fields
+    if (!data.requestType) {
+      toast.error("Please select a request type.");
+      return;
+    }
+
+    if (!validateCompanyName(data.companyName)) {
+      toast.error("Company name should only contain letters and spaces.");
+      return;
+    }
+
     if (!validateName(data.name)) {
       toast.error("Contact name should only contain letters and spaces.");
       return;
@@ -73,8 +92,11 @@ const ContactForm = () => {
     
     try {
       const payload = {
-        contactName: data.name,
+        requestType: data.requestType,
+        leadContactRequest: null,
+        companyName: data.companyName,
         emailAddress: data.email,
+        name: data.name,
         phoneNumber: data.phone || null,
         subject: data.subject,
         message: data.message
@@ -109,6 +131,42 @@ const ContactForm = () => {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="requestType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-left block">Request Type *</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select request type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="SUBSCRIBER_INFO_TYPE">Request more information</SelectItem>
+                      <SelectItem value="SUBSCRIBER_SUPPORT_TYPE">Request technical support</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="companyName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-left block">Company Name *</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter your company name" {...field} required />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="name"
