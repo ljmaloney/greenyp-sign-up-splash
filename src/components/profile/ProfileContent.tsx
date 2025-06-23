@@ -47,8 +47,8 @@ const ProfileContent = ({ profile }: ProfileContentProps) => {
   console.log('ProfileContent - Features:', { hasProductsFeature, hasServicesFeature });
   console.log('ProfileContent - Using profile producerId:', profile.producerId, 'locationId:', profile.locationId);
 
-  // Use the URL parameter for navigation links
-  const urlProducerId = params.producerId;
+  // Use the producerLocationId from URL parameter for navigation links (same as what we use for API calls)
+  const producerLocationId = params.producerId;
 
   return (
     <section className="py-12">
@@ -61,7 +61,7 @@ const ProfileContent = ({ profile }: ProfileContentProps) => {
             <div className="flex flex-wrap gap-4 mb-8">
               {hasProductsFeature && (
                 <Link
-                  to={`/profile/${urlProducerId}/products`}
+                  to={`/profile/${producerLocationId}/products`}
                   className="inline-flex items-center px-4 py-2 bg-greenyp-600 text-white rounded-lg hover:bg-greenyp-700 transition-colors"
                 >
                   <Package className="w-4 h-4 mr-2" />
@@ -70,7 +70,7 @@ const ProfileContent = ({ profile }: ProfileContentProps) => {
               )}
               {hasServicesFeature && (
                 <Link
-                  to={`/profile/${urlProducerId}/services`}
+                  to={`/profile/${producerLocationId}/services`}
                   className="inline-flex items-center px-4 py-2 bg-greenyp-600 text-white rounded-lg hover:bg-greenyp-700 transition-colors"
                 >
                   <Wrench className="w-4 h-4 mr-2" />

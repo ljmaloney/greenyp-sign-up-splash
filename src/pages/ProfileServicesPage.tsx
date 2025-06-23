@@ -43,9 +43,9 @@ const ProfileServicesPage = () => {
 
   const services = servicesResponse?.response || [];
   
-  // The producerId from URL params is the identifier we need to navigate back to
-  const profileIdentifier = params.producerId;
-  const backToProfileUrl = `/profile/${profileIdentifier}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
+  // Use the producerLocationId from URL params for the back link (this is what we use for the API call)
+  const producerLocationId = params.producerId;
+  const backToProfileUrl = `/profile/${producerLocationId}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
 
   console.log('ProfileServicesPage - Back URL:', backToProfileUrl);
 
