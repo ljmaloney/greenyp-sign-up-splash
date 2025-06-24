@@ -2,7 +2,7 @@
 import React, { useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { MapPin } from 'lucide-react';
+import { ExternalLink, Navigation } from 'lucide-react';
 
 interface LocationMapProps {
   latitude: string;
@@ -49,21 +49,38 @@ const LocationMap = ({ latitude, longitude, businessName }: LocationMapProps) =>
     };
   }, [latitude, longitude, businessName]);
 
-  const handleMapClick = () => {
+  const handleShowLarger = () => {
     const mapUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
     window.open(mapUrl, '_blank', 'noopener,noreferrer');
   };
 
+  const handleGetDirections = () => {
+    const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`;
+    window.open(directionsUrl, '_blank', 'noopener,noreferrer');
+  };
+
   return (
-    <div className="w-64 h-48 bg-gray-100 border border-gray-200 rounded-lg overflow-hidden relative">
-      <div ref={mapContainer} className="absolute inset-0" />
-      <button
-        onClick={handleMapClick}
-        className="absolute top-2 right-2 bg-white bg-opacity-90 hover:bg-opacity-100 p-1 rounded shadow text-xs text-gray-700"
-        title="Open in Google Maps"
-      >
-        <MapPin className="w-4 h-4" />
-      </button>
+    <div className="space-y-3">
+      <div className="w-80 h-60 bg-gray-100 border border-gray-200 rounded-lg overflow-hidden relative">
+        <div ref={mapContainer} className="absolute inset-0" />
+      </div>
+      
+      <div className="flex gap-4 justify-center">
+        <button
+          onClick={handleShowLarger}
+          className="flex items-center gap-1 text-sm text-greenyp-600 hover:text-greenyp-700 underline"
+        >
+          <ExternalLink className="w-3 h-3" />
+          Show Larger
+        </button>
+        <button
+          onClick={handleGetDirections}
+          className="flex items-center gap-1 text-sm text-greenyp-600 hover:text-greenyp-700 underline"
+        >
+          <Navigation className="w-3 h-3" />
+          Get Directions
+        </button>
+      </div>
     </div>
   );
 };
