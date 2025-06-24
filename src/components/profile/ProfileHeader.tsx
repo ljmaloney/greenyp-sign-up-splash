@@ -2,7 +2,7 @@
 import React from 'react';
 import { MapPin, Phone, Globe, ExternalLink, Building2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import Map from '@/components/Map';
+import LocationMap from '@/components/LocationMap';
 import type { ProducerProfile } from '@/types/profile';
 
 interface ProfileHeaderProps {
@@ -58,7 +58,7 @@ const ProfileHeader = ({ profile }: ProfileHeaderProps) => {
           </div>
 
           <div className="ml-8">
-            <Map
+            <LocationMap
               latitude={profile.latitude}
               longitude={profile.longitude}
               businessName={profile.businessName}
