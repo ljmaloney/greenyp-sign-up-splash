@@ -72,7 +72,7 @@ const SearchResultCard = ({ result, isNarrativeExpanded, onToggleNarrative }: Se
                   <Link 
                     to={createProfileUrl(result)}
                     state={{ from: location.pathname + location.search }}
-                    className="text-xl font-semibold text-gray-900 hover:text-greenyp-600 transition-colors text-left">
+                    className="text-xl font-semibold text-gray-900 hover:text-greenyp-600 transition-colors text-left block">
                     {result.businessName}
                   </Link>
                 </div>
