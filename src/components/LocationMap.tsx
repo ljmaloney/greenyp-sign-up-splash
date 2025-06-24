@@ -23,7 +23,7 @@ const LocationMap = ({ latitude, longitude, businessName }: LocationMapProps) =>
     // Initialize MapLibre map
     map.current = new maplibregl.Map({
       container: mapContainer.current,
-      style: 'https://demotiles.maplibre.org/style.json', // Free MapLibre style
+      style: 'https://api.maptiler.com/maps/basic/style.json?key=gkmPj4sliSAhXjX94Anp', // Free MapLibre style
       center: [lng, lat],
       zoom: 14,
     });
