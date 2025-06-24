@@ -72,8 +72,7 @@ const SearchResultCard = ({ result, isNarrativeExpanded, onToggleNarrative }: Se
                   <Link 
                     to={createProfileUrl(result)}
                     state={{ from: location.pathname + location.search }}
-                    className="text-xl font-semibold text-gray-900 hover:text-greenyp-600 transition-colors"
-                  >
+                    className="text-xl font-semibold text-gray-900 hover:text-greenyp-600 transition-colors text-left">
                     {result.businessName}
                   </Link>
                 </div>
@@ -90,11 +89,11 @@ const SearchResultCard = ({ result, isNarrativeExpanded, onToggleNarrative }: Se
             
             <div className="space-y-2 mb-4">
               <div className="flex items-center text-gray-600 flex-wrap">
-                <MapPin className="w-4 h-4 mr-2 flex-shrink-0" />
+                <MapPin className="w-4 h-4 mr-2 flex-shrink-0 text-greenyp-600" />
                 <span className="mr-4">{constructAddress(result)}</span>
                 {result.phone && (
                   <div className="flex items-center">
-                    <Phone className="w-4 h-4 mr-2 flex-shrink-0" />
+                    <Phone className="w-4 h-4 mr-2 flex-shrink-0 text-greenyp-600" />
                     <a href={`tel:${result.phone}`} className="hover:text-greenyp-600">
                       {result.phone}
                     </a>
@@ -104,7 +103,7 @@ const SearchResultCard = ({ result, isNarrativeExpanded, onToggleNarrative }: Se
               
               {result.websiteUrl && (
                 <div className="flex items-center text-gray-600">
-                  <Globe className="w-4 h-4 mr-2 flex-shrink-0" />
+                  <Globe className="w-4 h-4 mr-2 flex-shrink-0 text-greenyp-600" />
                   <a 
                     href={result.websiteUrl} 
                     target="_blank" 
@@ -112,7 +111,7 @@ const SearchResultCard = ({ result, isNarrativeExpanded, onToggleNarrative }: Se
                     className="hover:text-greenyp-600 truncate flex items-center"
                   >
                     {result.websiteUrl}
-                    <ExternalLink className="w-3 h-3 ml-1 flex-shrink-0" />
+                    <ExternalLink className="w-3 h-3 ml-1 flex-shrink-0 text-greenyp-600" />
                   </a>
                 </div>
               )}
