@@ -31,10 +31,10 @@ const Classifieds = () => {
           <ClassifiedsFilters filters={filters} onFiltersChange={setFilters} />
           
           <div className="mb-12">
-            <ClassifiedsList filters={filters} />
+            <RecentClassifieds />
           </div>
 
-          <RecentClassifieds />
+          <ClassifiedsList filters={filters} />
         </div>
       </main>
       <Footer />

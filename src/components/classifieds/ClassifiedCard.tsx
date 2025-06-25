@@ -26,7 +26,7 @@ const ClassifiedCard = ({ classified }: ClassifiedCardProps) => {
   };
 
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card className="hover:shadow-md transition-shadow flex flex-col h-full">
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start mb-2">
           <h3 className="font-semibold text-lg line-clamp-2">{classified.title}</h3>
@@ -45,7 +45,7 @@ const ClassifiedCard = ({ classified }: ClassifiedCardProps) => {
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 flex-grow flex flex-col">
         {classified.images.length > 0 && (
           <div className="aspect-video bg-gray-100 rounded-md overflow-hidden">
             <img 
@@ -56,7 +56,7 @@ const ClassifiedCard = ({ classified }: ClassifiedCardProps) => {
           </div>
         )}
 
-        <p className="text-gray-700 text-sm line-clamp-3">
+        <p className="text-gray-700 text-sm line-clamp-3 flex-grow">
           {classified.description}
         </p>
 
@@ -75,13 +75,15 @@ const ClassifiedCard = ({ classified }: ClassifiedCardProps) => {
           </div>
         </div>
 
-        <Button 
-          variant="outline" 
-          className="w-full"
-          onClick={() => window.open(`mailto:${classified.email}`, '_blank')}
-        >
-          Contact Seller
-        </Button>
+        <div className="mt-auto pt-4">
+          <Button 
+            variant="outline" 
+            className="w-full"
+            onClick={() => window.open(`mailto:${classified.email}`, '_blank')}
+          >
+            Contact Seller
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

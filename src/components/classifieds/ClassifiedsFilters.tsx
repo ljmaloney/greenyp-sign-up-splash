@@ -13,6 +13,11 @@ interface ClassifiedsFiltersProps {
 
 const ClassifiedsFilters = ({ filters, onFiltersChange }: ClassifiedsFiltersProps) => {
   const categories = [
+    'Lawn & Garden Equipment',
+    'Fruits, Vegetables',
+    'Livestock',
+    'Landscaping Services',
+    'Garden Supplies',
     'Electronics',
     'Vehicles', 
     'Real Estate',
