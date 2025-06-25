@@ -1,4 +1,3 @@
-
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/toaster';
@@ -53,6 +52,7 @@ import SubscriberNotFound from '@/pages/subscribers/NotFound';
 
 // Classifieds pages
 import CreateAd from '@/pages/classifieds/CreateAd';
+import ClassifiedsSearchResults from './pages/classifieds/SearchResults';
 
 import './App.css';
 
@@ -81,6 +81,7 @@ function App() {
               <Route path="/profile/:producerId/:producerLocationId" element={<ProfilePage />} />
               <Route path="/classifieds" element={<Classifieds />} />
               <Route path="/classifieds/create" element={<CreateAd />} />
+              <Route path="/classifieds/search" element={<ClassifiedsSearchResults />} />
 
               {/* Auth routes */}
               <Route path="/login" element={<Login />} />

@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ClassifiedFilters } from '@/types/classifieds';
+import { Search } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface ClassifiedsFiltersProps {
   filters: ClassifiedFilters;
@@ -12,6 +14,8 @@ interface ClassifiedsFiltersProps {
 }
 
 const ClassifiedsFilters = ({ filters, onFiltersChange }: ClassifiedsFiltersProps) => {
+  const navigate = useNavigate();
+  
   const categories = [
     'Lawn & Garden Equipment',
     'Fruits, Vegetables',
@@ -39,10 +43,19 @@ const ClassifiedsFilters = ({ filters, onFiltersChange }: ClassifiedsFiltersProp
     onFiltersChange({});
   };
 
+  const handleSearch = () => {
+    const searchParams = new URLSearchParams();
+    if (filters.category) searchParams.set('category', filters.category);
+    if (filters.zipCode) searchParams.set('zipCode', filters.zipCode);
+    if (filters.keyword) searchParams.set('keyword', filters.keyword);
+    
+    navigate(`/classifieds/search?${searchParams.toString()}`);
+  };
+
   return (
     <Card className="mb-6">
       <CardContent className="p-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Category
@@ -98,6 +111,16 @@ const ClassifiedsFilters = ({ filters, onFiltersChange }: ClassifiedsFiltersProp
               Clear Filters
             </Button>
           </div>
+        </div>
+
+        <div className="flex justify-center">
+          <Button 
+            onClick={handleSearch}
+            className="bg-greenyp-600 hover:bg-greenyp-700 text-white px-8"
+          >
+            <Search className="w-4 h-4 mr-2" />
+            Search Classifieds
+          </Button>
         </div>
       </CardContent>
     </Card>
