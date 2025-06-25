@@ -124,6 +124,9 @@ interface PaginatedResponse {
   nextCursor?: number;
 }
 
+// Type for classified with distance property
+type ClassifiedWithDistance = Classified & { distance: number };
+
 // Simple function to calculate mock distance based on zip codes
 const calculateDistance = (zip1: string, zip2: string): number => {
   // Mock distance calculation - in real app this would use geolocation
@@ -140,7 +143,7 @@ const fetchClassifieds = async (
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 800));
   
-  let filtered = [...mockClassifieds];
+  let filtered: Classified[] = [...mockClassifieds];
 
   if (filters.category) {
     filtered = filtered.filter(c => c.category === filters.category);
@@ -150,20 +153,24 @@ const fetchClassifieds = async (
     filtered = filtered.filter(c => c.zipCode.includes(filters.zipCode!));
     
     // Calculate distances and add to each classified for sorting
-    const classifiedsWithDistance = filtered.map(c => ({
+    const classifiedsWithDistance: ClassifiedWithDistance[] = filtered.map(c => ({
       ...c,
       distance: calculateDistance(filters.zipCode!, c.zipCode)
     }));
 
     // Filter by max miles if specified
+    let finalFiltered: ClassifiedWithDistance[];
     if (filters.maxMiles) {
-      filtered = classifiedsWithDistance.filter(c => c.distance <= filters.maxMiles!);
+      finalFiltered = classifiedsWithDistance.filter(c => c.distance <= filters.maxMiles!);
     } else {
-      filtered = classifiedsWithDistance;
+      finalFiltered = classifiedsWithDistance;
     }
 
     // Sort by distance (nearest first)
-    filtered.sort((a, b) => a.distance - b.distance);
+    finalFiltered.sort((a, b) => a.distance - b.distance);
+    
+    // Remove the distance property for the final result
+    filtered = finalFiltered.map(({ distance, ...classified }) => classified);
   }
 
   if (filters.keyword) {
