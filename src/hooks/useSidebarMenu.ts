@@ -80,7 +80,7 @@ export const useSidebarMenu = () => {
       icon: Package,
       href: producerId ? `/dashboard/products?producerId=${producerId}` : '/dashboard/products',
       enabled: hasProductsFeature,
-      upgradeHref: '/dashboard/upgrade',
+      upgradeHref: '/dashboard/subscription-plans',
       isPremium: true
     },
     {
@@ -88,7 +88,7 @@ export const useSidebarMenu = () => {
       icon: Wrench,
       href: producerId ? `/dashboard/services?producerId=${producerId}` : '/dashboard/services',
       enabled: hasServicesFeature,
-      upgradeHref: '/dashboard/upgrade',
+      upgradeHref: '/dashboard/subscription-plans',
       isPremium: true
     },
     {
@@ -96,7 +96,7 @@ export const useSidebarMenu = () => {
       icon: Image,
       href: producerId ? `/dashboard/photo-gallery?producerId=${producerId}` : '/dashboard/photo-gallery',
       enabled: hasPhotoGalleryFeature,
-      upgradeHref: '/dashboard/upgrade',
+      upgradeHref: '/dashboard/subscription-plans',
       isPremium: true
     },
     {
@@ -112,9 +112,9 @@ export const useSidebarMenu = () => {
       enabled: true
     },
     {
-      label: 'Upgrade',
+      label: 'Subscriptions',
       icon: Receipt,
-      href: '/dashboard/upgrade',
+      href: '/dashboard/subscription-plans',
       enabled: true
     }
   ];
