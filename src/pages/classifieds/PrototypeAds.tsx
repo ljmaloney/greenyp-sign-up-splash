@@ -135,73 +135,75 @@ const PrototypeAds = () => {
           {/* Ad Card Preview */}
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4">Card View (as seen in listings)</h2>
-            <div className="max-w-md">
-              <Card className="hover:shadow-md hover:border-yellow-500 transition-all duration-200 flex flex-col h-full border-2">
-                <CardHeader className="pb-3">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-semibold text-lg line-clamp-2 text-center flex-1">{selectedAd.title}</h3>
-                    <Badge variant="secondary" className="ml-2">{selectedAd.category}</Badge>
-                  </div>
-                  
-                  <div className="flex items-center text-sm text-gray-500 space-x-4">
-                    <div className="flex items-center">
-                      <MapPin className="w-4 h-4 mr-1 text-greenyp-600" />
-                      {selectedAd.zipCode}
+            <div className="flex justify-center">
+              <div className="max-w-md w-full">
+                <Card className="hover:shadow-md hover:border-yellow-500 transition-all duration-200 flex flex-col h-full border-2">
+                  <CardHeader className="pb-3">
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="font-semibold text-lg line-clamp-2 text-center flex-1">{selectedAd.title}</h3>
+                      <Badge variant="secondary" className="ml-2">{selectedAd.category}</Badge>
                     </div>
-                    <div className="flex items-center">
-                      <Calendar className="w-4 h-4 mr-1 text-greenyp-600" />
-                      {format(new Date(selectedAd.createdAt), 'MMM dd')}
+                    
+                    <div className="flex items-center text-sm text-gray-500 space-x-4">
+                      <div className="flex items-center">
+                        <MapPin className="w-4 h-4 mr-1 text-greenyp-600" />
+                        {selectedAd.zipCode}
+                      </div>
+                      <div className="flex items-center">
+                        <Calendar className="w-4 h-4 mr-1 text-greenyp-600" />
+                        {format(new Date(selectedAd.createdAt), 'MMM dd')}
+                      </div>
                     </div>
-                  </div>
-                </CardHeader>
+                  </CardHeader>
 
-                <CardContent className="space-y-4 flex-grow flex flex-col">
-                  {selectedAd.images.length > 0 && (
-                    <div className="aspect-video bg-gray-100 rounded-md overflow-hidden">
-                      <img 
-                        src={selectedAd.images[0]} 
-                        alt={selectedAd.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
+                  <CardContent className="space-y-4 flex-grow flex flex-col">
+                    {selectedAd.images.length > 0 && (
+                      <div className="aspect-video bg-gray-100 rounded-md overflow-hidden">
+                        <img 
+                          src={selectedAd.images[0]} 
+                          alt={selectedAd.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
 
-                  <p className="text-gray-700 text-sm line-clamp-3 flex-grow text-left">
-                    {selectedAd.description}
-                  </p>
+                    <p className="text-gray-700 text-sm line-clamp-3 flex-grow text-left">
+                      {selectedAd.description}
+                    </p>
 
-                  <div className="space-y-2">
-                    <div className="flex items-center text-sm">
-                      <Mail className="w-4 h-4 mr-2 text-greenyp-600" />
-                      <span className="text-gray-600">
-                        {formatContact(selectedAd.email, 'email')}
-                      </span>
+                    <div className="space-y-2">
+                      <div className="flex items-center text-sm">
+                        <Mail className="w-4 h-4 mr-2 text-greenyp-600" />
+                        <span className="text-gray-600">
+                          {formatContact(selectedAd.email, 'email')}
+                        </span>
+                      </div>
+                      <div className="flex items-center text-sm">
+                        <Phone className="w-4 h-4 mr-2 text-greenyp-600" />
+                        <span className="text-gray-600">
+                          {formatContact(selectedAd.phone, 'phone')}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex items-center text-sm">
-                      <Phone className="w-4 h-4 mr-2 text-greenyp-600" />
-                      <span className="text-gray-600">
-                        {formatContact(selectedAd.phone, 'phone')}
-                      </span>
-                    </div>
-                  </div>
 
-                  <div className="mt-auto pt-4 space-y-2">
-                    <Button 
-                      variant="outline" 
-                      className="w-full border-greenyp-600 text-greenyp-600 hover:bg-greenyp-50"
-                    >
-                      <Eye className="w-4 h-4 mr-2" />
-                      View More
-                    </Button>
-                    <Button 
-                      className="w-full bg-greenyp-600 hover:bg-greenyp-700"
-                    >
-                      <Mail className="w-4 h-4 mr-2" />
-                      Contact Seller
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+                    <div className="mt-auto pt-4 space-y-2">
+                      <Button 
+                        variant="outline" 
+                        className="w-full border-greenyp-600 text-greenyp-600 hover:bg-greenyp-50"
+                      >
+                        <Eye className="w-4 h-4 mr-2" />
+                        View More
+                      </Button>
+                      <Button 
+                        className="w-full bg-greenyp-600 hover:bg-greenyp-700"
+                      >
+                        <Mail className="w-4 h-4 mr-2" />
+                        Contact Seller
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </div>
 
@@ -236,6 +238,10 @@ const PrototypeAds = () => {
                             src={image} 
                             alt={`${selectedAd.title} - Image ${index + 1}`}
                             className="w-full h-full object-cover hover:scale-105 transition-transform duration-200 cursor-pointer"
+                            onError={(e) => {
+                              console.log(`Image failed to load: ${image}`);
+                              e.currentTarget.style.display = 'none';
+                            }}
                           />
                         </div>
                       ))}
