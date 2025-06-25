@@ -1,4 +1,3 @@
-
 import React, { useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import PublicHeader from '@/components/PublicHeader';
@@ -21,7 +20,7 @@ const SearchResults = () => {
   };
 
   const {
-    data,
+    data: infiniteData,
     isLoading,
     error,
     fetchNextPage,
@@ -29,7 +28,7 @@ const SearchResults = () => {
     isFetchingNextPage
   } = useInfiniteClassifieds(filters);
 
-  const classifieds = data?.pages.flatMap(page => page.data) || [];
+  const classifieds = infiniteData?.pages.flatMap(page => page.data) || [];
 
   const handleFiltersChange = (newFilters: ClassifiedFilters) => {
     const params = new URLSearchParams();
