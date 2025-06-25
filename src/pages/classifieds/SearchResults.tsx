@@ -1,24 +1,59 @@
 
-import React from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import PublicHeader from '@/components/PublicHeader';
 import Footer from '@/components/Footer';
 import ClassifiedCard from '@/components/classifieds/ClassifiedCard';
+import ClassifiedsFilters from '@/components/classifieds/ClassifiedsFilters';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useClassifieds } from '@/hooks/useClassifieds';
+import { useInfiniteClassifieds } from '@/hooks/useInfiniteClassifieds';
+import { ClassifiedFilters } from '@/types/classifieds';
 
 const SearchResults = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   
-  const filters = {
+  const filters: ClassifiedFilters = {
     category: searchParams.get('category') || undefined,
     zipCode: searchParams.get('zipCode') || undefined,
     keyword: searchParams.get('keyword') || undefined,
   };
 
-  const { data: classifieds, isLoading, error } = useClassifieds(filters);
+  const {
+    data,
+    isLoading,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useInfiniteClassifieds(filters);
+
+  const classifieds = data?.pages.flatMap(page => page.data) || [];
+
+  const handleFiltersChange = (newFilters: ClassifiedFilters) => {
+    const params = new URLSearchParams();
+    if (newFilters.category) params.set('category', newFilters.category);
+    if (newFilters.zipCode) params.set('zipCode', newFilters.zipCode);
+    if (newFilters.keyword) params.set('keyword', newFilters.keyword);
+    setSearchParams(params);
+  };
+
+  const handleScroll = useCallback(() => {
+    if (
+      window.innerHeight + document.documentElement.scrollTop
+      >= document.documentElement.offsetHeight - 100
+    ) {
+      if (hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [handleScroll]);
 
   const getSearchSummary = () => {
     const parts = [];
@@ -47,7 +82,9 @@ const SearchResults = () => {
             </p>
           </div>
 
-          {isLoading && (
+          <ClassifiedsFilters filters={filters} onFiltersChange={handleFiltersChange} />
+
+          {isLoading && classifieds.length === 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[...Array(6)].map((_, i) => (
                 <div key={i} className="bg-white rounded-lg shadow-sm border p-6 animate-pulse">
@@ -66,15 +103,30 @@ const SearchResults = () => {
             </div>
           )}
 
-          {!isLoading && !error && classifieds && classifieds.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {classifieds.map((classified) => (
-                <ClassifiedCard key={classified.id} classified={classified} />
-              ))}
-            </div>
+          {!isLoading && !error && classifieds.length > 0 && (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {classifieds.map((classified) => (
+                  <ClassifiedCard key={classified.id} classified={classified} />
+                ))}
+              </div>
+              
+              {isFetchingNextPage && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} className="bg-white rounded-lg shadow-sm border p-6 animate-pulse">
+                      <div className="h-4 bg-gray-200 rounded mb-4"></div>
+                      <div className="h-3 bg-gray-200 rounded mb-2"></div>
+                      <div className="h-3 bg-gray-200 rounded mb-4"></div>
+                      <div className="h-8 bg-gray-200 rounded"></div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
           )}
 
-          {!isLoading && !error && (!classifieds || classifieds.length === 0) && (
+          {!isLoading && !error && classifieds.length === 0 && (
             <div className="text-center py-12">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">No results found</h3>
               <p className="text-gray-600 mb-4">

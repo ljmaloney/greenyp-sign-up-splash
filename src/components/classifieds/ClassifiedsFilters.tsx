@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ClassifiedFilters } from '@/types/classifieds';
 import { Search } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 interface ClassifiedsFiltersProps {
   filters: ClassifiedFilters;
@@ -15,6 +15,8 @@ interface ClassifiedsFiltersProps {
 
 const ClassifiedsFilters = ({ filters, onFiltersChange }: ClassifiedsFiltersProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isSearchPage = location.pathname === '/classifieds/search';
   
   const categories = [
     'Lawn & Garden Equipment',
@@ -44,12 +46,14 @@ const ClassifiedsFilters = ({ filters, onFiltersChange }: ClassifiedsFiltersProp
   };
 
   const handleSearch = () => {
-    const searchParams = new URLSearchParams();
-    if (filters.category) searchParams.set('category', filters.category);
-    if (filters.zipCode) searchParams.set('zipCode', filters.zipCode);
-    if (filters.keyword) searchParams.set('keyword', filters.keyword);
-    
-    navigate(`/classifieds/search?${searchParams.toString()}`);
+    if (!isSearchPage) {
+      const searchParams = new URLSearchParams();
+      if (filters.category) searchParams.set('category', filters.category);
+      if (filters.zipCode) searchParams.set('zipCode', filters.zipCode);
+      if (filters.keyword) searchParams.set('keyword', filters.keyword);
+      
+      navigate(`/classifieds/search?${searchParams.toString()}`);
+    }
   };
 
   return (
@@ -113,15 +117,17 @@ const ClassifiedsFilters = ({ filters, onFiltersChange }: ClassifiedsFiltersProp
           </div>
         </div>
 
-        <div className="flex justify-center">
-          <Button 
-            onClick={handleSearch}
-            className="bg-greenyp-600 hover:bg-greenyp-700 text-white px-8"
-          >
-            <Search className="w-4 h-4 mr-2" />
-            Search Classifieds
-          </Button>
-        </div>
+        {!isSearchPage && (
+          <div className="flex justify-center">
+            <Button 
+              onClick={handleSearch}
+              className="bg-greenyp-600 hover:bg-greenyp-700 text-white px-8"
+            >
+              <Search className="w-4 h-4 mr-2" />
+              Search Classifieds
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
