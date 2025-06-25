@@ -28,7 +28,7 @@ export const getRoleBadgeVariant = (role: string) => {
 export const getSubscriptionBadgeVariant = (type: string) => {
   switch (type) {
     case 'Enterprise':
-      return 'enterprise';
+      return 'enterprise' as const;
     case 'Premium':
       return 'default';
     case 'Basic':
