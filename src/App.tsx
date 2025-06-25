@@ -91,6 +91,7 @@ function App() {
               <Route path="/dashboard/services" element={<ProtectedRoute><DashboardServices /></ProtectedRoute>} />
               <Route path="/dashboard/gallery" element={<ProtectedRoute><DashboardPhotoGallery /></ProtectedRoute>} />
               <Route path="/dashboard/users" element={<ProtectedRoute><DashboardAuthorizedUsers /></ProtectedRoute>} />
+              <Route path="/dashboard/authorized-users" element={<ProtectedRoute><DashboardAuthorizedUsers /></ProtectedRoute>} />
               <Route path="/dashboard/analytics" element={<ProtectedRoute><DashboardAnalytics /></ProtectedRoute>} />
               <Route path="/dashboard/payment" element={<ProtectedRoute><DashboardPayment /></ProtectedRoute>} />
               <Route path="/dashboard/subscription" element={<ProtectedRoute><DashboardSubscription /></ProtectedRoute>} />
