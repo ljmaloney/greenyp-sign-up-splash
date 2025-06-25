@@ -10,7 +10,7 @@ const UpgradeHeader = () => {
         <div className="flex justify-center">
           <Crown className="h-16 w-16 text-yellow-500" />
         </div>
-        <h1 className="text-3xl font-bold text-gray-900">Upgrade Your Plan</h1>
+        <h1 className="text-3xl font-bold text-gray-900">Available Subscriptions</h1>
         <p className="text-gray-600 max-w-2xl mx-auto">
           Choose from our available subscription plans to unlock more features and grow your business.
         </p>

@@ -96,7 +96,7 @@ function App() {
               <Route path="/dashboard/analytics" element={<ProtectedRoute><DashboardAnalytics /></ProtectedRoute>} />
               <Route path="/dashboard/payment" element={<ProtectedRoute><DashboardPayment /></ProtectedRoute>} />
               <Route path="/dashboard/subscription" element={<ProtectedRoute><DashboardSubscription /></ProtectedRoute>} />
-              <Route path="/dashboard/upgrade" element={<ProtectedRoute><DashboardUpgrade /></ProtectedRoute>} />
+              <Route path="/dashboard/subscription-plans" element={<ProtectedRoute><DashboardUpgrade /></ProtectedRoute>} />
 
               {/* Admin routes */}
               <Route path="/admin" element={<ProtectedRoute><AdminIndex /></ProtectedRoute>} />
