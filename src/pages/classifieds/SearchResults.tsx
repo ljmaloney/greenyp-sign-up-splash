@@ -1,8 +1,7 @@
-
 import React, { useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import PublicHeader from '@/components/PublicHeader';
-import Footer from '@/components/Footer';
+import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
 import ClassifiedCard from '@/components/classifieds/ClassifiedCard';
 import ClassifiedsFilters from '@/components/classifieds/ClassifiedsFilters';
 import { Button } from '@/components/ui/button';
@@ -153,7 +152,7 @@ const SearchResults = () => {
           )}
         </div>
       </main>
-      <Footer />
+      <ClassifiedsFooter />
     </div>
   );
 };

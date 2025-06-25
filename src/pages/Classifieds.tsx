@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import PublicHeader from '@/components/PublicHeader';
-import Footer from '@/components/Footer';
+import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
 import ClassifiedsFilters from '@/components/classifieds/ClassifiedsFilters';
 import ClassifiedsList from '@/components/classifieds/ClassifiedsList';
 import RecentClassifieds from '@/components/classifieds/RecentClassifieds';
@@ -37,7 +37,7 @@ const Classifieds = () => {
           <ClassifiedsList filters={filters} />
         </div>
       </main>
-      <Footer />
+      <ClassifiedsFooter />
     </div>
   );
 };

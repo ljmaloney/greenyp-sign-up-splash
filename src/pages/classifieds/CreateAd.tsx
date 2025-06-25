@@ -1,7 +1,7 @@
 
 import React from 'react';
 import PublicHeader from '@/components/PublicHeader';
-import Footer from '@/components/Footer';
+import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
 import CreateAdForm from '@/components/classifieds/CreateAdForm';
 
 const CreateAd = () => {
@@ -18,7 +18,7 @@ const CreateAd = () => {
           <CreateAdForm />
         </div>
       </main>
-      <Footer />
+      <ClassifiedsFooter />
     </div>
   );
 };
