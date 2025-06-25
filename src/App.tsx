@@ -11,6 +11,7 @@ import Categories from '@/pages/Categories';
 import CategoryPage from '@/pages/CategoryPage';
 import SearchResults from '@/pages/SearchResults';
 import ProfilePage from '@/pages/ProfilePage';
+import Classifieds from '@/pages/Classifieds';
 
 // Auth pages
 import Login from '@/pages/auth/Login';
@@ -50,6 +51,9 @@ import SubscriberSubscribe from '@/pages/subscribers/Subscribe';
 import SubscriberSubscriptionFeatures from '@/pages/subscribers/SubscriptionFeatures';
 import SubscriberNotFound from '@/pages/subscribers/NotFound';
 
+// Classifieds pages
+import CreateAd from '@/pages/classifieds/CreateAd';
+
 import './App.css';
 
 const queryClient = new QueryClient({
@@ -75,6 +79,8 @@ function App() {
               <Route path="/categories/:lineOfBusinessId" element={<CategoryPage />} />
               <Route path="/search" element={<SearchResults />} />
               <Route path="/profile/:producerId/:producerLocationId" element={<ProfilePage />} />
+              <Route path="/classifieds" element={<Classifieds />} />
+              <Route path="/classifieds/create" element={<CreateAd />} />
 
               {/* Auth routes */}
               <Route path="/login" element={<Login />} />
