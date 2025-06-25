@@ -53,6 +53,7 @@ import SubscriberNotFound from '@/pages/subscribers/NotFound';
 // Classifieds pages
 import CreateAd from '@/pages/classifieds/CreateAd';
 import ClassifiedsSearchResults from './pages/classifieds/SearchResults';
+import ClassifiedDetail from '@/pages/classifieds/ClassifiedDetail';
 
 import './App.css';
 
@@ -82,6 +83,7 @@ function App() {
               <Route path="/classifieds" element={<Classifieds />} />
               <Route path="/classifieds/create" element={<CreateAd />} />
               <Route path="/classifieds/search" element={<ClassifiedsSearchResults />} />
+              <Route path="/classifieds/:id" element={<ClassifiedDetail />} />
 
               {/* Auth routes */}
               <Route path="/login" element={<Login />} />

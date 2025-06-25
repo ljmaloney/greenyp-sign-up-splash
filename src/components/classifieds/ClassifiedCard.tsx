@@ -3,9 +3,10 @@ import React from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MapPin, Calendar, Mail, Phone } from 'lucide-react';
+import { MapPin, Calendar, Mail, Phone, Eye } from 'lucide-react';
 import { Classified } from '@/types/classifieds';
 import { format } from 'date-fns';
+import { Link } from 'react-router-dom';
 
 interface ClassifiedCardProps {
   classified: Classified;
@@ -26,20 +27,20 @@ const ClassifiedCard = ({ classified }: ClassifiedCardProps) => {
   };
 
   return (
-    <Card className="hover:shadow-md transition-shadow flex flex-col h-full">
+    <Card className="hover:shadow-md hover:border-yellow-500 transition-all duration-200 flex flex-col h-full border-2">
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start mb-2">
-          <h3 className="font-semibold text-lg line-clamp-2">{classified.title}</h3>
-          <Badge variant="secondary">{classified.category}</Badge>
+          <h3 className="font-semibold text-lg line-clamp-2 text-center flex-1">{classified.title}</h3>
+          <Badge variant="secondary" className="ml-2">{classified.category}</Badge>
         </div>
         
         <div className="flex items-center text-sm text-gray-500 space-x-4">
           <div className="flex items-center">
-            <MapPin className="w-4 h-4 mr-1" />
+            <MapPin className="w-4 h-4 mr-1 text-greenyp-600" />
             {classified.zipCode}
           </div>
           <div className="flex items-center">
-            <Calendar className="w-4 h-4 mr-1" />
+            <Calendar className="w-4 h-4 mr-1 text-greenyp-600" />
             {format(new Date(classified.createdAt), 'MMM dd')}
           </div>
         </div>
@@ -56,31 +57,40 @@ const ClassifiedCard = ({ classified }: ClassifiedCardProps) => {
           </div>
         )}
 
-        <p className="text-gray-700 text-sm line-clamp-3 flex-grow">
+        <p className="text-gray-700 text-sm line-clamp-3 flex-grow text-left">
           {classified.description}
         </p>
 
         <div className="space-y-2">
           <div className="flex items-center text-sm">
-            <Mail className="w-4 h-4 mr-2 text-gray-400" />
+            <Mail className="w-4 h-4 mr-2 text-greenyp-600" />
             <span className="text-gray-600">
               {formatContact(classified.email, 'email')}
             </span>
           </div>
           <div className="flex items-center text-sm">
-            <Phone className="w-4 h-4 mr-2 text-gray-400" />
+            <Phone className="w-4 h-4 mr-2 text-greenyp-600" />
             <span className="text-gray-600">
               {formatContact(classified.phone, 'phone')}
             </span>
           </div>
         </div>
 
-        <div className="mt-auto pt-4">
+        <div className="mt-auto pt-4 space-y-2">
+          <Link to={`/classifieds/${classified.id}`}>
+            <Button 
+              variant="outline" 
+              className="w-full border-greenyp-600 text-greenyp-600 hover:bg-greenyp-50"
+            >
+              <Eye className="w-4 h-4 mr-2" />
+              View More
+            </Button>
+          </Link>
           <Button 
-            variant="outline" 
-            className="w-full"
+            className="w-full bg-greenyp-600 hover:bg-greenyp-700"
             onClick={() => window.open(`mailto:${classified.email}`, '_blank')}
           >
+            <Mail className="w-4 h-4 mr-2" />
             Contact Seller
           </Button>
         </div>
