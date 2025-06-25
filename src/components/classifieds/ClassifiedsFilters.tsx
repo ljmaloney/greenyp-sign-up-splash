@@ -34,6 +34,8 @@ const ClassifiedsFilters = ({ filters, onFiltersChange }: ClassifiedsFiltersProp
     'Community'
   ];
 
+  const maxMileOptions = [10, 15, 25, 50, 75, 100, 150];
+
   const handleFilterChange = (key: keyof ClassifiedFilters, value: string) => {
     onFiltersChange({
       ...filters,
@@ -51,6 +53,7 @@ const ClassifiedsFilters = ({ filters, onFiltersChange }: ClassifiedsFiltersProp
       if (filters.category) searchParams.set('category', filters.category);
       if (filters.zipCode) searchParams.set('zipCode', filters.zipCode);
       if (filters.keyword) searchParams.set('keyword', filters.keyword);
+      if (filters.maxMiles) searchParams.set('maxMiles', filters.maxMiles.toString());
       
       navigate(`/classifieds/search?${searchParams.toString()}`);
     }
@@ -59,7 +62,7 @@ const ClassifiedsFilters = ({ filters, onFiltersChange }: ClassifiedsFiltersProp
   return (
     <Card className="mb-6">
       <CardContent className="p-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Category
@@ -92,6 +95,28 @@ const ClassifiedsFilters = ({ filters, onFiltersChange }: ClassifiedsFiltersProp
               value={filters.zipCode || ''}
               onChange={(e) => handleFilterChange('zipCode', e.target.value)}
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Max Miles
+            </label>
+            <Select 
+              value={filters.maxMiles?.toString() || 'all'} 
+              onValueChange={(value) => handleFilterChange('maxMiles', value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Any Distance" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Any Distance</SelectItem>
+                {maxMileOptions.map((miles) => (
+                  <SelectItem key={miles} value={miles.toString()}>
+                    {miles} miles
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div>

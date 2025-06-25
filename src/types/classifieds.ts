@@ -23,6 +23,7 @@ export interface ClassifiedFilters {
   category?: string;
   zipCode?: string;
   keyword?: string;
+  maxMiles?: number;
 }
 
 export interface ClassifiedFormData {

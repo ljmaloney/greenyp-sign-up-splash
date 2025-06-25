@@ -1,3 +1,4 @@
+
 import React, { useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import PublicHeader from '@/components/PublicHeader';
@@ -5,7 +6,7 @@ import Footer from '@/components/Footer';
 import ClassifiedCard from '@/components/classifieds/ClassifiedCard';
 import ClassifiedsFilters from '@/components/classifieds/ClassifiedsFilters';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useInfiniteClassifieds } from '@/hooks/useInfiniteClassifieds';
 import { ClassifiedFilters } from '@/types/classifieds';
@@ -17,6 +18,7 @@ const SearchResults = () => {
     category: searchParams.get('category') || undefined,
     zipCode: searchParams.get('zipCode') || undefined,
     keyword: searchParams.get('keyword') || undefined,
+    maxMiles: searchParams.get('maxMiles') ? parseInt(searchParams.get('maxMiles')!) : undefined,
   };
 
   const {
@@ -35,6 +37,7 @@ const SearchResults = () => {
     if (newFilters.category) params.set('category', newFilters.category);
     if (newFilters.zipCode) params.set('zipCode', newFilters.zipCode);
     if (newFilters.keyword) params.set('keyword', newFilters.keyword);
+    if (newFilters.maxMiles) params.set('maxMiles', newFilters.maxMiles.toString());
     setSearchParams(params);
   };
 
@@ -68,16 +71,26 @@ const SearchResults = () => {
       <main className="flex-grow bg-gray-50 py-8">
         <div className="container mx-auto px-4">
           <div className="mb-6">
-            <Link to="/classifieds">
-              <Button variant="outline" className="mb-4">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Classifieds
-              </Button>
-            </Link>
+            <div className="flex items-center justify-between mb-4">
+              <Link to="/classifieds">
+                <Button variant="outline">
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back to Classifieds
+                </Button>
+              </Link>
+              
+              <Link to="/classifieds/create">
+                <Button className="bg-greenyp-600 hover:bg-greenyp-700">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Post my Ad
+                </Button>
+              </Link>
+            </div>
             
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Search Results</h1>
             <p className="text-gray-600">
               Showing results for {getSearchSummary()}
+              {filters.maxMiles && ` within ${filters.maxMiles} miles`}
             </p>
           </div>
 

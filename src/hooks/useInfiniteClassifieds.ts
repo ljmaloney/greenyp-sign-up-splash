@@ -124,6 +124,15 @@ interface PaginatedResponse {
   nextCursor?: number;
 }
 
+// Simple function to calculate mock distance based on zip codes
+const calculateDistance = (zip1: string, zip2: string): number => {
+  // Mock distance calculation - in real app this would use geolocation
+  const num1 = parseInt(zip1);
+  const num2 = parseInt(zip2);
+  const diff = Math.abs(num1 - num2);
+  return Math.min(Math.max(diff / 100, 1), 150); // Mock distance between 1-150 miles
+};
+
 const fetchClassifieds = async (
   filters: ClassifiedFilters,
   pageParam: number = 0
@@ -139,6 +148,22 @@ const fetchClassifieds = async (
 
   if (filters.zipCode) {
     filtered = filtered.filter(c => c.zipCode.includes(filters.zipCode!));
+    
+    // Calculate distances and add to each classified for sorting
+    const classifiedsWithDistance = filtered.map(c => ({
+      ...c,
+      distance: calculateDistance(filters.zipCode!, c.zipCode)
+    }));
+
+    // Filter by max miles if specified
+    if (filters.maxMiles) {
+      filtered = classifiedsWithDistance.filter(c => c.distance <= filters.maxMiles!);
+    } else {
+      filtered = classifiedsWithDistance;
+    }
+
+    // Sort by distance (nearest first)
+    filtered.sort((a, b) => a.distance - b.distance);
   }
 
   if (filters.keyword) {
@@ -149,8 +174,10 @@ const fetchClassifieds = async (
     );
   }
 
-  // Sort by creation date (newest first)
-  filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  // If no zipCode filter, sort by creation date (newest first) as fallback
+  if (!filters.zipCode) {
+    filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
 
   // Simulate pagination
   const pageSize = 6;
