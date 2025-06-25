@@ -175,7 +175,7 @@ const fetchClassifieds = async (
 };
 
 export const useInfiniteClassifieds = (filters: ClassifiedFilters) => {
-  return useInfiniteQuery<PaginatedResponse, Error, PaginatedResponse, (string | ClassifiedFilters)[], number>({
+  return useInfiniteQuery({
     queryKey: ['infiniteClassifieds', filters],
     queryFn: ({ pageParam = 0 }) => fetchClassifieds(filters, pageParam),
     initialPageParam: 0,
