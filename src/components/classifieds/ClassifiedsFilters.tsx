@@ -26,7 +26,7 @@ const ClassifiedsFilters = ({ filters, onFiltersChange }: ClassifiedsFiltersProp
   const handleFilterChange = (key: keyof ClassifiedFilters, value: string) => {
     onFiltersChange({
       ...filters,
-      [key]: value || undefined
+      [key]: value === 'all' ? undefined : value || undefined
     });
   };
 
@@ -43,14 +43,14 @@ const ClassifiedsFilters = ({ filters, onFiltersChange }: ClassifiedsFiltersProp
               Category
             </label>
             <Select 
-              value={filters.category || ''} 
+              value={filters.category || 'all'} 
               onValueChange={(value) => handleFilterChange('category', value)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Categories</SelectItem>
+                <SelectItem value="all">All Categories</SelectItem>
                 {categories.map((category) => (
                   <SelectItem key={category} value={category}>
                     {category}
