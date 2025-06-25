@@ -1,26 +1,41 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Crown, Check } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import { useAccountData } from '@/hooks/useAccountData';
 import { useSubscriptions } from '@/hooks/useSubscriptions';
+import UpgradeConfirmationDialog from '@/components/dashboard/UpgradeConfirmationDialog';
+import UpgradeSubscriptionGrid from '@/components/dashboard/UpgradeSubscriptionGrid';
+import UpgradeLoadingState from '@/components/dashboard/UpgradeLoadingState';
+import UpgradeErrorState from '@/components/dashboard/UpgradeErrorState';
+import UpgradeEmptyState from '@/components/dashboard/UpgradeEmptyState';
+import { upgradeSubscription } from '@/services/upgradeService';
+import { useToast } from '@/hooks/use-toast';
 
 const Subscription = () => {
-  const { data: accountData, isLoading: accountLoading } = useAccountData();
-  const { data: subscriptions, isLoading: subscriptionsLoading } = useSubscriptions();
+  const { data: accountData, isLoading: accountLoading, refetch } = useAccountData();
+  const { data: subscriptions, isLoading: subscriptionsLoading, error } = useSubscriptions();
+  const { toast } = useToast();
+  
+  const [confirmationDialog, setConfirmationDialog] = useState<{
+    isOpen: boolean;
+    subscriptionId: string;
+    subscriptionName: string;
+  }>({
+    isOpen: false,
+    subscriptionId: '',
+    subscriptionName: ''
+  });
+  const [isUpgrading, setIsUpgrading] = useState(false);
 
   if (accountLoading || subscriptionsLoading) {
-    return (
-      <DashboardLayout>
-        <div className="space-y-6">
-          <h1 className="text-3xl font-bold text-gray-900">Subscription Management</h1>
-          <div className="text-center py-8">Loading subscription information...</div>
-        </div>
-      </DashboardLayout>
-    );
+    return <UpgradeLoadingState />;
+  }
+
+  if (error) {
+    return <UpgradeErrorState />;
   }
 
   // Get current subscription ID from account data
@@ -31,6 +46,11 @@ const Subscription = () => {
   
   // Get the subscription from account data (for billing info)
   const currentAccountSubscription = accountData?.producer?.subscriptions?.[0];
+
+  // Filter out current subscription from available plans
+  const availableSubscriptions = subscriptions?.filter(
+    subscription => subscription.subscriptionId !== currentSubscriptionId
+  ) || [];
 
   // Fallback to basic info if subscription details not found
   const displayName = currentSubscriptionDetails?.displayName || 'Basic Listing';
@@ -68,6 +88,73 @@ const Subscription = () => {
       default:
         return `${formatCurrency(amount)}/${cycle?.toLowerCase() || 'month'}`;
     }
+  };
+
+  const handleUpgradeClick = (subscriptionId: string, subscriptionName: string) => {
+    setConfirmationDialog({
+      isOpen: true,
+      subscriptionId,
+      subscriptionName
+    });
+  };
+
+  const handleConfirmUpgrade = async () => {
+    if (!accountData?.producer) {
+      toast({
+        title: "Error",
+        description: "Unable to get account information for upgrade.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsUpgrading(true);
+    
+    try {
+      // Get current subscription data for invoiceCycleType
+      const currentSubscription = accountData.producer.subscriptions?.[0];
+      
+      const upgradePayload = {
+        producerId: accountData.producer.producerId,
+        producerRequest: {
+          producerId: accountData.producer.producerId,
+          businessName: accountData.producer.businessName,
+          lineOfBusinessId: accountData.producer.lineOfBusinessId,
+          subscriptionId: confirmationDialog.subscriptionId,
+          subscriptionType: accountData.producer.subscriptionType,
+          invoiceCycleType: currentSubscription?.invoiceCycleType || accountData.producer.invoiceCycleType || 'MONTHLY',
+          websiteUrl: accountData.producer.websiteUrl || '',
+          narrative: accountData.producer.narrative || ''
+        }
+      };
+
+      console.log('🚀 Upgrade payload with all dynamic values:', upgradePayload);
+
+      await upgradeSubscription(upgradePayload);
+      
+      toast({
+        title: "Upgrade Successful",
+        description: `Your subscription has been upgraded to ${confirmationDialog.subscriptionName}.`,
+      });
+
+      // Refetch account data to get updated subscription
+      await refetch();
+      
+      setConfirmationDialog({ isOpen: false, subscriptionId: '', subscriptionName: '' });
+    } catch (error) {
+      console.error('Upgrade error:', error);
+      toast({
+        title: "Upgrade Failed",
+        description: "There was an error upgrading your subscription. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUpgrading(false);
+    }
+  };
+
+  const handleCancelUpgrade = () => {
+    setConfirmationDialog({ isOpen: false, subscriptionId: '', subscriptionName: '' });
   };
 
   return (
@@ -128,19 +215,45 @@ const Subscription = () => {
                 Upgrade to unlock additional features like product listings, services catalog, and enhanced visibility.
               </p>
               
-              <Button asChild className="bg-greenyp-600 hover:bg-greenyp-700 w-full">
-                <Link to="/dashboard/upgrade">
-                  View Upgrade Options
-                </Link>
-              </Button>
-              
               <Button variant="outline" className="w-full">
                 Contact Support
               </Button>
             </CardContent>
           </Card>
         </div>
+
+        {/* Available Subscription Plans */}
+        {availableSubscriptions.length > 0 && (
+          <div className="space-y-6">
+            <div className="text-center space-y-4">
+              <div className="flex justify-center">
+                <Crown className="h-16 w-16 text-yellow-500" />
+              </div>
+              <h2 className="text-3xl font-bold text-gray-900">Available Subscriptions</h2>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                Choose from our available subscription plans to unlock more features and grow your business.
+              </p>
+            </div>
+
+            <UpgradeSubscriptionGrid 
+              subscriptions={availableSubscriptions}
+              onUpgrade={handleUpgradeClick}
+            />
+          </div>
+        )}
+
+        {availableSubscriptions.length === 0 && (
+          <UpgradeEmptyState />
+        )}
       </div>
+
+      <UpgradeConfirmationDialog
+        isOpen={confirmationDialog.isOpen}
+        onClose={handleCancelUpgrade}
+        onConfirm={handleConfirmUpgrade}
+        subscriptionName={confirmationDialog.subscriptionName}
+        isLoading={isUpgrading}
+      />
     </DashboardLayout>
   );
 };

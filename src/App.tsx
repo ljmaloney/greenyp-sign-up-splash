@@ -29,7 +29,6 @@ import DashboardAuthorizedUsers from '@/pages/dashboard/AuthorizedUsers';
 import DashboardAnalytics from '@/pages/dashboard/Analytics';
 import DashboardPayment from '@/pages/dashboard/Payment';
 import DashboardSubscription from '@/pages/dashboard/Subscription';
-import DashboardUpgrade from '@/pages/dashboard/Upgrade';
 
 // Admin pages
 import AdminIndex from '@/pages/admin/Index';
@@ -96,7 +95,6 @@ function App() {
               <Route path="/dashboard/analytics" element={<ProtectedRoute><DashboardAnalytics /></ProtectedRoute>} />
               <Route path="/dashboard/payment" element={<ProtectedRoute><DashboardPayment /></ProtectedRoute>} />
               <Route path="/dashboard/subscription" element={<ProtectedRoute><DashboardSubscription /></ProtectedRoute>} />
-              <Route path="/dashboard/subscription-plans" element={<ProtectedRoute><DashboardUpgrade /></ProtectedRoute>} />
 
               {/* Admin routes */}
               <Route path="/admin" element={<ProtectedRoute><AdminIndex /></ProtectedRoute>} />

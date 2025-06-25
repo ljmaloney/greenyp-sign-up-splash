@@ -7,7 +7,6 @@ import {
   Wrench,
   CreditCard,
   Crown,
-  Receipt,
   Image
 } from 'lucide-react';
 import { useSubscriptions } from '@/hooks/useSubscriptions';
@@ -80,7 +79,7 @@ export const useSidebarMenu = () => {
       icon: Package,
       href: producerId ? `/dashboard/products?producerId=${producerId}` : '/dashboard/products',
       enabled: hasProductsFeature,
-      upgradeHref: '/dashboard/subscription-plans',
+      upgradeHref: '/dashboard/subscription',
       isPremium: true
     },
     {
@@ -88,7 +87,7 @@ export const useSidebarMenu = () => {
       icon: Wrench,
       href: producerId ? `/dashboard/services?producerId=${producerId}` : '/dashboard/services',
       enabled: hasServicesFeature,
-      upgradeHref: '/dashboard/subscription-plans',
+      upgradeHref: '/dashboard/subscription',
       isPremium: true
     },
     {
@@ -96,7 +95,7 @@ export const useSidebarMenu = () => {
       icon: Image,
       href: producerId ? `/dashboard/photo-gallery?producerId=${producerId}` : '/dashboard/photo-gallery',
       enabled: hasPhotoGalleryFeature,
-      upgradeHref: '/dashboard/subscription-plans',
+      upgradeHref: '/dashboard/subscription',
       isPremium: true
     },
     {
@@ -109,12 +108,6 @@ export const useSidebarMenu = () => {
       label: 'Payment',
       icon: CreditCard,
       href: '/dashboard/payment',
-      enabled: true
-    },
-    {
-      label: 'Subscriptions',
-      icon: Receipt,
-      href: '/dashboard/subscription-plans',
       enabled: true
     }
   ];
