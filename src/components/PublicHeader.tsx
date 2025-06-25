@@ -10,10 +10,13 @@ const PublicHeader = () => {
   const location = useLocation();
   const isClassifiedsPage = location.pathname.startsWith('/classifieds');
   
+  // Determine the appropriate home link based on current page
+  const homeLink = isClassifiedsPage ? '/classifieds' : '/';
+  
   return (
     <header className="py-4 px-6 md:px-8 lg:px-12 flex justify-between items-center border-b">
       <div className="flex flex-col">
-        <Link to="/" className="text-2xl font-bold text-greenyp-700 flex items-center">
+        <Link to={homeLink} className="text-2xl font-bold text-greenyp-700 flex items-center">
           <Leaf className="mr-2 h-8 w-8" />
           <span>{isClassifiedsPage ? 'GreenYP - Classifieds' : 'GreenYP'}</span>
         </Link>
