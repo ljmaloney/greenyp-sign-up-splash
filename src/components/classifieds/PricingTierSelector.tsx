@@ -17,42 +17,36 @@ const PricingTierSelector = ({ selectedTier, onTierChange }: PricingTierSelector
         <CardTitle>Choose Your Ad Package</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {Object.entries(PRICING_TIERS).map(([key, tier]) => (
-            <Button
+            <div
               key={key}
-              type="button"
-              variant="outline"
               onClick={() => onTierChange(key as 'basic' | 'standard' | 'premium')}
-              className={`p-4 flex flex-col items-start text-left space-y-2 ${
+              className={`border rounded-lg p-6 cursor-pointer transition-colors ${
                 selectedTier === key 
                   ? 'bg-gray-100 border-yellow-500 border-2' 
-                  : 'hover:bg-gray-50'
+                  : 'border-gray-200 hover:bg-gray-50'
               }`}
             >
-              <div className="font-semibold text-lg">{tier.name}</div>
-              <div className="text-2xl font-bold text-greenyp-600">${tier.price}/month</div>
+              <div className="font-semibold text-lg mb-2">{tier.name}</div>
+              <div className="text-2xl font-bold text-greenyp-600 mb-4">${tier.price}/month</div>
               
-              <div className="flex items-center text-sm text-gray-600">
+              <div className="flex items-center text-sm text-gray-600 mb-3">
                 <span className="bg-green-100 rounded-full p-1 mr-2 flex-shrink-0">
                   <CheckIcon className="h-4 w-4 text-green-600" />
                 </span>
                 {tier.description}
               </div>
               
-              <div className="flex items-center text-sm text-gray-600 min-h-[20px]">
-                {tier.contactObfuscation ? (
-                  <>
-                    <span className="bg-green-100 rounded-full p-1 mr-2 flex-shrink-0">
-                      <CheckIcon className="h-4 w-4 text-green-600" />
-                    </span>
-                    Contact Privacy
-                  </>
-                ) : (
-                  <span className="opacity-0">placeholder</span>
-                )}
-              </div>
-            </Button>
+              {tier.contactObfuscation && (
+                <div className="flex items-center text-sm text-gray-600">
+                  <span className="bg-green-100 rounded-full p-1 mr-2 flex-shrink-0">
+                    <CheckIcon className="h-4 w-4 text-green-600" />
+                  </span>
+                  Contact Privacy
+                </div>
+              )}
+            </div>
           ))}
         </div>
       </CardContent>
