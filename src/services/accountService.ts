@@ -98,7 +98,9 @@ export interface AccountDataResponse {
 export const createAccountService = (apiClient: any) => ({
   async fetchAccountData(externalUserRef: string): Promise<AccountDataResponse> {
     console.log('🔍 Fetching account data for user:', externalUserRef);
+    console.log('🌐 Using API client with base URL:', apiClient.getBaseUrl?.() || 'No base URL method');
     
+    // Use the correct endpoint path without the full URL since apiClient handles the base URL
     return apiClient.get(`/account/${externalUserRef}`, { requireAuth: true });
   }
 });

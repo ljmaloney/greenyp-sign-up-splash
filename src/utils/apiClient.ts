@@ -1,5 +1,5 @@
 
-import { getApiUrl } from '@/config/api';
+import { getApiUrl, API_CONFIG } from '@/config/api';
 
 interface ApiOptions extends RequestInit {
   requireAuth?: boolean;
@@ -10,6 +10,13 @@ export const apiClient = {
     const { requireAuth = false, headers = {}, ...fetchOptions } = options;
     
     const url = getApiUrl(endpoint);
+    
+    console.log('🔧 API Client Debug:', {
+      endpoint,
+      baseUrl: API_CONFIG.BASE_URL,
+      fullUrl: url,
+      requireAuth
+    });
     
     const requestHeaders: HeadersInit = {
       'Content-Type': 'application/json',
@@ -45,6 +52,11 @@ export const apiClient = {
   async getAccessToken(): Promise<string | null> {
     // This will be dynamically set by the useApiClient hook
     return null;
+  },
+
+  // Helper method to get the base URL for debugging
+  getBaseUrl(): string {
+    return API_CONFIG.BASE_URL;
   },
 
   get(endpoint: string, options: ApiOptions = {}) {

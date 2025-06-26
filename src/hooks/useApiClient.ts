@@ -11,7 +11,10 @@ export const useApiClient = () => {
     const client = { ...apiClient };
     
     // Override the getAccessToken method to return the current token
-    client.getAccessToken = async () => accessToken;
+    client.getAccessToken = async () => {
+      console.log('🔑 Getting access token:', accessToken ? 'Token available' : 'No token');
+      return accessToken;
+    };
     
     return client;
   }, [accessToken]);
