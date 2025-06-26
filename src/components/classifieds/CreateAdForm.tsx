@@ -6,17 +6,29 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import ImageUploadZone from './ImageUploadZone';
 import { ClassifiedFormData, PRICING_TIERS } from '@/types/classifieds';
 import { useToast } from '@/hooks/use-toast';
 
+interface ExtendedClassifiedFormData extends ClassifiedFormData {
+  price?: string;
+  per?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+}
+
 const CreateAdForm = () => {
   const { toast } = useToast();
-  const [formData, setFormData] = useState<ClassifiedFormData>({
+  const [formData, setFormData] = useState<ExtendedClassifiedFormData>({
     title: '',
     description: '',
     category: '',
+    price: '',
+    per: '',
+    address: '',
+    city: '',
+    state: '',
     zipCode: '',
     email: '',
     phone: '',
@@ -35,7 +47,19 @@ const CreateAdForm = () => {
     'Community'
   ];
 
-  const handleInputChange = (field: keyof ClassifiedFormData, value: string | File[]) => {
+  const perOptions = [
+    'each',
+    'hour',
+    'day',
+    'week',
+    'month',
+    'year',
+    'dozen',
+    'pound',
+    'gallon'
+  ];
+
+  const handleInputChange = (field: keyof ExtendedClassifiedFormData, value: string | File[]) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -85,26 +109,29 @@ const CreateAdForm = () => {
           <CardTitle>Choose Your Ad Package</CardTitle>
         </CardHeader>
         <CardContent>
-          <RadioGroup 
-            value={formData.pricingTier} 
-            onValueChange={(value) => handleInputChange('pricingTier', value)}
-            className="grid grid-cols-1 md:grid-cols-3 gap-4"
-          >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {Object.entries(PRICING_TIERS).map(([key, tier]) => (
-              <div key={key} className="flex items-center space-x-2">
-                <RadioGroupItem value={key} id={key} />
-                <Label htmlFor={key} className="flex-1 cursor-pointer">
-                  <div className="border rounded-lg p-4 hover:bg-gray-50">
-                    <div className="font-semibold">${tier.price}/month</div>
-                    <div className="text-sm text-gray-600">{tier.description}</div>
-                    {tier.contactObfuscation && (
-                      <div className="text-xs text-green-600 mt-1">+ Contact Privacy</div>
-                    )}
-                  </div>
-                </Label>
-              </div>
+              <Button
+                key={key}
+                type="button"
+                variant="outline"
+                onClick={() => handleInputChange('pricingTier', key)}
+                className={`h-auto p-4 flex flex-col items-start text-left space-y-2 ${
+                  formData.pricingTier === key 
+                    ? 'bg-gray-100 border-yellow-500 border-2' 
+                    : 'hover:bg-gray-50'
+                }`}
+              >
+                <div className="font-semibold text-lg">{tier.name}</div>
+                <div className="text-2xl font-bold text-greenyp-600">${tier.price}/month</div>
+                <div className="text-sm text-gray-600">{tier.description}</div>
+                <div className="text-sm text-gray-500">Max images: {tier.maxImages}</div>
+                {tier.contactObfuscation && (
+                  <div className="text-xs text-green-600 font-medium">+ Contact Privacy</div>
+                )}
+              </Button>
             ))}
-          </RadioGroup>
+          </div>
         </CardContent>
       </Card>
 
@@ -114,33 +141,16 @@ const CreateAdForm = () => {
           <CardTitle>Ad Details</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="title">Title *</Label>
-              <Input
-                id="title"
-                value={formData.title}
-                onChange={(e) => handleInputChange('title', e.target.value)}
-                placeholder="Enter ad title"
-                required
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="category">Category *</Label>
-              <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+          <div>
+            <Label htmlFor="title">Title *</Label>
+            <Input
+              id="title"
+              value={formData.title}
+              onChange={(e) => handleInputChange('title', e.target.value)}
+              placeholder="Enter ad title"
+              required
+              className="w-full"
+            />
           </div>
 
           <div>
@@ -159,15 +169,97 @@ const CreateAdForm = () => {
             </div>
           </div>
 
-          <div>
-            <Label htmlFor="zipCode">Zip Code *</Label>
-            <Input
-              id="zipCode"
-              value={formData.zipCode}
-              onChange={(e) => handleInputChange('zipCode', e.target.value)}
-              placeholder="Enter zip code"
-              required
-            />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <Label htmlFor="category">Category *</Label>
+              <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((category) => (
+                    <SelectItem key={category} value={category}>
+                      {category}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="price">Price</Label>
+              <Input
+                id="price"
+                value={formData.price}
+                onChange={(e) => handleInputChange('price', e.target.value)}
+                placeholder="Enter price"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="per">Per (optional)</Label>
+              <Select value={formData.per} onValueChange={(value) => handleInputChange('per', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select unit" />
+                </SelectTrigger>
+                <SelectContent>
+                  {perOptions.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <p className="text-sm text-gray-600 mb-4">
+              The address information provided is used to determine location for sorting purposes and is shown on the website to help buyers find your item or service.
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="address">Address</Label>
+                <Input
+                  id="address"
+                  value={formData.address}
+                  onChange={(e) => handleInputChange('address', e.target.value)}
+                  placeholder="Enter street address"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="city">City</Label>
+                <Input
+                  id="city"
+                  value={formData.city}
+                  onChange={(e) => handleInputChange('city', e.target.value)}
+                  placeholder="Enter city"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="state">State</Label>
+                <Input
+                  id="state"
+                  value={formData.state}
+                  onChange={(e) => handleInputChange('state', e.target.value)}
+                  placeholder="Enter state"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="zipCode">Zip Code *</Label>
+                <Input
+                  id="zipCode"
+                  value={formData.zipCode}
+                  onChange={(e) => handleInputChange('zipCode', e.target.value)}
+                  placeholder="Enter zip code"
+                  required
+                />
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
