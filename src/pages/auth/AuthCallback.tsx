@@ -27,9 +27,28 @@ const AuthCallback = () => {
         });
         
         if (user && !user.expired) {
-          console.log('🎯 User is valid, forcing page reload to refresh auth context...');
+          console.log('🎯 User is valid, determining redirect based on roles...');
+          
+          // Transform user to get roles
+          const userInfo = oidcService.transformUser(user);
+          const roles = userInfo.roles || [];
+          
+          console.log('👥 User roles:', roles);
+          
+          // Determine redirect URL based on roles
+          let redirectUrl = '/dashboard'; // default for subscribers
+          
+          if (roles.includes('GreenPages-Admin') || roles.includes('SysAdmin')) {
+            redirectUrl = '/admin';
+            console.log('🔧 Admin user detected, redirecting to /admin');
+          } else if (roles.includes('Greepages-Subscriber') || roles.includes('Greepages-SubscriberAdmin')) {
+            redirectUrl = '/dashboard';
+            console.log('👤 Subscriber user detected, redirecting to /dashboard');
+          }
+          
+          console.log('🚀 Redirecting to:', redirectUrl);
           // Force a full page reload to ensure the AuthContext picks up the new user
-          window.location.href = '/dashboard';
+          window.location.href = redirectUrl;
         } else {
           console.error('❌ Invalid user from callback:', user);
           setError('Authentication failed - invalid user session');
