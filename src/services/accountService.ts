@@ -1,4 +1,3 @@
-
 import { getApiUrl } from '@/config/api';
 
 export interface Subscription {
@@ -110,20 +109,8 @@ export const createAccountService = (apiClient: any) => ({
     console.log('🔍 Fetching account data for external user ref:', externalUserRef);
     console.log('🌐 Using API client with base URL:', apiClient.getBaseUrl?.() || 'No base URL method');
     
-    // First, get the producer ID using the external user reference
-    const userResponse = await apiClient.get(`/account/user/${externalUserRef}`, { requireAuth: true });
-    
-    console.log('👤 User lookup response:', userResponse);
-    
-    if (!userResponse.response || !userResponse.response.producerId) {
-      throw new Error('Producer ID not found for user');
-    }
-    
-    const producerId = userResponse.response.producerId;
-    console.log('✅ Found producer ID:', producerId);
-    
-    // Now fetch the full account data using the producer ID
-    const response = await apiClient.get(`/account/${producerId}`, { requireAuth: true });
+    // Use the external user reference endpoint which returns all the data we need
+    const response = await apiClient.get(`/account/user/${externalUserRef}`, { requireAuth: true });
     
     console.log('📦 Account API response:', response);
     
@@ -152,23 +139,8 @@ export const createAccountService = (apiClient: any) => ({
 export const fetchAccountData = async (externalUserRef: string): Promise<AccountDataResponse> => {
   console.log('⚠️ Using legacy fetchAccountData - consider using authenticated version');
   
-  // First get producer ID
-  const userResponse = await fetch(getApiUrl(`/account/user/${externalUserRef}`));
-  
-  if (!userResponse.ok) {
-    throw new Error(`Failed to fetch user data: ${userResponse.status}`);
-  }
-  
-  const userData = await userResponse.json();
-  
-  if (!userData.response || !userData.response.producerId) {
-    throw new Error('Producer ID not found for user');
-  }
-  
-  const producerId = userData.response.producerId;
-  
-  // Now fetch account data
-  const response = await fetch(getApiUrl(`/account/${producerId}`));
+  // Use the external user reference endpoint directly
+  const response = await fetch(getApiUrl(`/account/user/${externalUserRef}`));
   
   if (!response.ok) {
     throw new Error(`Failed to fetch account data: ${response.status}`);
