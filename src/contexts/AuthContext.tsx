@@ -14,6 +14,7 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  accessToken: string | null;
   login: () => void;
   logout: () => Promise<void>;
   hasRole: (role: string) => boolean;
@@ -35,6 +36,7 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [initialized, setInitialized] = useState(false);
 
@@ -75,14 +77,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         };
         
         setUser(transformedUser);
-        console.log('✅ User set in context:', transformedUser);
+        setAccessToken(oidcUser.access_token);
+        console.log('✅ User and token set in context:', { user: transformedUser, hasToken: !!oidcUser.access_token });
       } else {
         console.log('❌ No valid user found during initialization');
         setUser(null);
+        setAccessToken(null);
       }
     } catch (error) {
       console.error('❌ Auth initialization failed:', error);
       setUser(null);
+      setAccessToken(null);
     } finally {
       setIsLoading(false);
       setInitialized(true);
@@ -102,10 +107,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setIsLoading(true);
       await oidcService.logout();
       setUser(null);
+      setAccessToken(null);
     } catch (error) {
       console.error('❌ Logout failed:', error);
       await oidcService.removeUser();
       setUser(null);
+      setAccessToken(null);
     } finally {
       setIsLoading(false);
     }
@@ -119,6 +126,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     user,
     isLoading,
     isAuthenticated: !!user,
+    accessToken,
     login,
     logout,
     hasRole

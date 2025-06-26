@@ -1,11 +1,15 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
-import { fetchAccountData } from '../services/accountService';
+import { useApiClient } from './useApiClient';
+import { createAccountService } from '../services/accountService';
 
 export const useAccountData = () => {
   const { user } = useAuth();
+  const apiClient = useApiClient();
   const externalUserRef = user?.id || null;
+  
+  const accountService = createAccountService(apiClient);
   
   return useQuery({
     queryKey: ['account-data', externalUserRef],
@@ -13,7 +17,7 @@ export const useAccountData = () => {
       if (!externalUserRef) {
         throw new Error('User ID is required to fetch account data');
       }
-      return fetchAccountData(externalUserRef);
+      return accountService.fetchAccountData(externalUserRef);
     },
     enabled: !!externalUserRef,
     staleTime: 5 * 60 * 1000, // 5 minutes

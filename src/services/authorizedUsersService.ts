@@ -22,7 +22,22 @@ export interface AuthorizedUsersApiResponse {
   errorMessageApi: string | null;
 }
 
+// Create a function that accepts an API client for dependency injection
+export const createAuthorizedUsersService = (apiClient: any) => ({
+  async fetchAuthorizedUsers(producerId: string): Promise<AuthorizedUserResponse[]> {
+    const data: AuthorizedUsersApiResponse = await apiClient.get(`/producer/${producerId}/search/users`, { requireAuth: true });
+    
+    if (data.errorMessageApi) {
+      throw new Error(data.errorMessageApi);
+    }
+    
+    return data.response || [];
+  }
+});
+
+// Legacy function for backward compatibility - will be deprecated
 export const fetchAuthorizedUsers = async (producerId: string): Promise<AuthorizedUserResponse[]> => {
+  console.log('⚠️ Using legacy fetchAuthorizedUsers - consider using authenticated version');
   const response = await fetch(getApiUrl(`/producer/${producerId}/search/users`));
   
   if (!response.ok) {

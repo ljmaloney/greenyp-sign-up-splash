@@ -1,108 +1,53 @@
-import { getApiUrl } from '@/config/api';
 
-export interface Producer {
-  producerId: string;
-  createDate: string;
-  lastUpdateDate: string;
-  businessName: string;
-  lineOfBusinessId: string;
-  subscriptionType: string;
-  websiteUrl: string;
-  subscriptions: Subscription[];
-  narrative: string;
-  iconLink?: string;  // Added iconLink property
-  lastBillDate?: string;
-  lastBillPaidDate?: string;
-  invoiceCycleType?: string;
-}
+import { getApiUrl } from '@/config/api';
 
 export interface Subscription {
   subscriptionId: string;
-  producerSubscriptionId: string;
   displayName: string;
   shortDescription: string;
+  subscriptionAmount: number;
   invoiceCycleType: string;
-  subscriptionType: string;
-  nextInvoiceDate: string;
   startDate: string;
   endDate: string;
-  subscriptionAmount: number;
+  nextInvoiceDate?: string;
 }
 
-export interface PrimaryLocation {
-  locationId: string;
+export interface InvoiceHistoryItem {
+  invoiceId: string;
+  invoiceNumber: string;
+  invoiceDate: string;
+  dueDate: string;
+  amount: number;
+  status: string;
+  description: string;
+}
+
+export interface AccountDataResponse {
   producerId: string;
-  createDate: string;
-  lastUpdateDate: string;
-  locationName: string;
-  locationType: string;
-  locationDisplayType: string;
-  active: boolean;
-  addressLine1: string;
-  addressLine2: string;
-  addressLine3: string;
-  city: string;
-  state: string;
-  postalCode: string;
-  latitude: string;
-  longitude: string;
-  websiteUrl: string;
-  locationHours: any[];
+  businessName: string;
+  lineOfBusinessId: string;
+  subscriptionType: string;
+  subscriptions: Subscription[];
+  invoiceHistory: InvoiceHistoryItem[];
 }
 
-export interface Contact {
-  contactId: string;
-  createDate: string;
-  lastUpdateDate: string;
-  producerId: string;
-  producerLocationId: string;
-  producerContactType: string;
-  displayContactType: string;
-  firstName: string;
-  lastName: string;
-  title?: string;
-  phoneNumber: string;
-  cellPhoneNumber: string;
-  emailConfirmed: boolean;
-  emailAddress: string;
-  genericContactName?: string;
-}
+// Create a function that accepts an API client for dependency injection
+export const createAccountService = (apiClient: any) => ({
+  async fetchAccountData(externalUserRef: string): Promise<AccountDataResponse> {
+    console.log('🔍 Fetching account data for user:', externalUserRef);
+    
+    return apiClient.get(`/account/${externalUserRef}`, { requireAuth: true });
+  }
+});
 
-export interface AccountData {
-  producer: Producer;
-  primaryLocation: PrimaryLocation;
-  contacts: Contact[];
-}
-
-export interface AccountResponse {
-  response: AccountData;
-  errorMessageApi: null | string;
-}
-
-export const fetchAccountData = async (externalUserRef: string): Promise<AccountData> => {
-  console.log(`🔍 Fetching account data for user: ${externalUserRef}`);
+// Legacy function for backward compatibility - will be deprecated
+export const fetchAccountData = async (externalUserRef: string): Promise<AccountDataResponse> => {
+  console.log('⚠️ Using legacy fetchAccountData - consider using authenticated version');
+  const response = await fetch(getApiUrl(`/account/${externalUserRef}`));
   
-  const url = getApiUrl(`/account/user/${externalUserRef}`);
-  console.log(`📡 API URL: ${url}`);
-  
-  const response = await fetch(url, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-
   if (!response.ok) {
-    console.error(`❌ Account API failed: ${response.status} ${response.statusText}`);
-    throw new Error(`Failed to fetch account data: ${response.statusText}`);
+    throw new Error(`Failed to fetch account data: ${response.status}`);
   }
-
-  const data: AccountResponse = await response.json();
-  console.log('✅ Account data received:', data);
-
-  if (data.errorMessageApi) {
-    throw new Error(data.errorMessageApi);
-  }
-
-  return data.response;
+  
+  return response.json();
 };
