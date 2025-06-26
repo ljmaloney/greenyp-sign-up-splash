@@ -34,7 +34,7 @@ const PricingTierSelector = ({ selectedTier, onTierChange }: PricingTierSelector
               <div className="text-sm text-gray-600">{tier.description}</div>
               <div className="text-sm text-gray-500">Max images: {tier.maxImages}</div>
               {tier.contactObfuscation && (
-                <div className="text-xs text-green-600 font-medium">+ Contact Privacy</div>
+                <div className="text-xs text-green-600 font-medium">• Contact Privacy</div>
               )}
             </Button>
           ))}
