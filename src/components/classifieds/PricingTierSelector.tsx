@@ -1,0 +1,47 @@
+
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { PRICING_TIERS } from '@/types/classifieds';
+
+interface PricingTierSelectorProps {
+  selectedTier: 'basic' | 'standard' | 'premium';
+  onTierChange: (tier: 'basic' | 'standard' | 'premium') => void;
+}
+
+const PricingTierSelector = ({ selectedTier, onTierChange }: PricingTierSelectorProps) => {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Choose Your Ad Package</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {Object.entries(PRICING_TIERS).map(([key, tier]) => (
+            <Button
+              key={key}
+              type="button"
+              variant="outline"
+              onClick={() => onTierChange(key as 'basic' | 'standard' | 'premium')}
+              className={`h-auto p-4 flex flex-col items-start text-left space-y-2 ${
+                selectedTier === key 
+                  ? 'bg-gray-100 border-yellow-500 border-2' 
+                  : 'hover:bg-gray-50'
+              }`}
+            >
+              <div className="font-semibold text-lg">{tier.name}</div>
+              <div className="text-2xl font-bold text-greenyp-600">${tier.price}/month</div>
+              <div className="text-sm text-gray-600">{tier.description}</div>
+              <div className="text-sm text-gray-500">Max images: {tier.maxImages}</div>
+              {tier.contactObfuscation && (
+                <div className="text-xs text-green-600 font-medium">+ Contact Privacy</div>
+              )}
+            </Button>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default PricingTierSelector;
