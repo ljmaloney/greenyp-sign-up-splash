@@ -139,10 +139,10 @@ const AdDetailsForm = ({
         <div>
           <Label htmlFor="description" className="block text-left">Description * (Max 512 characters)</Label>
           <div className="space-y-2">
-            <div className="flex gap-1 border-2 border-yellow-500 bg-gray-100 rounded-md p-2">
+            <div className="flex gap-1 bg-gray-50 rounded-md p-2">
               <Button
                 type="button"
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 onClick={() => insertMarkup('bold')}
                 className="h-8 w-8 p-0"
@@ -151,7 +151,7 @@ const AdDetailsForm = ({
               </Button>
               <Button
                 type="button"
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 onClick={() => insertMarkup('italic')}
                 className="h-8 w-8 p-0"
@@ -160,7 +160,7 @@ const AdDetailsForm = ({
               </Button>
               <Button
                 type="button"
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 onClick={() => insertMarkup('list')}
                 className="h-8 w-8 p-0"
