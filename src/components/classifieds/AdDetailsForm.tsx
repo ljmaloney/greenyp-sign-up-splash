@@ -82,7 +82,7 @@ const AdDetailsForm = ({
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <Label htmlFor="category">Category *</Label>
+            <Label htmlFor="category" className="block mb-2">Category *</Label>
             <Select value={category} onValueChange={(value) => onFieldChange('category', value)}>
               <SelectTrigger>
                 <SelectValue placeholder="Select category" />
@@ -98,7 +98,7 @@ const AdDetailsForm = ({
           </div>
 
           <div>
-            <Label htmlFor="price">Price</Label>
+            <Label htmlFor="price" className="block mb-2">Price</Label>
             <Input
                 id="price"
                 value={price || ''}
@@ -108,7 +108,7 @@ const AdDetailsForm = ({
           </div>
 
           <div>
-            <Label htmlFor="per">Per (optional)</Label>
+            <Label htmlFor="per" className="block mb-2">Per (optional)</Label>
             <Select value={per} onValueChange={(value) => onFieldChange('per', value)}>
               <SelectTrigger>
                 <SelectValue placeholder="Select unit" />
@@ -125,7 +125,7 @@ const AdDetailsForm = ({
         </div>
         
         <div>
-          <Label htmlFor="title" className="block text-left">Title *</Label>
+          <Label htmlFor="title" className="block mb-2">Title *</Label>
           <Input
             id="title"
             value={title}
@@ -137,7 +137,7 @@ const AdDetailsForm = ({
         </div>
 
         <div>
-          <Label htmlFor="description" className="block text-left">Description * (Max 512 characters)</Label>
+          <Label htmlFor="description" className="block mb-2">Description * (Max 512 characters)</Label>
           <div className="space-y-2">
             <div className="flex gap-1 bg-gray-50 rounded-md p-2">
               <Button
