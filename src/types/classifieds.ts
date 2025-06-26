@@ -57,6 +57,6 @@ export const PRICING_TIERS = {
     price: 30,
     maxImages: 10,
     contactObfuscation: true,
-    description: 'Up to 10 images + contact obfuscation'
+    description: 'Up to 10 images'
   }
 } as const;

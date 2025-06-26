@@ -32,8 +32,14 @@ const PricingTierSelector = ({ selectedTier, onTierChange }: PricingTierSelector
             >
               <div className="font-semibold text-lg">{tier.name}</div>
               <div className="text-2xl font-bold text-greenyp-600">${tier.price}/month</div>
-              <div className="text-sm text-gray-600">{tier.description}</div>
-              <div className="text-sm text-gray-500">Max images: {tier.maxImages}</div>
+              
+              <div className="flex items-center text-sm text-gray-600">
+                <span className="bg-green-100 rounded-full p-1 mr-2 flex-shrink-0">
+                  <CheckIcon className="h-4 w-4 text-green-600" />
+                </span>
+                {tier.description}
+              </div>
+              
               {tier.contactObfuscation && (
                 <div className="flex items-center text-sm text-gray-600">
                   <span className="bg-green-100 rounded-full p-1 mr-2 flex-shrink-0">
