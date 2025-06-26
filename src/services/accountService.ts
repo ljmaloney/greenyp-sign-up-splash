@@ -22,6 +22,39 @@ export interface InvoiceHistoryItem {
   description: string;
 }
 
+export interface Contact {
+  contactId: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  emailAddress: string;
+  contactType: string;
+}
+
+export interface PrimaryLocation {
+  locationId: string;
+  businessName: string;
+  streetAddress: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  phoneNumber: string;
+  websiteUrl?: string;
+  emailAddress?: string;
+}
+
+export interface Producer {
+  producerId: string;
+  businessName: string;
+  lineOfBusinessId: string;
+  subscriptionType: string;
+  websiteUrl?: string;
+  narrative?: string;
+  logoUrl?: string;
+  primaryLocation?: PrimaryLocation;
+  contacts?: Contact[];
+}
+
 export interface AccountDataResponse {
   producerId: string;
   businessName: string;
@@ -29,6 +62,7 @@ export interface AccountDataResponse {
   subscriptionType: string;
   subscriptions: Subscription[];
   invoiceHistory: InvoiceHistoryItem[];
+  producer: Producer;
 }
 
 // Create a function that accepts an API client for dependency injection
