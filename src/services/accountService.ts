@@ -29,6 +29,14 @@ export interface Contact {
   phoneNumber: string;
   emailAddress: string;
   contactType: string;
+  // Additional properties needed by components
+  producerLocationId: string;
+  producerContactType: string;
+  displayContactType: string;
+  genericContactName?: string;
+  title?: string;
+  cellPhoneNumber?: string;
+  emailConfirmed?: boolean;
 }
 
 export interface PrimaryLocation {
@@ -41,6 +49,16 @@ export interface PrimaryLocation {
   phoneNumber: string;
   websiteUrl?: string;
   emailAddress?: string;
+  // Additional properties needed by components
+  locationName: string;
+  locationType: string;
+  locationDisplayType: string;
+  active: boolean;
+  addressLine1: string;
+  addressLine2?: string;
+  postalCode: string;
+  latitude: string;
+  longitude: string;
 }
 
 export interface Producer {
@@ -53,6 +71,14 @@ export interface Producer {
   logoUrl?: string;
   primaryLocation?: PrimaryLocation;
   contacts?: Contact[];
+  // Additional properties needed by components
+  subscriptions: Subscription[];
+  invoiceCycleType?: string;
+  createDate: string;
+  lastUpdateDate: string;
+  lastBillDate?: string;
+  lastBillPaidDate?: string;
+  iconLink?: string;
 }
 
 export interface AccountDataResponse {
@@ -63,6 +89,9 @@ export interface AccountDataResponse {
   subscriptions: Subscription[];
   invoiceHistory: InvoiceHistoryItem[];
   producer: Producer;
+  // Additional properties needed by components
+  primaryLocation: PrimaryLocation;
+  contacts: Contact[];
 }
 
 // Create a function that accepts an API client for dependency injection
