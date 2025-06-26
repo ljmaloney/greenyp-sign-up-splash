@@ -33,7 +33,7 @@ const LocationForm = ({
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="address">Address</Label>
+              <Label htmlFor="address" className="block text-left">Address</Label>
               <Input
                 id="address"
                 value={address || ''}
@@ -43,7 +43,7 @@ const LocationForm = ({
             </div>
 
             <div>
-              <Label htmlFor="city">City</Label>
+              <Label htmlFor="city" className="block text-left">City</Label>
               <Input
                 id="city"
                 value={city || ''}
@@ -53,7 +53,7 @@ const LocationForm = ({
             </div>
 
             <div>
-              <Label htmlFor="state">State</Label>
+              <Label htmlFor="state" className="block text-left">State</Label>
               <Input
                 id="state"
                 value={state || ''}
@@ -63,7 +63,7 @@ const LocationForm = ({
             </div>
 
             <div>
-              <Label htmlFor="zipCode">Zip Code *</Label>
+              <Label htmlFor="zipCode" className="block text-left">Zip Code *</Label>
               <Input
                 id="zipCode"
                 value={zipCode}
