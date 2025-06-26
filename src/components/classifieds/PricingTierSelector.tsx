@@ -17,14 +17,14 @@ const PricingTierSelector = ({ selectedTier, onTierChange }: PricingTierSelector
         <CardTitle>Choose Your Ad Package</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
           {Object.entries(PRICING_TIERS).map(([key, tier]) => (
             <Button
               key={key}
               type="button"
               variant="outline"
               onClick={() => onTierChange(key as 'basic' | 'standard' | 'premium')}
-              className={`h-full p-4 flex flex-col items-start text-left space-y-2 ${
+              className={`p-4 flex flex-col items-start text-left space-y-2 ${
                 selectedTier === key 
                   ? 'bg-gray-100 border-yellow-500 border-2' 
                   : 'hover:bg-gray-50'
@@ -40,14 +40,18 @@ const PricingTierSelector = ({ selectedTier, onTierChange }: PricingTierSelector
                 {tier.description}
               </div>
               
-              {tier.contactObfuscation && (
-                <div className="flex items-center text-sm text-gray-600">
-                  <span className="bg-green-100 rounded-full p-1 mr-2 flex-shrink-0">
-                    <CheckIcon className="h-4 w-4 text-green-600" />
-                  </span>
-                  Contact Privacy
-                </div>
-              )}
+              <div className="flex items-center text-sm text-gray-600 min-h-[20px]">
+                {tier.contactObfuscation ? (
+                  <>
+                    <span className="bg-green-100 rounded-full p-1 mr-2 flex-shrink-0">
+                      <CheckIcon className="h-4 w-4 text-green-600" />
+                    </span>
+                    Contact Privacy
+                  </>
+                ) : (
+                  <span className="opacity-0">placeholder</span>
+                )}
+              </div>
             </Button>
           ))}
         </div>
