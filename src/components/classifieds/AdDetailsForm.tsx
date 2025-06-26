@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -38,13 +37,9 @@ const AdDetailsForm = ({
 
   const perOptions = [
     'each',
-    'hour',
-    'day',
-    'week',
-    'month',
-    'year',
-    'dozen',
+    'ounce',
     'pound',
+    'dozen',
     'gallon'
   ];
 
@@ -109,18 +104,20 @@ const AdDetailsForm = ({
 
           <div>
             <Label htmlFor="per" className="block mb-2">Per (optional)</Label>
-            <Select value={per} onValueChange={(value) => onFieldChange('per', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select unit" />
-              </SelectTrigger>
-              <SelectContent>
+            <div className="relative">
+              <Input
+                id="per"
+                value={per || ''}
+                onChange={(e) => onFieldChange('per', e.target.value)}
+                placeholder="Enter unit or select below"
+                list="per-options"
+              />
+              <datalist id="per-options">
                 {perOptions.map((option) => (
-                    <SelectItem key={option} value={option}>
-                      {option}
-                    </SelectItem>
+                  <option key={option} value={option} />
                 ))}
-              </SelectContent>
-            </Select>
+              </datalist>
+            </div>
           </div>
         </div>
         
