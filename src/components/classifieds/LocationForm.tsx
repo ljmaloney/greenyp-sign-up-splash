@@ -28,7 +28,7 @@ const LocationForm = ({
         <div className="mt-6">
           <p className="text-sm text-gray-600 mb-4">
             The address you provide below helps determine your location so that listings can be sorted by distance from potential buyers.
-            <span className="text-bold"> Only the city, state, and ZIP code will be visible in your ad</span> — your street address will remain private.
+            <span className="font-bold"> Only the city, state, and ZIP code will be visible in your ad</span> — your street address will remain private.
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
