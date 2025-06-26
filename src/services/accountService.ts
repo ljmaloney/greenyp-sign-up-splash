@@ -106,12 +106,12 @@ export interface AccountDataResponse {
 
 // Create a function that accepts an API client for dependency injection
 export const createAccountService = (apiClient: any) => ({
-  async fetchAccountData(externalUserRef: string): Promise<AccountDataResponse> {
-    console.log('🔍 Fetching account data for user:', externalUserRef);
+  async fetchAccountData(producerId: string): Promise<AccountDataResponse> {
+    console.log('🔍 Fetching account data for producer:', producerId);
     console.log('🌐 Using API client with base URL:', apiClient.getBaseUrl?.() || 'No base URL method');
     
-    // Use the correct endpoint path: /account/user/{externalUserRef}
-    const response = await apiClient.get(`/account/user/${externalUserRef}`, { requireAuth: true });
+    // Use the correct endpoint path: /account/{producerId}
+    const response = await apiClient.get(`/account/${producerId}`, { requireAuth: true });
     
     console.log('📦 Account API response:', response);
     
@@ -137,9 +137,9 @@ export const createAccountService = (apiClient: any) => ({
 });
 
 // Legacy function for backward compatibility - will be deprecated
-export const fetchAccountData = async (externalUserRef: string): Promise<AccountDataResponse> => {
+export const fetchAccountData = async (producerId: string): Promise<AccountDataResponse> => {
   console.log('⚠️ Using legacy fetchAccountData - consider using authenticated version');
-  const response = await fetch(getApiUrl(`/account/user/${externalUserRef}`));
+  const response = await fetch(getApiUrl(`/account/${producerId}`));
   
   if (!response.ok) {
     throw new Error(`Failed to fetch account data: ${response.status}`);
