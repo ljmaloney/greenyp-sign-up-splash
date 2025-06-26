@@ -1,7 +1,7 @@
 
 // API configuration with customizable host
 const DEFAULT_API_HOST = 'https://services.greenyp.com';
-const DEFAULT_IMAGE_HOST = 'http://localhost:8081';
+const DEFAULT_IMAGE_HOST = 'https://services.greenyp.com';
 
 // Helper function to normalize URL
 const normalizeUrl = (url: string): string => {
@@ -35,13 +35,8 @@ const getImageHost = (): string => {
   const customImageHost = localStorage.getItem('IMAGE_HOST');
   if (customImageHost) return normalizeUrl(customImageHost);
   
-  // In production, use the API host for images
-  if (import.meta.env.PROD) {
-    return getApiHost();
-  }
-  
-  // In development, use the specific image host
-  return normalizeUrl(DEFAULT_IMAGE_HOST);
+  // Use the API host for images in both development and production
+  return getApiHost();
 };
 
 export const API_CONFIG = {
