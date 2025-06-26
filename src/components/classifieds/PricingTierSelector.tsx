@@ -17,14 +17,14 @@ const PricingTierSelector = ({ selectedTier, onTierChange }: PricingTierSelector
         <CardTitle>Choose Your Ad Package</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
           {Object.entries(PRICING_TIERS).map(([key, tier]) => (
             <Button
               key={key}
               type="button"
               variant="outline"
               onClick={() => onTierChange(key as 'basic' | 'standard' | 'premium')}
-              className={`h-auto p-4 flex flex-col items-start text-left space-y-2 ${
+              className={`h-full p-4 flex flex-col items-start text-left space-y-2 ${
                 selectedTier === key 
                   ? 'bg-gray-100 border-yellow-500 border-2' 
                   : 'hover:bg-gray-50'
