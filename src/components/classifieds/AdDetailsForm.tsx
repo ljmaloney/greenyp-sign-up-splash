@@ -139,7 +139,7 @@ const AdDetailsForm = ({
         <div>
           <Label htmlFor="description" className="block text-left">Description * (Max 512 characters)</Label>
           <div className="space-y-2">
-            <div className="flex gap-1 border-2 border-greenyp-300 bg-greenyp-50/50 rounded-md p-2">
+            <div className="flex gap-1 border-2 border-yellow-500 bg-gray-100 rounded-md p-2">
               <Button
                 type="button"
                 variant="ghost"
