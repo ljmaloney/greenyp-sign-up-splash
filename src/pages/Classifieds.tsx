@@ -24,7 +24,7 @@ const Classifieds = () => {
               <Link to="/classifieds/prototypes">
                 <Button variant="outline" className="border-greenyp-600 text-greenyp-600 hover:bg-greenyp-50">
                   <Eye className="w-4 h-4 mr-2" />
-                  View Prototypes
+                  View Ad Types
                 </Button>
               </Link>
               <Link to="/classifieds/create">
