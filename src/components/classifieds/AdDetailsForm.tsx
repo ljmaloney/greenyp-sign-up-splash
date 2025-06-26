@@ -52,6 +52,49 @@ const AdDetailsForm = ({
         <CardTitle>Ad Details</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <Label htmlFor="category">Category *</Label>
+            <Select value={category} onValueChange={(value) => onFieldChange('category', value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select category" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((cat) => (
+                    <SelectItem key={cat} value={cat}>
+                      {cat}
+                    </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label htmlFor="price">Price</Label>
+            <Input
+                id="price"
+                value={price || ''}
+                onChange={(e) => onFieldChange('price', e.target.value)}
+                placeholder="Enter price"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="per">Per (optional)</Label>
+            <Select value={per} onValueChange={(value) => onFieldChange('per', value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select unit" />
+              </SelectTrigger>
+              <SelectContent>
+                {perOptions.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
         <div>
           <Label htmlFor="title">Title *</Label>
           <Input
@@ -80,49 +123,6 @@ const AdDetailsForm = ({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <Label htmlFor="category">Category *</Label>
-            <Select value={category} onValueChange={(value) => onFieldChange('category', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select category" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((cat) => (
-                  <SelectItem key={cat} value={cat}>
-                    {cat}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <Label htmlFor="price">Price</Label>
-            <Input
-              id="price"
-              value={price || ''}
-              onChange={(e) => onFieldChange('price', e.target.value)}
-              placeholder="Enter price"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="per">Per (optional)</Label>
-            <Select value={per} onValueChange={(value) => onFieldChange('per', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select unit" />
-              </SelectTrigger>
-              <SelectContent>
-                {perOptions.map((option) => (
-                  <SelectItem key={option} value={option}>
-                    {option}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
       </CardContent>
     </Card>
   );
