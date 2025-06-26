@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Bold, Italic, List } from 'lucide-react';
 
 interface AdDetailsFormProps {
   title: string;
@@ -45,6 +47,32 @@ const AdDetailsForm = ({
     'pound',
     'gallon'
   ];
+
+  const insertMarkup = (markup: string) => {
+    const textarea = document.getElementById('description') as HTMLTextAreaElement;
+    if (textarea) {
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const selectedText = description.substring(start, end);
+      const beforeText = description.substring(0, start);
+      const afterText = description.substring(end);
+      
+      let newText = '';
+      switch (markup) {
+        case 'bold':
+          newText = `${beforeText}**${selectedText || 'bold text'}**${afterText}`;
+          break;
+        case 'italic':
+          newText = `${beforeText}*${selectedText || 'italic text'}*${afterText}`;
+          break;
+        case 'list':
+          newText = `${beforeText}\n• ${selectedText || 'list item'}${afterText}`;
+          break;
+      }
+      
+      onFieldChange('description', newText);
+    }
+  };
 
   return (
     <Card>
@@ -95,6 +123,7 @@ const AdDetailsForm = ({
             </Select>
           </div>
         </div>
+        
         <div>
           <Label htmlFor="title">Title *</Label>
           <Input
@@ -109,17 +138,49 @@ const AdDetailsForm = ({
 
         <div>
           <Label htmlFor="description">Description * (Max 512 characters)</Label>
-          <Textarea
-            id="description"
-            value={description}
-            onChange={(e) => onFieldChange('description', e.target.value)}
-            placeholder="Describe your item or service"
-            maxLength={512}
-            required
-            className="min-h-[100px]"
-          />
-          <div className="text-sm text-gray-500 mt-1">
-            {description.length}/512 characters
+          <div className="space-y-2">
+            <div className="flex gap-1 border-b border-gray-200 pb-2">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => insertMarkup('bold')}
+                className="h-8 w-8 p-0"
+              >
+                <Bold className="h-4 w-4" />
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => insertMarkup('italic')}
+                className="h-8 w-8 p-0"
+              >
+                <Italic className="h-4 w-4" />
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => insertMarkup('list')}
+                className="h-8 w-8 p-0"
+              >
+                <List className="h-4 w-4" />
+              </Button>
+            </div>
+            <Textarea
+              id="description"
+              value={description}
+              onChange={(e) => onFieldChange('description', e.target.value)}
+              placeholder="Describe your item or service. Use ** for bold text, * for italic text, and • for bullet points."
+              maxLength={512}
+              required
+              className="min-h-[200px] resize-y"
+            />
+            <div className="flex justify-between items-center text-sm text-gray-500">
+              <div>Use **bold**, *italic*, and • for bullet points</div>
+              <div>{description.length}/512 characters</div>
+            </div>
           </div>
         </div>
 
