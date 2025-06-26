@@ -2,6 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { CheckIcon } from 'lucide-react';
 import { PRICING_TIERS } from '@/types/classifieds';
 
 interface PricingTierSelectorProps {
@@ -34,7 +35,12 @@ const PricingTierSelector = ({ selectedTier, onTierChange }: PricingTierSelector
               <div className="text-sm text-gray-600">{tier.description}</div>
               <div className="text-sm text-gray-500">Max images: {tier.maxImages}</div>
               {tier.contactObfuscation && (
-                <div className="text-xs text-green-600 font-medium">• Contact Privacy</div>
+                <div className="flex items-center text-sm text-gray-600">
+                  <span className="bg-green-100 rounded-full p-1 mr-2 flex-shrink-0">
+                    <CheckIcon className="h-4 w-4 text-green-600" />
+                  </span>
+                  Contact Privacy
+                </div>
               )}
             </Button>
           ))}
