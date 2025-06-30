@@ -79,31 +79,16 @@ export class OIDCUserTransformer {
     } else if (typeof rawRoles === 'string') {
       roles = [rawRoles];
     } else {
-      console.log('⚠️ TRANSFORMER - No roles found in profile, checking email for admin access');
-      
-      // TEMPORARY WORKAROUND: Check if user should have admin access based on email
-      const userEmail = oidcUser.profile.email || '';
-      const adminEmails = [
-        'luther.maloney@greenyp.com',
-        'admin@greenyp.com',
-        'test@admin.com'
-      ];
-      
-      if (adminEmails.includes(userEmail.toLowerCase())) {
-        console.log('🔧 TRANSFORMER - Email matches admin list, granting admin role');
-        roles = ['GreenPages-Admin'];
-      } else {
-        console.log('🔧 TRANSFORMER - Email not in admin list, using default subscriber role');
-        roles = ['GreenPages-Subscriber'];
-      }
+      console.log('⚠️ TRANSFORMER - No roles found in profile, using default subscriber role');
+      // Default to subscriber role when no roles are found
+      roles = ['GreenPages-Subscriber'];
     }
     
     console.log('🔄 TRANSFORMER - Final roles being set:', {
       originalRoles: rawRoles,
       finalRoles: roles,
       userEmail: oidcUser.profile.email,
-      userSub: oidcUser.profile.sub,
-      isTemporaryWorkaround: !rawRoles
+      userSub: oidcUser.profile.sub
     });
     
     return {
