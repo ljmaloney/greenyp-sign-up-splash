@@ -50,7 +50,7 @@ const ProtectedRoute = ({
 
   if (requiredRole) {
     const userRoles = user?.roles || [];
-    console.log('🔍 ROLE CHECK:', { 
+    console.log('🔍 PROTECTED ROUTE - Starting role check:', { 
       requiredRole, 
       userRoles,
       userEmail: user?.email,
@@ -61,16 +61,27 @@ const ProtectedRoute = ({
     
     // Handle special Dashboard-Access role for both subscribers and admins
     if (requiredRole === 'Dashboard-Access') {
+      console.log('🎯 PROTECTED ROUTE - Checking Dashboard-Access (subscriber or admin roles)');
+      
       hasRequiredRole = userRoles.some(role => {
         const normalizedRole = role.toLowerCase();
-        return normalizedRole === 'greenpages-subscriber' || 
+        const isDashboardAccessRole = normalizedRole === 'greenpages-subscriber' || 
                normalizedRole === 'greepages-subscriber' ||
                role === 'GreenPages-Subscriber' || 
                role === 'GreenPages-SubscriberAdmin' || 
                role === 'GreenPages-Admin';
+               
+        console.log('🔍 PROTECTED ROUTE - Role check detail:', {
+          role,
+          normalizedRole,
+          isDashboardAccessRole,
+          checkingAgainst: 'Dashboard-Access'
+        });
+        
+        return isDashboardAccessRole;
       });
       
-      console.log('🔍 Dashboard access check:', {
+      console.log('🎯 PROTECTED ROUTE - Dashboard access check result:', {
         userRoles,
         hasRequiredRole,
         checkingFor: 'Dashboard-Access (subscriber or admin roles)'
@@ -78,23 +89,36 @@ const ProtectedRoute = ({
     } 
     // Handle GreenPages-Admin role check
     else if (requiredRole === 'GreenPages-Admin') {
+      console.log('🔧 PROTECTED ROUTE - Checking GreenPages-Admin role');
+      
       hasRequiredRole = userRoles.some(role => {
         const normalizedRole = role.toLowerCase();
-        return normalizedRole === 'greenpages-admin' || 
+        const isAdminRole = normalizedRole === 'greenpages-admin' || 
                normalizedRole === 'greepages-admin' ||
                role === 'GreenPages-Admin';
+               
+        console.log('🔍 PROTECTED ROUTE - Admin role check detail:', {
+          role,
+          normalizedRole,
+          isAdminRole,
+          checkingAgainst: 'GreenPages-Admin'
+        });
+        
+        return isAdminRole;
       });
       
-      console.log('🔧 Admin role check:', {
+      console.log('🔧 PROTECTED ROUTE - Admin role check result:', {
         userRoles,
         hasRequiredRole
       });
     } 
     // Handle exact role match for other roles
     else {
+      console.log('🎯 PROTECTED ROUTE - Checking exact role match for:', requiredRole);
+      
       hasRequiredRole = userRoles.includes(requiredRole);
       
-      console.log('🎯 Exact role check:', {
+      console.log('🎯 PROTECTED ROUTE - Exact role check result:', {
         requiredRole,
         userRoles,
         hasRequiredRole
@@ -102,22 +126,32 @@ const ProtectedRoute = ({
     }
 
     if (!hasRequiredRole) {
-      console.log('❌ ROLE CHECK FAILED:', {
+      console.log('❌ PROTECTED ROUTE - ROLE CHECK FAILED:', {
         requiredRole,
         userRoles,
         userEmail: user?.email,
         currentPath: location.pathname,
-        redirectingTo: '/unauthorized'
+        redirectingTo: '/unauthorized',
+        finalDecision: 'ACCESS DENIED'
       });
       return <Navigate to="/unauthorized" replace />;
+    } else {
+      console.log('✅ PROTECTED ROUTE - ROLE CHECK PASSED:', {
+        requiredRole,
+        userRoles,
+        userEmail: user?.email,
+        currentPath: location.pathname,
+        finalDecision: 'ACCESS GRANTED'
+      });
     }
   }
 
-  console.log('✅ Authentication checks passed, rendering protected content for:', {
+  console.log('✅ PROTECTED ROUTE - All authentication checks passed, rendering protected content for:', {
     userEmail: user?.email,
     userRoles: user?.roles,
     currentPath: location.pathname,
-    requiredRole
+    requiredRole,
+    finalDecision: 'CONTENT RENDERED'
   });
   return <>{children}</>;
 };
