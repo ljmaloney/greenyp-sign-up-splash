@@ -100,6 +100,62 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           user: transformedUser, 
           hasToken: !!oidcUser.access_token 
         });
+
+        // 🚨 ROLE-BASED REDIRECTION LOGIC - Check if user should be redirected based on their role
+        const currentPath = window.location.pathname;
+        const userRoles = transformedUser.roles || [];
+        const normalizedRoles = userRoles.map(role => role.toLowerCase());
+        
+        console.log('🔀 AUTH CONTEXT - Role-based redirection check:', {
+          currentPath,
+          userRoles,
+          normalizedRoles,
+          userEmail: transformedUser.email
+        });
+
+        // Define admin role patterns
+        const adminRolePatterns = [
+          'greenpages-admin',
+          'greepages-admin',   // handle typo variation
+          'admin', 
+          'sysadmin',
+          'administrator'
+        ];
+
+        // Check if user has admin role
+        const hasAdminRole = normalizedRoles.some(userRole => {
+          const isExactMatch = adminRolePatterns.includes(userRole);
+          const containsAdmin = userRole.includes('admin');
+          return isExactMatch || containsAdmin;
+        });
+
+        console.log('🔧 AUTH CONTEXT - Admin role check:', {
+          hasAdminRole,
+          currentPath,
+          userRoles: transformedUser.roles,
+          normalizedRoles
+        });
+
+        // If admin user is accessing non-admin routes, redirect to admin
+        if (hasAdminRole && !currentPath.startsWith('/admin')) {
+          console.log('🔀 AUTH CONTEXT - ADMIN USER detected on non-admin route, redirecting to /admin');
+          console.log('🔀 AUTH CONTEXT - Redirect details:', {
+            userEmail: transformedUser.email,
+            currentPath,
+            redirectTo: '/admin',
+            reason: 'Admin user accessing non-admin route'
+          });
+          
+          // Force redirect to admin panel
+          window.location.href = '/admin';
+          return; // Exit early to prevent further initialization
+        }
+
+        // If non-admin user is accessing admin routes, they'll be handled by ProtectedRoute
+        if (!hasAdminRole && currentPath.startsWith('/admin')) {
+          console.log('🔀 AUTH CONTEXT - Non-admin user accessing admin route, will be handled by ProtectedRoute');
+        }
+
       } else {
         console.log('❌ AUTH CONTEXT - No valid user found during initialization');
         setUser(null);
