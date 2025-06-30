@@ -94,19 +94,19 @@ function App() {
               <Route path="/auth/silent-callback" element={<SilentCallback />} />
               <Route path="/unauthorized" element={<Unauthorized />} />
 
-              {/* Dashboard routes - Protected for subscribers */}
-              <Route path="/dashboard" element={<ProtectedRoute requiredRole="Greepages-Subscriber"><DashboardIndex /></ProtectedRoute>} />
-              <Route path="/dashboard/locations" element={<ProtectedRoute requiredRole="Greepages-Subscriber"><DashboardLocations /></ProtectedRoute>} />
-              <Route path="/dashboard/contacts" element={<ProtectedRoute requiredRole="Greepages-Subscriber"><DashboardContacts /></ProtectedRoute>} />
-              <Route path="/dashboard/products" element={<ProtectedRoute requiredRole="Greepages-Subscriber"><DashboardProducts /></ProtectedRoute>} />
-              <Route path="/dashboard/services" element={<ProtectedRoute requiredRole="Greepages-Subscriber"><DashboardServices /></ProtectedRoute>} />
-              <Route path="/dashboard/gallery" element={<ProtectedRoute requiredRole="Greepages-Subscriber"><DashboardPhotoGallery /></ProtectedRoute>} />
-              <Route path="/dashboard/photo-gallery" element={<ProtectedRoute requiredRole="Greepages-Subscriber"><DashboardPhotoGallery /></ProtectedRoute>} />
-              <Route path="/dashboard/users" element={<ProtectedRoute requiredRole="Greepages-Subscriber"><DashboardAuthorizedUsers /></ProtectedRoute>} />
-              <Route path="/dashboard/authorized-users" element={<ProtectedRoute requiredRole="Greepages-Subscriber"><DashboardAuthorizedUsers /></ProtectedRoute>} />
-              <Route path="/dashboard/analytics" element={<ProtectedRoute requiredRole="Greepages-Subscriber"><DashboardAnalytics /></ProtectedRoute>} />
-              <Route path="/dashboard/payment" element={<ProtectedRoute requiredRole="Greepages-Subscriber"><DashboardPayment /></ProtectedRoute>} />
-              <Route path="/dashboard/subscription" element={<ProtectedRoute requiredRole="Greepages-Subscriber"><DashboardSubscription /></ProtectedRoute>} />
+              {/* Dashboard routes - Allow both subscribers AND admins */}
+              <Route path="/dashboard" element={<ProtectedRoute requiredRole="Dashboard-Access"><DashboardIndex /></ProtectedRoute>} />
+              <Route path="/dashboard/locations" element={<ProtectedRoute requiredRole="Dashboard-Access"><DashboardLocations /></ProtectedRoute>} />
+              <Route path="/dashboard/contacts" element={<ProtectedRoute requiredRole="Dashboard-Access"><DashboardContacts /></ProtectedRoute>} />
+              <Route path="/dashboard/products" element={<ProtectedRoute requiredRole="Dashboard-Access"><DashboardProducts /></ProtectedRoute>} />
+              <Route path="/dashboard/services" element={<ProtectedRoute requiredRole="Dashboard-Access"><DashboardServices /></ProtectedRoute>} />
+              <Route path="/dashboard/gallery" element={<ProtectedRoute requiredRole="Dashboard-Access"><DashboardPhotoGallery /></ProtectedRoute>} />
+              <Route path="/dashboard/photo-gallery" element={<ProtectedRoute requiredRole="Dashboard-Access"><DashboardPhotoGallery /></ProtectedRoute>} />
+              <Route path="/dashboard/users" element={<ProtectedRoute requiredRole="Dashboard-Access"><DashboardAuthorizedUsers /></ProtectedRoute>} />
+              <Route path="/dashboard/authorized-users" element={<ProtectedRoute requiredRole="Dashboard-Access"><DashboardAuthorizedUsers /></ProtectedRoute>} />
+              <Route path="/dashboard/analytics" element={<ProtectedRoute requiredRole="Dashboard-Access"><DashboardAnalytics /></ProtectedRoute>} />
+              <Route path="/dashboard/payment" element={<ProtectedRoute requiredRole="Dashboard-Access"><DashboardPayment /></ProtectedRoute>} />
+              <Route path="/dashboard/subscription" element={<ProtectedRoute requiredRole="Dashboard-Access"><DashboardSubscription /></ProtectedRoute>} />
 
               {/* Admin routes - Protected for admins */}
               <Route path="/admin" element={<ProtectedRoute requiredRole="GreenPages-Admin"><AdminIndex /></ProtectedRoute>} />
