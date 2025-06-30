@@ -46,17 +46,21 @@ export class OIDCUserTransformer {
     let rawRoles = profileRoles || profileRole || profileGroups || profileAuthorities || 
                    profileApplicationRoles || profileUserRoles || profilePermissions;
     
-    // Handle Keycloak-style nested roles
-    if (!rawRoles && profileRealmAccess && profileRealmAccess.roles) {
-      rawRoles = profileRealmAccess.roles;
+    // Handle Keycloak-style nested roles with proper type checking
+    if (!rawRoles && profileRealmAccess && typeof profileRealmAccess === 'object' && profileRealmAccess !== null) {
+      const realmAccess = profileRealmAccess as any;
+      if (realmAccess.roles) {
+        rawRoles = realmAccess.roles;
+      }
     }
     
-    // Handle resource-specific roles
-    if (!rawRoles && profileResourceAccess) {
+    // Handle resource-specific roles with proper type checking
+    if (!rawRoles && profileResourceAccess && typeof profileResourceAccess === 'object' && profileResourceAccess !== null) {
+      const resourceAccess = profileResourceAccess as Record<string, any>;
       // Look for roles in any resource
-      for (const resource in profileResourceAccess) {
-        if (profileResourceAccess[resource] && profileResourceAccess[resource].roles) {
-          rawRoles = profileResourceAccess[resource].roles;
+      for (const resource in resourceAccess) {
+        if (resourceAccess[resource] && resourceAccess[resource].roles) {
+          rawRoles = resourceAccess[resource].roles;
           break;
         }
       }
