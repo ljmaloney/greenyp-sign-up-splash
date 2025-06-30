@@ -61,20 +61,29 @@ const ProtectedRoute = ({
     
     // Handle special Dashboard-Access role for both subscribers and admins
     if (requiredRole === 'Dashboard-Access') {
-      hasRequiredRole = userRoles.some(role => 
-        role === 'GreenPages-Subscriber' || 
-        role === 'GreenPages-SubscriberAdmin' || 
-        role === 'GreenPages-Admin'
-      );
+      hasRequiredRole = userRoles.some(role => {
+        const normalizedRole = role.toLowerCase();
+        return normalizedRole === 'greenpages-subscriber' || 
+               normalizedRole === 'greepages-subscriber' ||
+               role === 'GreenPages-Subscriber' || 
+               role === 'GreenPages-SubscriberAdmin' || 
+               role === 'GreenPages-Admin';
+      });
       
       console.log('🔍 Dashboard access check:', {
         userRoles,
-        hasRequiredRole
+        hasRequiredRole,
+        checkingFor: 'Dashboard-Access (subscriber or admin roles)'
       });
     } 
     // Handle GreenPages-Admin role check
     else if (requiredRole === 'GreenPages-Admin') {
-      hasRequiredRole = userRoles.includes('GreenPages-Admin');
+      hasRequiredRole = userRoles.some(role => {
+        const normalizedRole = role.toLowerCase();
+        return normalizedRole === 'greenpages-admin' || 
+               normalizedRole === 'greepages-admin' ||
+               role === 'GreenPages-Admin';
+      });
       
       console.log('🔧 Admin role check:', {
         userRoles,
