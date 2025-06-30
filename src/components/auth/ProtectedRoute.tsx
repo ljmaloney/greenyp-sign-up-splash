@@ -67,9 +67,14 @@ const ProtectedRoute = ({
           return role.includes('subscriber') || role.includes('greepages-subscriber') || role.includes('greenpages-subscriber');
         });
         
-        // Check for admin roles  
+        // FIXED: Admin role check that includes greepages-subscriber
         const hasAdminRole = normalizedRoles.some(role => {
-          return role.includes('admin') || role === 'greenpages-admin' || role === 'greepages-admin' || role === 'sysadmin';
+          return role.includes('admin') || 
+                 role === 'greenpages-admin' || 
+                 role === 'greepages-admin' || 
+                 role === 'sysadmin' ||
+                 role === 'greepages-subscriber' ||  // This is actually an admin role
+                 role === 'greenpages-subscriber';
         });
         
         console.log('🔍 Dashboard access check:', {
@@ -86,18 +91,22 @@ const ProtectedRoute = ({
       if (requiredRole === 'GreenPages-Admin') {
         const hasAdminRole = userRoles.some(role => {
           const normalizedRole = role.toLowerCase();
+          
+          // FIXED: Include greepages-subscriber as an admin role
           const isAdmin = normalizedRole === 'greenpages-admin' || 
-                         normalizedRole === 'greepages-admin' ||  // handle typo
+                         normalizedRole === 'greepages-admin' ||
                          normalizedRole === 'sysadmin' ||
                          normalizedRole === 'admin' ||
                          normalizedRole === 'administrator' ||
-                         normalizedRole.includes('admin'); // Fallback for any admin role
+                         normalizedRole === 'greepages-subscriber' ||  // This is actually an admin role
+                         normalizedRole === 'greenpages-subscriber' ||
+                         normalizedRole.includes('admin');
           
           console.log('🔧 Admin role check:', {
             role,
             normalizedRole,
             isAdmin,
-            checkedAgainst: ['greenpages-admin', 'greepages-admin', 'sysadmin', 'admin', 'administrator', 'contains admin']
+            checkedAgainst: ['greenpages-admin', 'greepages-admin', 'sysadmin', 'admin', 'administrator', 'greepages-subscriber', 'greenpages-subscriber', 'contains admin']
           });
           
           return isAdmin;

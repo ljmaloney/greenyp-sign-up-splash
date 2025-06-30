@@ -113,27 +113,43 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           userEmail: transformedUser.email
         });
 
-        // Define admin role patterns
-        const adminRolePatterns = [
-          'greenpages-admin',
-          'greepages-admin',   // handle typo variation
-          'admin', 
-          'sysadmin',
-          'administrator'
-        ];
-
-        // Check if user has admin role
+        // FIXED: Comprehensive admin role detection
         const hasAdminRole = normalizedRoles.some(userRole => {
-          const isExactMatch = adminRolePatterns.includes(userRole);
-          const containsAdmin = userRole.includes('admin');
-          return isExactMatch || containsAdmin;
+          // Check for exact admin role matches
+          const exactAdminRoles = [
+            'greenpages-admin',
+            'greepages-admin',
+            'admin', 
+            'sysadmin',
+            'administrator'
+          ];
+          
+          // Check for roles that contain "admin" OR are subscriber admin roles
+          const isAdminRole = exactAdminRoles.includes(userRole) || 
+                             userRole.includes('admin') ||
+                             userRole === 'greepages-subscriber' ||  // This is actually an admin role
+                             userRole === 'greenpages-subscriber' ||
+                             userRole.includes('subscriberadmin');
+          
+          console.log('🔍 AUTH CONTEXT - Checking role:', userRole, {
+            isExactMatch: exactAdminRoles.includes(userRole),
+            containsAdmin: userRole.includes('admin'),
+            isSubscriberAdmin: userRole === 'greepages-subscriber' || userRole === 'greenpages-subscriber',
+            finalResult: isAdminRole
+          });
+          
+          return isAdminRole;
         });
 
         console.log('🔧 AUTH CONTEXT - Admin role check:', {
           hasAdminRole,
           currentPath,
           userRoles: transformedUser.roles,
-          normalizedRoles
+          normalizedRoles,
+          detailedCheck: normalizedRoles.map(role => ({
+            role,
+            isAdmin: role.includes('admin') || role === 'greepages-subscriber' || role === 'greenpages-subscriber'
+          }))
         });
 
         // If admin user is accessing non-admin routes, redirect to admin
@@ -143,7 +159,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             userEmail: transformedUser.email,
             currentPath,
             redirectTo: '/admin',
-            reason: 'Admin user accessing non-admin route'
+            reason: 'Admin user accessing non-admin route',
+            userRoles: transformedUser.roles
           });
           
           // Force redirect to admin panel

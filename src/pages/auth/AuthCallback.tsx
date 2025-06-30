@@ -48,41 +48,39 @@ const AuthCallback = () => {
           const normalizedRoles = roles.map(role => role.toLowerCase());
           console.log('🔄 CALLBACK - Normalized roles:', normalizedRoles);
           
-          // Define COMPREHENSIVE admin role patterns
-          const adminRolePatterns = [
-            'greenpages-admin',
-            'greepages-admin',   // handle typo variation
-            'admin', 
-            'sysadmin',
-            'administrator'
-          ];
-          
-          // Check if user has any admin role - use exact matching
+          // FIXED: Check if user has any admin role including greepages-subscriber
           const hasAdminRole = normalizedRoles.some(userRole => {
-            // Check for exact match with admin patterns
-            const isExactMatch = adminRolePatterns.includes(userRole);
-            // Also check if the user role contains 'admin' 
-            const containsAdmin = userRole.includes('admin');
+            const exactAdminRoles = [
+              'greenpages-admin',
+              'greepages-admin',
+              'admin', 
+              'sysadmin',
+              'administrator'
+            ];
+            
+            const isAdmin = exactAdminRoles.includes(userRole) || 
+                           userRole.includes('admin') ||
+                           userRole === 'greepages-subscriber' ||  // This is actually an admin role
+                           userRole === 'greenpages-subscriber';
             
             console.log('🔍 CALLBACK - Admin role check for:', userRole, {
-              isExactMatch,
-              containsAdmin,
-              matchesAnyPattern: isExactMatch || containsAdmin,
-              checkedAgainst: adminRolePatterns
+              isExactMatch: exactAdminRoles.includes(userRole),
+              containsAdmin: userRole.includes('admin'),
+              isSubscriberAdmin: userRole === 'greepages-subscriber' || userRole === 'greenpages-subscriber',
+              finalResult: isAdmin
             });
             
-            return isExactMatch || containsAdmin;
+            return isAdmin;
           });
           
           console.log('🔧 CALLBACK - Admin role check details:', {
             originalRoles: roles,
             normalizedRoles,
-            adminRolePatterns,
             hasAdminRole,
             userEmail: userInfo.email,
             detailedCheck: normalizedRoles.map(role => ({
               role,
-              matchesAdmin: adminRolePatterns.includes(role) || role.includes('admin')
+              isAdmin: role.includes('admin') || role === 'greepages-subscriber' || role === 'greenpages-subscriber'
             }))
           });
           
@@ -93,9 +91,9 @@ const AuthCallback = () => {
             // Check for subscriber roles - case insensitive with COMPREHENSIVE patterns
             const subscriberRolePatterns = [
               'greenpages-subscriber', 
-              'greepages-subscriber',  // handle typo variation
+              'greepages-subscriber',
               'greenpages-subscriberadmin',
-              'greepages-subscriberadmin',  // handle typo variation
+              'greepages-subscriberadmin',
               'subscriber'
             ];
             
