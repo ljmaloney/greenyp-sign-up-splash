@@ -22,7 +22,7 @@ export interface ProducerListingsResponse {
 }
 
 export const fetchProducerProfiles = async (lineOfBusinessId: string): Promise<ProducerListingsResponse> => {
-  const response = await fetch(getApiUrl(`/producer/${lineOfBusinessId}/profiles`));
+  const response = await fetch(getApiUrl(`/producer/profiles?lineOfBusinessId=${lineOfBusinessId}`));
   
   if (!response.ok) {
     throw new Error(`Failed to fetch producer profiles: ${response.status}`);

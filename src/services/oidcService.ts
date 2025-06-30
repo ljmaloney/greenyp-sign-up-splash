@@ -51,4 +51,4 @@ class OIDCService {
 }
 
 export const oidcService = new OIDCService();
-export type { UserInfo };
+export type { UserInfo };0.
