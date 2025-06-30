@@ -1,3 +1,4 @@
+
 import { UserManagerSettings } from 'oidc-client-ts';
 
 const getAuthConfig = (): UserManagerSettings => {
@@ -25,8 +26,7 @@ const getAuthConfig = (): UserManagerSettings => {
     loadUserInfo: false,
     // Add better error handling and timeout
     fetchRequestCredentials: 'same-origin',
-    // Increase timeout for slower connections
-    staleStateAge: 300, // 5 minutes
+    // Increase timeout for slower connections - using clockSkew for tolerance
     clockSkew: 300, // 5 minutes clock skew tolerance
     // FusionAuth specific configuration
     client_authentication: 'client_secret_post',
