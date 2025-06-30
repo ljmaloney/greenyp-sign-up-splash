@@ -13,39 +13,19 @@ export class OIDCUserTransformer {
       isArray: Array.isArray(userRoles)
     });
     
-    let roles: string[] = Array.isArray(userRoles) ? userRoles : ['GreenPages-Subscriber'];
+    // Ensure we always have an array of roles
+    let roles: string[] = [];
+    if (Array.isArray(userRoles)) {
+      roles = userRoles;
+    } else if (typeof userRoles === 'string') {
+      roles = [userRoles];
+    } else {
+      roles = ['GreenPages-Subscriber']; // Default fallback
+    }
     
-    // Normalize role names to handle case variations
-    roles = roles.map(role => {
-      const lowerRole = role.toLowerCase();
-      
-      console.log('🔄 TRANSFORMER - Processing role:', {
-        originalRole: role,
-        lowerCaseRole: lowerRole
-      });
-      
-      // Map common variations to standard names
-      if (lowerRole === 'greenpages-subscriber' || lowerRole === 'greepages-subscriber') {
-        console.log('✅ TRANSFORMER - Mapped to GreenPages-Subscriber');
-        return 'GreenPages-Subscriber';
-      }
-      if (lowerRole === 'greenpages-subscriberadmin' || lowerRole === 'greenpages-subscriberadmin') {
-        console.log('✅ TRANSFORMER - Mapped to GreenPages-SubscriberAdmin');
-        return 'GreenPages-SubscriberAdmin';
-      }
-      if (lowerRole === 'greenpages-admin' || lowerRole === 'greepages-admin') {
-        console.log('✅ TRANSFORMER - Mapped to GreenPages-Admin');
-        return 'GreenPages-Admin';
-      }
-      
-      console.log('⚠️ TRANSFORMER - No mapping found, keeping original role');
-      // Return the role as-is if no mapping found
-      return role;
-    });
-    
-    console.log('🔄 TRANSFORMER - Final role normalization result:', {
+    console.log('🔄 TRANSFORMER - Final roles being set:', {
       originalRoles: userRoles,
-      normalizedRoles: roles,
+      finalRoles: roles,
       userEmail: oidcUser.profile.email,
       userSub: oidcUser.profile.sub
     });

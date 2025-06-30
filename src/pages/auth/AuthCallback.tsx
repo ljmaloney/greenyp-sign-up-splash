@@ -10,17 +10,15 @@ const AuthCallback = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log('🔥 AUTH CALLBACK COMPONENT MOUNTED - This should appear in logs if callback is being called');
-    console.log('📍 Current URL in AuthCallback:', window.location.href);
-    console.log('📍 URL search params:', window.location.search);
-    console.log('📍 URL hash:', window.location.hash);
+    console.log('🔥 AUTH CALLBACK - Component mounted');
+    console.log('📍 Current URL:', window.location.href);
     
     const handleCallback = async () => {
       try {
-        console.log('🔄 Starting callback handling...');
+        console.log('🔄 AUTH CALLBACK - Starting callback handling...');
         const user = await oidcService.handleCallback();
         
-        console.log('✅ Callback completed, user received:', {
+        console.log('✅ AUTH CALLBACK - Callback completed, user received:', {
           hasUser: !!user,
           userProfile: user ? {
             sub: user.profile?.sub,
@@ -32,70 +30,56 @@ const AuthCallback = () => {
         });
         
         if (user && !user.expired) {
-          console.log('🎯 User is valid, determining redirect based on roles...');
+          console.log('🎯 AUTH CALLBACK - User is valid, determining redirect...');
           
           // Transform user to get roles
           const userInfo = oidcService.transformUser(user);
           const roles = userInfo.roles || [];
           
-          console.log('👥 CALLBACK - User roles from token:', roles);
-          console.log('🔍 CALLBACK - Raw user info:', userInfo);
+          console.log('👥 AUTH CALLBACK - User roles:', roles);
           
-          // SIMPLE ROLE-BASED REDIRECTION LOGIC WITH CASE-INSENSITIVE COMPARISON
-          let redirectUrl = '/dashboard'; // default fallback
+          // SIMPLE ROLE-BASED REDIRECTION - CASE INSENSITIVE
+          let redirectUrl = '/dashboard'; // Default
           
-          // Check for admin role FIRST (case-insensitive)
-          const hasAdminRole = roles.some(role => {
-            const normalizedRole = role.toLowerCase();
-            return normalizedRole === 'greenpages-admin' || normalizedRole === 'greepages-admin';
+          // Check each role (case insensitive)
+          const hasAdminRole = roles.some(role => 
+            role.toLowerCase() === 'greenpages-admin'
+          );
+          
+          const hasSubscriberRole = roles.some(role => {
+            const lowerRole = role.toLowerCase();
+            return lowerRole === 'greenpages-subscriber' || 
+                   lowerRole === 'greenpages-subscriberadmin';
           });
           
           if (hasAdminRole) {
             redirectUrl = '/admin';
-            console.log('🔧 CALLBACK - Admin role detected - redirecting to /admin');
+            console.log('🔧 AUTH CALLBACK - ADMIN ROLE DETECTED - redirecting to /admin');
+          } else if (hasSubscriberRole) {
+            redirectUrl = '/dashboard';
+            console.log('👤 AUTH CALLBACK - SUBSCRIBER ROLE DETECTED - redirecting to /dashboard');
           } else {
-            // Check for subscriber roles (case-insensitive)
-            const hasSubscriberRole = roles.some(role => {
-              const normalizedRole = role.toLowerCase();
-              return normalizedRole === 'greenpages-subscriber' || 
-                     normalizedRole === 'greepages-subscriber' ||
-                     normalizedRole === 'greenpages-subscriberadmin' ||
-                     normalizedRole === 'greepages-subscriberadmin';
-            });
-            
-            if (hasSubscriberRole) {
-              redirectUrl = '/dashboard';
-              console.log('👤 CALLBACK - Subscriber role detected - redirecting to /dashboard');
-            } else {
-              console.log('⚠️ CALLBACK - NO RECOGNIZED ROLES - defaulting to /dashboard');
-              redirectUrl = '/dashboard';
-            }
+            console.log('⚠️ AUTH CALLBACK - NO RECOGNIZED ROLES - defaulting to /dashboard');
+            redirectUrl = '/dashboard';
           }
           
-          console.log('🚀 CALLBACK - FINAL REDIRECT DECISION:', {
+          console.log('🚀 AUTH CALLBACK - FINAL REDIRECT DECISION:', {
             userEmail: userInfo.email,
-            userId: userInfo.sub,
             userRoles: roles,
             hasAdminRole,
-            finalRedirectUrl: redirectUrl,
-            timestamp: new Date().toISOString()
+            hasSubscriberRole,
+            finalRedirectUrl: redirectUrl
           });
           
-          // Force a full page reload to ensure the AuthContext picks up the new user
-          console.log(`🔀 CALLBACK - Redirecting to: ${redirectUrl}`);
+          // Force redirect
+          console.log(`🔀 AUTH CALLBACK - Redirecting to: ${redirectUrl}`);
           window.location.href = redirectUrl;
         } else {
-          console.error('❌ CALLBACK - Invalid user from callback:', user);
+          console.error('❌ AUTH CALLBACK - Invalid user from callback:', user);
           setError('Authentication failed - invalid user session');
         }
       } catch (error) {
-        console.error('❌ CALLBACK - Auth callback error:', error);
-        console.error('CALLBACK - Error details:', {
-          message: error.message,
-          stack: error.stack,
-          name: error.name,
-          currentUrl: window.location.href
-        });
+        console.error('❌ AUTH CALLBACK - Auth callback error:', error);
         setError('Authentication failed. Please try again.');
         setTimeout(() => navigate('/login', { replace: true }), 3000);
       }

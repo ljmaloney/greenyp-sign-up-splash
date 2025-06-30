@@ -19,18 +19,17 @@ const ProtectedRoute = ({
   const { isAuthenticated, isLoading, user } = useAuth();
   const location = useLocation();
 
-  console.log('🛡️ ProtectedRoute check:', {
+  console.log('🛡️ PROTECTED ROUTE - Auth check:', {
     isLoading,
     isAuthenticated,
     requiredRole,
     currentPath: location.pathname,
     userRoles: user?.roles,
-    userEmail: user?.email,
-    userId: user?.id
+    userEmail: user?.email
   });
 
   if (isLoading) {
-    console.log('⏳ Auth still loading, showing loading screen');
+    console.log('⏳ PROTECTED ROUTE - Auth still loading');
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <Card className="w-full max-w-md">
@@ -44,7 +43,7 @@ const ProtectedRoute = ({
   }
 
   if (!isAuthenticated) {
-    console.log('❌ User not authenticated, redirecting to login');
+    console.log('❌ PROTECTED ROUTE - User not authenticated, redirecting to login');
     return <Navigate to={fallbackPath} state={{ from: location }} replace />;
   }
 
@@ -53,72 +52,39 @@ const ProtectedRoute = ({
     console.log('🔍 PROTECTED ROUTE - Starting role check:', { 
       requiredRole, 
       userRoles,
-      userEmail: user?.email,
-      currentPath: location.pathname
+      userEmail: user?.email
     });
     
     let hasRequiredRole = false;
     
-    // Handle special Dashboard-Access role for both subscribers and admins
     if (requiredRole === 'Dashboard-Access') {
-      console.log('🎯 PROTECTED ROUTE - Checking Dashboard-Access (subscriber or admin roles)');
-      
+      // Allow both subscriber and admin roles for dashboard access
       hasRequiredRole = userRoles.some(role => {
-        const normalizedRole = role.toLowerCase();
-        const isDashboardAccessRole = normalizedRole === 'greenpages-subscriber' || 
-               normalizedRole === 'greepages-subscriber' ||
-               role === 'GreenPages-Subscriber' || 
-               role === 'GreenPages-SubscriberAdmin' || 
-               role === 'GreenPages-Admin';
-               
-        console.log('🔍 PROTECTED ROUTE - Role check detail:', {
-          role,
-          normalizedRole,
-          isDashboardAccessRole,
-          checkingAgainst: 'Dashboard-Access'
-        });
-        
-        return isDashboardAccessRole;
+        const lowerRole = role.toLowerCase();
+        return lowerRole === 'greenpages-subscriber' || 
+               lowerRole === 'greenpages-subscriberadmin' || 
+               lowerRole === 'greenpages-admin';
       });
       
-      console.log('🎯 PROTECTED ROUTE - Dashboard access check result:', {
-        userRoles,
-        hasRequiredRole,
-        checkingFor: 'Dashboard-Access (subscriber or admin roles)'
-      });
-    } 
-    // Handle GreenPages-Admin role check
-    else if (requiredRole === 'GreenPages-Admin') {
-      console.log('🔧 PROTECTED ROUTE - Checking GreenPages-Admin role');
-      
-      hasRequiredRole = userRoles.some(role => {
-        const normalizedRole = role.toLowerCase();
-        const isAdminRole = normalizedRole === 'greenpages-admin' || 
-               normalizedRole === 'greepages-admin' ||
-               role === 'GreenPages-Admin';
-               
-        console.log('🔍 PROTECTED ROUTE - Admin role check detail:', {
-          role,
-          normalizedRole,
-          isAdminRole,
-          checkingAgainst: 'GreenPages-Admin'
-        });
-        
-        return isAdminRole;
-      });
-      
-      console.log('🔧 PROTECTED ROUTE - Admin role check result:', {
+      console.log('🎯 PROTECTED ROUTE - Dashboard access check:', {
         userRoles,
         hasRequiredRole
       });
-    } 
-    // Handle exact role match for other roles
-    else {
-      console.log('🎯 PROTECTED ROUTE - Checking exact role match for:', requiredRole);
+    } else if (requiredRole === 'GreenPages-Admin') {
+      // Only allow admin role
+      hasRequiredRole = userRoles.some(role => 
+        role.toLowerCase() === 'greenpages-admin'
+      );
       
+      console.log('🔧 PROTECTED ROUTE - Admin role check:', {
+        userRoles,
+        hasRequiredRole
+      });
+    } else {
+      // Exact role match
       hasRequiredRole = userRoles.includes(requiredRole);
       
-      console.log('🎯 PROTECTED ROUTE - Exact role check result:', {
+      console.log('🎯 PROTECTED ROUTE - Exact role check:', {
         requiredRole,
         userRoles,
         hasRequiredRole
@@ -126,33 +92,23 @@ const ProtectedRoute = ({
     }
 
     if (!hasRequiredRole) {
-      console.log('❌ PROTECTED ROUTE - ROLE CHECK FAILED:', {
+      console.log('❌ PROTECTED ROUTE - ACCESS DENIED:', {
         requiredRole,
         userRoles,
         userEmail: user?.email,
-        currentPath: location.pathname,
-        redirectingTo: '/unauthorized',
-        finalDecision: 'ACCESS DENIED'
+        redirectingTo: '/unauthorized'
       });
       return <Navigate to="/unauthorized" replace />;
     } else {
-      console.log('✅ PROTECTED ROUTE - ROLE CHECK PASSED:', {
+      console.log('✅ PROTECTED ROUTE - ACCESS GRANTED:', {
         requiredRole,
         userRoles,
-        userEmail: user?.email,
-        currentPath: location.pathname,
-        finalDecision: 'ACCESS GRANTED'
+        userEmail: user?.email
       });
     }
   }
 
-  console.log('✅ PROTECTED ROUTE - All authentication checks passed, rendering protected content for:', {
-    userEmail: user?.email,
-    userRoles: user?.roles,
-    currentPath: location.pathname,
-    requiredRole,
-    finalDecision: 'CONTENT RENDERED'
-  });
+  console.log('✅ PROTECTED ROUTE - Rendering protected content');
   return <>{children}</>;
 };
 

@@ -10,7 +10,6 @@ export const useAuthInitialization = () => {
   const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    // Only run the initial auth check once when the provider mounts
     if (!initialized) {
       initializeAuth();
     }
@@ -18,7 +17,7 @@ export const useAuthInitialization = () => {
 
   const initializeAuth = async () => {
     try {
-      console.log('🔄 AUTH CONTEXT - Initializing authentication (one-time check)...');
+      console.log('🔄 AUTH CONTEXT - Initializing authentication...');
       
       const oidcUser = await oidcService.getUser();
       
@@ -27,26 +26,14 @@ export const useAuthInitialization = () => {
         userDetails: oidcUser ? {
           sub: oidcUser.profile?.sub,
           email: oidcUser.profile?.email,
-          name: oidcUser.profile?.name,
           expired: oidcUser.expired,
-          expiresAt: oidcUser.expires_at,
-          currentTime: Math.floor(Date.now() / 1000),
-          hasAccessToken: !!oidcUser.access_token,
-          accessTokenStart: oidcUser.access_token ? oidcUser.access_token.substring(0, 20) + '...' : 'none'
+          hasAccessToken: !!oidcUser.access_token
         } : 'no user'
       });
       
       if (oidcUser && !oidcUser.expired) {
         console.log('✅ AUTH CONTEXT - Valid user found during initialization');
         const userInfo = oidcService.transformUser(oidcUser);
-        
-        console.log('🔍 AUTH CONTEXT - Transformed user info:', {
-          sub: userInfo.sub,
-          email: userInfo.email,
-          name: userInfo.name,
-          roles: userInfo.roles,
-          hasAccessToken: !!oidcUser.access_token
-        });
         
         const transformedUser: User = {
           id: userInfo.sub,
@@ -55,62 +42,39 @@ export const useAuthInitialization = () => {
           roles: userInfo.roles || ['GreenPages-Subscriber']
         };
         
-        console.log('✅ AUTH CONTEXT - Final user object being set:', {
+        console.log('✅ AUTH CONTEXT - Setting user in context:', {
           id: transformedUser.id,
           email: transformedUser.email,
-          name: transformedUser.name,
-          roles: transformedUser.roles,
-          hasToken: !!oidcUser.access_token
+          roles: transformedUser.roles
         });
         
         setUser(transformedUser);
         setAccessToken(oidcUser.access_token);
-        console.log('✅ AUTH CONTEXT - User and token set in context:', { 
-          user: transformedUser, 
-          hasToken: !!oidcUser.access_token 
-        });
 
-        // SIMPLE ROLE-BASED REDIRECTION LOGIC WITH CASE-INSENSITIVE COMPARISON
+        // ROLE-BASED REDIRECTION LOGIC - CASE INSENSITIVE
         const currentPath = window.location.pathname;
         const userRoles = transformedUser.roles || [];
         
-        console.log('🔀 AUTH CONTEXT - Role-based redirection check:', {
+        console.log('🔀 AUTH CONTEXT - Checking if redirection needed:', {
           currentPath,
-          userRoles,
-          userEmail: transformedUser.email
+          userRoles
         });
 
-        // Check if user has admin role (case-insensitive)
-        const hasAdminRole = userRoles.some(role => {
-          const normalizedRole = role.toLowerCase();
-          return normalizedRole === 'greenpages-admin' || normalizedRole === 'greepages-admin';
-        });
+        // Only redirect if user is on root path or login-related paths
+        if (currentPath === '/' || currentPath === '/login' || currentPath.startsWith('/auth/')) {
+          const hasAdminRole = userRoles.some(role => 
+            role.toLowerCase() === 'greenpages-admin'
+          );
 
-        console.log('🔧 AUTH CONTEXT - Role check:', {
-          hasAdminRole,
-          currentPath,
-          userRoles: transformedUser.roles
-        });
-
-        // If admin user is accessing non-admin routes, redirect to admin
-        if (hasAdminRole && !currentPath.startsWith('/admin')) {
-          console.log('🔀 AUTH CONTEXT - Admin user detected on non-admin route, redirecting to /admin');
-          console.log('🔀 AUTH CONTEXT - Redirect details:', {
-            userEmail: transformedUser.email,
-            currentPath,
-            redirectTo: '/admin',
-            reason: 'Admin user accessing non-admin route',
-            userRoles: transformedUser.roles
-          });
-          
-          // Force redirect to admin panel
-          window.location.href = '/admin';
-          return; // Exit early to prevent further initialization
-        }
-
-        // If non-admin user is accessing admin routes, they'll be handled by ProtectedRoute
-        if (!hasAdminRole && currentPath.startsWith('/admin')) {
-          console.log('🔀 AUTH CONTEXT - Non-admin user accessing admin route, will be handled by ProtectedRoute');
+          if (hasAdminRole) {
+            console.log('🔀 AUTH CONTEXT - Admin user on root/login, redirecting to /admin');
+            window.location.href = '/admin';
+            return;
+          } else {
+            console.log('🔀 AUTH CONTEXT - Subscriber user on root/login, redirecting to /dashboard');
+            window.location.href = '/dashboard';
+            return;
+          }
         }
 
       } else {
@@ -120,11 +84,6 @@ export const useAuthInitialization = () => {
       }
     } catch (error) {
       console.error('❌ AUTH CONTEXT - Auth initialization failed:', error);
-      console.error('AUTH CONTEXT - Error details:', {
-        message: error.message,
-        stack: error.stack,
-        name: error.name
-      });
       setUser(null);
       setAccessToken(null);
     } finally {
