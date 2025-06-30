@@ -41,84 +41,26 @@ const AuthCallback = () => {
           console.log('👥 CALLBACK - User roles from token:', roles);
           console.log('🔍 CALLBACK - Raw user info:', userInfo);
           
-          // Determine redirect URL based on roles - check admin roles FIRST (highest priority)
+          // SIMPLE ROLE-BASED REDIRECTION LOGIC
           let redirectUrl = '/dashboard'; // default fallback
           
-          // Normalize roles to lowercase for comparison
-          const normalizedRoles = roles.map(role => role.toLowerCase());
-          console.log('🔄 CALLBACK - Normalized roles:', normalizedRoles);
-          
-          // FIXED: Check if user has any admin role including greepages-subscriber
-          const hasAdminRole = normalizedRoles.some(userRole => {
-            const exactAdminRoles = [
-              'greenpages-admin',
-              'greepages-admin',
-              'admin', 
-              'sysadmin',
-              'administrator'
-            ];
-            
-            const isAdmin = exactAdminRoles.includes(userRole) || 
-                           userRole.includes('admin') ||
-                           userRole === 'greepages-subscriber' ||  // This is actually an admin role
-                           userRole === 'greenpages-subscriber';
-            
-            console.log('🔍 CALLBACK - Admin role check for:', userRole, {
-              isExactMatch: exactAdminRoles.includes(userRole),
-              containsAdmin: userRole.includes('admin'),
-              isSubscriberAdmin: userRole === 'greepages-subscriber' || userRole === 'greenpages-subscriber',
-              finalResult: isAdmin
-            });
-            
-            return isAdmin;
-          });
-          
-          console.log('🔧 CALLBACK - Admin role check details:', {
-            originalRoles: roles,
-            normalizedRoles,
-            hasAdminRole,
-            userEmail: userInfo.email,
-            detailedCheck: normalizedRoles.map(role => ({
-              role,
-              isAdmin: role.includes('admin') || role === 'greepages-subscriber' || role === 'greenpages-subscriber'
-            }))
-          });
+          // Check for GreenPages-Admin FIRST (highest priority)
+          const hasAdminRole = roles.some(role => 
+            role === 'GreenPages-Admin'
+          );
           
           if (hasAdminRole) {
             redirectUrl = '/admin';
-            console.log('🔧 CALLBACK - ADMIN USER DETECTED - redirecting to /admin');
+            console.log('🔧 CALLBACK - GreenPages-Admin detected - redirecting to /admin');
           } else {
-            // Check for subscriber roles - case insensitive with COMPREHENSIVE patterns
-            const subscriberRolePatterns = [
-              'greenpages-subscriber', 
-              'greepages-subscriber',
-              'greenpages-subscriberadmin',
-              'greepages-subscriberadmin',
-              'subscriber'
-            ];
-            
-            const hasSubscriberRole = normalizedRoles.some(userRole => 
-              subscriberRolePatterns.some(subPattern => 
-                userRole.includes(subPattern) || subPattern.includes(userRole)
-              )
+            // Check for subscriber roles
+            const hasSubscriberRole = roles.some(role => 
+              role === 'GreenPages-Subscriber' || role === 'GreenPages-SubscriberAdmin'
             );
-            
-            console.log('👤 CALLBACK - Subscriber role check details:', {
-              originalRoles: roles,
-              normalizedRoles,
-              subscriberRolePatterns,
-              hasSubscriberRole,
-              userEmail: userInfo.email,
-              matchingPatterns: subscriberRolePatterns.filter(pattern => 
-                normalizedRoles.some(userRole => 
-                  userRole.includes(pattern) || pattern.includes(userRole)
-                )
-              )
-            });
             
             if (hasSubscriberRole) {
               redirectUrl = '/dashboard';
-              console.log('👤 CALLBACK - SUBSCRIBER USER DETECTED - redirecting to /dashboard');
+              console.log('👤 CALLBACK - GreenPages-Subscriber/SubscriberAdmin detected - redirecting to /dashboard');
             } else {
               console.log('⚠️ CALLBACK - NO RECOGNIZED ROLES - defaulting to /dashboard');
               redirectUrl = '/dashboard';
@@ -129,11 +71,9 @@ const AuthCallback = () => {
             userEmail: userInfo.email,
             userId: userInfo.sub,
             userRoles: roles,
-            normalizedRoles,
             hasAdminRole,
             finalRedirectUrl: redirectUrl,
-            timestamp: new Date().toISOString(),
-            willUseWindowLocation: true
+            timestamp: new Date().toISOString()
           });
           
           // Force a full page reload to ensure the AuthContext picks up the new user

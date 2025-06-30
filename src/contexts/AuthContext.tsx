@@ -83,7 +83,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           id: userInfo.sub,
           email: userInfo.email,
           name: userInfo.name,
-          roles: userInfo.roles || ['Greepages-Subscriber']
+          roles: userInfo.roles || ['GreenPages-Subscriber']
         };
         
         console.log('✅ AUTH CONTEXT - Final user object being set:', {
@@ -101,60 +101,28 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           hasToken: !!oidcUser.access_token 
         });
 
-        // 🚨 ROLE-BASED REDIRECTION LOGIC - Check if user should be redirected based on their role
+        // SIMPLE ROLE-BASED REDIRECTION LOGIC
         const currentPath = window.location.pathname;
         const userRoles = transformedUser.roles || [];
-        const normalizedRoles = userRoles.map(role => role.toLowerCase());
         
         console.log('🔀 AUTH CONTEXT - Role-based redirection check:', {
           currentPath,
           userRoles,
-          normalizedRoles,
           userEmail: transformedUser.email
         });
 
-        // FIXED: Comprehensive admin role detection
-        const hasAdminRole = normalizedRoles.some(userRole => {
-          // Check for exact admin role matches
-          const exactAdminRoles = [
-            'greenpages-admin',
-            'greepages-admin',
-            'admin', 
-            'sysadmin',
-            'administrator'
-          ];
-          
-          // Check for roles that contain "admin" OR are subscriber admin roles
-          const isAdminRole = exactAdminRoles.includes(userRole) || 
-                             userRole.includes('admin') ||
-                             userRole === 'greepages-subscriber' ||  // This is actually an admin role
-                             userRole === 'greenpages-subscriber' ||
-                             userRole.includes('subscriberadmin');
-          
-          console.log('🔍 AUTH CONTEXT - Checking role:', userRole, {
-            isExactMatch: exactAdminRoles.includes(userRole),
-            containsAdmin: userRole.includes('admin'),
-            isSubscriberAdmin: userRole === 'greepages-subscriber' || userRole === 'greenpages-subscriber',
-            finalResult: isAdminRole
-          });
-          
-          return isAdminRole;
-        });
+        // Check if user has GreenPages-Admin role
+        const hasAdminRole = userRoles.includes('GreenPages-Admin');
 
-        console.log('🔧 AUTH CONTEXT - Admin role check:', {
+        console.log('🔧 AUTH CONTEXT - Role check:', {
           hasAdminRole,
           currentPath,
-          userRoles: transformedUser.roles,
-          normalizedRoles,
-          detailedCheck: normalizedRoles.map(role => ({
-            role,
-            isAdmin: role.includes('admin') || role === 'greepages-subscriber' || role === 'greenpages-subscriber'
-          }))
+          userRoles: transformedUser.roles
         });
 
         // If admin user is accessing non-admin routes, redirect to admin
         if (hasAdminRole && !currentPath.startsWith('/admin')) {
-          console.log('🔀 AUTH CONTEXT - ADMIN USER detected on non-admin route, redirecting to /admin');
+          console.log('🔀 AUTH CONTEXT - GreenPages-Admin detected on non-admin route, redirecting to /admin');
           console.log('🔀 AUTH CONTEXT - Redirect details:', {
             userEmail: transformedUser.email,
             currentPath,
