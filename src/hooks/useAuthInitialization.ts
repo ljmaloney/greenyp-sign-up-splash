@@ -70,7 +70,7 @@ export const useAuthInitialization = () => {
           hasToken: !!oidcUser.access_token 
         });
 
-        // SIMPLE ROLE-BASED REDIRECTION LOGIC
+        // SIMPLE ROLE-BASED REDIRECTION LOGIC WITH CASE-INSENSITIVE COMPARISON
         const currentPath = window.location.pathname;
         const userRoles = transformedUser.roles || [];
         
@@ -80,8 +80,11 @@ export const useAuthInitialization = () => {
           userEmail: transformedUser.email
         });
 
-        // Check if user has GreenPages-Admin role
-        const hasAdminRole = userRoles.includes('GreenPages-Admin');
+        // Check if user has admin role (case-insensitive)
+        const hasAdminRole = userRoles.some(role => {
+          const normalizedRole = role.toLowerCase();
+          return normalizedRole === 'greenpages-admin' || normalizedRole === 'greepages-admin';
+        });
 
         console.log('🔧 AUTH CONTEXT - Role check:', {
           hasAdminRole,
@@ -91,7 +94,7 @@ export const useAuthInitialization = () => {
 
         // If admin user is accessing non-admin routes, redirect to admin
         if (hasAdminRole && !currentPath.startsWith('/admin')) {
-          console.log('🔀 AUTH CONTEXT - GreenPages-Admin detected on non-admin route, redirecting to /admin');
+          console.log('🔀 AUTH CONTEXT - Admin user detected on non-admin route, redirecting to /admin');
           console.log('🔀 AUTH CONTEXT - Redirect details:', {
             userEmail: transformedUser.email,
             currentPath,

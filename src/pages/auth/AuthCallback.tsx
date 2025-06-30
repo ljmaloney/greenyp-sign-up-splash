@@ -41,26 +41,31 @@ const AuthCallback = () => {
           console.log('👥 CALLBACK - User roles from token:', roles);
           console.log('🔍 CALLBACK - Raw user info:', userInfo);
           
-          // SIMPLE ROLE-BASED REDIRECTION LOGIC
+          // SIMPLE ROLE-BASED REDIRECTION LOGIC WITH CASE-INSENSITIVE COMPARISON
           let redirectUrl = '/dashboard'; // default fallback
           
-          // Check for GreenPages-Admin FIRST (highest priority)
-          const hasAdminRole = roles.some(role => 
-            role === 'GreenPages-Admin'
-          );
+          // Check for admin role FIRST (case-insensitive)
+          const hasAdminRole = roles.some(role => {
+            const normalizedRole = role.toLowerCase();
+            return normalizedRole === 'greenpages-admin' || normalizedRole === 'greepages-admin';
+          });
           
           if (hasAdminRole) {
             redirectUrl = '/admin';
-            console.log('🔧 CALLBACK - GreenPages-Admin detected - redirecting to /admin');
+            console.log('🔧 CALLBACK - Admin role detected - redirecting to /admin');
           } else {
-            // Check for subscriber roles
-            const hasSubscriberRole = roles.some(role => 
-              role === 'GreenPages-Subscriber' || role === 'GreenPages-SubscriberAdmin'
-            );
+            // Check for subscriber roles (case-insensitive)
+            const hasSubscriberRole = roles.some(role => {
+              const normalizedRole = role.toLowerCase();
+              return normalizedRole === 'greenpages-subscriber' || 
+                     normalizedRole === 'greepages-subscriber' ||
+                     normalizedRole === 'greenpages-subscriberadmin' ||
+                     normalizedRole === 'greepages-subscriberadmin';
+            });
             
             if (hasSubscriberRole) {
               redirectUrl = '/dashboard';
-              console.log('👤 CALLBACK - GreenPages-Subscriber/SubscriberAdmin detected - redirecting to /dashboard');
+              console.log('👤 CALLBACK - Subscriber role detected - redirecting to /dashboard');
             } else {
               console.log('⚠️ CALLBACK - NO RECOGNIZED ROLES - defaulting to /dashboard');
               redirectUrl = '/dashboard';
