@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { oidcService } from '@/services/oidcService';
@@ -34,35 +35,55 @@ const AuthCallback = () => {
           
           console.log('👥 User roles:', roles);
           
-          // Determine redirect URL based on roles - check admin roles first
+          // Determine redirect URL based on roles - check admin roles FIRST (highest priority)
           let redirectUrl = '/dashboard'; // default fallback
           
-          // Check for admin roles first (highest priority) - case insensitive
-          const isAdmin = roles.some(role => 
-            role.toLowerCase() === 'greenpages-admin' || 
-            role.toLowerCase() === 'admin' || 
-            role.toLowerCase() === 'sysadmin'
+          // Check for admin roles FIRST (highest priority) - case insensitive
+          const adminRoles = ['greenpages-admin', 'admin', 'sysadmin'];
+          const hasAdminRole = roles.some(role => 
+            adminRoles.includes(role.toLowerCase())
           );
           
-          if (isAdmin) {
+          console.log('🔧 Admin role check:', {
+            userRoles: roles,
+            adminRoles,
+            hasAdminRole,
+            rolesLowerCase: roles.map(r => r.toLowerCase())
+          });
+          
+          if (hasAdminRole) {
             redirectUrl = '/admin';
             console.log('🔧 Admin user detected, redirecting to /admin');
           } else {
             // Check for subscriber roles - case insensitive
-            const isSubscriber = roles.some(role => 
-              role.toLowerCase() === 'greenpages-subscriber' || 
-              role.toLowerCase() === 'greenpages-subscriberadmin'
+            const subscriberRoles = ['greenpages-subscriber', 'greenpages-subscriberadmin'];
+            const hasSubscriberRole = roles.some(role => 
+              subscriberRoles.includes(role.toLowerCase())
             );
             
-            if (isSubscriber) {
+            console.log('👤 Subscriber role check:', {
+              userRoles: roles,
+              subscriberRoles,
+              hasSubscriberRole,
+              rolesLowerCase: roles.map(r => r.toLowerCase())
+            });
+            
+            if (hasSubscriberRole) {
               redirectUrl = '/dashboard';
               console.log('👤 Subscriber user detected, redirecting to /dashboard');
             } else {
               console.log('⚠️ No recognized roles found, defaulting to /dashboard');
+              redirectUrl = '/dashboard';
             }
           }
           
-          console.log('🚀 Redirecting to:', redirectUrl);
+          console.log('🚀 Final redirect decision:', {
+            userRoles: roles,
+            redirectUrl,
+            hasAdminRole,
+            timestamp: new Date().toISOString()
+          });
+          
           // Force a full page reload to ensure the AuthContext picks up the new user
           window.location.href = redirectUrl;
         } else {
