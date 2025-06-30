@@ -1,4 +1,5 @@
 
+
 import { UserManagerSettings } from 'oidc-client-ts';
 
 const getAuthConfig = (): UserManagerSettings => {
@@ -26,8 +27,6 @@ const getAuthConfig = (): UserManagerSettings => {
     loadUserInfo: false,
     // Add better error handling and timeout
     fetchRequestCredentials: 'same-origin',
-    // Increase timeout for slower connections - using clockSkew for tolerance
-    clockSkew: 300, // 5 minutes clock skew tolerance
     // FusionAuth specific configuration
     client_authentication: 'client_secret_post',
     // Add extra query params to help with debugging
@@ -71,3 +70,4 @@ export const resetAuthHost = () => {
 };
 
 export { getAuthConfig };
+
