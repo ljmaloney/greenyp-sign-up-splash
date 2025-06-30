@@ -16,14 +16,15 @@ const ProtectedRoute = ({
   requiredRole, 
   fallbackPath = '/login' 
 }: ProtectedRouteProps) => {
-  const { isAuthenticated, isLoading, hasRole } = useAuth();
+  const { isAuthenticated, isLoading, hasRole, user } = useAuth();
   const location = useLocation();
 
   console.log('🛡️ ProtectedRoute check:', {
     isLoading,
     isAuthenticated,
     requiredRole,
-    currentPath: location.pathname
+    currentPath: location.pathname,
+    userRoles: user?.roles
   });
 
   if (isLoading) {
@@ -48,18 +49,36 @@ const ProtectedRoute = ({
 
   if (requiredRole) {
     const hasRequiredRole = (() => {
-      // Dashboard routes: allow both Greepages-Subscriber and Greepages-SubscriberAdmin
+      const userRoles = user?.roles || [];
+      console.log('🔍 Checking roles:', { requiredRole, userRoles });
+      
+      // Dashboard routes: allow both Greepages-Subscriber and Greepages-SubscriberAdmin (case insensitive)
       if (requiredRole === 'Greepages-Subscriber') {
-        return hasRole('Greepages-Subscriber') || hasRole('Greepages-SubscriberAdmin');
+        const hasSubscriberRole = userRoles.some(role => 
+          role.toLowerCase() === 'greepages-subscriber' || 
+          role.toLowerCase() === 'greepages-subscriberadmin'
+        );
+        console.log('📊 Dashboard role check result:', hasSubscriberRole);
+        return hasSubscriberRole;
       }
       
-      // Admin routes: allow both GreenPages-Admin and SysAdmin
+      // Admin routes: allow GreenPages-Admin and SysAdmin (case insensitive)
       if (requiredRole === 'GreenPages-Admin') {
-        return hasRole('GreenPages-Admin') || hasRole('SysAdmin');
+        const hasAdminRole = userRoles.some(role => 
+          role.toLowerCase() === 'greenpages-admin' || 
+          role.toLowerCase() === 'sysadmin' ||
+          role.toLowerCase() === 'admin'
+        );
+        console.log('🔧 Admin role check result:', hasAdminRole);
+        return hasAdminRole;
       }
       
-      // For any other role, check exact match
-      return hasRole(requiredRole);
+      // For any other role, check case-insensitive match
+      const hasOtherRole = userRoles.some(role => 
+        role.toLowerCase() === requiredRole.toLowerCase()
+      );
+      console.log('🎯 Other role check result:', hasOtherRole);
+      return hasOtherRole;
     })();
 
     if (!hasRequiredRole) {
