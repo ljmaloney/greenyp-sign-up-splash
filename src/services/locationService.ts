@@ -1,5 +1,5 @@
 
-import { getApiUrl } from '@/config/api';
+import { apiClient } from '@/utils/apiClient';
 
 export interface LocationHour {
   locationHoursId?: string;
@@ -35,24 +35,48 @@ export interface LocationsResponse {
   errorMessageApi: string | null;
 }
 
+// Create a function that accepts an API client for dependency injection
+export const createLocationService = (authenticatedApiClient: any) => ({
+  async fetchLocations(producerId: string): Promise<Location[]> {
+    console.log('🌍 Fetching locations for producer:', producerId);
+    
+    const endpoint = `/producer/${producerId}/locations?activeOnly=false&includeHours=true`;
+    
+    try {
+      const data: LocationsResponse = await authenticatedApiClient.get(endpoint, { requireAuth: true });
+      
+      console.log('🌍 Locations response:', data);
+      
+      if (data.errorMessageApi) {
+        throw new Error(data.errorMessageApi);
+      }
+      
+      return data.response || [];
+    } catch (error) {
+      console.error('❌ Failed to fetch locations:', error);
+      throw error;
+    }
+  }
+});
+
+// Legacy function - will be deprecated in favor of authenticated version
 export const fetchLocations = async (producerId: string): Promise<Location[]> => {
-  const url = getApiUrl(`/producer/${producerId}/locations?activeOnly=false&includeHours=true`);
+  console.log('⚠️ Using legacy fetchLocations - should use authenticated version');
   
-  console.log('🌍 Fetching locations from:', url);
+  const endpoint = `/producer/${producerId}/locations?activeOnly=false&includeHours=true`;
   
-  const response = await fetch(url);
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch locations: ${response.status} ${response.statusText}`);
+  try {
+    const data: LocationsResponse = await apiClient.get(endpoint);
+    
+    console.log('🌍 Locations response:', data);
+    
+    if (data.errorMessageApi) {
+      throw new Error(data.errorMessageApi);
+    }
+    
+    return data.response || [];
+  } catch (error) {
+    console.error('❌ Failed to fetch locations:', error);
+    throw error;
   }
-  
-  const data: LocationsResponse = await response.json();
-  
-  console.log('🌍 Locations response:', data);
-  
-  if (data.errorMessageApi) {
-    throw new Error(data.errorMessageApi);
-  }
-  
-  return data.response;
 };

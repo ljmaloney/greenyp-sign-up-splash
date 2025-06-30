@@ -21,21 +21,29 @@ const normalizeUrl = (url: string): string => {
 
 // Get API host from environment or use default
 const getApiHost = (): string => {
-  // In a real environment, you could use import.meta.env.VITE_API_HOST
-  // For now, we'll check if there's a custom host set in localStorage for development
+  // Check for development override
   const customHost = localStorage.getItem('API_HOST');
-  const host = customHost || DEFAULT_API_HOST;
-  return normalizeUrl(host);
+  if (customHost) return normalizeUrl(customHost);
+  
+  // For development, default to localhost if available, otherwise use production
+  const isDevelopment = window.location.hostname === 'localhost';
+  if (isDevelopment) {
+    // Check if we have a local API server preference
+    const localApiHost = localStorage.getItem('USE_LOCAL_API');
+    if (localApiHost === 'true') {
+      return 'http://localhost:8081';
+    }
+  }
+  
+  return DEFAULT_API_HOST;
 };
 
 // Get image host from environment or use default
 const getImageHost = (): string => {
-  // In production, this would be the same as API host or a CDN
-  // For development, we use localhost:8081
   const customImageHost = localStorage.getItem('IMAGE_HOST');
   if (customImageHost) return normalizeUrl(customImageHost);
   
-  // Use the API host for images in both development and production
+  // Use the API host for images
   return getApiHost();
 };
 
@@ -56,6 +64,19 @@ export const setApiHost = (host: string) => {
   localStorage.setItem('API_HOST', normalizedHost);
   // Update the current config
   API_CONFIG.BASE_URL = normalizedHost;
+  console.log('API host updated to:', normalizedHost);
+};
+
+// Helper function to toggle local API usage
+export const setUseLocalApi = (useLocal: boolean) => {
+  if (useLocal) {
+    localStorage.setItem('USE_LOCAL_API', 'true');
+    API_CONFIG.BASE_URL = 'http://localhost:8081';
+  } else {
+    localStorage.removeItem('USE_LOCAL_API');
+    API_CONFIG.BASE_URL = DEFAULT_API_HOST;
+  }
+  console.log('API host updated to:', API_CONFIG.BASE_URL);
 };
 
 // Helper function to update image host for development/testing
@@ -69,7 +90,9 @@ export const setImageHost = (host: string) => {
 // Helper function to reset to default host
 export const resetApiHost = () => {
   localStorage.removeItem('API_HOST');
-  API_CONFIG.BASE_URL = normalizeUrl(DEFAULT_API_HOST);
+  localStorage.removeItem('USE_LOCAL_API');
+  API_CONFIG.BASE_URL = DEFAULT_API_HOST;
+  console.log('API host reset to default:', DEFAULT_API_HOST);
 };
 
 // Helper function to reset to default image host
@@ -80,7 +103,13 @@ export const resetImageHost = () => {
 
 // Helper function to get full URL
 export const getApiUrl = (endpoint: string): string => {
-  return `${API_CONFIG.BASE_URL}${endpoint}`;
+  const fullUrl = `${API_CONFIG.BASE_URL}${endpoint}`;
+  console.log('🌐 API URL constructed:', {
+    baseUrl: API_CONFIG.BASE_URL,
+    endpoint,
+    fullUrl
+  });
+  return fullUrl;
 };
 
 // Helper function to get full image URL

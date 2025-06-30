@@ -11,11 +11,12 @@ export const apiClient = {
     
     const url = getApiUrl(endpoint);
     
-    console.log('🔧 API Client Debug:', {
+    console.log('🔧 API Client Request:', {
       endpoint,
       baseUrl: API_CONFIG.BASE_URL,
       fullUrl: url,
-      requireAuth
+      requireAuth,
+      method: fetchOptions.method || 'GET'
     });
     
     const requestHeaders: HeadersInit = {
@@ -25,28 +26,68 @@ export const apiClient = {
 
     // Add authorization header if authentication is required
     if (requireAuth) {
-      // Get token from the auth context - this will be handled by the hook
-      const token = await this.getAccessToken();
-      if (token) {
-        requestHeaders['Authorization'] = `Bearer ${token}`;
+      try {
+        const token = await this.getAccessToken();
+        console.log('🔑 Token check:', {
+          hasToken: !!token,
+          tokenStart: token ? token.substring(0, 20) + '...' : 'none'
+        });
+        
+        if (token) {
+          requestHeaders['Authorization'] = `Bearer ${token}`;
+        } else {
+          console.warn('⚠️ No access token available for authenticated request');
+        }
+      } catch (error) {
+        console.error('❌ Failed to get access token:', error);
       }
     }
 
-    console.log(`🌐 API Request: ${fetchOptions.method || 'GET'} ${url}`, {
+    console.log(`🌐 Making API Request: ${fetchOptions.method || 'GET'} ${url}`, {
       requireAuth,
-      hasAuthHeader: !!requestHeaders['Authorization']
+      hasAuthHeader: !!requestHeaders['Authorization'],
+      headers: Object.keys(requestHeaders)
     });
 
-    const response = await fetch(url, {
-      ...fetchOptions,
-      headers: requestHeaders,
-    });
+    try {
+      const response = await fetch(url, {
+        ...fetchOptions,
+        headers: requestHeaders,
+      });
 
-    if (!response.ok) {
-      throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+      console.log('📡 API Response:', {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok,
+        url: response.url
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ API Error Response:', {
+          status: response.status,
+          statusText: response.statusText,
+          body: errorText
+        });
+        throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      console.log('✅ API Success:', {
+        hasData: !!result,
+        dataKeys: result ? Object.keys(result) : []
+      });
+      
+      return result;
+    } catch (error) {
+      console.error('❌ API Request Failed:', {
+        url,
+        error: error.message,
+        requireAuth,
+        hasAuthHeader: !!requestHeaders['Authorization']
+      });
+      throw error;
     }
-
-    return response.json();
   },
 
   async getAccessToken(): Promise<string | null> {
