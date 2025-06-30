@@ -66,15 +66,27 @@ export const useAuthInitialization = () => {
             role.toLowerCase() === 'greenpages-admin'
           );
 
+          const hasSubscriberRole = userRoles.some(role => {
+            const lowerRole = role.toLowerCase();
+            return lowerRole === 'greenpages-subscriber' || 
+                   lowerRole === 'greenpages-subscriberadmin';
+          });
+
           if (hasAdminRole) {
-            console.log('🔀 AUTH CONTEXT - Admin user on root/login, redirecting to /admin');
+            console.log('🔀 AUTH CONTEXT - Admin user detected, redirecting to /admin');
             window.location.href = '/admin';
             return;
+          } else if (hasSubscriberRole) {
+            console.log('🔀 AUTH CONTEXT - Subscriber user detected, redirecting to /dashboard');
+            window.location.href = '/dashboard';
+            return;
           } else {
-            console.log('🔀 AUTH CONTEXT - Subscriber user on root/login, redirecting to /dashboard');
+            console.log('🔀 AUTH CONTEXT - Unknown role, defaulting to /dashboard');
             window.location.href = '/dashboard';
             return;
           }
+        } else {
+          console.log('🔀 AUTH CONTEXT - User already on valid page, no redirection needed');
         }
 
       } else {

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { oidcService } from '@/services/oidcService';
@@ -32,20 +31,21 @@ const AuthCallback = () => {
         if (user && !user.expired) {
           console.log('🎯 AUTH CALLBACK - User is valid, determining redirect...');
           
-          // Transform user to get roles
+          // Transform user to get roles with enhanced detection
           const userInfo = oidcService.transformUser(user);
           const roles = userInfo.roles || [];
           
-          console.log('👥 AUTH CALLBACK - User roles:', roles);
+          console.log('👥 AUTH CALLBACK - User roles after transformation:', roles);
           
-          // SIMPLE ROLE-BASED REDIRECTION - CASE INSENSITIVE
+          // ENHANCED ROLE-BASED REDIRECTION - CASE INSENSITIVE
           let redirectUrl = '/dashboard'; // Default
           
-          // Check each role (case insensitive)
+          // Check for admin role (case insensitive)
           const hasAdminRole = roles.some(role => 
             role.toLowerCase() === 'greenpages-admin'
           );
           
+          // Check for subscriber roles (case insensitive)
           const hasSubscriberRole = roles.some(role => {
             const lowerRole = role.toLowerCase();
             return lowerRole === 'greenpages-subscriber' || 
