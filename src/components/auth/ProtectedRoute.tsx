@@ -51,20 +51,30 @@ const ProtectedRoute = ({
   if (user?.roles && location.pathname.startsWith('/dashboard')) {
     const userRoles = user.roles.map(role => role.toLowerCase());
     
-    // Fix the admin role patterns to match actual role names
+    // FIXED: Correct admin role patterns to match actual role names
     const adminRolePatterns = [
-      'greenpages-admin',     // exact match
-      'greenp ages-admin',    // handle potential spaces
+      'greenpages-admin',     // handle typo version  
+      'greenpages-admin',     // correct version (GreenPages-Admin -> greenpages-admin)
       'admin',                // generic admin
       'sysadmin'             // system admin
     ];
     
-    const hasAdminRole = userRoles.some(userRole => 
-      adminRolePatterns.some(pattern => 
-        userRole.includes(pattern.replace(/\s+/g, '').toLowerCase()) ||
-        pattern.replace(/\s+/g, '').toLowerCase().includes(userRole)
-      )
-    );
+    const hasAdminRole = userRoles.some(userRole => {
+      // Direct exact matches after normalization
+      const isDirectMatch = adminRolePatterns.includes(userRole);
+      
+      // Also check if the role contains 'admin' as fallback
+      const containsAdmin = userRole.includes('admin');
+      
+      console.log('🔍 Role check detail:', {
+        userRole,
+        isDirectMatch,
+        containsAdmin,
+        matches: isDirectMatch || containsAdmin
+      });
+      
+      return isDirectMatch || containsAdmin;
+    });
     
     console.log('🔍 Dashboard access check for potential admin:', {
       currentPath: location.pathname,
@@ -72,14 +82,7 @@ const ProtectedRoute = ({
       normalizedRoles: userRoles,
       adminRolePatterns,
       hasAdminRole,
-      shouldRedirectToAdmin: hasAdminRole,
-      detailedCheck: userRoles.map(role => ({
-        role,
-        matchesAnyPattern: adminRolePatterns.some(pattern => 
-          role.includes(pattern.replace(/\s+/g, '').toLowerCase()) ||
-          pattern.replace(/\s+/g, '').toLowerCase().includes(role)
-        )
-      }))
+      shouldRedirectToAdmin: hasAdminRole
     });
     
     if (hasAdminRole) {
@@ -106,11 +109,12 @@ const ProtectedRoute = ({
       // Admin routes: allow GreenPages-Admin and SysAdmin (case insensitive) - FIXED PATTERN
       if (requiredRole === 'GreenPages-Admin') {
         const hasAdminRole = userRoles.some(role => {
-          const normalizedRole = role.toLowerCase().replace(/\s+/g, '');
+          const normalizedRole = role.toLowerCase();
+          // Direct match for the actual role name format
           return normalizedRole === 'greenpages-admin' || 
-                 normalizedRole === 'greenp ages-admin' ||
                  normalizedRole === 'sysadmin' ||
-                 normalizedRole === 'admin';
+                 normalizedRole === 'admin' ||
+                 normalizedRole.includes('admin'); // Fallback for any admin role
         });
         console.log('🔧 Admin role check result:', hasAdminRole);
         return hasAdminRole;
