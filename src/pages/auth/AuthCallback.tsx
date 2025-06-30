@@ -33,58 +33,92 @@ const AuthCallback = () => {
           const userInfo = oidcService.transformUser(user);
           const roles = userInfo.roles || [];
           
-          console.log('👥 User roles:', roles);
+          console.log('👥 User roles from token:', roles);
           
           // Determine redirect URL based on roles - check admin roles FIRST (highest priority)
           let redirectUrl = '/dashboard'; // default fallback
           
-          // Check for admin roles FIRST (highest priority) - case insensitive
-          const adminRoles = ['greenpages-admin', 'admin', 'sysadmin'];
-          const hasAdminRole = roles.some(role => 
-            adminRoles.includes(role.toLowerCase())
+          // Normalize roles to lowercase for comparison
+          const normalizedRoles = roles.map(role => role.toLowerCase());
+          console.log('🔄 Normalized roles:', normalizedRoles);
+          
+          // Define admin role patterns (case insensitive)
+          const adminRolePatterns = [
+            'greenpages-admin',
+            'admin', 
+            'sysadmin',
+            'administrator'
+          ];
+          
+          // Check if user has any admin role
+          const hasAdminRole = normalizedRoles.some(userRole => 
+            adminRolePatterns.some(adminPattern => 
+              userRole.includes(adminPattern) || adminPattern.includes(userRole)
+            )
           );
           
-          console.log('🔧 Admin role check:', {
-            userRoles: roles,
-            adminRoles,
+          console.log('🔧 Admin role check details:', {
+            originalRoles: roles,
+            normalizedRoles,
+            adminRolePatterns,
             hasAdminRole,
-            rolesLowerCase: roles.map(r => r.toLowerCase())
+            matchingPatterns: adminRolePatterns.filter(pattern => 
+              normalizedRoles.some(userRole => 
+                userRole.includes(pattern) || pattern.includes(userRole)
+              )
+            )
           });
           
           if (hasAdminRole) {
             redirectUrl = '/admin';
-            console.log('🔧 Admin user detected, redirecting to /admin');
+            console.log('🔧 ADMIN USER DETECTED - redirecting to /admin');
           } else {
             // Check for subscriber roles - case insensitive
-            const subscriberRoles = ['greenpages-subscriber', 'greenpages-subscriberadmin'];
-            const hasSubscriberRole = roles.some(role => 
-              subscriberRoles.includes(role.toLowerCase())
+            const subscriberRolePatterns = [
+              'greenpages-subscriber', 
+              'greepages-subscriber',  // handle typo variation
+              'greenpages-subscriberadmin',
+              'greepages-subscriberadmin'  // handle typo variation
+            ];
+            
+            const hasSubscriberRole = normalizedRoles.some(userRole => 
+              subscriberRolePatterns.some(subPattern => 
+                userRole.includes(subPattern) || subPattern.includes(userRole)
+              )
             );
             
-            console.log('👤 Subscriber role check:', {
-              userRoles: roles,
-              subscriberRoles,
+            console.log('👤 Subscriber role check details:', {
+              originalRoles: roles,
+              normalizedRoles,
+              subscriberRolePatterns,
               hasSubscriberRole,
-              rolesLowerCase: roles.map(r => r.toLowerCase())
+              matchingPatterns: subscriberRolePatterns.filter(pattern => 
+                normalizedRoles.some(userRole => 
+                  userRole.includes(pattern) || pattern.includes(userRole)
+                )
+              )
             });
             
             if (hasSubscriberRole) {
               redirectUrl = '/dashboard';
-              console.log('👤 Subscriber user detected, redirecting to /dashboard');
+              console.log('👤 SUBSCRIBER USER DETECTED - redirecting to /dashboard');
             } else {
-              console.log('⚠️ No recognized roles found, defaulting to /dashboard');
+              console.log('⚠️ NO RECOGNIZED ROLES - defaulting to /dashboard');
               redirectUrl = '/dashboard';
             }
           }
           
-          console.log('🚀 Final redirect decision:', {
+          console.log('🚀 FINAL REDIRECT DECISION:', {
+            userEmail: userInfo.email,
             userRoles: roles,
-            redirectUrl,
+            normalizedRoles,
             hasAdminRole,
+            finalRedirectUrl: redirectUrl,
             timestamp: new Date().toISOString()
           });
           
           // Force a full page reload to ensure the AuthContext picks up the new user
+          console.log(`🔀 Redirecting to: ${redirectUrl}`);
           window.location.href = redirectUrl;
         } else {
           console.error('❌ Invalid user from callback:', user);
