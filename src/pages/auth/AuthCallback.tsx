@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { oidcService } from '@/services/oidcService';
@@ -35,18 +34,32 @@ const AuthCallback = () => {
           
           console.log('👥 User roles:', roles);
           
-          // Determine redirect URL based on roles
-          let redirectUrl = '/dashboard'; // default for subscribers
+          // Determine redirect URL based on roles - check admin roles first
+          let redirectUrl = '/dashboard'; // default fallback
           
-          // Check for admin roles first (highest priority)
-          if (roles.includes('GreenPages-Admin') || roles.includes('admin') || roles.includes('SysAdmin')) {
+          // Check for admin roles first (highest priority) - case insensitive
+          const isAdmin = roles.some(role => 
+            role.toLowerCase() === 'greenpages-admin' || 
+            role.toLowerCase() === 'admin' || 
+            role.toLowerCase() === 'sysadmin'
+          );
+          
+          if (isAdmin) {
             redirectUrl = '/admin';
             console.log('🔧 Admin user detected, redirecting to /admin');
-          } 
-          // Check for subscriber roles
-          else if (roles.includes('Greenpages-Subscriber') || roles.includes('Greenpages-SubscriberAdmin')) {
-            redirectUrl = '/dashboard';
-            console.log('👤 Subscriber user detected, redirecting to /dashboard');
+          } else {
+            // Check for subscriber roles - case insensitive
+            const isSubscriber = roles.some(role => 
+              role.toLowerCase() === 'greenpages-subscriber' || 
+              role.toLowerCase() === 'greenpages-subscriberadmin'
+            );
+            
+            if (isSubscriber) {
+              redirectUrl = '/dashboard';
+              console.log('👤 Subscriber user detected, redirecting to /dashboard');
+            } else {
+              console.log('⚠️ No recognized roles found, defaulting to /dashboard');
+            }
           }
           
           console.log('🚀 Redirecting to:', redirectUrl);
