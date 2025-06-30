@@ -42,7 +42,7 @@ const AuthCallback = () => {
           const normalizedRoles = roles.map(role => role.toLowerCase());
           console.log('🔄 Normalized roles:', normalizedRoles);
           
-          // Define admin role patterns (case insensitive)
+          // Define admin role patterns - EXACT matches for GreenPages-Admin
           const adminRolePatterns = [
             'greenpages-admin',
             'admin', 
@@ -50,23 +50,31 @@ const AuthCallback = () => {
             'administrator'
           ];
           
-          // Check if user has any admin role
-          const hasAdminRole = normalizedRoles.some(userRole => 
-            adminRolePatterns.some(adminPattern => 
-              userRole.includes(adminPattern) || adminPattern.includes(userRole)
-            )
-          );
+          // Check if user has any admin role - use exact matching
+          const hasAdminRole = normalizedRoles.some(userRole => {
+            // Check for exact match with admin patterns
+            const isExactMatch = adminRolePatterns.includes(userRole);
+            // Also check if the user role contains 'greenpages-admin' 
+            const containsGreenPagesAdmin = userRole.includes('greenpages-admin');
+            
+            console.log('🔍 Admin role check for:', userRole, {
+              isExactMatch,
+              containsGreenPagesAdmin,
+              matchesAnyPattern: isExactMatch || containsGreenPagesAdmin
+            });
+            
+            return isExactMatch || containsGreenPagesAdmin;
+          });
           
           console.log('🔧 Admin role check details:', {
             originalRoles: roles,
             normalizedRoles,
             adminRolePatterns,
             hasAdminRole,
-            matchingPatterns: adminRolePatterns.filter(pattern => 
-              normalizedRoles.some(userRole => 
-                userRole.includes(pattern) || pattern.includes(userRole)
-              )
-            )
+            detailedCheck: normalizedRoles.map(role => ({
+              role,
+              matchesAdmin: adminRolePatterns.includes(role) || role.includes('greenpages-admin')
+            }))
           });
           
           if (hasAdminRole) {
