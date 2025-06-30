@@ -24,7 +24,9 @@ const ProtectedRoute = ({
     isAuthenticated,
     requiredRole,
     currentPath: location.pathname,
-    userRoles: user?.roles
+    userRoles: user?.roles,
+    userEmail: user?.email,
+    userId: user?.id
   });
 
   if (isLoading) {
@@ -47,16 +49,35 @@ const ProtectedRoute = ({
     return <Navigate to={fallbackPath} state={{ from: location }} replace />;
   }
 
+  // 🚨 COMPREHENSIVE ROLE ANALYSIS
+  console.log('🔍 COMPREHENSIVE ROLE ANALYSIS:', {
+    userEmail: user?.email,
+    userId: user?.id,
+    rawRoles: user?.roles,
+    currentPath: location.pathname,
+    requiredRole,
+    timestamp: new Date().toISOString()
+  });
+
   // 🚨 CRITICAL: Check if admin user is trying to access dashboard
   if (user?.roles && location.pathname.startsWith('/dashboard')) {
     const userRoles = user.roles.map(role => role.toLowerCase());
     
-    // FIXED: Correct admin role patterns to match actual role names
+    console.log('🔍 DASHBOARD ACCESS CHECK - DETAILED ROLE ANALYSIS:', {
+      originalRoles: user.roles,
+      normalizedRoles: userRoles,
+      currentPath: location.pathname,
+      userEmail: user.email,
+      userId: user.id
+    });
+    
+    // COMPREHENSIVE admin role patterns to match actual role names
     const adminRolePatterns = [
-      'greenpages-admin',     // handle typo version  
-      'greenpages-admin',     // correct version (GreenPages-Admin -> greenpages-admin)
+      'greenpages-admin',     // correct version
+      'greepages-admin',      // handle typo version  
       'admin',                // generic admin
-      'sysadmin'             // system admin
+      'sysadmin',             // system admin
+      'administrator'         // full administrator
     ];
     
     const hasAdminRole = userRoles.some(userRole => {
@@ -66,23 +87,29 @@ const ProtectedRoute = ({
       // Also check if the role contains 'admin' as fallback
       const containsAdmin = userRole.includes('admin');
       
-      console.log('🔍 Role check detail:', {
+      console.log('🔍 Individual role check:', {
         userRole,
         isDirectMatch,
         containsAdmin,
-        matches: isDirectMatch || containsAdmin
+        matches: isDirectMatch || containsAdmin,
+        againstPatterns: adminRolePatterns
       });
       
       return isDirectMatch || containsAdmin;
     });
     
-    console.log('🔍 Dashboard access check for potential admin:', {
+    console.log('🔍 FINAL DASHBOARD ACCESS CHECK:', {
       currentPath: location.pathname,
+      userEmail: user.email,
       userRoles: user.roles,
       normalizedRoles: userRoles,
       adminRolePatterns,
       hasAdminRole,
-      shouldRedirectToAdmin: hasAdminRole
+      shouldRedirectToAdmin: hasAdminRole,
+      detailedRoleAnalysis: userRoles.map(role => ({
+        role,
+        isAdmin: adminRolePatterns.includes(role) || role.includes('admin')
+      }))
     });
     
     if (hasAdminRole) {
@@ -94,27 +121,54 @@ const ProtectedRoute = ({
   if (requiredRole) {
     const hasRequiredRole = (() => {
       const userRoles = user?.roles || [];
-      console.log('🔍 Checking roles:', { requiredRole, userRoles });
+      console.log('🔍 REQUIRED ROLE CHECK:', { 
+        requiredRole, 
+        userRoles,
+        userEmail: user?.email,
+        currentPath: location.pathname
+      });
       
       // Dashboard routes: allow both Greepages-Subscriber and Greepages-SubscriberAdmin (case insensitive)
       if (requiredRole === 'Greepages-Subscriber') {
-        const hasSubscriberRole = userRoles.some(role => 
-          role.toLowerCase() === 'greepages-subscriber' || 
-          role.toLowerCase() === 'greepages-subscriberadmin'
-        );
+        const hasSubscriberRole = userRoles.some(role => {
+          const normalizedRole = role.toLowerCase();
+          const isSubscriber = normalizedRole === 'greepages-subscriber' || 
+                              normalizedRole === 'greepages-subscriberadmin' ||
+                              normalizedRole === 'greenpages-subscriber' ||  // handle typo
+                              normalizedRole === 'greenpages-subscriberadmin'; // handle typo
+          
+          console.log('📊 Subscriber role check:', {
+            role,
+            normalizedRole,
+            isSubscriber,
+            checkedAgainst: ['greepages-subscriber', 'greepages-subscriberadmin', 'greenpages-subscriber', 'greenpages-subscriberadmin']
+          });
+          
+          return isSubscriber;
+        });
         console.log('📊 Dashboard role check result:', hasSubscriberRole);
         return hasSubscriberRole;
       }
       
-      // Admin routes: allow GreenPages-Admin and SysAdmin (case insensitive) - FIXED PATTERN
+      // Admin routes: allow GreenPages-Admin and SysAdmin (case insensitive)
       if (requiredRole === 'GreenPages-Admin') {
         const hasAdminRole = userRoles.some(role => {
           const normalizedRole = role.toLowerCase();
-          // Direct match for the actual role name format
-          return normalizedRole === 'greenpages-admin' || 
-                 normalizedRole === 'sysadmin' ||
-                 normalizedRole === 'admin' ||
-                 normalizedRole.includes('admin'); // Fallback for any admin role
+          const isAdmin = normalizedRole === 'greenpages-admin' || 
+                         normalizedRole === 'greepages-admin' ||  // handle typo
+                         normalizedRole === 'sysadmin' ||
+                         normalizedRole === 'admin' ||
+                         normalizedRole === 'administrator' ||
+                         normalizedRole.includes('admin'); // Fallback for any admin role
+          
+          console.log('🔧 Admin role check:', {
+            role,
+            normalizedRole,
+            isAdmin,
+            checkedAgainst: ['greenpages-admin', 'greepages-admin', 'sysadmin', 'admin', 'administrator', 'contains admin']
+          });
+          
+          return isAdmin;
         });
         console.log('🔧 Admin role check result:', hasAdminRole);
         return hasAdminRole;
@@ -124,18 +178,33 @@ const ProtectedRoute = ({
       const hasOtherRole = userRoles.some(role => 
         role.toLowerCase() === requiredRole.toLowerCase()
       );
-      console.log('🎯 Other role check result:', hasOtherRole);
+      console.log('🎯 Other role check result:', {
+        requiredRole,
+        userRoles,
+        hasOtherRole
+      });
       return hasOtherRole;
     })();
 
     if (!hasRequiredRole) {
-      console.log('❌ User lacks required role, redirecting to unauthorized');
+      console.log('❌ ROLE CHECK FAILED:', {
+        requiredRole,
+        userRoles: user?.roles,
+        userEmail: user?.email,
+        currentPath: location.pathname,
+        redirectingTo: '/unauthorized'
+      });
       // User doesn't have required role, redirect to unauthorized page
       return <Navigate to="/unauthorized" replace />;
     }
   }
 
-  console.log('✅ Authentication checks passed, rendering protected content');
+  console.log('✅ Authentication checks passed, rendering protected content for:', {
+    userEmail: user?.email,
+    userRoles: user?.roles,
+    currentPath: location.pathname,
+    requiredRole
+  });
   return <>{children}</>;
 };
 

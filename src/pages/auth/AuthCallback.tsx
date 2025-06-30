@@ -12,6 +12,8 @@ const AuthCallback = () => {
   useEffect(() => {
     console.log('🔥 AUTH CALLBACK COMPONENT MOUNTED - This should appear in logs if callback is being called');
     console.log('📍 Current URL in AuthCallback:', window.location.href);
+    console.log('📍 URL search params:', window.location.search);
+    console.log('📍 URL hash:', window.location.hash);
     
     const handleCallback = async () => {
       try {
@@ -36,18 +38,20 @@ const AuthCallback = () => {
           const userInfo = oidcService.transformUser(user);
           const roles = userInfo.roles || [];
           
-          console.log('👥 User roles from token:', roles);
+          console.log('👥 CALLBACK - User roles from token:', roles);
+          console.log('🔍 CALLBACK - Raw user info:', userInfo);
           
           // Determine redirect URL based on roles - check admin roles FIRST (highest priority)
           let redirectUrl = '/dashboard'; // default fallback
           
           // Normalize roles to lowercase for comparison
           const normalizedRoles = roles.map(role => role.toLowerCase());
-          console.log('🔄 Normalized roles:', normalizedRoles);
+          console.log('🔄 CALLBACK - Normalized roles:', normalizedRoles);
           
-          // Define admin role patterns - EXACT matches for GreenPages-Admin
+          // Define COMPREHENSIVE admin role patterns
           const adminRolePatterns = [
             'greenpages-admin',
+            'greepages-admin',   // handle typo variation
             'admin', 
             'sysadmin',
             'administrator'
@@ -57,39 +61,42 @@ const AuthCallback = () => {
           const hasAdminRole = normalizedRoles.some(userRole => {
             // Check for exact match with admin patterns
             const isExactMatch = adminRolePatterns.includes(userRole);
-            // Also check if the user role contains 'greenpages-admin' 
-            const containsGreenPagesAdmin = userRole.includes('greenpages-admin');
+            // Also check if the user role contains 'admin' 
+            const containsAdmin = userRole.includes('admin');
             
-            console.log('🔍 Admin role check for:', userRole, {
+            console.log('🔍 CALLBACK - Admin role check for:', userRole, {
               isExactMatch,
-              containsGreenPagesAdmin,
-              matchesAnyPattern: isExactMatch || containsGreenPagesAdmin
+              containsAdmin,
+              matchesAnyPattern: isExactMatch || containsAdmin,
+              checkedAgainst: adminRolePatterns
             });
             
-            return isExactMatch || containsGreenPagesAdmin;
+            return isExactMatch || containsAdmin;
           });
           
-          console.log('🔧 Admin role check details:', {
+          console.log('🔧 CALLBACK - Admin role check details:', {
             originalRoles: roles,
             normalizedRoles,
             adminRolePatterns,
             hasAdminRole,
+            userEmail: userInfo.email,
             detailedCheck: normalizedRoles.map(role => ({
               role,
-              matchesAdmin: adminRolePatterns.includes(role) || role.includes('greenpages-admin')
+              matchesAdmin: adminRolePatterns.includes(role) || role.includes('admin')
             }))
           });
           
           if (hasAdminRole) {
             redirectUrl = '/admin';
-            console.log('🔧 ADMIN USER DETECTED - redirecting to /admin');
+            console.log('🔧 CALLBACK - ADMIN USER DETECTED - redirecting to /admin');
           } else {
-            // Check for subscriber roles - case insensitive
+            // Check for subscriber roles - case insensitive with COMPREHENSIVE patterns
             const subscriberRolePatterns = [
               'greenpages-subscriber', 
               'greepages-subscriber',  // handle typo variation
               'greenpages-subscriberadmin',
-              'greepages-subscriberadmin'  // handle typo variation
+              'greepages-subscriberadmin',  // handle typo variation
+              'subscriber'
             ];
             
             const hasSubscriberRole = normalizedRoles.some(userRole => 
@@ -98,11 +105,12 @@ const AuthCallback = () => {
               )
             );
             
-            console.log('👤 Subscriber role check details:', {
+            console.log('👤 CALLBACK - Subscriber role check details:', {
               originalRoles: roles,
               normalizedRoles,
               subscriberRolePatterns,
               hasSubscriberRole,
+              userEmail: userInfo.email,
               matchingPatterns: subscriberRolePatterns.filter(pattern => 
                 normalizedRoles.some(userRole => 
                   userRole.includes(pattern) || pattern.includes(userRole)
@@ -112,35 +120,38 @@ const AuthCallback = () => {
             
             if (hasSubscriberRole) {
               redirectUrl = '/dashboard';
-              console.log('👤 SUBSCRIBER USER DETECTED - redirecting to /dashboard');
+              console.log('👤 CALLBACK - SUBSCRIBER USER DETECTED - redirecting to /dashboard');
             } else {
-              console.log('⚠️ NO RECOGNIZED ROLES - defaulting to /dashboard');
+              console.log('⚠️ CALLBACK - NO RECOGNIZED ROLES - defaulting to /dashboard');
               redirectUrl = '/dashboard';
             }
           }
           
-          console.log('🚀 FINAL REDIRECT DECISION:', {
+          console.log('🚀 CALLBACK - FINAL REDIRECT DECISION:', {
             userEmail: userInfo.email,
+            userId: userInfo.sub,
             userRoles: roles,
             normalizedRoles,
             hasAdminRole,
             finalRedirectUrl: redirectUrl,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            willUseWindowLocation: true
           });
           
           // Force a full page reload to ensure the AuthContext picks up the new user
-          console.log(`🔀 Redirecting to: ${redirectUrl}`);
+          console.log(`🔀 CALLBACK - Redirecting to: ${redirectUrl}`);
           window.location.href = redirectUrl;
         } else {
-          console.error('❌ Invalid user from callback:', user);
+          console.error('❌ CALLBACK - Invalid user from callback:', user);
           setError('Authentication failed - invalid user session');
         }
       } catch (error) {
-        console.error('❌ Auth callback error:', error);
-        console.error('Error details:', {
+        console.error('❌ CALLBACK - Auth callback error:', error);
+        console.error('CALLBACK - Error details:', {
           message: error.message,
           stack: error.stack,
-          name: error.name
+          name: error.name,
+          currentUrl: window.location.href
         });
         setError('Authentication failed. Please try again.');
         setTimeout(() => navigate('/login', { replace: true }), 3000);

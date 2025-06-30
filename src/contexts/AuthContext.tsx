@@ -49,11 +49,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const initializeAuth = async () => {
     try {
-      console.log('🔄 Initializing authentication (one-time check)...');
+      console.log('🔄 AUTH CONTEXT - Initializing authentication (one-time check)...');
       
       const oidcUser = await oidcService.getUser();
       
-      console.log('🔍 Initial auth check result:', {
+      console.log('🔍 AUTH CONTEXT - Initial auth check result:', {
         hasUser: !!oidcUser,
         userDetails: oidcUser ? {
           sub: oidcUser.profile?.sub,
@@ -62,13 +62,23 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           expired: oidcUser.expired,
           expiresAt: oidcUser.expires_at,
           currentTime: Math.floor(Date.now() / 1000),
-          hasAccessToken: !!oidcUser.access_token
+          hasAccessToken: !!oidcUser.access_token,
+          accessTokenStart: oidcUser.access_token ? oidcUser.access_token.substring(0, 20) + '...' : 'none'
         } : 'no user'
       });
       
       if (oidcUser && !oidcUser.expired) {
-        console.log('✅ Valid user found during initialization');
+        console.log('✅ AUTH CONTEXT - Valid user found during initialization');
         const userInfo = oidcService.transformUser(oidcUser);
+        
+        console.log('🔍 AUTH CONTEXT - Transformed user info:', {
+          sub: userInfo.sub,
+          email: userInfo.email,
+          name: userInfo.name,
+          roles: userInfo.roles,
+          hasAccessToken: !!oidcUser.access_token
+        });
+        
         const transformedUser: User = {
           id: userInfo.sub,
           email: userInfo.email,
@@ -76,40 +86,56 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           roles: userInfo.roles || ['Greepages-Subscriber']
         };
         
+        console.log('✅ AUTH CONTEXT - Final user object being set:', {
+          id: transformedUser.id,
+          email: transformedUser.email,
+          name: transformedUser.name,
+          roles: transformedUser.roles,
+          hasToken: !!oidcUser.access_token
+        });
+        
         setUser(transformedUser);
         setAccessToken(oidcUser.access_token);
-        console.log('✅ User and token set in context:', { user: transformedUser, hasToken: !!oidcUser.access_token });
+        console.log('✅ AUTH CONTEXT - User and token set in context:', { 
+          user: transformedUser, 
+          hasToken: !!oidcUser.access_token 
+        });
       } else {
-        console.log('❌ No valid user found during initialization');
+        console.log('❌ AUTH CONTEXT - No valid user found during initialization');
         setUser(null);
         setAccessToken(null);
       }
     } catch (error) {
-      console.error('❌ Auth initialization failed:', error);
+      console.error('❌ AUTH CONTEXT - Auth initialization failed:', error);
+      console.error('AUTH CONTEXT - Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
       setUser(null);
       setAccessToken(null);
     } finally {
       setIsLoading(false);
       setInitialized(true);
-      console.log('✅ Auth initialization complete');
+      console.log('✅ AUTH CONTEXT - Auth initialization complete');
     }
   };
 
   const login = () => {
-    console.log('🚀 Starting login process...');
+    console.log('🚀 AUTH CONTEXT - Starting login process...');
     setIsLoading(true);
     oidcService.login();
   };
 
   const logout = async () => {
     try {
-      console.log('🚪 Starting logout...');
+      console.log('🚪 AUTH CONTEXT - Starting logout...');
       setIsLoading(true);
       await oidcService.logout();
       setUser(null);
       setAccessToken(null);
     } catch (error) {
-      console.error('❌ Logout failed:', error);
+      console.error('❌ AUTH CONTEXT - Logout failed:', error);
       await oidcService.removeUser();
       setUser(null);
       setAccessToken(null);
@@ -119,7 +145,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const hasRole = (role: string): boolean => {
-    return user?.roles.includes(role) ?? false;
+    const result = user?.roles.includes(role) ?? false;
+    console.log('🔍 AUTH CONTEXT - Role check:', {
+      requestedRole: role,
+      userRoles: user?.roles,
+      hasRole: result
+    });
+    return result;
   };
 
   const value: AuthContextType = {
