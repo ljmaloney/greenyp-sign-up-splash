@@ -1,5 +1,5 @@
 
-import { getApiUrl } from '@/config/api';
+import { apiClient } from '@/utils/apiClient';
 
 export interface Contact {
   contactId: string;
@@ -24,46 +24,90 @@ export interface ContactsResponse {
   errorMessageApi: string | null;
 }
 
+// Create a function that accepts an API client for dependency injection
+export const createContactService = (authenticatedApiClient: any) => ({
+  async fetchContacts(producerId: string): Promise<Contact[]> {
+    console.log('👥 Fetching contacts for producer:', producerId);
+    
+    const endpoint = `/producer/${producerId}/contacts?activeOnly=false`;
+    
+    try {
+      const data: ContactsResponse = await authenticatedApiClient.get(endpoint, { requireAuth: true });
+      
+      console.log('👥 Contacts response:', data);
+      
+      if (data.errorMessageApi) {
+        throw new Error(data.errorMessageApi);
+      }
+      
+      return data.response || [];
+    } catch (error) {
+      console.error('❌ Failed to fetch contacts:', error);
+      throw error;
+    }
+  },
+
+  async fetchLocationContacts(producerId: string, locationId: string): Promise<Contact[]> {
+    console.log('👥 Fetching location contacts for producer:', producerId, 'location:', locationId);
+    
+    const endpoint = `/producer/${producerId}/contacts?locationId=${locationId}&activeOnly=false`;
+    
+    try {
+      const data: ContactsResponse = await authenticatedApiClient.get(endpoint, { requireAuth: true });
+      
+      console.log('👥 Location contacts response:', data);
+      
+      if (data.errorMessageApi) {
+        throw new Error(data.errorMessageApi);
+      }
+      
+      return data.response || [];
+    } catch (error) {
+      console.error('❌ Failed to fetch location contacts:', error);
+      throw error;
+    }
+  }
+});
+
+// Legacy functions - will be deprecated in favor of authenticated versions
 export const fetchContacts = async (producerId: string): Promise<Contact[]> => {
-  const url = getApiUrl(`/producer/${producerId}/contacts?activeOnly=false`);
+  console.log('⚠️ Using legacy fetchContacts - should use authenticated version');
   
-  console.log('👥 Fetching contacts from:', url);
+  const endpoint = `/producer/${producerId}/contacts?activeOnly=false`;
   
-  const response = await fetch(url);
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch contacts: ${response.status} ${response.statusText}`);
+  try {
+    const data: ContactsResponse = await apiClient.get(endpoint);
+    
+    console.log('👥 Contacts response:', data);
+    
+    if (data.errorMessageApi) {
+      throw new Error(data.errorMessageApi);
+    }
+    
+    return data.response;
+  } catch (error) {
+    console.error('❌ Failed to fetch contacts:', error);
+    throw error;
   }
-  
-  const data: ContactsResponse = await response.json();
-  
-  console.log('👥 Contacts response:', data);
-  
-  if (data.errorMessageApi) {
-    throw new Error(data.errorMessageApi);
-  }
-  
-  return data.response;
 };
 
 export const fetchLocationContacts = async (producerId: string, locationId: string): Promise<Contact[]> => {
-  const url = getApiUrl(`/producer/${producerId}/contacts?locationId=${locationId}&activeOnly=false`);
+  console.log('⚠️ Using legacy fetchLocationContacts - should use authenticated version');
   
-  console.log('👥 Fetching location contacts from:', url);
+  const endpoint = `/producer/${producerId}/contacts?locationId=${locationId}&activeOnly=false`;
   
-  const response = await fetch(url);
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch location contacts: ${response.status} ${response.statusText}`);
+  try {
+    const data: ContactsResponse = await apiClient.get(endpoint);
+    
+    console.log('👥 Location contacts response:', data);
+    
+    if (data.errorMessageApi) {
+      throw new Error(data.errorMessageApi);
+    }
+    
+    return data.response;
+  } catch (error) {
+    console.error('❌ Failed to fetch location contacts:', error);
+    throw error;
   }
-  
-  const data: ContactsResponse = await response.json();
-  
-  console.log('👥 Location contacts response:', data);
-  
-  if (data.errorMessageApi) {
-    throw new Error(data.errorMessageApi);
-  }
-  
-  return data.response;
 };

@@ -38,10 +38,13 @@ const AuthCallback = () => {
           // Determine redirect URL based on roles
           let redirectUrl = '/dashboard'; // default for subscribers
           
-          if (roles.includes('GreenPages-Admin') || roles.includes('SysAdmin')) {
+          // Check for admin roles first (highest priority)
+          if (roles.includes('GreenPages-Admin') || roles.includes('admin') || roles.includes('SysAdmin')) {
             redirectUrl = '/admin';
             console.log('🔧 Admin user detected, redirecting to /admin');
-          } else if (roles.includes('Greepages-Subscriber') || roles.includes('Greepages-SubscriberAdmin')) {
+          } 
+          // Check for subscriber roles
+          else if (roles.includes('Greenpages-Subscriber') || roles.includes('Greenpages-SubscriberAdmin')) {
             redirectUrl = '/dashboard';
             console.log('👤 Subscriber user detected, redirecting to /dashboard');
           }
