@@ -50,18 +50,36 @@ const ProtectedRoute = ({
   // 🚨 CRITICAL: Check if admin user is trying to access dashboard
   if (user?.roles && location.pathname.startsWith('/dashboard')) {
     const userRoles = user.roles.map(role => role.toLowerCase());
-    const hasAdminRole = userRoles.some(role => 
-      role.includes('greenpages-admin') || 
-      role.includes('admin') || 
-      role === 'sysadmin'
+    
+    // Fix the admin role patterns to match actual role names
+    const adminRolePatterns = [
+      'greenpages-admin',     // exact match
+      'greenp ages-admin',    // handle potential spaces
+      'admin',                // generic admin
+      'sysadmin'             // system admin
+    ];
+    
+    const hasAdminRole = userRoles.some(userRole => 
+      adminRolePatterns.some(pattern => 
+        userRole.includes(pattern.replace(/\s+/g, '').toLowerCase()) ||
+        pattern.replace(/\s+/g, '').toLowerCase().includes(userRole)
+      )
     );
     
     console.log('🔍 Dashboard access check for potential admin:', {
       currentPath: location.pathname,
       userRoles: user.roles,
       normalizedRoles: userRoles,
+      adminRolePatterns,
       hasAdminRole,
-      shouldRedirectToAdmin: hasAdminRole
+      shouldRedirectToAdmin: hasAdminRole,
+      detailedCheck: userRoles.map(role => ({
+        role,
+        matchesAnyPattern: adminRolePatterns.some(pattern => 
+          role.includes(pattern.replace(/\s+/g, '').toLowerCase()) ||
+          pattern.replace(/\s+/g, '').toLowerCase().includes(role)
+        )
+      }))
     });
     
     if (hasAdminRole) {
@@ -85,13 +103,15 @@ const ProtectedRoute = ({
         return hasSubscriberRole;
       }
       
-      // Admin routes: allow GreenPages-Admin and SysAdmin (case insensitive)
+      // Admin routes: allow GreenPages-Admin and SysAdmin (case insensitive) - FIXED PATTERN
       if (requiredRole === 'GreenPages-Admin') {
-        const hasAdminRole = userRoles.some(role => 
-          role.toLowerCase() === 'greenpages-admin' || 
-          role.toLowerCase() === 'sysadmin' ||
-          role.toLowerCase() === 'admin'
-        );
+        const hasAdminRole = userRoles.some(role => {
+          const normalizedRole = role.toLowerCase().replace(/\s+/g, '');
+          return normalizedRole === 'greenpages-admin' || 
+                 normalizedRole === 'greenp ages-admin' ||
+                 normalizedRole === 'sysadmin' ||
+                 normalizedRole === 'admin';
+        });
         console.log('🔧 Admin role check result:', hasAdminRole);
         return hasAdminRole;
       }
