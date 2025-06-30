@@ -47,6 +47,29 @@ const ProtectedRoute = ({
     return <Navigate to={fallbackPath} state={{ from: location }} replace />;
   }
 
+  // 🚨 CRITICAL: Check if admin user is trying to access dashboard
+  if (user?.roles && location.pathname.startsWith('/dashboard')) {
+    const userRoles = user.roles.map(role => role.toLowerCase());
+    const hasAdminRole = userRoles.some(role => 
+      role.includes('greenpages-admin') || 
+      role.includes('admin') || 
+      role === 'sysadmin'
+    );
+    
+    console.log('🔍 Dashboard access check for potential admin:', {
+      currentPath: location.pathname,
+      userRoles: user.roles,
+      normalizedRoles: userRoles,
+      hasAdminRole,
+      shouldRedirectToAdmin: hasAdminRole
+    });
+    
+    if (hasAdminRole) {
+      console.log('🔀 ADMIN USER detected accessing dashboard - redirecting to /admin');
+      return <Navigate to="/admin" replace />;
+    }
+  }
+
   if (requiredRole) {
     const hasRequiredRole = (() => {
       const userRoles = user?.roles || [];

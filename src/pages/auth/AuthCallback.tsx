@@ -10,6 +10,9 @@ const AuthCallback = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log('🔥 AUTH CALLBACK COMPONENT MOUNTED - This should appear in logs if callback is being called');
+    console.log('📍 Current URL in AuthCallback:', window.location.href);
+    
     const handleCallback = async () => {
       try {
         console.log('🔄 Starting callback handling...');
