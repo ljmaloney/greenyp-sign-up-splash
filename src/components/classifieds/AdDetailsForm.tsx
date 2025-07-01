@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -5,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { useClassifiedCategories } from '@/hooks/useClassifiedCategories';
+import { useIsMobile } from '@/hooks/use-mobile';
 import CategoryDescriptionsDialog from './CategoryDescriptionsDialog';
 
 interface AdDetailsFormProps {
@@ -19,6 +21,7 @@ interface AdDetailsFormProps {
 const AdDetailsForm = ({ title, description, category, price, per, onFieldChange }: AdDetailsFormProps) => {
   const { data: categoriesData } = useClassifiedCategories();
   const categories = categoriesData?.response?.filter(cat => cat.active).sort((a, b) => a.name.localeCompare(b.name)) || [];
+  const isMobile = useIsMobile();
 
   return (
     <Card>
@@ -62,7 +65,7 @@ const AdDetailsForm = ({ title, description, category, price, per, onFieldChange
             <SelectContent>
               {categories.map((cat) => (
                 <SelectItem key={cat.categoryId} value={cat.name}>
-                  {cat.name}
+                  {isMobile ? cat.name : `${cat.name} - ${cat.shortDescription}`}
                 </SelectItem>
               ))}
             </SelectContent>
