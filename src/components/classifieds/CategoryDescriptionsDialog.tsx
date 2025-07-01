@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Info, Check } from 'lucide-react';
 import { useClassifiedCategories } from '@/hooks/useClassifiedCategories';
@@ -22,6 +22,9 @@ const CategoryDescriptionsDialog = () => {
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl text-greenyp-700">Category Descriptions</DialogTitle>
+          <DialogDescription>
+            Browse through all available classified categories and their descriptions to help you choose the right category for your ad.
+          </DialogDescription>
         </DialogHeader>
         
         {isLoading ? (
