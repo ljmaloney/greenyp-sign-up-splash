@@ -14,6 +14,7 @@ import Classifieds from '@/pages/Classifieds';
 import PrototypeAds from '@/pages/classifieds/PrototypeAds';
 import CreateAd from '@/pages/classifieds/CreateAd';
 import SearchResultsClassifieds from '@/pages/classifieds/SearchResults';
+import ClassifiedDetail from '@/pages/classifieds/ClassifiedDetail';
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ function App() {
             <Route path="/classifieds/prototypes" element={<PrototypeAds />} />
             <Route path="/classifieds/create" element={<CreateAd />} />
             <Route path="/classifieds/search" element={<SearchResultsClassifieds />} />
+            <Route path="/classifieds/:id" element={<ClassifiedDetail />} />
           </Routes>
         </Router>
         <Toaster />
