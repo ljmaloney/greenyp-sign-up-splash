@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -21,7 +20,7 @@ const ClassifiedsFilters = ({ filters, onFiltersChange }: ClassifiedsFiltersProp
   const isSearchPage = location.pathname === '/classifieds/search';
   const { data: categoriesData } = useClassifiedCategories();
   
-  const categories = categoriesData?.response?.filter(cat => cat.active) || [];
+  const categories = categoriesData?.response?.filter(cat => cat.active).sort((a, b) => a.name.localeCompare(b.name)) || [];
   const maxMileOptions = [10, 15, 25, 50, 75, 100, 150];
 
   const handleFilterChange = (key: keyof ClassifiedFilters, value: string) => {

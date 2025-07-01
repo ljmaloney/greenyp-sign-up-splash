@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -19,7 +18,7 @@ interface AdDetailsFormProps {
 
 const AdDetailsForm = ({ title, description, category, price, per, onFieldChange }: AdDetailsFormProps) => {
   const { data: categoriesData } = useClassifiedCategories();
-  const categories = categoriesData?.response?.filter(cat => cat.active) || [];
+  const categories = categoriesData?.response?.filter(cat => cat.active).sort((a, b) => a.name.localeCompare(b.name)) || [];
 
   return (
     <Card>
