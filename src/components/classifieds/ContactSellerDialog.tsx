@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Mail, Phone, X } from 'lucide-react';
 import { Classified } from '@/types/classifieds';
+import { validateEmail, validatePhone } from '@/utils/contactFormValidation';
 
 interface ContactSellerDialogProps {
   isOpen: boolean;
@@ -23,8 +24,43 @@ const ContactSellerDialog = ({ isOpen, onOpenChange, classified }: ContactSeller
     message: ''
   });
 
+  const [errors, setErrors] = React.useState({
+    email: '',
+    phone: ''
+  });
+
+  const handleEmailChange = (email: string) => {
+    setFormData({ ...formData, email });
+    if (email && !validateEmail(email)) {
+      setErrors({ ...errors, email: 'Please enter a valid email address' });
+    } else {
+      setErrors({ ...errors, email: '' });
+    }
+  };
+
+  const handlePhoneChange = (phone: string) => {
+    setFormData({ ...formData, phone });
+    if (phone && !validatePhone(phone)) {
+      setErrors({ ...errors, phone: 'Please enter a valid US phone number' });
+    } else {
+      setErrors({ ...errors, phone: '' });
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate email
+    if (!validateEmail(formData.email)) {
+      setErrors({ ...errors, email: 'Please enter a valid email address' });
+      return;
+    }
+
+    // Validate phone if provided
+    if (formData.phone && !validatePhone(formData.phone)) {
+      setErrors({ ...errors, phone: 'Please enter a valid US phone number' });
+      return;
+    }
     
     // Create mailto link with pre-filled content
     const subject = formData.subject;
@@ -69,17 +105,19 @@ ${formData.phone}`;
         </DialogHeader>
 
         <div className="space-y-4 mb-6">
-          <div className="flex items-center text-sm">
-            <Mail className="w-4 h-4 mr-2 text-greenyp-600" />
-            <span className="text-gray-600">
-              {formatContact(classified.email, 'email')}
-            </span>
-          </div>
-          <div className="flex items-center text-sm">
-            <Phone className="w-4 h-4 mr-2 text-greenyp-600" />
-            <span className="text-gray-600">
-              {formatContact(classified.phone, 'phone')}
-            </span>
+          <div className="flex items-center text-sm space-x-6">
+            <div className="flex items-center">
+              <Mail className="w-4 h-4 mr-2 text-greenyp-600" />
+              <span className="text-gray-600">
+                {formatContact(classified.email, 'email')}
+              </span>
+            </div>
+            <div className="flex items-center">
+              <Phone className="w-4 h-4 mr-2 text-greenyp-600" />
+              <span className="text-gray-600">
+                {formatContact(classified.phone, 'phone')}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -101,10 +139,14 @@ ${formData.phone}`;
               id="email"
               type="email"
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onChange={(e) => handleEmailChange(e.target.value)}
               placeholder="your@email.com"
               required
+              className={errors.email ? 'border-red-500' : ''}
             />
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+            )}
           </div>
 
           <div>
@@ -113,9 +155,13 @@ ${formData.phone}`;
               id="phone"
               type="tel"
               value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              onChange={(e) => handlePhoneChange(e.target.value)}
               placeholder="(555) 123-4567"
+              className={errors.phone ? 'border-red-500' : ''}
             />
+            {errors.phone && (
+              <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+            )}
           </div>
 
           <div>
@@ -142,7 +188,11 @@ ${formData.phone}`;
           </div>
 
           <div className="flex gap-3 pt-4">
-            <Button type="submit" className="flex-1 bg-greenyp-600 hover:bg-greenyp-700">
+            <Button 
+              type="submit" 
+              className="flex-1 bg-greenyp-600 hover:bg-greenyp-700"
+              disabled={!!errors.email || !!errors.phone}
+            >
               <Mail className="w-4 h-4 mr-2" />
               Send Message
             </Button>
