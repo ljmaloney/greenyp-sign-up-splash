@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckIcon } from 'lucide-react';
 import { useAdPackages } from '@/hooks/useAdPackages';
 import { AdPackage } from '@/types/adPackages';
+import PrototypeAdPopup from './PrototypeAdPopup';
 
 interface PricingTierSelectorProps {
   selectedTier: string;
@@ -73,6 +74,8 @@ const PricingTierSelector = ({ selectedTier, onTierChange }: PricingTierSelector
                   </div>
                 ))}
               </div>
+
+              <PrototypeAdPopup adPackage={adPackage} />
             </div>
           ))}
         </div>

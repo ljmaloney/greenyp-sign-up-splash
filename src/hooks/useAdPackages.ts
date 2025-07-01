@@ -16,8 +16,7 @@ const DUMMY_AD_PACKAGES_DATA: AdPackagesResponse = {
       features: {
         features: [
           "Text-only listing",
-          "30-day visibility",
-          "Email contact form"
+          "30-day visibility"
         ],
         maxImages: 0,
         protectContact: false
@@ -35,11 +34,11 @@ const DUMMY_AD_PACKAGES_DATA: AdPackagesResponse = {
           "Text listing with images",
           "Up to 5 high-quality photos",
           "30-day visibility",
-          "Email contact form",
+          "Protected contact information",
           "Featured in category searches"
         ],
         maxImages: 5,
-        protectContact: false
+        protectContact: true
       }
     },
     {
@@ -53,10 +52,9 @@ const DUMMY_AD_PACKAGES_DATA: AdPackagesResponse = {
         features: [
           "Premium listing with enhanced visibility",
           "Up to 10 high-quality photos",
-          "45-day visibility",
+          "30-day visibility",
           "Protected contact information",
-          "Priority placement in search results",
-          "Social media promotion"
+          "Priority placement in search results"
         ],
         maxImages: 10,
         protectContact: true
