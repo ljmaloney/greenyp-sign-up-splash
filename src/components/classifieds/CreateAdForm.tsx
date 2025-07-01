@@ -7,19 +7,23 @@ import AdDetailsForm from './AdDetailsForm';
 import LocationForm from './LocationForm';
 import ContactForm from './ContactForm';
 import AdSubmitSection from './AdSubmitSection';
-import { ClassifiedFormData, PRICING_TIERS } from '@/types/classifieds';
+import { ClassifiedFormData } from '@/types/classifieds';
 import { useToast } from '@/hooks/use-toast';
+import { useAdPackages } from '@/hooks/useAdPackages';
 
-interface ExtendedClassifiedFormData extends ClassifiedFormData {
+interface ExtendedClassifiedFormData extends Omit<ClassifiedFormData, 'pricingTier'> {
   price?: string;
   per?: string;
   address?: string;
   city?: string;
   state?: string;
+  pricingTier: string; // Now stores adTypeId
 }
 
 const CreateAdForm = () => {
   const { toast } = useToast();
+  const { data: adPackagesData } = useAdPackages();
+  
   const [formData, setFormData] = useState<ExtendedClassifiedFormData>({
     title: '',
     description: '',
@@ -32,9 +36,19 @@ const CreateAdForm = () => {
     zipCode: '',
     email: '',
     phone: '',
-    pricingTier: 'basic',
+    pricingTier: '', // Will be set to first available adTypeId
     images: []
   });
+
+  // Set default tier to first available package if not set
+  React.useEffect(() => {
+    if (adPackagesData?.response && adPackagesData.response.length > 0 && !formData.pricingTier) {
+      const firstActivePackage = adPackagesData.response.find(pkg => pkg.active);
+      if (firstActivePackage) {
+        setFormData(prev => ({ ...prev, pricingTier: firstActivePackage.adTypeId }));
+      }
+    }
+  }, [adPackagesData, formData.pricingTier]);
 
   const handleInputChange = (field: keyof ExtendedClassifiedFormData, value: string | File[]) => {
     setFormData(prev => ({
@@ -57,11 +71,20 @@ const CreateAdForm = () => {
       return;
     }
 
-    const selectedTier = PRICING_TIERS[formData.pricingTier];
-    if (formData.images.length > selectedTier.maxImages) {
+    const selectedPackage = adPackagesData?.response?.find(pkg => pkg.adTypeId === formData.pricingTier);
+    if (!selectedPackage) {
       toast({
         title: "Error",
-        description: `Too many images for ${selectedTier.name} tier. Maximum: ${selectedTier.maxImages}`,
+        description: "Please select a valid ad package",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (formData.images.length > selectedPackage.features.maxImages) {
+      toast({
+        title: "Error",
+        description: `Too many images for ${selectedPackage.adTypeName} package. Maximum: ${selectedPackage.features.maxImages}`,
         variant: "destructive"
       });
       return;
@@ -72,11 +95,11 @@ const CreateAdForm = () => {
     
     toast({
       title: "Success!",
-      description: `Your ad has been posted! You will be charged $${selectedTier.price}/month.`,
+      description: `Your ad has been posted! You will be charged $${selectedPackage.monthlyPrice}/month.`,
     });
   };
 
-  const selectedTier = PRICING_TIERS[formData.pricingTier];
+  const selectedPackage = adPackagesData?.response?.find(pkg => pkg.adTypeId === formData.pricingTier);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -102,15 +125,15 @@ const CreateAdForm = () => {
         onFieldChange={handleInputChange}
       />
 
-      {selectedTier.maxImages > 0 && (
+      {selectedPackage && selectedPackage.features.maxImages > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Images (Up to {selectedTier.maxImages})</CardTitle>
+            <CardTitle>Images (Up to {selectedPackage.features.maxImages})</CardTitle>
           </CardHeader>
           <CardContent>
             <ImageUploadZone
               images={formData.images}
-              maxImages={selectedTier.maxImages}
+              maxImages={selectedPackage.features.maxImages}
               onImagesChange={(images) => handleInputChange('images', images)}
             />
           </CardContent>
@@ -120,12 +143,12 @@ const CreateAdForm = () => {
       <ContactForm
         email={formData.email}
         phone={formData.phone}
-        hasContactObfuscation={selectedTier.contactObfuscation}
+        hasContactObfuscation={selectedPackage?.features.protectContact || false}
         onFieldChange={handleInputChange}
       />
 
       <AdSubmitSection
-        price={selectedTier.price}
+        price={selectedPackage?.monthlyPrice || 0}
         onSubmit={() => handleSubmit(new Event('submit') as any)}
       />
     </form>

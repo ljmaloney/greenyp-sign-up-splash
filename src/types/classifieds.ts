@@ -1,4 +1,3 @@
-
 export interface Classified {
   id: string;
   title: string;
@@ -8,7 +7,7 @@ export interface Classified {
   email: string;
   phone: string;
   images: string[];
-  pricingTier: 'basic' | 'standard' | 'premium';
+  pricingTier: string; // Now stores adTypeId
   contactObfuscated: boolean;
   createdAt: string;
   expiresAt: string;
@@ -33,10 +32,11 @@ export interface ClassifiedFormData {
   zipCode: string;
   email: string;
   phone: string;
-  pricingTier: 'basic' | 'standard' | 'premium';
+  pricingTier: string; // Now stores adTypeId
   images: File[];
 }
 
+// Keep the legacy PRICING_TIERS for backward compatibility, but it's no longer used
 export const PRICING_TIERS = {
   basic: {
     name: 'Basic',
