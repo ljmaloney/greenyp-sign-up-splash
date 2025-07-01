@@ -1,11 +1,11 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { Bold, Italic, List } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { useClassifiedCategories } from '@/hooks/useClassifiedCategories';
 
 interface AdDetailsFormProps {
   title: string;
@@ -16,58 +16,9 @@ interface AdDetailsFormProps {
   onFieldChange: (field: string, value: string) => void;
 }
 
-const AdDetailsForm = ({ 
-  title, 
-  description, 
-  category, 
-  price, 
-  per, 
-  onFieldChange 
-}: AdDetailsFormProps) => {
-  const categories = [
-    'Electronics',
-    'Vehicles', 
-    'Real Estate',
-    'Jobs',
-    'Services',
-    'For Sale',
-    'Wanted',
-    'Community'
-  ];
-
-  const perOptions = [
-    'each',
-    'ounce',
-    'pound',
-    'dozen',
-    'gallon'
-  ];
-
-  const insertMarkup = (markup: string) => {
-    const textarea = document.getElementById('description') as HTMLTextAreaElement;
-    if (textarea) {
-      const start = textarea.selectionStart;
-      const end = textarea.selectionEnd;
-      const selectedText = description.substring(start, end);
-      const beforeText = description.substring(0, start);
-      const afterText = description.substring(end);
-      
-      let newText = '';
-      switch (markup) {
-        case 'bold':
-          newText = `${beforeText}**${selectedText || 'bold text'}**${afterText}`;
-          break;
-        case 'italic':
-          newText = `${beforeText}*${selectedText || 'italic text'}*${afterText}`;
-          break;
-        case 'list':
-          newText = `${beforeText}\n• ${selectedText || 'list item'}${afterText}`;
-          break;
-      }
-      
-      onFieldChange('description', newText);
-    }
-  };
+const AdDetailsForm = ({ title, description, category, price, per, onFieldChange }: AdDetailsFormProps) => {
+  const { data: categoriesData } = useClassifiedCategories();
+  const categories = categoriesData?.response?.filter(cat => cat.active) || [];
 
   return (
     <Card>
@@ -75,112 +26,76 @@ const AdDetailsForm = ({
         <CardTitle>Ad Details</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <Label htmlFor="category" className="block mb-2">Category *</Label>
-            <Select value={category} onValueChange={(value) => onFieldChange('category', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select category" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((cat) => (
-                    <SelectItem key={cat} value={cat}>
-                      {cat}
-                    </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <Label htmlFor="price" className="block mb-2">Price</Label>
-            <Input
-                id="price"
-                value={price || ''}
-                onChange={(e) => onFieldChange('price', e.target.value)}
-                placeholder="Enter price"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="per" className="block mb-2">Per (optional)</Label>
-            <div className="relative">
-              <Input
-                id="per"
-                value={per || ''}
-                onChange={(e) => onFieldChange('per', e.target.value)}
-                placeholder="Enter unit or select below"
-                list="per-options"
-              />
-              <datalist id="per-options">
-                {perOptions.map((option) => (
-                  <option key={option} value={option} />
-                ))}
-              </datalist>
-            </div>
-          </div>
-        </div>
-        
         <div>
-          <Label htmlFor="title" className="block mb-2">Title *</Label>
+          <Label htmlFor="title">Title *</Label>
           <Input
             id="title"
+            type="text"
+            placeholder="Enter ad title"
             value={title}
             onChange={(e) => onFieldChange('title', e.target.value)}
-            placeholder="Enter ad title"
             required
-            className="w-full"
           />
         </div>
 
         <div>
-          <Label htmlFor="description" className="block mb-2">Description * (Max 512 characters)</Label>
-          <div className="space-y-2">
-            <div className="flex gap-1 bg-gray-50 rounded-md p-2">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => insertMarkup('bold')}
-                className="h-8 w-8 p-0"
-              >
-                <Bold className="h-4 w-4" />
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => insertMarkup('italic')}
-                className="h-8 w-8 p-0"
-              >
-                <Italic className="h-4 w-4" />
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => insertMarkup('list')}
-                className="h-8 w-8 p-0"
-              >
-                <List className="h-4 w-4" />
-              </Button>
-            </div>
-            <Textarea
-              id="description"
-              value={description}
-              onChange={(e) => onFieldChange('description', e.target.value)}
-              placeholder="Describe your item or service. Use ** for bold text, * for italic text, and • for bullet points."
-              maxLength={512}
-              required
-              className="min-h-[200px] resize-y"
-            />
-            <div className="flex justify-between items-center text-sm text-gray-500">
-              <div>Use **bold**, *italic*, and • for bullet points</div>
-              <div>{description.length}/512 characters</div>
-            </div>
-          </div>
+          <Label htmlFor="description">Description *</Label>
+          <Textarea
+            id="description"
+            placeholder="Describe your item or service"
+            value={description}
+            onChange={(e) => onFieldChange('description', e.target.value)}
+            rows={4}
+            required
+          />
         </div>
 
+        <div>
+          <Label htmlFor="category">Category *</Label>
+          <Select value={category} onValueChange={(value) => onFieldChange('category', value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select a category" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map((cat) => (
+                <SelectItem key={cat.categoryId} value={cat.name}>
+                  {cat.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="price">Price (Optional)</Label>
+            <Input
+              id="price"
+              type="text"
+              placeholder="Enter price"
+              value={price || ''}
+              onChange={(e) => onFieldChange('price', e.target.value)}
+            />
+          </div>
+          <div>
+            <Label htmlFor="per">Per (Optional)</Label>
+            <Select value={per || ''} onValueChange={(value) => onFieldChange('per', value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select unit" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="each">Each</SelectItem>
+                <SelectItem value="dozen">Dozen</SelectItem>
+                <SelectItem value="pound">Pound</SelectItem>
+                <SelectItem value="bushel">Bushel</SelectItem>
+                <SelectItem value="hour">Hour</SelectItem>
+                <SelectItem value="day">Day</SelectItem>
+                <SelectItem value="week">Week</SelectItem>
+                <SelectItem value="month">Month</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

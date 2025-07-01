@@ -5,8 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ClassifiedFilters } from '@/types/classifieds';
-import { Search } from 'lucide-react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { Search, Info } from 'lucide-react';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useClassifiedCategories } from '@/hooks/useClassifiedCategories';
 
 interface ClassifiedsFiltersProps {
   filters: ClassifiedFilters;
@@ -17,23 +18,9 @@ const ClassifiedsFilters = ({ filters, onFiltersChange }: ClassifiedsFiltersProp
   const navigate = useNavigate();
   const location = useLocation();
   const isSearchPage = location.pathname === '/classifieds/search';
+  const { data: categoriesData } = useClassifiedCategories();
   
-  const categories = [
-    'Lawn & Garden Equipment',
-    'Fruits, Vegetables',
-    'Livestock',
-    'Landscaping Services',
-    'Garden Supplies',
-    'Electronics',
-    'Vehicles', 
-    'Real Estate',
-    'Jobs',
-    'Services',
-    'For Sale',
-    'Wanted',
-    'Community'
-  ];
-
+  const categories = categoriesData?.response?.filter(cat => cat.active) || [];
   const maxMileOptions = [10, 15, 25, 50, 75, 100, 150];
 
   const handleFilterChange = (key: keyof ClassifiedFilters, value: string) => {
@@ -64,9 +51,17 @@ const ClassifiedsFilters = ({ filters, onFiltersChange }: ClassifiedsFiltersProp
       <CardContent className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Category
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Category
+              </label>
+              <Link to="/classifieds/categories">
+                <Button variant="ghost" size="sm" className="text-greenyp-600 hover:text-greenyp-700 p-0 h-auto">
+                  <Info className="w-4 h-4 mr-1" />
+                  View descriptions
+                </Button>
+              </Link>
+            </div>
             <Select 
               value={filters.category || 'all'} 
               onValueChange={(value) => handleFilterChange('category', value)}
@@ -77,8 +72,8 @@ const ClassifiedsFilters = ({ filters, onFiltersChange }: ClassifiedsFiltersProp
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
                 {categories.map((category) => (
-                  <SelectItem key={category} value={category}>
-                    {category}
+                  <SelectItem key={category.categoryId} value={category.name}>
+                    {category.name}
                   </SelectItem>
                 ))}
               </SelectContent>
