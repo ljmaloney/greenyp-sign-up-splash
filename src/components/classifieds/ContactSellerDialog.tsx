@@ -19,6 +19,7 @@ const ContactSellerDialog = ({ isOpen, onOpenChange, classified }: ContactSeller
     name: '',
     email: '',
     phone: '',
+    subject: `Re - ${classified.title}`,
     message: ''
   });
 
@@ -26,7 +27,7 @@ const ContactSellerDialog = ({ isOpen, onOpenChange, classified }: ContactSeller
     e.preventDefault();
     
     // Create mailto link with pre-filled content
-    const subject = `Inquiry about: ${classified.title}`;
+    const subject = formData.subject;
     const body = `Hi,
 
 I'm interested in your listing: ${classified.title}
@@ -114,6 +115,17 @@ ${formData.phone}`;
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
               placeholder="(555) 123-4567"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="subject">Subject *</Label>
+            <Input
+              id="subject"
+              value={formData.subject}
+              onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+              placeholder="Subject"
+              required
             />
           </div>
 
