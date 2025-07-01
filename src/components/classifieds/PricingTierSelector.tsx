@@ -56,8 +56,8 @@ const PricingTierSelector = ({ selectedTier, onTierChange }: PricingTierSelector
               onClick={() => onTierChange(adPackage.adTypeId)}
               className={`border rounded-lg p-6 cursor-pointer transition-colors ${
                 selectedTier === adPackage.adTypeId 
-                  ? 'bg-gray-100 border-yellow-500 border-2' 
-                  : 'border-gray-200 hover:bg-gray-50'
+                  ? 'bg-yellow-50 border-yellow-500 border-2' 
+                  : 'border-greenyp-500 hover:bg-greenyp-50'
               }`}
             >
               <div className="font-semibold text-lg mb-2">{adPackage.adTypeName}</div>
@@ -65,11 +65,11 @@ const PricingTierSelector = ({ selectedTier, onTierChange }: PricingTierSelector
               
               <div className="space-y-3">
                 {adPackage.features.features.map((feature, index) => (
-                  <div key={index} className="flex items-center text-sm text-gray-600">
-                    <span className="bg-green-100 rounded-full p-1 mr-2 flex-shrink-0">
-                      <CheckIcon className="h-4 w-4 text-green-600" />
+                  <div key={index} className="flex items-start text-sm text-gray-600">
+                    <span className="bg-green-100 rounded-full p-1 mr-3 mt-0.5 flex-shrink-0">
+                      <CheckIcon className="h-3 w-3 text-green-600" />
                     </span>
-                    {feature}
+                    <span className="text-left flex-1">{feature}</span>
                   </div>
                 ))}
               </div>
