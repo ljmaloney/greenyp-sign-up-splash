@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import PublicHeader from '@/components/PublicHeader';
@@ -19,7 +18,17 @@ const ClassifiedDetail = () => {
 
   // Find the ad package for this classified
   const adPackage = adPackagesData?.response?.find(pkg => pkg.adTypeId === classified?.pricingTier);
-  const hasProtectedContact = adPackage?.features?.protectContact || false;
+  
+  // Check if contact should be protected - either by ad package feature OR if contact is obfuscated
+  const hasProtectedContact = (adPackage?.features?.protectContact || classified?.contactObfuscated) || false;
+
+  console.log('🔍 Contact protection check:', {
+    classifiedId: classified?.id,
+    pricingTier: classified?.pricingTier,
+    contactObfuscated: classified?.contactObfuscated,
+    adPackageProtectContact: adPackage?.features?.protectContact,
+    hasProtectedContact
+  });
 
   const formatContact = (contact: string, type: 'email' | 'phone') => {
     if (!classified?.contactObfuscated) {
@@ -35,10 +44,18 @@ const ClassifiedDetail = () => {
   };
 
   const handleContactSeller = () => {
+    console.log('📧 Send Email clicked:', {
+      hasProtectedContact,
+      classifiedId: classified?.id,
+      contactObfuscated: classified?.contactObfuscated
+    });
+    
     if (hasProtectedContact) {
+      console.log('🛡️ Showing contact dialog for protected contact');
       setShowContactDialog(true);
     } else {
-      window.open(`mailto:${classified.email}`, '_blank');
+      console.log('📬 Opening email client directly');
+      window.open(`mailto:${classified?.email}`, '_blank');
     }
   };
 
