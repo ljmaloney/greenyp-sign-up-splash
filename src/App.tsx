@@ -14,7 +14,6 @@ import Classifieds from '@/pages/Classifieds';
 import PrototypeAds from '@/pages/classifieds/PrototypeAds';
 import CreateAd from '@/pages/classifieds/CreateAd';
 import SearchResultsClassifieds from '@/pages/classifieds/SearchResults';
-import CategoryDescriptions from '@/pages/classifieds/CategoryDescriptions';
 
 const queryClient = new QueryClient();
 
@@ -34,7 +33,6 @@ function App() {
             
             {/* Classifieds routes */}
             <Route path="/classifieds" element={<Classifieds />} />
-            <Route path="/classifieds/categories" element={<CategoryDescriptions />} />
             <Route path="/classifieds/prototypes" element={<PrototypeAds />} />
             <Route path="/classifieds/create" element={<CreateAd />} />
             <Route path="/classifieds/search" element={<SearchResultsClassifieds />} />

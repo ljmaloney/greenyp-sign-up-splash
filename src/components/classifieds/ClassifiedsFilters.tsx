@@ -5,9 +5,10 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ClassifiedFilters } from '@/types/classifieds';
-import { Search, Info } from 'lucide-react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { Search } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useClassifiedCategories } from '@/hooks/useClassifiedCategories';
+import CategoryDescriptionsDialog from './CategoryDescriptionsDialog';
 
 interface ClassifiedsFiltersProps {
   filters: ClassifiedFilters;
@@ -55,12 +56,7 @@ const ClassifiedsFilters = ({ filters, onFiltersChange }: ClassifiedsFiltersProp
               <label className="block text-sm font-medium text-gray-700">
                 Category
               </label>
-              <Link to="/classifieds/categories">
-                <Button variant="ghost" size="sm" className="text-greenyp-600 hover:text-greenyp-700 p-0 h-auto">
-                  <Info className="w-4 h-4 mr-1" />
-                  View descriptions
-                </Button>
-              </Link>
+              <CategoryDescriptionsDialog />
             </div>
             <Select 
               value={filters.category || 'all'} 

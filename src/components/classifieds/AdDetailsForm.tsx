@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { useClassifiedCategories } from '@/hooks/useClassifiedCategories';
+import CategoryDescriptionsDialog from './CategoryDescriptionsDialog';
 
 interface AdDetailsFormProps {
   title: string;
@@ -51,7 +52,10 @@ const AdDetailsForm = ({ title, description, category, price, per, onFieldChange
         </div>
 
         <div>
-          <Label htmlFor="category">Category *</Label>
+          <div className="flex items-center justify-between mb-2">
+            <Label htmlFor="category">Category *</Label>
+            <CategoryDescriptionsDialog />
+          </div>
           <Select value={category} onValueChange={(value) => onFieldChange('category', value)}>
             <SelectTrigger>
               <SelectValue placeholder="Select a category" />
