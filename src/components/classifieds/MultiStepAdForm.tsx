@@ -116,11 +116,15 @@ const MultiStepAdForm = () => {
     try {
       console.log('Submitting classified ad to API:', formData);
       
+      // Handle empty price and per fields
+      const priceValue = formData.price && formData.price.trim() !== '' ? parseFloat(formData.price) : 0.00;
+      const perValue = formData.price && formData.price.trim() !== '' && formData.per ? formData.per : 'NA';
+      
       const payload = {
         adType: formData.pricingTier,
         categoryId: formData.category,
-        price: parseFloat(formData.price || '0'),
-        pricePerUnitType: formData.per || '',
+        price: priceValue,
+        pricePerUnitType: perValue,
         firstName: formData.firstName,
         lastName: formData.lastName,
         address: formData.address || '',

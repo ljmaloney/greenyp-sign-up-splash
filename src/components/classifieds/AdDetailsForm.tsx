@@ -1,13 +1,10 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { useClassifiedCategories } from '@/hooks/useClassifiedCategories';
-import { useIsMobile } from '@/hooks/use-mobile';
-import CategoryDescriptionsDialog from './CategoryDescriptionsDialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 
 interface AdDetailsFormProps {
   title: string;
@@ -15,28 +12,59 @@ interface AdDetailsFormProps {
   category: string;
   price?: string;
   per?: string;
-  onFieldChange: (field: string, value: string) => void;
+  onFieldChange: (field: string, value: string | File[]) => void;
 }
 
-const AdDetailsForm = ({ title, description, category, price, per, onFieldChange }: AdDetailsFormProps) => {
-  const { data: categoriesData } = useClassifiedCategories();
-  const categories = categoriesData?.response?.filter(cat => cat.active).sort((a, b) => a.name.localeCompare(b.name)) || [];
-  const isMobile = useIsMobile();
+const AdDetailsForm = ({ 
+  title, 
+  description, 
+  category, 
+  price, 
+  per, 
+  onFieldChange 
+}: AdDetailsFormProps) => {
+  const [isCustomPer, setIsCustomPer] = useState(false);
+  const [customPerValue, setCustomPerValue] = useState('');
+
+  const predefinedPerOptions = [
+    'Hour',
+    'Day',
+    'Each',
+    'Set',
+    'Lot',
+    'Yard',
+    'Sq Ft',
+    'Custom'
+  ];
+
+  const handlePerChange = (value: string) => {
+    if (value === 'Custom') {
+      setIsCustomPer(true);
+      onFieldChange('per', customPerValue);
+    } else {
+      setIsCustomPer(false);
+      onFieldChange('per', value);
+    }
+  };
+
+  const handleCustomPerChange = (value: string) => {
+    setCustomPerValue(value);
+    onFieldChange('per', value);
+  };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Ad Details</CardTitle>
+        <CardTitle className="text-center">Ad Details</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
           <Label htmlFor="title">Title *</Label>
           <Input
             id="title"
-            type="text"
-            placeholder="Enter ad title"
             value={title}
             onChange={(e) => onFieldChange('title', e.target.value)}
+            placeholder="Enter ad title"
             required
           />
         </div>
@@ -45,61 +73,80 @@ const AdDetailsForm = ({ title, description, category, price, per, onFieldChange
           <Label htmlFor="description">Description *</Label>
           <Textarea
             id="description"
-            placeholder="Describe your item or service"
             value={description}
             onChange={(e) => onFieldChange('description', e.target.value)}
+            placeholder="Describe your item or service"
             rows={4}
             required
           />
         </div>
 
         <div>
-          <div className="flex items-center justify-between mb-2">
-            <Label htmlFor="category">Category *</Label>
-            <CategoryDescriptionsDialog />
-          </div>
+          <Label htmlFor="category">Category *</Label>
           <Select value={category} onValueChange={(value) => onFieldChange('category', value)}>
             <SelectTrigger>
               <SelectValue placeholder="Select a category" />
             </SelectTrigger>
-            <SelectContent>
-              {categories.map((cat) => (
-                <SelectItem key={cat.categoryId} value={cat.name}>
-                  {isMobile ? cat.name : `${cat.name} - ${cat.shortDescription}`}
-                </SelectItem>
-              ))}
+            <SelectContent className="bg-white z-50">
+              <SelectItem value="electronics">Electronics</SelectItem>
+              <SelectItem value="furniture">Furniture</SelectItem>
+              <SelectItem value="clothing">Clothing</SelectItem>
+              <SelectItem value="vehicles">Vehicles</SelectItem>
+              <SelectItem value="real-estate">Real Estate</SelectItem>
+              <SelectItem value="services">Services</SelectItem>
+              <SelectItem value="jobs">Jobs</SelectItem>
+              <SelectItem value="other">Other</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="price">Price (Optional)</Label>
+            <Label htmlFor="price">Price (optional)</Label>
             <Input
               id="price"
-              type="text"
-              placeholder="Enter price"
+              type="number"
+              step="0.01"
               value={price || ''}
               onChange={(e) => onFieldChange('price', e.target.value)}
+              placeholder="0.00"
             />
           </div>
+
           <div>
-            <Label htmlFor="per">Per (Optional)</Label>
-            <Select value={per || ''} onValueChange={(value) => onFieldChange('per', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select unit" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="each">Each</SelectItem>
-                <SelectItem value="dozen">Dozen</SelectItem>
-                <SelectItem value="pound">Pound</SelectItem>
-                <SelectItem value="bushel">Bushel</SelectItem>
-                <SelectItem value="hour">Hour</SelectItem>
-                <SelectItem value="day">Day</SelectItem>
-                <SelectItem value="week">Week</SelectItem>
-                <SelectItem value="month">Month</SelectItem>
-              </SelectContent>
-            </Select>
+            <Label htmlFor="per">Per (optional)</Label>
+            {isCustomPer ? (
+              <div className="flex gap-2">
+                <Input
+                  value={customPerValue}
+                  onChange={(e) => handleCustomPerChange(e.target.value)}
+                  placeholder="Enter custom unit"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsCustomPer(false);
+                    onFieldChange('per', '');
+                  }}
+                  className="px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded"
+                >
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <Select value={per || ''} onValueChange={handlePerChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select unit" />
+                </SelectTrigger>
+                <SelectContent className="bg-white z-50">
+                  {predefinedPerOptions.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
           </div>
         </div>
       </CardContent>

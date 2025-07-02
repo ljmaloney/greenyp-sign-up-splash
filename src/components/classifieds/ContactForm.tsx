@@ -24,9 +24,9 @@ const ContactForm = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Contact Information</CardTitle>
+        <CardTitle className="text-center">Contact Information</CardTitle>
         {hasContactObfuscation && (
-          <p className="text-sm text-green-600">Your contact details will be partially hidden for privacy</p>
+          <p className="text-sm text-green-600 text-center">Your contact details will be partially hidden for privacy</p>
         )}
       </CardHeader>
       <CardContent className="space-y-4">

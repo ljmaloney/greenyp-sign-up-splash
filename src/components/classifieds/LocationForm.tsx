@@ -22,7 +22,7 @@ const LocationForm = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Location</CardTitle>
+        <CardTitle className="text-center">Location</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="mt-6">
