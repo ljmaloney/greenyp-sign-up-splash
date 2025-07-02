@@ -33,32 +33,35 @@ const LocationForm = ({
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="address" className="block mb-2">Address</Label>
+              <Label htmlFor="address" className="block mb-2">Address *</Label>
               <Input
                 id="address"
                 value={address || ''}
                 onChange={(e) => onFieldChange('address', e.target.value)}
                 placeholder="Enter street address"
+                required
               />
             </div>
 
             <div>
-              <Label htmlFor="city" className="block mb-2">City</Label>
+              <Label htmlFor="city" className="block mb-2">City *</Label>
               <Input
                 id="city"
                 value={city || ''}
                 onChange={(e) => onFieldChange('city', e.target.value)}
                 placeholder="Enter city"
+                required
               />
             </div>
 
             <div>
-              <Label htmlFor="state" className="block mb-2">State</Label>
+              <Label htmlFor="state" className="block mb-2">State *</Label>
               <Input
                 id="state"
                 value={state || ''}
                 onChange={(e) => onFieldChange('state', e.target.value)}
                 placeholder="Enter state"
+                required
               />
             </div>
 

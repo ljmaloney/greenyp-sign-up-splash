@@ -18,6 +18,8 @@ interface ExtendedClassifiedFormData {
   city?: string;
   state?: string;
   zipCode: string;
+  firstName: string;
+  lastName: string;
   email: string;
   phone: string;
   pricingTier: string;
@@ -67,6 +69,8 @@ const AdBasicDetailsStep = ({ formData, onFieldChange, onSubmit, selectedPackage
       />
 
       <ContactForm
+        firstName={formData.firstName}
+        lastName={formData.lastName}
         email={formData.email}
         phone={formData.phone}
         hasContactObfuscation={selectedPackage?.features.protectContact || false}

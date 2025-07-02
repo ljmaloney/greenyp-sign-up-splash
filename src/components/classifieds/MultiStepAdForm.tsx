@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useAdPackages } from '@/hooks/useAdPackages';
+import { useApiClient } from '@/hooks/useApiClient';
 import { ClassifiedFormData } from '@/types/classifieds';
 import AdBasicDetailsStep from './AdBasicDetailsStep';
 import AdImageUploadStep from './AdImageUploadStep';
@@ -13,6 +14,8 @@ interface ExtendedClassifiedFormData extends Omit<ClassifiedFormData, 'pricingTi
   address?: string;
   city?: string;
   state?: string;
+  firstName: string;
+  lastName: string;
   pricingTier: string; // Now stores adTypeId
 }
 
@@ -21,6 +24,7 @@ type Step = 'basic' | 'images' | 'payment';
 const MultiStepAdForm = () => {
   const { toast } = useToast();
   const { data: adPackagesData } = useAdPackages();
+  const apiClient = useApiClient();
   
   const [currentStep, setCurrentStep] = useState<Step>('basic');
   const [formData, setFormData] = useState<ExtendedClassifiedFormData>({
@@ -33,6 +37,8 @@ const MultiStepAdForm = () => {
     city: '',
     state: '',
     zipCode: '',
+    firstName: '',
+    lastName: '',
     email: '',
     phone: '',
     pricingTier: '', // Will be set to first available adTypeId
@@ -60,7 +66,9 @@ const MultiStepAdForm = () => {
 
   const validateBasicForm = () => {
     if (!formData.title || !formData.description || !formData.category || 
-        !formData.zipCode || !formData.email || !formData.phone) {
+        !formData.zipCode || !formData.email || !formData.phone ||
+        !formData.firstName || !formData.lastName || !formData.address ||
+        !formData.city || !formData.state) {
       toast({
         title: "Error",
         description: "Please fill in all required fields",
@@ -104,14 +112,51 @@ const MultiStepAdForm = () => {
     setCurrentStep('payment');
   };
 
-  const handlePaymentComplete = () => {
-    // Here you would normally submit to your API
-    console.log('Submitting classified ad:', formData);
-    
-    toast({
-      title: "Success!",
-      description: `Your ad has been posted! You will be charged $${selectedPackage?.monthlyPrice}/month.`,
-    });
+  const handlePaymentComplete = async () => {
+    try {
+      console.log('Submitting classified ad to API:', formData);
+      
+      const payload = {
+        adType: formData.pricingTier,
+        categoryId: formData.category,
+        price: parseFloat(formData.price || '0'),
+        pricePerUnitType: formData.per || '',
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        address: formData.address || '',
+        city: formData.city || '',
+        state: formData.state || '',
+        postalCode: formData.zipCode,
+        phoneNumber: formData.phone,
+        title: formData.title,
+        description: formData.description
+      };
+
+      console.log('API Payload:', payload);
+
+      const response = await apiClient.post('/classified', payload, { requireAuth: true });
+      
+      console.log('API Response:', response);
+
+      if (response?.response?.classifiedId) {
+        toast({
+          title: "Success!",
+          description: `Your classified ad has been created successfully! ID: ${response.response.classifiedId}`,
+        });
+      } else {
+        toast({
+          title: "Success!",
+          description: "Your ad has been posted successfully!",
+        });
+      }
+    } catch (error) {
+      console.error('Failed to submit classified ad:', error);
+      toast({
+        title: "Error",
+        description: "Failed to submit your ad. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   if (currentStep === 'basic') {

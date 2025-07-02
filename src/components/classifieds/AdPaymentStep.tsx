@@ -15,6 +15,8 @@ interface ExtendedClassifiedFormData {
   city?: string;
   state?: string;
   zipCode: string;
+  firstName: string;
+  lastName: string;
   email: string;
   phone: string;
   pricingTier: string;
@@ -30,8 +32,7 @@ interface AdPaymentStepProps {
 
 const AdPaymentStep = ({ formData, selectedPackage, onPaymentComplete, onBack }: AdPaymentStepProps) => {
   const handlePayment = () => {
-    // TODO: Implement actual payment processing
-    // For now, just simulate successful payment
+    // Call the payment completion handler which now includes API submission
     onPaymentComplete();
   };
 
@@ -66,8 +67,16 @@ const AdPaymentStep = ({ formData, selectedPackage, onPaymentComplete, onBack }:
               <p className="text-gray-600">{formData.category}</p>
             </div>
             <div>
+              <span className="font-medium">Contact:</span>
+              <p className="text-gray-600">{formData.firstName} {formData.lastName}</p>
+            </div>
+            <div>
               <span className="font-medium">Location:</span>
-              <p className="text-gray-600">{formData.zipCode}</p>
+              <p className="text-gray-600">{formData.city}, {formData.state} {formData.zipCode}</p>
+            </div>
+            <div>
+              <span className="font-medium">Phone:</span>
+              <p className="text-gray-600">{formData.phone}</p>
             </div>
             <div>
               <span className="font-medium">Images:</span>
@@ -116,7 +125,7 @@ const AdPaymentStep = ({ formData, selectedPackage, onPaymentComplete, onBack }:
             </div>
             <p className="text-sm text-yellow-700">
               Payment processing will be integrated in the next phase. 
-              For now, clicking "Complete Payment" will simulate a successful transaction.
+              For now, clicking "Complete Payment" will submit your ad to the API.
             </p>
           </div>
 
@@ -132,7 +141,7 @@ const AdPaymentStep = ({ formData, selectedPackage, onPaymentComplete, onBack }:
               className="w-full bg-greenyp-600 hover:bg-greenyp-700"
             >
               <CreditCard className="w-4 h-4 mr-2" />
-              Complete Payment - ${selectedPackage?.monthlyPrice}/month
+              Complete Payment & Submit Ad - ${selectedPackage?.monthlyPrice}/month
             </Button>
           </div>
         </CardContent>

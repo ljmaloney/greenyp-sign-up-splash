@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 interface ContactFormProps {
+  firstName: string;
+  lastName: string;
   email: string;
   phone: string;
   hasContactObfuscation: boolean;
@@ -12,6 +14,8 @@ interface ContactFormProps {
 }
 
 const ContactForm = ({ 
+  firstName,
+  lastName,
   email, 
   phone, 
   hasContactObfuscation, 
@@ -27,6 +31,28 @@ const ContactForm = ({
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="firstName">First Name *</Label>
+            <Input
+              id="firstName"
+              value={firstName}
+              onChange={(e) => onFieldChange('firstName', e.target.value)}
+              placeholder="Enter first name"
+              required
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="lastName">Last Name *</Label>
+            <Input
+              id="lastName"
+              value={lastName}
+              onChange={(e) => onFieldChange('lastName', e.target.value)}
+              placeholder="Enter last name"
+              required
+            />
+          </div>
+
           <div>
             <Label htmlFor="email">Email Address *</Label>
             <Input
