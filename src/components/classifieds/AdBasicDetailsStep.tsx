@@ -7,24 +7,7 @@ import AdDetailsForm from './AdDetailsForm';
 import LocationForm from './LocationForm';
 import ContactForm from './ContactForm';
 import { AdPackage } from '@/types/adPackages';
-
-interface ExtendedClassifiedFormData {
-  title: string;
-  description: string;
-  category: string;
-  price?: string;
-  per?: string;
-  address?: string;
-  city?: string;
-  state?: string;
-  zipCode: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  pricingTier: string;
-  images: File[];
-}
+import { ExtendedClassifiedFormData } from '@/types/extendedClassifiedForm';
 
 interface AdBasicDetailsStepProps {
   formData: ExtendedClassifiedFormData;

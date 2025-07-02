@@ -4,24 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, CreditCard, Check } from 'lucide-react';
 import { AdPackage } from '@/types/adPackages';
-
-interface ExtendedClassifiedFormData {
-  title: string;
-  description: string;
-  category: string;
-  price?: string;
-  per?: string;
-  address?: string;
-  city?: string;
-  state?: string;
-  zipCode: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  pricingTier: string;
-  images: File[];
-}
+import { ExtendedClassifiedFormData } from '@/types/extendedClassifiedForm';
 
 interface AdPaymentStepProps {
   formData: ExtendedClassifiedFormData;
