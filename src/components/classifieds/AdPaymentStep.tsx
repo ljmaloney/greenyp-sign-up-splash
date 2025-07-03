@@ -19,11 +19,18 @@ const AdPaymentStep = ({
   onPaymentComplete, 
   onBack 
 }: AdPaymentStepProps) => {
-  const handlePayment = () => {
-    console.log('💳 Payment button clicked');
-    console.log('📋 Form data at payment:', formData);
-    console.log('📦 Selected package at payment:', selectedPackage);
-    onPaymentComplete();
+  const handlePayment = async () => {
+    console.log('💳 PAYMENT STEP - Payment button clicked');
+    console.log('📋 PAYMENT STEP - Form data at payment:', JSON.stringify(formData, null, 2));
+    console.log('📦 PAYMENT STEP - Selected package at payment:', JSON.stringify(selectedPackage, null, 2));
+    console.log('🔄 PAYMENT STEP - About to call onPaymentComplete handler');
+    
+    try {
+      await onPaymentComplete();
+      console.log('✅ PAYMENT STEP - Payment complete handler finished');
+    } catch (error) {
+      console.error('❌ PAYMENT STEP - Error in payment handler:', error);
+    }
   };
 
   return (
