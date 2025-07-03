@@ -3,6 +3,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useApiClient } from '@/hooks/useApiClient';
 import { ExtendedClassifiedFormData, Step } from '@/types/extendedClassifiedForm';
 import { AdPackage } from '@/types/adPackages';
+import { FULL_NAME_TO_ABBREVIATION } from '@/constants/usStates';
 
 export const useAdFormSubmission = (
   formData: ExtendedClassifiedFormData,
@@ -68,6 +69,9 @@ export const useAdFormSubmission = (
       const priceValue = formData.price && formData.price.trim() !== '' ? parseFloat(formData.price) : 0;
       const perValue = formData.price && formData.price.trim() !== '' && formData.per ? formData.per : 'NA';
       
+      // Convert state name to abbreviation
+      const stateAbbreviation = FULL_NAME_TO_ABBREVIATION[formData.state || ''] || formData.state;
+      
       const payload = {
         adType: formData.pricingTier,
         categoryId: formData.category,
@@ -77,7 +81,7 @@ export const useAdFormSubmission = (
         lastName: formData.lastName,
         address: formData.address,
         city: formData.city,
-        state: formData.state,
+        state: stateAbbreviation,
         postalCode: formData.zipCode,
         phoneNumber: formData.phone,
         emailAddress: formData.email,

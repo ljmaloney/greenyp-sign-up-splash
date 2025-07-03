@@ -3,6 +3,8 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { US_STATES_AND_TERRITORIES } from '@/constants/usStates';
 
 interface LocationFormProps {
   address?: string;
@@ -56,13 +58,18 @@ const LocationForm = ({
 
             <div>
               <Label htmlFor="state" className="block mb-2">State *</Label>
-              <Input
-                id="state"
-                value={state || ''}
-                onChange={(e) => onFieldChange('state', e.target.value)}
-                placeholder="Enter state"
-                required
-              />
+              <Select value={state || ''} onValueChange={(value) => onFieldChange('state', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a state" />
+                </SelectTrigger>
+                <SelectContent className="bg-white z-50 max-h-96">
+                  {US_STATES_AND_TERRITORIES.map((stateName) => (
+                    <SelectItem key={stateName} value={stateName}>
+                      {stateName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
