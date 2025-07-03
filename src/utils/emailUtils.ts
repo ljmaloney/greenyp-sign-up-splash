@@ -10,8 +10,11 @@ export const renderEmailTemplate = (
 ): string => {
   const emailElement = React.createElement(
     BaseEmailTemplate,
-    { title, preheader },
-    content
+    { 
+      title, 
+      preheader,
+      children: content 
+    }
   );
   
   return `<!DOCTYPE html>${renderToString(emailElement)}`;
