@@ -7,8 +7,6 @@ import AdImageUploadStep from './AdImageUploadStep';
 import AdPaymentStep from './AdPaymentStep';
 
 const MultiStepAdForm = () => {
-  console.log('MultiStepAdForm rendering...');
-  
   const {
     currentStep,
     setCurrentStep,
@@ -17,10 +15,6 @@ const MultiStepAdForm = () => {
     selectedPackage
   } = useMultiStepAdForm();
 
-  console.log('Current step:', currentStep);
-  console.log('Form data:', formData);
-  console.log('Selected package:', selectedPackage);
-
   const {
     handleBasicFormSubmit,
     handleImageUploadComplete,
@@ -28,7 +22,6 @@ const MultiStepAdForm = () => {
   } = useAdFormSubmission(formData, selectedPackage, setCurrentStep);
 
   if (currentStep === 'basic') {
-    console.log('Rendering basic step');
     return (
       <AdBasicDetailsStep
         formData={formData}
@@ -40,7 +33,6 @@ const MultiStepAdForm = () => {
   }
 
   if (currentStep === 'images') {
-    console.log('Rendering images step');
     return (
       <AdImageUploadStep
         images={formData.images}
@@ -54,7 +46,6 @@ const MultiStepAdForm = () => {
   }
 
   if (currentStep === 'payment') {
-    console.log('Rendering payment step');
     return (
       <AdPaymentStep
         formData={formData}
@@ -71,7 +62,6 @@ const MultiStepAdForm = () => {
     );
   }
 
-  console.log('No step matched, returning null');
   return null;
 };
 
