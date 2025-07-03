@@ -97,7 +97,7 @@ const UploadImages = () => {
         await apiClient.request(`/classified/images/${classifiedId}/gallery?imageFileName=${encodeURIComponent(file.name)}&imageDescription=${encodeURIComponent(description)}`, {
           method: 'POST',
           body: formData,
-          requireAuth: true,
+          requireAuth: false,
           headers: {} // Don't set Content-Type for FormData
         });
       }

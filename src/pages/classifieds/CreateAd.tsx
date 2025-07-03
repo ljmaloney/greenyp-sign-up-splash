@@ -114,7 +114,7 @@ const CreateAd = () => {
       };
 
       console.log('🚀 Submitting classified ad:', payload);
-      const response = await apiClient.post('/classified/create-ad', payload, { requireAuth: true });
+      const response = await apiClient.post('/classified/create-ad', payload, { requireAuth: false });
       console.log('✅ Classified ad created:', response);
 
       if (response?.response?.classifiedId) {

@@ -136,7 +136,7 @@ export const useAdFormSubmission = (
       console.log('🌐 STEP 3 - Payload to be sent:', JSON.stringify(payload, null, 2));
       console.log('🌐 STEP 3 - Making POST request now...');
 
-      const response = await apiClient.post('/classified', payload, { requireAuth: true });
+      const response = await apiClient.post('/classified', payload, { requireAuth: false });
       
       console.log('✅ STEP 3 - *** POST REQUEST COMPLETED ***');
       console.log('✅ STEP 3 - API Response received:', JSON.stringify(response, null, 2));
