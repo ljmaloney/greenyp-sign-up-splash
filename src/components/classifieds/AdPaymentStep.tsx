@@ -20,18 +20,25 @@ const AdPaymentStep = ({
   onBack 
 }: AdPaymentStepProps) => {
   const handlePayment = async () => {
-    console.log('💳 PAYMENT STEP - Payment button clicked');
-    console.log('📋 PAYMENT STEP - Form data at payment:', JSON.stringify(formData, null, 2));
-    console.log('📦 PAYMENT STEP - Selected package at payment:', JSON.stringify(selectedPackage, null, 2));
-    console.log('🔄 PAYMENT STEP - About to call onPaymentComplete handler');
+    console.log('💳 PAYMENT BUTTON - *** PAYMENT BUTTON CLICKED ***');
+    console.log('💳 PAYMENT BUTTON - This should trigger the POST to /classified');
+    console.log('💳 PAYMENT BUTTON - Form data at button click:', JSON.stringify(formData, null, 2));
+    console.log('💳 PAYMENT BUTTON - Selected package at button click:', JSON.stringify(selectedPackage, null, 2));
+    console.log('💳 PAYMENT BUTTON - About to call onPaymentComplete handler...');
     
     try {
+      console.log('💳 PAYMENT BUTTON - Calling onPaymentComplete now...');
       await onPaymentComplete();
-      console.log('✅ PAYMENT STEP - Payment complete handler finished');
+      console.log('✅ PAYMENT BUTTON - onPaymentComplete handler finished successfully');
     } catch (error) {
-      console.error('❌ PAYMENT STEP - Error in payment handler:', error);
+      console.error('❌ PAYMENT BUTTON - Error in onPaymentComplete handler:', error);
     }
   };
+
+  console.log('🔄 PAYMENT STEP RENDER - Payment step component rendered');
+  console.log('🔄 PAYMENT STEP RENDER - Has formData:', !!formData);
+  console.log('🔄 PAYMENT STEP RENDER - Has selectedPackage:', !!selectedPackage);
+  console.log('🔄 PAYMENT STEP RENDER - Package name:', selectedPackage?.adTypeName);
 
   return (
     <div className="space-y-6">
