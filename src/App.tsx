@@ -13,6 +13,8 @@ import Login from './pages/auth/Login';
 import Classifieds from '@/pages/Classifieds';
 import PrototypeAds from '@/pages/classifieds/PrototypeAds';
 import CreateAd from '@/pages/classifieds/CreateAd';
+import UploadImages from '@/pages/classifieds/UploadImages';
+import Payment from '@/pages/classifieds/Payment';
 import SearchResultsClassifieds from '@/pages/classifieds/SearchResults';
 import ClassifiedDetail from '@/pages/classifieds/ClassifiedDetail';
 
@@ -36,6 +38,8 @@ function App() {
             <Route path="/classifieds" element={<Classifieds />} />
             <Route path="/classifieds/prototypes" element={<PrototypeAds />} />
             <Route path="/classifieds/create" element={<CreateAd />} />
+            <Route path="/classifieds/uploadimages/:classifiedId" element={<UploadImages />} />
+            <Route path="/classifieds/payment/:classifiedId" element={<Payment />} />
             <Route path="/classifieds/search" element={<SearchResultsClassifieds />} />
             <Route path="/classifieds/:id" element={<ClassifiedDetail />} />
           </Routes>
