@@ -98,6 +98,7 @@ export const useClassifiedCategories = () => {
     queryKey: ['classified-categories'],
     queryFn: async (): Promise<ClassifiedCategoriesResponse> => {
       console.log('🎯 Fetching classified categories from API...');
+      console.log('🔗 API Base URL:', apiClient.getBaseUrl());
       try {
         const response = await apiClient.get(API_CONFIG.ENDPOINTS.CLASSIFIED_CATEGORIES);
         console.log('📦 Categories response:', response);

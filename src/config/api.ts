@@ -1,4 +1,3 @@
-
 // API configuration with customizable host
 const DEFAULT_API_HOST = 'https://services.greenyp.com';
 const DEFAULT_IMAGE_HOST = 'https://services.greenyp.com';
@@ -26,19 +25,7 @@ const getApiHost = (): string => {
   const customHost = localStorage.getItem('API_HOST');
   if (customHost) return normalizeUrl(customHost);
   
-  // For development, check if we should use local API
-  const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-  if (isDevelopment) {
-    // Check if we have a local API server preference
-    const useLocalApi = localStorage.getItem('USE_LOCAL_API');
-    if (useLocalApi === 'false') {
-      // Explicitly set to use production API in development
-      return DEFAULT_API_HOST;
-    }
-    // Default to production API in development for now since local API might not be running
-    return DEFAULT_API_HOST;
-  }
-  
+  // Always use production API unless explicitly overridden
   return DEFAULT_API_HOST;
 };
 
@@ -60,6 +47,7 @@ export const API_CONFIG = {
     SUBSCRIPTIONS: '/reference/subscription',
     ACCOUNT: '/account',
     CLASSIFIED_CATEGORIES: '/reference/classified/categories',
+    CLASSIFIED: '/classified',
   }
 };
 

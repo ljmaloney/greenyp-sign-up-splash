@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, CreditCard, Check } from 'lucide-react';
+import { ArrowLeft, CreditCard } from 'lucide-react';
 import { AdPackage } from '@/types/adPackages';
 import { ExtendedClassifiedFormData } from '@/types/extendedClassifiedForm';
 
@@ -13,9 +13,16 @@ interface AdPaymentStepProps {
   onBack: () => void;
 }
 
-const AdPaymentStep = ({ formData, selectedPackage, onPaymentComplete, onBack }: AdPaymentStepProps) => {
+const AdPaymentStep = ({ 
+  formData, 
+  selectedPackage, 
+  onPaymentComplete, 
+  onBack 
+}: AdPaymentStepProps) => {
   const handlePayment = () => {
-    // Call the payment completion handler which now includes API submission
+    console.log('💳 Payment button clicked');
+    console.log('📋 Form data at payment:', formData);
+    console.log('📦 Selected package at payment:', selectedPackage);
     onPaymentComplete();
   };
 
@@ -30,101 +37,77 @@ const AdPaymentStep = ({ formData, selectedPackage, onPaymentComplete, onBack }:
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back
         </Button>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Step 3: Payment</h2>
-        <p className="text-gray-600">Complete your payment to publish your ad</p>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Step 3: Payment & Submit</h2>
+        <p className="text-gray-600">
+          Review your ad details and complete your purchase
+        </p>
       </div>
 
-      {/* Ad Summary */}
       <Card>
         <CardHeader>
-          <CardTitle>Ad Summary</CardTitle>
+          <CardTitle>Order Summary</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <span className="font-medium">Title:</span>
-              <p className="text-gray-600">{formData.title}</p>
-            </div>
-            <div>
-              <span className="font-medium">Category:</span>
-              <p className="text-gray-600">{formData.category}</p>
-            </div>
-            <div>
-              <span className="font-medium">Contact:</span>
-              <p className="text-gray-600">{formData.firstName} {formData.lastName}</p>
-            </div>
-            <div>
-              <span className="font-medium">Location:</span>
-              <p className="text-gray-600">{formData.city}, {formData.state} {formData.zipCode}</p>
-            </div>
-            <div>
-              <span className="font-medium">Phone:</span>
-              <p className="text-gray-600">{formData.phone}</p>
-            </div>
-            <div>
+          <div className="flex justify-between items-center py-2 border-b">
+            <span className="font-medium">Package:</span>
+            <span>{selectedPackage?.adTypeName || 'Unknown'}</span>
+          </div>
+          <div className="flex justify-between items-center py-2 border-b">
+            <span className="font-medium">Price:</span>
+            <span className="text-lg font-bold">${selectedPackage?.monthlyPrice || 0}/month</span>
+          </div>
+          <div className="flex justify-between items-center py-2 border-b">
+            <span className="font-medium">Duration:</span>
+            <span>30 days</span>
+          </div>
+          {selectedPackage?.features.maxImages > 0 && (
+            <div className="flex justify-between items-center py-2 border-b">
               <span className="font-medium">Images:</span>
-              <p className="text-gray-600">{formData.images.length} uploaded</p>
+              <span>Up to {selectedPackage.features.maxImages} images</span>
             </div>
-          </div>
+          )}
         </CardContent>
       </Card>
 
-      {/* Package Details */}
       <Card>
         <CardHeader>
-          <CardTitle>Selected Package</CardTitle>
+          <CardTitle>Ad Preview</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="flex justify-between items-start mb-4">
+        <CardContent className="space-y-3">
+          <div>
+            <span className="font-medium">Title:</span>
+            <p className="text-gray-700">{formData.title}</p>
+          </div>
+          <div>
+            <span className="font-medium">Description:</span>
+            <p className="text-gray-700">{formData.description}</p>
+          </div>
+          <div>
+            <span className="font-medium">Location:</span>
+            <p className="text-gray-700">{formData.city}, {formData.state} {formData.zipCode}</p>
+          </div>
+          {formData.price && (
             <div>
-              <h3 className="text-lg font-semibold">{selectedPackage?.adTypeName}</h3>
-              <p className="text-2xl font-bold text-greenyp-600">
-                ${selectedPackage?.monthlyPrice}/month
-              </p>
+              <span className="font-medium">Price:</span>
+              <p className="text-gray-700">${formData.price}{formData.per ? ` per ${formData.per}` : ''}</p>
             </div>
-          </div>
-          
-          <div className="space-y-2">
-            {selectedPackage?.features.features.map((feature, index) => (
-              <div key={index} className="flex items-center text-sm text-gray-600">
-                <Check className="h-4 w-4 text-green-600 mr-2 flex-shrink-0" />
-                <span>{feature}</span>
-              </div>
-            ))}
-          </div>
+          )}
         </CardContent>
       </Card>
 
-      {/* Payment Section */}
       <Card>
-        <CardHeader>
-          <CardTitle>Payment Information</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <div className="flex items-center mb-2">
-              <CreditCard className="h-5 w-5 text-yellow-600 mr-2" />
-              <span className="font-medium text-yellow-800">Payment Integration Coming Soon</span>
-            </div>
-            <p className="text-sm text-yellow-700">
-              Payment processing will be integrated in the next phase. 
-              For now, clicking "Complete Payment" will submit your ad to the API.
+        <CardContent className="pt-6">
+          <div className="text-center space-y-4">
+            <p className="text-sm text-gray-600">
+              By clicking "Submit Ad", you agree to post your classified ad for ${selectedPackage?.monthlyPrice || 0}/month.
             </p>
-          </div>
-
-          <div className="border-t pt-4">
-            <div className="flex justify-between items-center text-lg font-semibold mb-4">
-              <span>Total:</span>
-              <span>${selectedPackage?.monthlyPrice}/month</span>
-            </div>
-            
             <Button 
               onClick={handlePayment}
               size="lg" 
-              className="w-full bg-greenyp-600 hover:bg-greenyp-700"
+              className="bg-greenyp-600 hover:bg-greenyp-700 w-full md:w-auto px-8"
             >
               <CreditCard className="w-4 h-4 mr-2" />
-              Complete Payment & Submit Ad - ${selectedPackage?.monthlyPrice}/month
+              Submit Ad - ${selectedPackage?.monthlyPrice || 0}/month
             </Button>
           </div>
         </CardContent>
