@@ -44,11 +44,24 @@ export const apiClient = {
       }
     }
 
+    // Helper function to get body length safely
+    const getBodyInfo = (body: BodyInit | undefined) => {
+      if (!body) return { hasBody: false, bodyInfo: 'none' };
+      
+      if (typeof body === 'string') {
+        return { hasBody: true, bodyInfo: `string (${body.length} chars)` };
+      }
+      
+      return { hasBody: true, bodyInfo: 'non-string body' };
+    };
+
+    const { hasBody, bodyInfo } = getBodyInfo(fetchOptions.body);
+
     console.log(`🌐 API CLIENT - Making Request: ${fetchOptions.method || 'GET'} ${url}`, {
       requireAuth,
       hasAuthHeader: !!requestHeaders['Authorization'],
       headers: Object.keys(requestHeaders),
-      bodyLength: fetchOptions.body ? fetchOptions.body.length : 0
+      bodyInfo
     });
 
     if (fetchOptions.body) {
