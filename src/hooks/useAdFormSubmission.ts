@@ -65,7 +65,7 @@ export const useAdFormSubmission = (
       console.log('Submitting classified ad to API:', formData);
       
       // Handle empty price and per fields
-      const priceValue = formData.price && formData.price.trim() !== '' ? parseFloat(formData.price) : 0.00;
+      const priceValue = formData.price && formData.price.trim() !== '' ? parseFloat(formData.price) : 0;
       const perValue = formData.price && formData.price.trim() !== '' && formData.per ? formData.per : 'NA';
       
       const payload = {
@@ -75,11 +75,12 @@ export const useAdFormSubmission = (
         pricePerUnitType: perValue,
         firstName: formData.firstName,
         lastName: formData.lastName,
-        address: formData.address || '',
-        city: formData.city || '',
-        state: formData.state || '',
+        address: formData.address,
+        city: formData.city,
+        state: formData.state,
         postalCode: formData.zipCode,
         phoneNumber: formData.phone,
+        emailAddress: formData.email,
         title: formData.title,
         description: formData.description
       };
