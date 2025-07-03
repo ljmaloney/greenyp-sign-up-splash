@@ -95,7 +95,7 @@ const AdDetailsForm = ({
               {activeCategories.length > 0 ? (
                 activeCategories.map((cat) => (
                   <SelectItem key={cat.categoryId} value={cat.categoryId}>
-                    {cat.name}
+                    {cat.name} - {cat.shortDescription}
                   </SelectItem>
                 ))
               ) : (
