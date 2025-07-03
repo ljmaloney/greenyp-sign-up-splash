@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { useClassifiedCategories } from '@/hooks/useClassifiedCategories';
 
 interface AdDetailsFormProps {
   title: string;
@@ -25,6 +26,7 @@ const AdDetailsForm = ({
 }: AdDetailsFormProps) => {
   const [isCustomPer, setIsCustomPer] = useState(false);
   const [customPerValue, setCustomPerValue] = useState('');
+  const { data: categoriesData } = useClassifiedCategories();
 
   const predefinedPerOptions = [
     'Hour',
@@ -51,6 +53,8 @@ const AdDetailsForm = ({
     setCustomPerValue(value);
     onFieldChange('per', value);
   };
+
+  const activeCategories = categoriesData?.response?.filter(cat => cat.active) || [];
 
   return (
     <Card>
@@ -88,14 +92,17 @@ const AdDetailsForm = ({
               <SelectValue placeholder="Select a category" />
             </SelectTrigger>
             <SelectContent className="bg-white z-50">
-              <SelectItem value="electronics">Electronics</SelectItem>
-              <SelectItem value="furniture">Furniture</SelectItem>
-              <SelectItem value="clothing">Clothing</SelectItem>
-              <SelectItem value="vehicles">Vehicles</SelectItem>
-              <SelectItem value="real-estate">Real Estate</SelectItem>
-              <SelectItem value="services">Services</SelectItem>
-              <SelectItem value="jobs">Jobs</SelectItem>
-              <SelectItem value="other">Other</SelectItem>
+              {activeCategories.length > 0 ? (
+                activeCategories.map((cat) => (
+                  <SelectItem key={cat.categoryId} value={cat.categoryId}>
+                    {cat.name}
+                  </SelectItem>
+                ))
+              ) : (
+                <SelectItem value="loading" disabled>
+                  Loading categories...
+                </SelectItem>
+              )}
             </SelectContent>
           </Select>
         </div>

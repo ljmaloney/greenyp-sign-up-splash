@@ -2,6 +2,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useApiClient } from './useApiClient';
 import { ClassifiedCategoriesResponse, ClassifiedCategory } from '@/types/classifiedCategories';
+import { API_CONFIG } from '@/config/api';
 
 // Mock data that matches the API response format
 const MOCK_CATEGORIES_DATA: ClassifiedCategoriesResponse = {
@@ -98,7 +99,7 @@ export const useClassifiedCategories = () => {
     queryFn: async (): Promise<ClassifiedCategoriesResponse> => {
       console.log('🎯 Fetching classified categories from API...');
       try {
-        const response = await apiClient.get('/reference/classified/categories');
+        const response = await apiClient.get(API_CONFIG.ENDPOINTS.CLASSIFIED_CATEGORIES);
         console.log('📦 Categories response:', response);
         return response;
       } catch (error) {
