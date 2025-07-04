@@ -90,7 +90,14 @@ const ImageUploadForm = ({ classifiedData, packageData, maxImages }: ImageUpload
         const description = imageDescriptions[i] || file.name;
         
         const formData = new FormData();
-        formData.append('image', file);
+        formData.append('file', file); // Changed from 'image' to 'file' to match server expectation
+        
+        console.log('📤 Uploading file:', {
+          fileName: file.name,
+          description,
+          fileSize: file.size,
+          fileType: file.type
+        });
         
         await apiClient.request(`/classified/images/${classifiedId}/gallery?imageFileName=${encodeURIComponent(file.name)}&imageDescription=${encodeURIComponent(description)}`, {
           method: 'POST',
