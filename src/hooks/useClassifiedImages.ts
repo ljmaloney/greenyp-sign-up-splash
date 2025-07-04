@@ -26,7 +26,7 @@ export const useClassifiedImages = (classifiedId: string, enabled: boolean = tru
       console.log('🖼️ Fetching classified images for ID:', classifiedId);
       
       const response: ClassifiedImagesResponse = await apiClient.get(
-        `/classified/${classifiedId}/image/gallery`,
+        `/classified/images/${classifiedId}/gallery`,
         { requireAuth: false }
       );
       
