@@ -101,6 +101,11 @@ export const useCreateAdForm = () => {
       };
 
       console.log('🚀 Submitting classified ad:', payload);
+      console.log('📤 Payload JSON string:', JSON.stringify(payload, null, 2));
+      console.log('🌐 API Base URL:', apiClient.getBaseUrl());
+      console.log('🎯 Full endpoint URL:', `${apiClient.getBaseUrl()}/classified/create-ad`);
+      
+      // Try using the direct endpoint path that matches your server configuration
       const response = await apiClient.post('/classified/create-ad', payload, { requireAuth: false });
       console.log('✅ Classified ad created:', response);
 
@@ -126,6 +131,11 @@ export const useCreateAdForm = () => {
       }
     } catch (error) {
       console.error('❌ Error creating classified ad:', error);
+      console.error('❌ Error details:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      });
       toast({
         title: "Error",
         description: `Failed to create your ad: ${error.message}`,

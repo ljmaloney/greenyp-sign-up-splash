@@ -1,4 +1,3 @@
-
 import { getApiUrl, API_CONFIG } from '@/config/api';
 
 interface ApiOptions extends RequestInit {
@@ -65,8 +64,16 @@ export const apiClient = {
     });
 
     if (fetchOptions.body) {
-      console.log('📤 API CLIENT - Request body:', fetchOptions.body);
+      console.log('📤 API CLIENT - Request body (raw):', fetchOptions.body);
+      console.log('📤 API CLIENT - Request body (parsed):', JSON.parse(fetchOptions.body as string));
     }
+
+    console.log('🔍 API CLIENT - Final request details:', {
+      url,
+      method: fetchOptions.method,
+      headers: requestHeaders,
+      bodyLength: fetchOptions.body ? (fetchOptions.body as string).length : 0
+    });
 
     try {
       console.log('🚀 API CLIENT - About to make fetch request...');
