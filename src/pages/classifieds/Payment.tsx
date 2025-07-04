@@ -81,14 +81,14 @@ const Payment = () => {
                 </CardContent>
               </Card>
 
-              {/* Ad Preview as Tile */}
+              {/* Ad Preview as Tile - Matching Classifieds Page */}
               <Card>
                 <CardHeader>
                   <CardTitle>Your Ad Preview</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="max-w-md mx-auto">
-                    <Card className="border-2 border-yellow-500 hover:shadow-md transition-all duration-200">
+                    <Card className="hover:shadow-md hover:border-yellow-500 transition-all duration-200 flex flex-col h-full border-2">
                       <CardHeader className="pb-3">
                         <div className="flex justify-between items-start mb-2">
                           <h3 className="font-semibold text-lg line-clamp-2 text-center flex-1">{classifiedData?.title}</h3>
@@ -107,8 +107,8 @@ const Payment = () => {
                         </div>
                       </CardHeader>
 
-                      <CardContent className="space-y-4">
-                        <p className="text-gray-700 text-sm line-clamp-3 text-left">
+                      <CardContent className="space-y-4 flex-grow flex flex-col">
+                        <p className="text-gray-700 text-sm line-clamp-3 flex-grow text-left">
                           {classifiedData?.description}
                         </p>
 
