@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import PublicHeader from '@/components/PublicHeader';
 import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { CreditCard, MapPin, Calendar, Lock } from 'lucide-react';
 import { format } from 'date-fns';
+import { useClassifiedImages } from '@/hooks/useClassifiedImages';
 
 const Payment = () => {
   const { classifiedId } = useParams();
@@ -17,6 +18,20 @@ const Payment = () => {
   
   const classifiedData = location.state?.classifiedData;
   const packageData = location.state?.packageData;
+
+  // Fetch images if the package supports them
+  const shouldFetchImages = packageData?.features?.maxImages > 0;
+  const { data: images = [], isLoading: imagesLoading } = useClassifiedImages(
+    classifiedId || '', 
+    shouldFetchImages
+  );
+
+  // Select a random image to display
+  const randomImage = useMemo(() => {
+    if (!images || images.length === 0) return null;
+    const randomIndex = Math.floor(Math.random() * images.length);
+    return images[randomIndex];
+  }, [images]);
 
   const [paymentForm, setPaymentForm] = useState({
     cardNumber: '',
@@ -89,6 +104,21 @@ const Payment = () => {
                 <CardContent>
                   <div className="max-w-md mx-auto">
                     <Card className="hover:shadow-md hover:border-yellow-500 transition-all duration-200 flex flex-col h-full border-2">
+                      {/* Display random image if available */}
+                      {randomImage && (
+                        <div className="relative h-48 w-full">
+                          <img 
+                            src={randomImage.url} 
+                            alt={randomImage.description || classifiedData?.title || 'Ad image'}
+                            className="w-full h-full object-cover rounded-t-lg"
+                            onError={(e) => {
+                              console.error('Failed to load image:', randomImage.url);
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        </div>
+                      )}
+                      
                       <CardHeader className="pb-3">
                         <div className="flex justify-between items-start mb-2">
                           <h3 className="font-semibold text-lg line-clamp-2 text-center flex-1">{classifiedData?.title}</h3>
