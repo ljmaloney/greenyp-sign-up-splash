@@ -1,3 +1,4 @@
+
 import { getApiUrl, API_CONFIG } from '@/config/api';
 
 interface ApiOptions extends RequestInit {
@@ -20,9 +21,13 @@ export const apiClient = {
     });
     
     const requestHeaders: HeadersInit = {
-      'Content-Type': 'application/json',
       ...headers,
     };
+
+    // Only set Content-Type for non-FormData requests
+    if (!(fetchOptions.body instanceof FormData)) {
+      requestHeaders['Content-Type'] = 'application/json';
+    }
 
     // Add authorization header if authentication is required
     if (requireAuth) {
@@ -43,9 +48,13 @@ export const apiClient = {
       }
     }
 
-    // Helper function to get body length safely
+    // Helper function to get body info safely
     const getBodyInfo = (body: BodyInit | undefined) => {
       if (!body) return { hasBody: false, bodyInfo: 'none' };
+      
+      if (body instanceof FormData) {
+        return { hasBody: true, bodyInfo: 'FormData' };
+      }
       
       if (typeof body === 'string') {
         return { hasBody: true, bodyInfo: `string (${body.length} chars)` };
@@ -63,16 +72,23 @@ export const apiClient = {
       bodyInfo
     });
 
-    if (fetchOptions.body) {
+    // Only log body details for non-FormData requests
+    if (fetchOptions.body && !(fetchOptions.body instanceof FormData)) {
       console.log('📤 API CLIENT - Request body (raw):', fetchOptions.body);
-      console.log('📤 API CLIENT - Request body (parsed):', JSON.parse(fetchOptions.body as string));
+      try {
+        console.log('📤 API CLIENT - Request body (parsed):', JSON.parse(fetchOptions.body as string));
+      } catch (e) {
+        console.log('📤 API CLIENT - Request body (could not parse as JSON):', fetchOptions.body);
+      }
+    } else if (fetchOptions.body instanceof FormData) {
+      console.log('📤 API CLIENT - Request body: FormData (cannot display contents)');
     }
 
     console.log('🔍 API CLIENT - Final request details:', {
       url,
       method: fetchOptions.method,
       headers: requestHeaders,
-      bodyLength: fetchOptions.body ? (fetchOptions.body as string).length : 0
+      bodyType: fetchOptions.body instanceof FormData ? 'FormData' : typeof fetchOptions.body
     });
 
     try {
@@ -100,14 +116,22 @@ export const apiClient = {
         throw new Error(`API request failed: ${response.status} ${response.statusText} - ${errorText}`);
       }
 
-      const result = await response.json();
-      console.log('✅ API CLIENT - Success Response:', {
-        hasData: !!result,
-        dataKeys: result ? Object.keys(result) : [],
-        fullResponse: result
-      });
-      
-      return result;
+      // Check content type before parsing as JSON
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        const result = await response.json();
+        console.log('✅ API CLIENT - Success Response (JSON):', {
+          hasData: !!result,
+          dataKeys: result ? Object.keys(result) : [],
+          fullResponse: result
+        });
+        return result;
+      } else {
+        // For non-JSON responses (like successful file uploads), return a success indicator
+        const textResult = await response.text();
+        console.log('✅ API CLIENT - Success Response (Text):', textResult);
+        return { success: true, message: textResult };
+      }
     } catch (error) {
       console.error('❌ API CLIENT - Request Failed:', {
         url,
@@ -137,18 +161,20 @@ export const apiClient = {
   },
 
   post(endpoint: string, data?: any, options: ApiOptions = {}) {
+    const body = data instanceof FormData ? data : (data ? JSON.stringify(data) : undefined);
     return this.request(endpoint, {
       ...options,
       method: 'POST',
-      body: data ? JSON.stringify(data) : undefined,
+      body,
     });
   },
 
   put(endpoint: string, data?: any, options: ApiOptions = {}) {
+    const body = data instanceof FormData ? data : (data ? JSON.stringify(data) : undefined);
     return this.request(endpoint, {
       ...options,
       method: 'PUT',
-      body: data ? JSON.stringify(data) : undefined,
+      body,
     });
   },
 
