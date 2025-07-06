@@ -48,6 +48,7 @@ import DashboardPayment from '@/pages/dashboard/Payment';
 import AdminIndex from '@/pages/admin/Index';
 import AdminUsers from '@/pages/admin/Users';
 import AdminSubscribers from '@/pages/admin/Subscribers';
+import AdminClassifieds from '@/pages/admin/Classifieds';
 import AdminInvoices from '@/pages/admin/Invoices';
 import AdminPermissions from '@/pages/admin/Permissions';
 import AdminSettings from '@/pages/admin/Settings';
@@ -141,6 +142,11 @@ function App() {
               <Route path="/admin/subscribers" element={
                 <ProtectedRoute requiredRole="GreenPages-Admin">
                   <AdminSubscribers />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/classifieds" element={
+                <ProtectedRoute requiredRole="GreenPages-Admin">
+                  <AdminClassifieds />
                 </ProtectedRoute>
               } />
               <Route path="/admin/invoices" element={

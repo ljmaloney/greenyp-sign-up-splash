@@ -8,6 +8,7 @@ import {
   Settings,
   ShieldCheck,
   Receipt,
+  FileText,
   X 
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -37,6 +38,12 @@ const AdminSidebar = ({ isOpen, onClose }: AdminSidebarProps) => {
       label: 'Subscribers',
       icon: UserCheck,
       href: '/admin/subscribers',
+      enabled: true
+    },
+    {
+      label: 'Classifieds',
+      icon: FileText,
+      href: '/admin/classifieds',
       enabled: true
     },
     {
