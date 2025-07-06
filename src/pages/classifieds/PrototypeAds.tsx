@@ -12,7 +12,7 @@ import { Classified } from '@/types/classifieds';
 import { useAdPackages } from '@/hooks/useAdPackages';
 
 const PrototypeAds = () => {
-  const { data: adPackagesData } = useAdPackages();
+  const { data: adPackagesData, isLoading } = useAdPackages();
   const [selectedTierId, setSelectedTierId] = useState<string>('basic-001');
 
   const prototypeAds: Record<string, Classified> = {
@@ -70,8 +70,38 @@ const PrototypeAds = () => {
     }
   };
 
+  // Show loading state while data is being fetched
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <PublicHeader />
+        <main className="flex-grow bg-gray-50 py-8">
+          <div className="container mx-auto px-4 max-w-4xl">
+            <div className="text-center">Loading...</div>
+          </div>
+        </main>
+        <ClassifiedsFooter />
+      </div>
+    );
+  }
+
   const selectedAd = prototypeAds[selectedTierId];
   const selectedPackage = adPackagesData?.response?.find(pkg => pkg.adTypeId === selectedTierId);
+
+  // If no ad is found for the selected tier, show error
+  if (!selectedAd) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <PublicHeader />
+        <main className="flex-grow bg-gray-50 py-8">
+          <div className="container mx-auto px-4 max-w-4xl">
+            <div className="text-center text-red-600">Error: Ad prototype not found</div>
+          </div>
+        </main>
+        <ClassifiedsFooter />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
