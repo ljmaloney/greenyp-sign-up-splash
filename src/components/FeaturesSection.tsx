@@ -106,7 +106,7 @@ const FeaturesSection = () => {
                 Start connecting with customers today. Create your business listing and join the leading directory for green industry professionals.
               </p>
               <Button asChild size="lg" className="bg-greenyp-600 hover:bg-greenyp-700 text-white px-10 py-4 text-lg">
-                <Link to="/subscriber/signup">Get Started Now</Link>
+                <Link to="/subscribers/signup">Get Started Now</Link>
               </Button>
             </div>
           </div>
