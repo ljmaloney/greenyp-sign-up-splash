@@ -1,8 +1,8 @@
+
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import RecentListings from '@/components/RecentListings';
 import CategoryHeroSection from '@/components/category/CategoryHeroSection';
 import CategoryCTASection from '@/components/category/CategoryCTASection';
 import CategoryPageLoadingState from '@/components/category/CategoryPageLoadingState';
@@ -10,7 +10,7 @@ import CategoryPageErrorState from '@/components/category/CategoryPageErrorState
 import { useCategories } from '@/hooks/useCategories';
 import { useCategoryServices } from '@/hooks/useCategoryServices';
 
-const CategoryPage = () => {
+const SubscriberCategoryPage = () => {
   const { lineOfBusinessId } = useParams<{ lineOfBusinessId: string }>();
   
   // Fetch all categories using the same service as the CategorySection
@@ -25,11 +25,11 @@ const CategoryPage = () => {
   useEffect(() => {
     // Update document title for SEO
     if (category) {
-      document.title = `${category.lineOfBusinessName} - GreenYP`;
+      document.title = `${category.lineOfBusinessName} - GreenYP Subscribers`;
       
       // Create meta description
       const metaDescription = document.querySelector('meta[name="description"]');
-      const metaDesc = `Connect with top-rated ${category.lineOfBusinessName.toLowerCase()} professionals. Browse reviews, see portfolios, and request quotes.`;
+      const metaDesc = `Learn about ${category.lineOfBusinessName.toLowerCase()} services and join GreenYP as a subscriber to list your business.`;
       
       if (metaDescription) {
         metaDescription.setAttribute('content', metaDesc);
@@ -61,19 +61,36 @@ const CategoryPage = () => {
           servicesLoading={servicesLoading}
           servicesError={servicesError}
         />
-
-        {/* Recent Listings Section - This will show empty state if API fails */}
-        <RecentListings 
-          lineOfBusinessId={lineOfBusinessId || ''} 
-          categoryName={category.lineOfBusinessName} 
-        />
         
-        {/* CTA Section */}
-        <CategoryCTASection categoryName={category.lineOfBusinessName} />
+        {/* CTA Section for Subscribers */}
+        <section className="py-16 bg-greenyp-50">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-3xl font-bold mb-6 text-gray-900">
+              Ready to List Your {category.lineOfBusinessName} Business?
+            </h2>
+            <p className="text-xl text-gray-700 mb-8 max-w-3xl mx-auto">
+              Join GreenYP today and connect with customers looking for {category.lineOfBusinessName.toLowerCase()} services in your area.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <a
+                href="/subscribers/signup"
+                className="bg-greenyp-600 hover:bg-greenyp-700 text-white px-8 py-3 rounded-lg font-medium transition-colors"
+              >
+                Sign Up Now
+              </a>
+              <a
+                href="/subscribers/subscription-features"
+                className="border border-greenyp-600 text-greenyp-600 hover:bg-greenyp-50 px-8 py-3 rounded-lg font-medium transition-colors"
+              >
+                View Features
+              </a>
+            </div>
+          </div>
+        </section>
       </main>
       <Footer />
     </div>
   );
 };
 
-export default CategoryPage;
+export default SubscriberCategoryPage;
