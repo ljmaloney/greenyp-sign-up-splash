@@ -8,6 +8,7 @@ import PublicIndex from './pages/PublicIndex';
 import Contact from './pages/subscribers/Contact';
 import SearchResults from './pages/SearchResults';
 import CategoryPage from './pages/CategoryPage';
+import Categories from './pages/Categories';
 import ProfilePage from './pages/ProfilePage';
 import Login from './pages/auth/Login';
 import Classifieds from '@/pages/Classifieds';
@@ -41,6 +42,8 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/search" element={<SearchResults />} />
             <Route path="/category/:lineOfBusinessId" element={<CategoryPage />} />
+            <Route path="/categories" element={<Categories />} />
+            <Route path="/categories/:lineOfBusinessId" element={<CategoryPage />} />
             <Route path="/business/:businessId" element={<ProfilePage />} />
             <Route path="/login" element={<Login />} />
             
@@ -53,6 +56,7 @@ function App() {
             <Route path="/subscribers/subscribe" element={<SubscribersSubscribe />} />
             <Route path="/subscribers/subscription-features" element={<SubscriptionFeatures />} />
             <Route path="/subscribers/contact" element={<Contact />} />
+            <Route path="/subscribers/categories" element={<SubscriberCategories />} />
             <Route path="/subscribers/categories/:lineOfBusinessId" element={<SubscriberCategories />} />
             
             {/* Classifieds routes */}
