@@ -18,6 +18,12 @@ import Payment from '@/pages/classifieds/Payment';
 import SearchResultsClassifieds from '@/pages/classifieds/SearchResults';
 import ClassifiedDetail from '@/pages/classifieds/ClassifiedDetail';
 
+// Import subscriber pages
+import SubscribersIndex from '@/pages/subscribers/Index';
+import SubscribersSignUp from '@/pages/subscribers/SignUp';
+import SubscribersSubscribe from '@/pages/subscribers/Subscribe';
+import SubscriptionFeatures from '@/pages/subscribers/SubscriptionFeatures';
+
 const queryClient = new QueryClient();
 
 function App() {
@@ -33,6 +39,13 @@ function App() {
             <Route path="/category/:lineOfBusinessId" element={<CategoryPage />} />
             <Route path="/business/:businessId" element={<ProfilePage />} />
             <Route path="/login" element={<Login />} />
+            
+            {/* Subscriber Routes */}
+            <Route path="/subscribers" element={<SubscribersIndex />} />
+            <Route path="/subscribers/signup" element={<SubscribersSignUp />} />
+            <Route path="/subscribers/subscribe" element={<SubscribersSubscribe />} />
+            <Route path="/subscribers/subscription-features" element={<SubscriptionFeatures />} />
+            <Route path="/subscribers/contact" element={<Contact />} />
             
             {/* Classifieds routes */}
             <Route path="/classifieds" element={<Classifieds />} />
