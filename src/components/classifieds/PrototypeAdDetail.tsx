@@ -11,6 +11,17 @@ interface PrototypeAdDetailProps {
 }
 
 const PrototypeAdDetail = ({ classified }: PrototypeAdDetailProps) => {
+  // Add safety check for undefined classified
+  if (!classified) {
+    return (
+      <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="p-6 text-center text-gray-500">
+          Loading ad details...
+        </div>
+      </div>
+    );
+  }
+
   const formatContact = (contact: string, type: 'email' | 'phone') => {
     if (!classified.contactObfuscated) {
       return contact;
