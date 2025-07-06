@@ -1,26 +1,31 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import AdminHeader from './AdminHeader';
-import AdminSidebar from './AdminSidebar';
+import AdminSidebarComponent from './AdminSidebarComponent';
+import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      <AdminHeader onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
-      <div className="flex">
-        <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-        {/* Main content with fixed left margin to account for sidebar */}
-        <main className="flex-1 p-6 text-left lg:ml-64">
-          {children}
-        </main>
+    <SidebarProvider>
+      <div className="min-h-screen bg-gray-50 flex w-full">
+        <AdminSidebarComponent />
+        <SidebarInset>
+          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+            <SidebarTrigger className="-ml-1" />
+            <div className="flex-1">
+              <AdminHeader onMenuClick={() => {}} />
+            </div>
+          </header>
+          <main className="flex-1 p-6">
+            {children}
+          </main>
+        </SidebarInset>
       </div>
-    </div>
+    </SidebarProvider>
   );
 };
 
