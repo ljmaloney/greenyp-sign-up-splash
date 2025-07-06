@@ -70,7 +70,7 @@ const AdminSidebarComponent = () => {
   ];
 
   return (
-    <Sidebar className="w-64">
+    <Sidebar className="w-64 min-w-64 max-w-64">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Admin Menu</SidebarGroupLabel>
