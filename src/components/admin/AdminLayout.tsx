@@ -15,7 +15,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       <AdminHeader onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
       <div className="flex">
         <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-        <main className="flex-1 p-6 text-left">
+        {/* Main content with fixed left margin to account for sidebar */}
+        <main className="flex-1 p-6 text-left lg:ml-64">
           {children}
         </main>
       </div>
