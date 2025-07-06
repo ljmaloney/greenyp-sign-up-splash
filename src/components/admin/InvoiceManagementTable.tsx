@@ -3,6 +3,8 @@ import React, { useState, useMemo } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import InvoiceSearch from './InvoiceSearch';
 
 interface Invoice {
@@ -109,6 +111,7 @@ const mockInvoices: Invoice[] = [
 ];
 
 const InvoiceManagementTable = () => {
+  const [invoiceType, setInvoiceType] = useState('subscriber');
   const [searchTerm, setSearchTerm] = useState('');
   const [searchType, setSearchType] = useState('all');
   const [dateRange, setDateRange] = useState('all');
@@ -202,6 +205,18 @@ const InvoiceManagementTable = () => {
     <Card>
       <CardHeader>
         <CardTitle>All Invoices</CardTitle>
+        <div className="mt-4">
+          <RadioGroup value={invoiceType} onValueChange={setInvoiceType} className="flex space-x-6">
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="classified" id="classified" />
+              <Label htmlFor="classified">Display / Search Classified Invoices</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="subscriber" id="subscriber" />
+              <Label htmlFor="subscriber">Display / Search Subscriber Invoices</Label>
+            </div>
+          </RadioGroup>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         <InvoiceSearch
