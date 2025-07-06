@@ -23,6 +23,7 @@ import SubscribersIndex from '@/pages/subscribers/Index';
 import SubscribersSignUp from '@/pages/subscribers/SignUp';
 import SubscribersSubscribe from '@/pages/subscribers/Subscribe';
 import SubscriptionFeatures from '@/pages/subscribers/SubscriptionFeatures';
+import SubscriberCategories from '@/pages/subscribers/SubscriberCategories';
 
 // Import dashboard page
 import DashboardIndex from '@/pages/dashboard/Index';
@@ -52,6 +53,7 @@ function App() {
             <Route path="/subscribers/subscribe" element={<SubscribersSubscribe />} />
             <Route path="/subscribers/subscription-features" element={<SubscriptionFeatures />} />
             <Route path="/subscribers/contact" element={<Contact />} />
+            <Route path="/subscribers/categories/:lineOfBusinessId" element={<SubscriberCategories />} />
             
             {/* Classifieds routes */}
             <Route path="/classifieds" element={<Classifieds />} />
