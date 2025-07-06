@@ -1,11 +1,18 @@
+
 import React from 'react';
 import { ChevronRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCategories } from '@/hooks/useCategories';
 import { CategoryWithIcon } from '@/types/category';
 
 const CategorySection = () => {
   const { data: categories, isLoading, error } = useCategories();
+  const navigate = useNavigate();
+
+  const handleViewAllClick = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    navigate('/categories');
+  };
   
   if (isLoading) {
     return (
@@ -100,12 +107,13 @@ const CategorySection = () => {
         </div>
         
         <div className="text-center mt-12">
-          <Link to="/categories">
-            <button className="bg-greenyp-600 hover:bg-greenyp-700 text-white px-8 py-3 rounded-lg font-medium inline-flex items-center">
-              View All Categories
-              <ChevronRight className="w-4 h-4 ml-2" />
-            </button>
-          </Link>
+          <button 
+            onClick={handleViewAllClick}
+            className="bg-greenyp-600 hover:bg-greenyp-700 text-white px-8 py-3 rounded-lg font-medium inline-flex items-center"
+          >
+            View All Categories
+            <ChevronRight className="w-4 h-4 ml-2" />
+          </button>
         </div>
       </div>
     </section>
