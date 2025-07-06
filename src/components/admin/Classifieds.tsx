@@ -11,6 +11,8 @@ import { format } from 'date-fns';
 
 const AdminClassifieds = () => {
     const [searchTerm, setSearchTerm] = useState('');
+    const [emailSearch, setEmailSearch] = useState('');
+    const [phoneSearch, setPhoneSearch] = useState('');
     const { data: recentClassifieds, isLoading } = useRecentClassifieds();
 
     // Mock analytics data
@@ -23,7 +25,7 @@ const AdminClassifieds = () => {
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Searching for:', searchTerm);
+        console.log('Searching for:', { searchTerm, emailSearch, phoneSearch });
         // TODO: Implement search functionality
     };
 
@@ -88,19 +90,39 @@ const AdminClassifieds = () => {
                         <CardTitle>Search Classifieds</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <form onSubmit={handleSearch} className="flex gap-4">
-                            <div className="flex-1">
-                                <Input
-                                    type="text"
-                                    placeholder="Search by title, category, or email..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                />
+                        <form onSubmit={handleSearch} className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <Input
+                                        type="text"
+                                        placeholder="Search by title, category..."
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
+                                </div>
+                                <div>
+                                    <Input
+                                        type="email"
+                                        placeholder="Search by email address..."
+                                        value={emailSearch}
+                                        onChange={(e) => setEmailSearch(e.target.value)}
+                                    />
+                                </div>
+                                <div>
+                                    <Input
+                                        type="tel"
+                                        placeholder="Search by phone number..."
+                                        value={phoneSearch}
+                                        onChange={(e) => setPhoneSearch(e.target.value)}
+                                    />
+                                </div>
                             </div>
-                            <Button type="submit">
-                                <Search className="h-4 w-4 mr-2" />
-                                Search
-                            </Button>
+                            <div className="flex justify-center">
+                                <Button type="submit">
+                                    <Search className="h-4 w-4 mr-2" />
+                                    Search
+                                </Button>
+                            </div>
                         </form>
                     </CardContent>
                 </Card>
