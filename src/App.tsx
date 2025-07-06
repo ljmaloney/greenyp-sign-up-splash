@@ -18,6 +18,7 @@ import UploadImages from '@/pages/classifieds/UploadImages';
 import Payment from '@/pages/classifieds/Payment';
 import SearchResultsClassifieds from '@/pages/classifieds/SearchResults';
 import ClassifiedDetail from '@/pages/classifieds/ClassifiedDetail';
+import CategoryDescriptions from '@/pages/classifieds/CategoryDescriptions';
 
 // Import subscriber pages
 import SubscribersIndex from '@/pages/subscribers/Index';
@@ -41,9 +42,9 @@ function App() {
             <Route path="/" element={<PublicIndex />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/search" element={<SearchResults />} />
-            <Route path="/category/:lineOfBusinessId" element={<CategoryPage />} />
             <Route path="/categories" element={<Categories />} />
             <Route path="/categories/:lineOfBusinessId" element={<CategoryPage />} />
+            <Route path="/category/:lineOfBusinessId" element={<CategoryPage />} />
             <Route path="/business/:businessId" element={<ProfilePage />} />
             <Route path="/login" element={<Login />} />
             
@@ -66,6 +67,7 @@ function App() {
             <Route path="/classifieds/uploadimages/:classifiedId" element={<UploadImages />} />
             <Route path="/classifieds/payment/:classifiedId" element={<Payment />} />
             <Route path="/classifieds/search" element={<SearchResultsClassifieds />} />
+            <Route path="/classifieds/categories" element={<CategoryDescriptions />} />
             <Route path="/classifieds/:id" element={<ClassifiedDetail />} />
           </Routes>
         </Router>
