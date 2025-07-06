@@ -24,6 +24,9 @@ import SubscribersSignUp from '@/pages/subscribers/SignUp';
 import SubscribersSubscribe from '@/pages/subscribers/Subscribe';
 import SubscriptionFeatures from '@/pages/subscribers/SubscriptionFeatures';
 
+// Import dashboard page
+import DashboardIndex from '@/pages/dashboard/Index';
+
 const queryClient = new QueryClient();
 
 function App() {
@@ -39,6 +42,9 @@ function App() {
             <Route path="/category/:lineOfBusinessId" element={<CategoryPage />} />
             <Route path="/business/:businessId" element={<ProfilePage />} />
             <Route path="/login" element={<Login />} />
+            
+            {/* Dashboard Route */}
+            <Route path="/dashboard" element={<DashboardIndex />} />
             
             {/* Subscriber Routes */}
             <Route path="/subscribers" element={<SubscribersIndex />} />
