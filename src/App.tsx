@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -32,8 +31,25 @@ import SubscriptionFeatures from '@/pages/subscribers/SubscriptionFeatures';
 import SubscriberCategories from '@/pages/subscribers/SubscriberCategories';
 import SubscriberCategoryPage from '@/pages/subscribers/CategoryPage';
 
-// Import dashboard page
+// Import dashboard pages
 import DashboardIndex from '@/pages/dashboard/Index';
+import DashboardContacts from '@/pages/dashboard/Contacts';
+import DashboardLocations from '@/pages/dashboard/Locations';
+import DashboardProducts from '@/pages/dashboard/Products';
+import DashboardServices from '@/pages/dashboard/Services';
+import DashboardAuthorizedUsers from '@/pages/dashboard/AuthorizedUsers';
+import DashboardPhotoGallery from '@/pages/dashboard/PhotoGallery';
+import DashboardAnalytics from '@/pages/dashboard/Analytics';
+import DashboardSubscription from '@/pages/dashboard/Subscription';
+import DashboardPayment from '@/pages/dashboard/Payment';
+
+// Import admin pages
+import AdminIndex from '@/pages/admin/Index';
+import AdminUsers from '@/pages/admin/Users';
+import AdminSubscribers from '@/pages/admin/Subscribers';
+import AdminInvoices from '@/pages/admin/Invoices';
+import AdminPermissions from '@/pages/admin/Permissions';
+import AdminSettings from '@/pages/admin/Settings';
 
 const queryClient = new QueryClient();
 
@@ -44,7 +60,7 @@ function App() {
           <Router>
             <Routes>
               {/* Public Routes */}
-              <Route path="/" element={<SubscribersIndex />} />
+              <Route path="/" element={<PublicIndex />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/search" element={<SearchResults />} />
               <Route path="/categories" element={<Categories />} />
@@ -58,10 +74,87 @@ function App() {
               <Route path="/auth/silent-callback" element={<SilentCallback />} />
               <Route path="/unauthorized" element={<Unauthorized />} />
 
-              {/* Protected Dashboard Route */}
+              {/* Dashboard Routes - Protected */}
               <Route path="/dashboard" element={
                 <ProtectedRoute requiredRole="Dashboard-Access">
                   <DashboardIndex />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/contacts" element={
+                <ProtectedRoute requiredRole="Dashboard-Access">
+                  <DashboardContacts />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/locations" element={
+                <ProtectedRoute requiredRole="Dashboard-Access">
+                  <DashboardLocations />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/products" element={
+                <ProtectedRoute requiredRole="Dashboard-Access">
+                  <DashboardProducts />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/services" element={
+                <ProtectedRoute requiredRole="Dashboard-Access">
+                  <DashboardServices />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/authorized-users" element={
+                <ProtectedRoute requiredRole="Dashboard-Access">
+                  <DashboardAuthorizedUsers />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/photo-gallery" element={
+                <ProtectedRoute requiredRole="Dashboard-Access">
+                  <DashboardPhotoGallery />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/analytics" element={
+                <ProtectedRoute requiredRole="Dashboard-Access">
+                  <DashboardAnalytics />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/subscription" element={
+                <ProtectedRoute requiredRole="Dashboard-Access">
+                  <DashboardSubscription />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/payment" element={
+                <ProtectedRoute requiredRole="Dashboard-Access">
+                  <DashboardPayment />
+                </ProtectedRoute>
+              } />
+
+              {/* Admin Routes - Protected */}
+              <Route path="/admin" element={
+                <ProtectedRoute requiredRole="GreenPages-Admin">
+                  <AdminIndex />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/users" element={
+                <ProtectedRoute requiredRole="GreenPages-Admin">
+                  <AdminUsers />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/subscribers" element={
+                <ProtectedRoute requiredRole="GreenPages-Admin">
+                  <AdminSubscribers />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/invoices" element={
+                <ProtectedRoute requiredRole="GreenPages-Admin">
+                  <AdminInvoices />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/permissions" element={
+                <ProtectedRoute requiredRole="GreenPages-Admin">
+                  <AdminPermissions />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/settings" element={
+                <ProtectedRoute requiredRole="GreenPages-Admin">
+                  <AdminSettings />
                 </ProtectedRoute>
               } />
 
