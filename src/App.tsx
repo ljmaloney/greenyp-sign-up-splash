@@ -11,6 +11,9 @@ import CategoryPage from './pages/CategoryPage';
 import Categories from './pages/Categories';
 import ProfilePage from './pages/ProfilePage';
 import Login from './pages/auth/Login';
+import AuthCallback from './pages/auth/AuthCallback';
+import SilentCallback from './pages/auth/SilentCallback';
+import Unauthorized from './pages/auth/Unauthorized';
 import Classifieds from '@/pages/Classifieds';
 import PrototypeAds from '@/pages/classifieds/PrototypeAds';
 import CreateAd from '@/pages/classifieds/CreateAd';
@@ -48,6 +51,11 @@ function App() {
             <Route path="/category/:lineOfBusinessId" element={<CategoryPage />} />
             <Route path="/business/:businessId" element={<ProfilePage />} />
             <Route path="/login" element={<Login />} />
+            
+            {/* Authentication Routes */}
+            <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route path="/auth/silent-callback" element={<SilentCallback />} />
+            <Route path="/unauthorized" element={<Unauthorized />} />
             
             {/* Dashboard Route */}
             <Route path="/dashboard" element={<DashboardIndex />} />
