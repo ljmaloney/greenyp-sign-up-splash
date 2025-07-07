@@ -134,11 +134,28 @@ const PrototypeAds = () => {
           </div>
 
           <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Prototype Ad Preview</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              {selectedPackage?.adTypeName} Ad Sample Preview
+            </h1>
             <p className="text-gray-600">
               Preview how your ad will look with the <strong>{selectedPackage?.adTypeName}</strong> tier (${selectedPackage?.monthlyPrice}/month)
             </p>
           </div>
+
+          {/* Package Information - Moved to top */}
+          {selectedPackage && (
+            <div className="mb-8 p-4 bg-blue-50 rounded-lg">
+              <h3 className="font-semibold text-lg mb-2">{selectedPackage.adTypeName} Package Features</h3>
+              <ul className="text-sm text-gray-700 space-y-1">
+                <li>• Price: ${selectedPackage.monthlyPrice}/month</li>
+                <li>• Maximum Images: {selectedPackage.features.maxImages}</li>
+                <li>• Contact Privacy: {selectedPackage.features.protectContact ? 'Yes' : 'No'}</li>
+                {selectedPackage.features.features.map((feature, index) => (
+                  <li key={index}>• {feature}</li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {/* Ad Card Preview */}
           <div className="mb-8">
@@ -151,21 +168,6 @@ const PrototypeAds = () => {
             <h2 className="text-xl font-semibold mb-4">Detailed View (full ad page)</h2>
             <PrototypeAdDetail classified={selectedAd} />
           </div>
-
-          {/* Package Information */}
-          {selectedPackage && (
-            <div className="mt-8 p-4 bg-blue-50 rounded-lg">
-              <h3 className="font-semibold text-lg mb-2">{selectedPackage.adTypeName} Package Features</h3>
-              <ul className="text-sm text-gray-700 space-y-1">
-                <li>• Price: ${selectedPackage.monthlyPrice}/month</li>
-                <li>• Maximum Images: {selectedPackage.features.maxImages}</li>
-                <li>• Contact Privacy: {selectedPackage.features.protectContact ? 'Yes' : 'No'}</li>
-                {selectedPackage.features.features.map((feature, index) => (
-                  <li key={index}>• {feature}</li>
-                ))}
-              </ul>
-            </div>
-          )}
         </div>
       </main>
       <ClassifiedsFooter />

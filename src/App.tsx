@@ -176,7 +176,7 @@ function App() {
 
               {/* Classifieds routes */}
               <Route path="/classifieds" element={<Classifieds />} />
-              <Route path="/classifieds/prototypes" element={<PrototypeAds />} />
+              <Route path="/classifieds/samples" element={<PrototypeAds />} />
               <Route path="/classifieds/create" element={<CreateAd />} />
               <Route path="/classifieds/uploadimages/:classifiedId" element={<UploadImages />} />
               <Route path="/classifieds/payment/:classifiedId" element={<Payment />} />
