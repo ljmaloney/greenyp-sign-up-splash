@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PublicHeader from '@/components/PublicHeader';
 import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
 import PrototypeAdCard from '@/components/classifieds/PrototypeAdCard';
@@ -13,7 +12,23 @@ import { useAdPackages } from '@/hooks/useAdPackages';
 
 const PrototypeAds = () => {
   const { data: adPackagesData, isLoading } = useAdPackages();
-  const [selectedTierId, setSelectedTierId] = useState<string>('basic-001');
+  const [selectedTierId, setSelectedTierId] = useState<string>('');
+
+  // Set default tier based on defaultPackage property
+  useEffect(() => {
+    if (adPackagesData?.response && !selectedTierId) {
+      const defaultPackage = adPackagesData.response.find(pkg => pkg.defaultPackage && pkg.active);
+      if (defaultPackage) {
+        setSelectedTierId(defaultPackage.adTypeId);
+      } else {
+        // Fallback to first active package if no default is found
+        const firstActivePackage = adPackagesData.response.find(pkg => pkg.active);
+        if (firstActivePackage) {
+          setSelectedTierId(firstActivePackage.adTypeId);
+        }
+      }
+    }
+  }, [adPackagesData, selectedTierId]);
 
   const prototypeAds: Record<string, Classified> = {
     'basic-001': {

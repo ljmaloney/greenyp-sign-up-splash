@@ -21,16 +21,22 @@ export const useMultiStepAdForm = () => {
     lastName: '',
     email: '',
     phone: '',
-    pricingTier: '', // Will be set to first available adTypeId
+    pricingTier: '', // Will be set based on defaultPackage
     images: []
   });
 
-  // Set default tier to first available package if not set
+  // Set default tier based on defaultPackage property
   React.useEffect(() => {
     if (adPackagesData?.response && adPackagesData.response.length > 0 && !formData.pricingTier) {
-      const firstActivePackage = adPackagesData.response.find(pkg => pkg.active);
-      if (firstActivePackage) {
-        setFormData(prev => ({ ...prev, pricingTier: firstActivePackage.adTypeId }));
+      const defaultPackage = adPackagesData.response.find(pkg => pkg.defaultPackage && pkg.active);
+      if (defaultPackage) {
+        setFormData(prev => ({ ...prev, pricingTier: defaultPackage.adTypeId }));
+      } else {
+        // Fallback to first active package if no default is found
+        const firstActivePackage = adPackagesData.response.find(pkg => pkg.active);
+        if (firstActivePackage) {
+          setFormData(prev => ({ ...prev, pricingTier: firstActivePackage.adTypeId }));
+        }
       }
     }
   }, [adPackagesData, formData.pricingTier]);
