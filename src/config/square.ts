@@ -3,8 +3,8 @@
 export const SQUARE_CONFIG = {
   // Use sandbox for development, production for live
   environment: 'sandbox', // Change to 'production' for live payments
-  applicationId: process.env.SQUARE_APPLICATION_ID || 'sandbox-sq0idb-YOUR_SANDBOX_APP_ID', // Replace with your actual Square Application ID
-  locationId: process.env.SQUARE_LOCATION_ID || 'YOUR_LOCATION_ID', // Replace with your actual Square Location ID
+  applicationId: process.env.SQUARE_APPLICATION_ID || '', // Replace with your actual Square Application ID
+  locationId: process.env.SQUARE_LOCATION_ID || '', // Replace with your actual Square Location ID
 };
 
 // Square Web SDK instance
@@ -13,6 +13,15 @@ let payments: any = null;
 export const initializeSquare = async () => {
   if (!window.Square) {
     throw new Error('Square Web SDK not loaded');
+  }
+
+  // Validate required configuration
+  if (!SQUARE_CONFIG.applicationId || !SQUARE_CONFIG.locationId) {
+    throw new Error('Square Application ID and Location ID are required. Please configure your Square credentials.');
+  }
+
+  if (SQUARE_CONFIG.applicationId.includes('YOUR_') || SQUARE_CONFIG.locationId.includes('YOUR_')) {
+    throw new Error('Please replace placeholder Square credentials with actual values from your Square Developer Dashboard.');
   }
 
   if (!payments) {

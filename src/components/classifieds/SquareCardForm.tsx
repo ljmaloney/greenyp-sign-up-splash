@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Lock, Copy, CreditCard } from 'lucide-react';
+import { Lock, Copy, CreditCard, AlertCircle } from 'lucide-react';
 import { useSquarePayments, SquareCardData } from '@/hooks/useSquarePayments';
 import { useToast } from '@/hooks/use-toast';
 
@@ -36,26 +36,30 @@ const SquareCardForm = ({
 
   useEffect(() => {
     const setupCard = async () => {
-      if (isSquareReady && !cardInitialized && cardElementRef.current) {
+      if (isSquareReady && !cardInitialized && !error && cardElementRef.current) {
         try {
           await initializeCard('square-card');
           setCardInitialized(true);
           console.log('Square card initialized successfully');
-        } catch (err) {
+        } catch (err: any) {
           console.error('Failed to initialize Square card:', err);
-          toast({
-            title: "Payment Setup Error",
-            description: "Failed to initialize secure payment form",
-            variant: "destructive"
-          });
         }
       }
     };
 
     setupCard();
-  }, [isSquareReady, cardInitialized, initializeCard, toast]);
+  }, [isSquareReady, cardInitialized, error, initializeCard]);
 
   const handleTokenizeCard = async () => {
+    if (error) {
+      toast({
+        title: "Configuration Error",
+        description: error,
+        variant: "destructive"
+      });
+      return;
+    }
+
     if (!cardInitialized) {
       toast({
         title: "Payment Error",
@@ -125,6 +129,21 @@ const SquareCardForm = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        {error && (
+          <div className="flex items-center p-4 text-amber-800 bg-amber-50 border border-amber-200 rounded-lg">
+            <AlertCircle className="w-5 h-5 mr-3 flex-shrink-0" />
+            <div>
+              <p className="font-medium">Square Configuration Required</p>
+              <p className="text-sm mt-1">
+                {error.includes('credentials') 
+                  ? 'Please set up your Square Application ID and Location ID in the project configuration to enable payments.'
+                  : error
+                }
+              </p>
+            </div>
+          </div>
+        )}
+
         <div>
           <Label htmlFor="cardholderName">Cardholder Name *</Label>
           <Input
@@ -167,28 +186,22 @@ const SquareCardForm = ({
             ref={cardElementRef}
             className="min-h-[60px] border border-gray-300 rounded-md p-3 bg-white"
             style={{
-              opacity: isSquareReady ? 1 : 0.5,
-              pointerEvents: isProcessing ? 'none' : 'auto'
+              opacity: (isSquareReady && !error) ? 1 : 0.5,
+              pointerEvents: (isProcessing || error) ? 'none' : 'auto'
             }}
           >
-            {!isSquareReady && (
+            {(!isSquareReady || error) && (
               <div className="flex items-center justify-center h-full text-gray-500">
-                Loading secure payment form...
+                {error ? 'Payment form unavailable - configuration required' : 'Loading secure payment form...'}
               </div>
             )}
           </div>
         </div>
 
-        {error && (
-          <div className="text-red-600 text-sm bg-red-50 p-3 rounded-md">
-            {error}
-          </div>
-        )}
-
         <div className="pt-4">
           <Button 
             onClick={handleTokenizeCard}
-            disabled={!cardInitialized || isLoading || isProcessing}
+            disabled={!cardInitialized || isLoading || isProcessing || !!error}
             className="w-full bg-greenyp-600 hover:bg-greenyp-700"
           >
             <CreditCard className="w-4 h-4 mr-2" />

@@ -29,20 +29,30 @@ export const useSquarePayments = () => {
           script.src = 'https://sandbox.web.squarecdn.com/v1/square.js'; // Use production URL for live
           script.async = true;
           script.onload = async () => {
-            await initializeSquare();
-            setIsSquareReady(true);
+            try {
+              await initializeSquare();
+              setIsSquareReady(true);
+            } catch (initError: any) {
+              console.error('Square initialization error:', initError);
+              setError(initError.message || 'Failed to initialize Square payments');
+            }
           };
           script.onerror = () => {
             setError('Failed to load Square Web SDK');
           };
           document.head.appendChild(script);
         } else {
-          await initializeSquare();
-          setIsSquareReady(true);
+          try {
+            await initializeSquare();
+            setIsSquareReady(true);
+          } catch (initError: any) {
+            console.error('Square initialization error:', initError);
+            setError(initError.message || 'Failed to initialize Square payments');
+          }
         }
-      } catch (err) {
-        console.error('Error initializing Square:', err);
-        setError('Failed to initialize Square payments');
+      } catch (err: any) {
+        console.error('Error loading Square:', err);
+        setError(err.message || 'Failed to initialize Square payments');
       }
     };
 
@@ -54,16 +64,25 @@ export const useSquarePayments = () => {
       throw new Error('Square is not ready');
     }
 
+    if (error) {
+      throw new Error(`Square configuration error: ${error}`);
+    }
+
     try {
       const payments = getSquarePayments();
+      if (!payments) {
+        throw new Error('Square payments not initialized');
+      }
+      
       const cardInstance = await payments.card();
       await cardInstance.attach(`#${cardElementId}`);
       setCard(cardInstance);
       return cardInstance;
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error initializing card:', err);
-      setError('Failed to initialize card form');
-      throw err;
+      const errorMessage = err.message || 'Failed to initialize card form';
+      setError(errorMessage);
+      throw new Error(errorMessage);
     }
   };
 
