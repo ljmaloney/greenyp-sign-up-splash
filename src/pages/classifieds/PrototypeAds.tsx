@@ -4,8 +4,8 @@ import PublicHeader from '@/components/PublicHeader';
 import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
 import PrototypeAdCard from '@/components/classifieds/PrototypeAdCard';
 import PrototypeAdDetail from '@/components/classifieds/PrototypeAdDetail';
+import AdPackageSelector from '@/components/classifieds/AdPackageSelector';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Classified } from '@/types/classifieds';
@@ -106,7 +106,8 @@ const PrototypeAds = () => {
     );
   }
 
-  const selectedPackage = adPackagesData?.response?.find(pkg => pkg.adTypeId === selectedTierId);
+  const activePackages = adPackagesData?.response?.filter(pkg => pkg.active) || [];
+  const selectedPackage = activePackages.find(pkg => pkg.adTypeId === selectedTierId);
   const selectedAd = selectedPackage ? getPrototypeAdByPackageName(selectedPackage.adTypeName) : null;
 
   // If no ad is found for the selected tier, show error
@@ -129,29 +130,13 @@ const PrototypeAds = () => {
       <PublicHeader />
       <main className="flex-grow bg-gray-50 py-8">
         <div className="container mx-auto px-4 max-w-4xl">
-          <div className="mb-6 flex items-center justify-between">
+          <div className="mb-6 flex items-center">
             <Link to="/classifieds">
               <Button variant="outline" className="border-greenyp-600 text-greenyp-600 hover:bg-greenyp-50">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Classifieds
               </Button>
             </Link>
-            
-            <div className="flex items-center space-x-4">
-              <span className="text-sm font-medium">Ad Package:</span>
-              <Select value={selectedTierId} onValueChange={setSelectedTierId}>
-                <SelectTrigger className="w-32">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {adPackagesData?.response?.filter(pkg => pkg.active).map(pkg => (
-                    <SelectItem key={pkg.adTypeId} value={pkg.adTypeId}>
-                      {pkg.adTypeName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
           </div>
 
           <div className="mb-6">
@@ -163,7 +148,16 @@ const PrototypeAds = () => {
             </p>
           </div>
 
-          {/* Package Information - Moved to top */}
+          {/* Package Selection - Using card-based selector */}
+          <div className="mb-8">
+            <AdPackageSelector
+              adPackages={activePackages}
+              selectedAdType={selectedTierId}
+              onAdTypeChange={setSelectedTierId}
+            />
+          </div>
+
+          {/* Package Information */}
           <div className="mb-8 p-4 bg-blue-50 rounded-lg">
             <h3 className="font-semibold text-lg mb-2">{selectedPackage.adTypeName} Package Features</h3>
             <ul className="text-sm text-gray-700 space-y-1">
