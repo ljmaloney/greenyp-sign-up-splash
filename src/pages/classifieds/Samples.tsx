@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 import { Classified } from '@/types/classifieds';
 import { useAdPackages } from '@/hooks/useAdPackages';
 
-const PrototypeAds = () => {
+const Samples = () => {
   const { data: adPackagesData, isLoading } = useAdPackages();
   const [selectedTierId, setSelectedTierId] = useState<string>('');
 
@@ -139,14 +139,7 @@ const PrototypeAds = () => {
             </Link>
           </div>
 
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              {selectedPackage.adTypeName} Ad Sample Preview
-            </h1>
-            <p className="text-gray-600">
-              Preview how your ad will look with the <strong>{selectedPackage.adTypeName}</strong> tier (${selectedPackage.monthlyPrice}/month)
-            </p>
-          </div>
+
 
           {/* Package Selection - Using card-based selector */}
           <div className="mb-8">
@@ -170,6 +163,16 @@ const PrototypeAds = () => {
             </ul>
           </div>
 
+          <div className="mb-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+              Preview how your ad will appear with the <strong className="text-greenyp-600">{selectedPackage.adTypeName}</strong> package (${selectedPackage.monthlyPrice}/month)
+            </h1>
+            {/*<p className="text-gray-600">*/}
+            {/*  Preview how your ad will look with the <strong>{selectedPackage.adTypeName}</strong> tier (${selectedPackage.monthlyPrice}/month)*/}
+            {/*</p>*/}
+          </div>
+
+
           {/* Ad Card Preview */}
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4">Card View (as seen in listings)</h2>
@@ -188,4 +191,4 @@ const PrototypeAds = () => {
   );
 };
 
-export default PrototypeAds;
+export default Samples;
