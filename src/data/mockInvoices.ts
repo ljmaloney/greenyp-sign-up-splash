@@ -66,5 +66,38 @@ export const mockInvoices: Invoice[] = [
     subscriptionType: 'Basic',
     paymentDate: '2024-06-05',
     status: 'Failed'
+  },
+  {
+    id: 'INV-006',
+    subscriberName: 'Botanical Landscapes',
+    email: 'info@botanical.com',
+    phone: '(555) 678-9012',
+    producerId: 'PROD-006',
+    amount: 199.99,
+    subscriptionType: 'Enterprise',
+    paymentDate: '2024-05-15',
+    status: 'Paid'
+  },
+  {
+    id: 'INV-007',
+    subscriberName: 'Garden Innovations',
+    email: 'contact@gardeninnovations.com',
+    phone: '(555) 789-0123',
+    producerId: 'PROD-007',
+    amount: 89.99,
+    subscriptionType: 'Premium',
+    paymentDate: '2024-04-20',
+    status: 'Paid'
+  },
+  {
+    id: 'INV-008',
+    subscriberName: 'Nature Works LLC',
+    email: 'hello@natureworks.com',
+    phone: '(555) 890-1234',
+    producerId: 'PROD-008',
+    amount: 29.99,
+    subscriptionType: 'Basic',
+    paymentDate: '2024-03-10',
+    status: 'Paid'
   }
 ];

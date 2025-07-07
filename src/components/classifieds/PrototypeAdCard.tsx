@@ -12,6 +12,21 @@ interface PrototypeAdCardProps {
 }
 
 const PrototypeAdCard = ({ classified }: PrototypeAdCardProps) => {
+  // Add safety check for undefined classified
+  if (!classified) {
+    return (
+      <div className="flex justify-center">
+        <div className="max-w-md w-full">
+          <Card className="border-2">
+            <CardContent className="p-4 text-center text-gray-500">
+              Loading ad preview...
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
   const formatContact = (contact: string, type: 'email' | 'phone') => {
     if (!classified.contactObfuscated) {
       return contact;

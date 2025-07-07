@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PublicHeader from '@/components/PublicHeader';
 import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
 import PrototypeAdCard from '@/components/classifieds/PrototypeAdCard';
@@ -12,8 +11,24 @@ import { Classified } from '@/types/classifieds';
 import { useAdPackages } from '@/hooks/useAdPackages';
 
 const PrototypeAds = () => {
-  const { data: adPackagesData } = useAdPackages();
-  const [selectedTierId, setSelectedTierId] = useState<string>('basic-001');
+  const { data: adPackagesData, isLoading } = useAdPackages();
+  const [selectedTierId, setSelectedTierId] = useState<string>('');
+
+  // Set default tier based on defaultPackage property
+  useEffect(() => {
+    if (adPackagesData?.response && !selectedTierId) {
+      const defaultPackage = adPackagesData.response.find(pkg => pkg.defaultPackage && pkg.active);
+      if (defaultPackage) {
+        setSelectedTierId(defaultPackage.adTypeId);
+      } else {
+        // Fallback to first active package if no default is found
+        const firstActivePackage = adPackagesData.response.find(pkg => pkg.active);
+        if (firstActivePackage) {
+          setSelectedTierId(firstActivePackage.adTypeId);
+        }
+      }
+    }
+  }, [adPackagesData, selectedTierId]);
 
   const prototypeAds: Record<string, Classified> = {
     'basic-001': {
@@ -70,8 +85,38 @@ const PrototypeAds = () => {
     }
   };
 
+  // Show loading state while data is being fetched
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <PublicHeader />
+        <main className="flex-grow bg-gray-50 py-8">
+          <div className="container mx-auto px-4 max-w-4xl">
+            <div className="text-center">Loading...</div>
+          </div>
+        </main>
+        <ClassifiedsFooter />
+      </div>
+    );
+  }
+
   const selectedAd = prototypeAds[selectedTierId];
   const selectedPackage = adPackagesData?.response?.find(pkg => pkg.adTypeId === selectedTierId);
+
+  // If no ad is found for the selected tier, show error
+  if (!selectedAd) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <PublicHeader />
+        <main className="flex-grow bg-gray-50 py-8">
+          <div className="container mx-auto px-4 max-w-4xl">
+            <div className="text-center text-red-600">Error: Ad prototype not found</div>
+          </div>
+        </main>
+        <ClassifiedsFooter />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -104,11 +149,28 @@ const PrototypeAds = () => {
           </div>
 
           <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Prototype Ad Preview</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              {selectedPackage?.adTypeName} Ad Sample Preview
+            </h1>
             <p className="text-gray-600">
               Preview how your ad will look with the <strong>{selectedPackage?.adTypeName}</strong> tier (${selectedPackage?.monthlyPrice}/month)
             </p>
           </div>
+
+          {/* Package Information - Moved to top */}
+          {selectedPackage && (
+            <div className="mb-8 p-4 bg-blue-50 rounded-lg">
+              <h3 className="font-semibold text-lg mb-2">{selectedPackage.adTypeName} Package Features</h3>
+              <ul className="text-sm text-gray-700 space-y-1">
+                <li>• Price: ${selectedPackage.monthlyPrice}/month</li>
+                <li>• Maximum Images: {selectedPackage.features.maxImages}</li>
+                <li>• Contact Privacy: {selectedPackage.features.protectContact ? 'Yes' : 'No'}</li>
+                {selectedPackage.features.features.map((feature, index) => (
+                  <li key={index}>• {feature}</li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {/* Ad Card Preview */}
           <div className="mb-8">
@@ -121,21 +183,6 @@ const PrototypeAds = () => {
             <h2 className="text-xl font-semibold mb-4">Detailed View (full ad page)</h2>
             <PrototypeAdDetail classified={selectedAd} />
           </div>
-
-          {/* Package Information */}
-          {selectedPackage && (
-            <div className="mt-8 p-4 bg-blue-50 rounded-lg">
-              <h3 className="font-semibold text-lg mb-2">{selectedPackage.adTypeName} Package Features</h3>
-              <ul className="text-sm text-gray-700 space-y-1">
-                <li>• Price: ${selectedPackage.monthlyPrice}/month</li>
-                <li>• Maximum Images: {selectedPackage.features.maxImages}</li>
-                <li>• Contact Privacy: {selectedPackage.features.protectContact ? 'Yes' : 'No'}</li>
-                {selectedPackage.features.features.map((feature, index) => (
-                  <li key={index}>• {feature}</li>
-                ))}
-              </ul>
-            </div>
-          )}
         </div>
       </main>
       <ClassifiedsFooter />
