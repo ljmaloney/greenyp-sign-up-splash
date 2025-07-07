@@ -57,9 +57,9 @@ const PrototypeAds = () => {
         email: 'seller@email.com',
         phone: '(770) 555-5678',
         images: [
-          'https://images.unsplash.com/photo-1558618666-9c5e22e6203c?w=500',
-          'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=500',
-          'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=500'
+          'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=500&h=400&fit=crop',
+          'https://images.unsplash.com/photo-1518770660439-4636190af475?w=500&h=400&fit=crop',
+          'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=500&h=400&fit=crop'
         ],
         pricingTier: selectedTierId,
         contactObfuscated: true,
@@ -75,11 +75,11 @@ const PrototypeAds = () => {
         email: 'info@landscapecompany.com',
         phone: '(404) 555-9999',
         images: [
-          'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=500',
-          'https://images.unsplash.com/photo-1416431168657-a6c4f5c24e33?w=500',
-          'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=500',
-          'https://images.unsplash.com/photo-1558618666-9c5e22e6203c?w=500',
-          'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500'
+          'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=500&h=400&fit=crop',
+          'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=500&h=400&fit=crop',
+          'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=500&h=400&fit=crop',
+          'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=500&h=400&fit=crop',
+          'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=500&h=400&fit=crop'
         ],
         pricingTier: selectedTierId,
         contactObfuscated: true,
