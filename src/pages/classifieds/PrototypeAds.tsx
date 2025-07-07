@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import PublicHeader from '@/components/PublicHeader';
 import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
@@ -30,59 +31,64 @@ const PrototypeAds = () => {
     }
   }, [adPackagesData, selectedTierId]);
 
-  const prototypeAds: Record<string, Classified> = {
-    'basic-001': {
-      id: 'proto-basic',
-      title: 'Organic Tomato Seeds - Heirloom Varieties',
-      description: 'Fresh heirloom tomato seeds from my garden. Cherokee Purple, Brandywine, and Green Zebra varieties available. $3 per packet, minimum 5 packets. Seeds were harvested this season and properly dried. Perfect germination rate. Great for organic gardeners who want to grow their own food.',
-      category: 'Seeds & Plants',
-      zipCode: '30309',
-      email: 'gardener@email.com',
-      phone: '(404) 555-1234',
-      images: [],
-      pricingTier: 'basic-001',
-      contactObfuscated: false,
-      createdAt: '2024-01-20T14:30:00Z',
-      expiresAt: '2024-02-20T14:30:00Z'
-    },
-    'standard-002': {
-      id: 'proto-standard',
-      title: 'Professional Lawn Mower - Barely Used',
-      description: 'Commercial grade zero-turn mower, 54-inch cutting deck. Used for only one season on my property. Features include hydrostatic transmission, comfortable operator seat, and powerful 25HP engine. Excellent condition with all maintenance records. Perfect for landscaping professionals or large property owners. Includes extra blades and owner\'s manual.',
-      category: 'Lawn Equipment',
-      zipCode: '30305',
-      email: 'seller@email.com',
-      phone: '(770) 555-5678',
-      images: [
-        'https://images.unsplash.com/photo-1558618666-9c5e22e6203c?w=500',
-        'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=500',
-        'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=500'
-      ],
-      pricingTier: 'standard-002',
-      contactObfuscated: true,
-      createdAt: '2024-01-18T09:15:00Z',
-      expiresAt: '2024-02-18T09:15:00Z'
-    },
-    'premium-003': {
-      id: 'proto-premium',
-      title: 'Complete Landscape Design & Installation Service',
-      description: 'Full-service landscape architecture and installation company with 20+ years experience. We specialize in sustainable garden designs, native plant installations, and water-efficient irrigation systems. Our team includes certified arborists and landscape architects. Services include design consultation, 3D rendering, plant selection, hardscape installation, and ongoing maintenance packages. Licensed, bonded, and insured with excellent references available.',
-      category: 'Landscaping Services',
-      zipCode: '30308',
-      email: 'info@landscapecompany.com',
-      phone: '(404) 555-9999',
-      images: [
-        'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=500',
-        'https://images.unsplash.com/photo-1416431168657-a6c4f5c24e33?w=500',
-        'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=500',
-        'https://images.unsplash.com/photo-1558618666-9c5e22e6203c?w=500',
-        'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500'
-      ],
-      pricingTier: 'premium-003',
-      contactObfuscated: true,
-      createdAt: '2024-01-16T11:45:00Z',
-      expiresAt: '2024-02-16T11:45:00Z'
-    }
+  // Map ad package names to prototype ads
+  const getPrototypeAdByPackageName = (packageName: string): Classified => {
+    const prototypeAdsMap: Record<string, Classified> = {
+      'Basic': {
+        id: 'proto-basic',
+        title: 'Organic Tomato Seeds - Heirloom Varieties',
+        description: 'Fresh heirloom tomato seeds from my garden. Cherokee Purple, Brandywine, and Green Zebra varieties available. $3 per packet, minimum 5 packets. Seeds were harvested this season and properly dried. Perfect germination rate. Great for organic gardeners who want to grow their own food.',
+        category: 'Seeds & Plants',
+        zipCode: '30309',
+        email: 'gardener@email.com',
+        phone: '(404) 555-1234',
+        images: [],
+        pricingTier: selectedTierId,
+        contactObfuscated: false,
+        createdAt: '2024-01-20T14:30:00Z',
+        expiresAt: '2024-02-20T14:30:00Z'
+      },
+      'Standard': {
+        id: 'proto-standard',
+        title: 'Professional Lawn Mower - Barely Used',
+        description: 'Commercial grade zero-turn mower, 54-inch cutting deck. Used for only one season on my property. Features include hydrostatic transmission, comfortable operator seat, and powerful 25HP engine. Excellent condition with all maintenance records. Perfect for landscaping professionals or large property owners. Includes extra blades and owner\'s manual.',
+        category: 'Lawn Equipment',
+        zipCode: '30305',
+        email: 'seller@email.com',
+        phone: '(770) 555-5678',
+        images: [
+          'https://images.unsplash.com/photo-1558618666-9c5e22e6203c?w=500',
+          'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=500',
+          'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=500'
+        ],
+        pricingTier: selectedTierId,
+        contactObfuscated: true,
+        createdAt: '2024-01-18T09:15:00Z',
+        expiresAt: '2024-02-18T09:15:00Z'
+      },
+      'Enhanced': {
+        id: 'proto-enhanced',
+        title: 'Complete Landscape Design & Installation Service',
+        description: 'Full-service landscape architecture and installation company with 20+ years experience. We specialize in sustainable garden designs, native plant installations, and water-efficient irrigation systems. Our team includes certified arborists and landscape architects. Services include design consultation, 3D rendering, plant selection, hardscape installation, and ongoing maintenance packages. Licensed, bonded, and insured with excellent references available.',
+        category: 'Landscaping Services',
+        zipCode: '30308',
+        email: 'info@landscapecompany.com',
+        phone: '(404) 555-9999',
+        images: [
+          'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=500',
+          'https://images.unsplash.com/photo-1416431168657-a6c4f5c24e33?w=500',
+          'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=500',
+          'https://images.unsplash.com/photo-1558618666-9c5e22e6203c?w=500',
+          'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500'
+        ],
+        pricingTier: selectedTierId,
+        contactObfuscated: true,
+        createdAt: '2024-01-16T11:45:00Z',
+        expiresAt: '2024-02-16T11:45:00Z'
+      }
+    };
+
+    return prototypeAdsMap[packageName];
   };
 
   // Show loading state while data is being fetched
@@ -100,11 +106,11 @@ const PrototypeAds = () => {
     );
   }
 
-  const selectedAd = prototypeAds[selectedTierId];
   const selectedPackage = adPackagesData?.response?.find(pkg => pkg.adTypeId === selectedTierId);
+  const selectedAd = selectedPackage ? getPrototypeAdByPackageName(selectedPackage.adTypeName) : null;
 
   // If no ad is found for the selected tier, show error
-  if (!selectedAd) {
+  if (!selectedAd || !selectedPackage) {
     return (
       <div className="min-h-screen flex flex-col">
         <PublicHeader />
@@ -150,27 +156,25 @@ const PrototypeAds = () => {
 
           <div className="mb-6">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              {selectedPackage?.adTypeName} Ad Sample Preview
+              {selectedPackage.adTypeName} Ad Sample Preview
             </h1>
             <p className="text-gray-600">
-              Preview how your ad will look with the <strong>{selectedPackage?.adTypeName}</strong> tier (${selectedPackage?.monthlyPrice}/month)
+              Preview how your ad will look with the <strong>{selectedPackage.adTypeName}</strong> tier (${selectedPackage.monthlyPrice}/month)
             </p>
           </div>
 
           {/* Package Information - Moved to top */}
-          {selectedPackage && (
-            <div className="mb-8 p-4 bg-blue-50 rounded-lg">
-              <h3 className="font-semibold text-lg mb-2">{selectedPackage.adTypeName} Package Features</h3>
-              <ul className="text-sm text-gray-700 space-y-1">
-                <li>• Price: ${selectedPackage.monthlyPrice}/month</li>
-                <li>• Maximum Images: {selectedPackage.features.maxImages}</li>
-                <li>• Contact Privacy: {selectedPackage.features.protectContact ? 'Yes' : 'No'}</li>
-                {selectedPackage.features.features.map((feature, index) => (
-                  <li key={index}>• {feature}</li>
-                ))}
-              </ul>
-            </div>
-          )}
+          <div className="mb-8 p-4 bg-blue-50 rounded-lg">
+            <h3 className="font-semibold text-lg mb-2">{selectedPackage.adTypeName} Package Features</h3>
+            <ul className="text-sm text-gray-700 space-y-1">
+              <li>• Price: ${selectedPackage.monthlyPrice}/month</li>
+              <li>• Maximum Images: {selectedPackage.features.maxImages}</li>
+              <li>• Contact Privacy: {selectedPackage.features.protectContact ? 'Yes' : 'No'}</li>
+              {selectedPackage.features.features.map((feature, index) => (
+                <li key={index}>• {feature}</li>
+              ))}
+            </ul>
+          </div>
 
           {/* Ad Card Preview */}
           <div className="mb-8">
