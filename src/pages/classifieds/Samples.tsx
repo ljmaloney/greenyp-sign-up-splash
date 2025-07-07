@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import PublicHeader from '@/components/PublicHeader';
 import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
@@ -6,12 +5,13 @@ import PrototypeAdCard from '@/components/classifieds/PrototypeAdCard';
 import PrototypeAdDetail from '@/components/classifieds/PrototypeAdDetail';
 import AdPackageSelector from '@/components/classifieds/AdPackageSelector';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Classified } from '@/types/classifieds';
 import { useAdPackages } from '@/hooks/useAdPackages';
 
 const Samples = () => {
+  const navigate = useNavigate();
   const { data: adPackagesData, isLoading } = useAdPackages();
   const [selectedTierId, setSelectedTierId] = useState<string>('');
 
@@ -110,6 +110,14 @@ const Samples = () => {
   const selectedPackage = activePackages.find(pkg => pkg.adTypeId === selectedTierId);
   const selectedAd = selectedPackage ? getPrototypeAdByPackageName(selectedPackage.adTypeName) : null;
 
+  const handleCreateAdNow = () => {
+    navigate('/classifieds/create', {
+      state: {
+        preSelectedPackage: selectedTierId
+      }
+    });
+  };
+
   // If no ad is found for the selected tier, show error
   if (!selectedAd || !selectedPackage) {
     return (
@@ -139,8 +147,6 @@ const Samples = () => {
             </Link>
           </div>
 
-
-
           {/* Package Selection - Using card-based selector */}
           <div className="mb-8">
             <AdPackageSelector
@@ -167,11 +173,7 @@ const Samples = () => {
             <h1 className="text-2xl font-bold text-gray-900 mb-2">
               Preview how your ad will appear with the <strong className="text-greenyp-600">{selectedPackage.adTypeName}</strong> package (${selectedPackage.monthlyPrice}/month)
             </h1>
-            {/*<p className="text-gray-600">*/}
-            {/*  Preview how your ad will look with the <strong>{selectedPackage.adTypeName}</strong> tier (${selectedPackage.monthlyPrice}/month)*/}
-            {/*</p>*/}
           </div>
-
 
           {/* Ad Card Preview */}
           <div className="mb-8">
@@ -180,9 +182,21 @@ const Samples = () => {
           </div>
 
           {/* Detailed View Preview */}
-          <div>
+          <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4">Detailed View (full ad page)</h2>
             <PrototypeAdDetail classified={selectedAd} />
+          </div>
+
+          {/* Create Ad Now Button */}
+          <div className="mb-8 text-center">
+            <Button
+              onClick={handleCreateAdNow}
+              size="lg"
+              className="bg-greenyp-600 hover:bg-greenyp-700 text-white px-8 py-3 text-lg"
+            >
+              Create my ad now
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Button>
           </div>
         </div>
       </main>
