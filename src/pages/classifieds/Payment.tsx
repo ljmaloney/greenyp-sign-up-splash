@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 import PublicHeader from '@/components/PublicHeader';
 import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
 import OrderSummaryCard from '@/components/classifieds/OrderSummaryCard';
@@ -12,6 +13,7 @@ import PaymentTotalCard from '@/components/classifieds/PaymentTotalCard';
 const Payment = () => {
   const { classifiedId } = useParams();
   const location = useLocation();
+  const { toast } = useToast();
   
   const classifiedData = location.state?.classifiedData;
   const packageData = location.state?.packageData;
@@ -21,6 +23,8 @@ const Payment = () => {
     expiryDate: '',
     cvv: '',
     cardholderName: '',
+    email: '',
+    phoneNumber: '',
     billingAddress: '',
     city: '',
     state: '',
@@ -29,6 +33,26 @@ const Payment = () => {
 
   const handleInputChange = (field: string, value: string) => {
     setPaymentForm(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleCopyFromClassified = () => {
+    if (classifiedData) {
+      setPaymentForm(prev => ({
+        ...prev,
+        cardholderName: `${classifiedData.firstName || ''} ${classifiedData.lastName || ''}`.trim(),
+        email: classifiedData.emailAddress || '',
+        phoneNumber: classifiedData.phoneNumber || '',
+        billingAddress: classifiedData.address || '',
+        city: classifiedData.city || '',
+        state: classifiedData.state || '',
+        zipCode: classifiedData.postalCode || ''
+      }));
+
+      toast({
+        title: "Information Copied",
+        description: "Contact and address information has been copied from your ad details.",
+      });
+    }
   };
 
   const handlePayment = () => {
@@ -65,9 +89,13 @@ const Payment = () => {
                   cardNumber: paymentForm.cardNumber,
                   expiryDate: paymentForm.expiryDate,
                   cvv: paymentForm.cvv,
-                  cardholderName: paymentForm.cardholderName
+                  cardholderName: paymentForm.cardholderName,
+                  email: paymentForm.email,
+                  phoneNumber: paymentForm.phoneNumber
                 }}
                 onInputChange={handleInputChange}
+                onCopyFromClassified={handleCopyFromClassified}
+                classifiedData={classifiedData}
               />
 
               <BillingAddressCard 
