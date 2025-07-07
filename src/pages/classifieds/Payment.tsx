@@ -1,7 +1,8 @@
 
 import React, { useState } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { useApiClient } from '@/hooks/useApiClient';
 import PublicHeader from '@/components/PublicHeader';
 import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
 import OrderSummaryCard from '@/components/classifieds/OrderSummaryCard';
@@ -14,7 +15,9 @@ import { SquareCardData } from '@/hooks/useSquarePayments';
 const Payment = () => {
   const { classifiedId } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
   const { toast } = useToast();
+  const apiClient = useApiClient();
   
   const classifiedData = location.state?.classifiedData;
   const packageData = location.state?.packageData;
@@ -73,6 +76,15 @@ const Payment = () => {
       return;
     }
 
+    if (!classifiedId) {
+      toast({
+        title: "Error",
+        description: "Missing classified ID",
+        variant: "destructive"
+      });
+      return;
+    }
+
     // Validate billing address
     const requiredBillingFields = ['billingAddress', 'city', 'state', 'zipCode'];
     for (const field of requiredBillingFields) {
@@ -86,36 +98,58 @@ const Payment = () => {
       }
     }
 
+    // Validate payment form fields
+    const requiredPaymentFields = ['cardholderName', 'email', 'phoneNumber'];
+    for (const field of requiredPaymentFields) {
+      if (!paymentForm[field as keyof typeof paymentForm]) {
+        toast({
+          title: "Validation Error",
+          description: `Please fill in the ${field.replace(/([A-Z])/g, ' $1').toLowerCase()} field`,
+          variant: "destructive"
+        });
+        return;
+      }
+    }
+
     setIsProcessingPayment(true);
     
     try {
-      console.log('Processing payment for classified:', classifiedId);
-      console.log('Payment token:', squareToken);
-      console.log('Card details:', cardDetails);
-      console.log('Billing info:', paymentForm);
-      console.log('Package data:', packageData);
+      // Extract first and last name from cardholder name
+      const nameParts = paymentForm.cardholderName.trim().split(' ');
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
 
-      // TODO: Send payment to backend
       const paymentPayload = {
         classifiedId,
         paymentToken: squareToken,
-        amount: packageData?.monthlyPrice || 0,
-        billingInfo: paymentForm,
-        cardDetails: cardDetails,
-        packageInfo: packageData
+        firstName,
+        lastName,
+        address: paymentForm.billingAddress,
+        city: paymentForm.city,
+        state: paymentForm.state,
+        postalCode: paymentForm.zipCode,
+        phoneNumber: paymentForm.phoneNumber,
+        emailAddress: paymentForm.email
       };
 
-      console.log('Payment payload to send to backend:', paymentPayload);
+      console.log('Sending payment request:', paymentPayload);
 
-      // Simulate API call for now
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const response = await apiClient.post('/classified/payment', paymentPayload, { requireAuth: false });
+      
+      console.log('Payment response:', response);
 
       toast({
         title: "Payment Successful!",
         description: "Your classified ad has been published successfully.",
       });
 
-      // TODO: Redirect to success page or classified detail
+      // Navigate to success page or classified detail
+      navigate('/classifieds', { 
+        state: { 
+          paymentSuccess: true,
+          classifiedId: classifiedId 
+        }
+      });
       
     } catch (error: any) {
       console.error('Payment processing failed:', error);
