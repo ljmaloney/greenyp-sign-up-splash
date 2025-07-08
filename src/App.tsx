@@ -15,7 +15,7 @@ import AuthCallback from './pages/auth/AuthCallback';
 import SilentCallback from './pages/auth/SilentCallback';
 import Unauthorized from './pages/auth/Unauthorized';
 import Classifieds from '@/pages/Classifieds';
-import PrototypeAds from '@/pages/classifieds/PrototypeAds';
+import Samples from '@/pages/classifieds/Samples.tsx';
 import CreateAd from '@/pages/classifieds/CreateAd';
 import UploadImages from '@/pages/classifieds/UploadImages';
 import Payment from '@/pages/classifieds/Payment';
@@ -175,7 +175,7 @@ function App() {
 
               {/* Classifieds routes */}
               <Route path="/classifieds" element={<Classifieds />} />
-              <Route path="/classifieds/samples" element={<PrototypeAds />} />
+              <Route path="/classifieds/samples" element={<Samples />} />
               <Route path="/classifieds/create" element={<CreateAd />} />
               <Route path="/classifieds/uploadimages/:classifiedId" element={<UploadImages />} />
               <Route path="/classifieds/payment/:classifiedId" element={<Payment />} />

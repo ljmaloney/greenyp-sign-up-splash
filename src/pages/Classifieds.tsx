@@ -21,7 +21,7 @@ const Classifieds = () => {
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900">Classifieds</h1>
             <div className="flex space-x-3">
-              <Link to="/classifieds/prototypes">
+              <Link to="/classifieds/samples">
                 <Button variant="outline" className="border-greenyp-600 text-greenyp-600 hover:bg-greenyp-50">
                   <Eye className="w-4 h-4 mr-2" />
                   View Ad Types

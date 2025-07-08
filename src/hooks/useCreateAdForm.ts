@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAdPackages } from '@/hooks/useAdPackages';
 import { useClassifiedCategories } from '@/hooks/useClassifiedCategories';
 import { useApiClient } from '@/hooks/useApiClient';
@@ -26,6 +27,7 @@ interface FormData {
 
 export const useCreateAdForm = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { data: adPackagesData } = useAdPackages();
   const { data: categoriesData } = useClassifiedCategories();
   const apiClient = useApiClient();
@@ -49,6 +51,34 @@ export const useCreateAdForm = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Set adType based on preSelectedPackage from navigation state or default
+  React.useEffect(() => {
+    if (adPackagesData?.response && adPackagesData.response.length > 0 && !formData.adType) {
+      // Check if there's a pre-selected package from navigation state
+      const preSelectedPackage = location.state?.preSelectedPackage;
+      
+      if (preSelectedPackage) {
+        const selectedPackage = adPackagesData.response.find(pkg => pkg.adTypeId === preSelectedPackage && pkg.active);
+        if (selectedPackage) {
+          setFormData(prev => ({ ...prev, adType: selectedPackage.adTypeId }));
+          return;
+        }
+      }
+
+      // Fallback to default package
+      const defaultPackage = adPackagesData.response.find(pkg => pkg.defaultPackage && pkg.active);
+      if (defaultPackage) {
+        setFormData(prev => ({ ...prev, adType: defaultPackage.adTypeId }));
+      } else {
+        // Fallback to first active package if no default is found
+        const firstActivePackage = adPackagesData.response.find(pkg => pkg.active);
+        if (firstActivePackage) {
+          setFormData(prev => ({ ...prev, adType: firstActivePackage.adTypeId }));
+        }
+      }
+    }
+  }, [adPackagesData, formData.adType, location.state]);
 
   const adPackages = adPackagesData?.response?.filter(pkg => pkg.active) || [];
   const categories = categoriesData?.response?.filter(cat => cat.active) || [];
