@@ -23,14 +23,18 @@ export const useSquarePayments = () => {
   useEffect(() => {
     const loadSquare = async () => {
       try {
+        console.log('Loading Square SDK...');
         // Load Square Web SDK script
         if (!window.Square) {
+          console.log('Square not found in window, loading script...');
           const script = document.createElement('script');
           script.src = 'https://sandbox.web.squarecdn.com/v1/square.js'; // Use production URL for live
           script.async = true;
           script.onload = async () => {
+            console.log('Square script loaded successfully');
             try {
               await initializeSquare();
+              console.log('Square initialized successfully');
               setIsSquareReady(true);
             } catch (initError: any) {
               console.error('Square initialization error:', initError);
@@ -38,12 +42,15 @@ export const useSquarePayments = () => {
             }
           };
           script.onerror = () => {
+            console.error('Failed to load Square Web SDK');
             setError('Failed to load Square Web SDK');
           };
           document.head.appendChild(script);
         } else {
+          console.log('Square already loaded, initializing...');
           try {
             await initializeSquare();
+            console.log('Square initialized successfully');
             setIsSquareReady(true);
           } catch (initError: any) {
             console.error('Square initialization error:', initError);
@@ -60,22 +67,30 @@ export const useSquarePayments = () => {
   }, []);
 
   const initializeCard = async (cardElementId: string) => {
+    console.log('initializeCard called with elementId:', cardElementId);
+    
     if (!isSquareReady) {
+      console.error('Square is not ready');
       throw new Error('Square is not ready');
     }
 
     if (error) {
+      console.error('Square configuration error:', error);
       throw new Error(`Square configuration error: ${error}`);
     }
 
     try {
       const payments = getSquarePayments();
       if (!payments) {
+        console.error('Square payments not initialized');
         throw new Error('Square payments not initialized');
       }
       
+      console.log('Creating card instance...');
       const cardInstance = await payments.card();
+      console.log('Card instance created, attaching to element:', cardElementId);
       await cardInstance.attach(`#${cardElementId}`);
+      console.log('Card attached successfully');
       setCard(cardInstance);
       return cardInstance;
     } catch (err: any) {

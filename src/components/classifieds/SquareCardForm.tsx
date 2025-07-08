@@ -31,13 +31,17 @@ const SquareCardForm = ({
   const cardElementRef = useRef<HTMLDivElement>(null);
   const cardInstanceRef = useRef<any>(null);
 
+  console.log('SquareCardForm render - isSquareReady:', isSquareReady, 'error:', error, 'isLoading:', isLoading);
+
   useEffect(() => {
     let cardInstance: any = null;
 
     const initialize = async () => {
       try {
+        console.log('Initializing Square card...');
         cardInstance = await initializeCard('square-card');
         cardInstanceRef.current = cardInstance;
+        console.log('Square card initialized successfully:', cardInstance);
       } catch (initError: any) {
         console.error('Failed to initialize Square card:', initError);
         toast({
@@ -49,11 +53,15 @@ const SquareCardForm = ({
     };
 
     if (isSquareReady && !error) {
+      console.log('Square is ready, initializing card...');
       initialize();
+    } else {
+      console.log('Square not ready or has error - isSquareReady:', isSquareReady, 'error:', error);
     }
 
     return () => {
       if (cardInstance) {
+        console.log('Destroying card instance...');
         cardInstance.destroy();
       }
     };
@@ -84,8 +92,11 @@ const SquareCardForm = ({
   };
 
   if (error) {
+    console.log('Rendering error component due to:', error);
     return <SquareCardFormError error={error} />;
   }
+
+  console.log('Rendering SquareCardForm components...');
 
   return (
     <Card>

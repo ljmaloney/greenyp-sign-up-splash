@@ -10,6 +10,8 @@ interface SquareCardFormPaymentProps {
 }
 
 const SquareCardFormPayment = ({ cardElementRef, isSquareReady, error, isProcessing }: SquareCardFormPaymentProps) => {
+  console.log('SquareCardFormPayment render - isSquareReady:', isSquareReady, 'error:', error, 'isProcessing:', isProcessing);
+
   return (
     <div>
       <Label>Card Information *</Label>
@@ -28,6 +30,7 @@ const SquareCardFormPayment = ({ cardElementRef, isSquareReady, error, isProcess
           </div>
         )}
       </div>
+      {console.log('Square card element div rendered with ID: square-card')}
     </div>
   );
 };
