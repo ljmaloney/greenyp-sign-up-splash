@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { useSquarePayments, SquareCardData } from '@/hooks/useSquarePayments';
@@ -104,10 +105,11 @@ const SquareCardForm = ({
         />
 
         <SquareCardFormActions
-          onTokenize={handleTokenize}
+          onTokenizeCard={handleTokenize}
+          cardInitialized={isSquareReady && !error}
           isLoading={isLoading}
           isProcessing={isProcessing}
-          hasValidForm={!!(billingInfo.cardholderName && billingInfo.email && billingInfo.phoneNumber)}
+          error={error}
         />
       </CardContent>
     </Card>
