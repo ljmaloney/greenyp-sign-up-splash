@@ -1,18 +1,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
-import { initializeSquare, getSquarePayments } from '@/config/square';
-
-export interface SquareCardData {
-  token: string;
-  details: {
-    card: {
-      brand: string;
-      last4: string;
-      expMonth: number;
-      expYear: number;
-    };
-  };
-}
+import { SquareCardData } from '@/types/square';
+import { initializeSquarePayments, createSquareCard } from '@/utils/squareInitialization';
+import { processTokenization } from '@/utils/squareUtils';
 
 export const useSquarePayments = () => {
   const [isSquareReady, setIsSquareReady] = useState(false);
@@ -25,13 +15,10 @@ export const useSquarePayments = () => {
 
     const loadSquare = async () => {
       try {
-        console.log('Loading Square SDK...');
         setError(null);
-        
-        await initializeSquare();
+        await initializeSquarePayments();
         
         if (isMounted) {
-          console.log('Square initialized successfully');
           setIsSquareReady(true);
         }
       } catch (err: any) {
@@ -50,8 +37,6 @@ export const useSquarePayments = () => {
   }, []);
 
   const initializeCard = useCallback(async (cardElementId: string) => {
-    console.log('initializeCard called with elementId:', cardElementId);
-    
     if (!isSquareReady) {
       console.error('Square is not ready');
       throw new Error('Square is not ready');
@@ -63,21 +48,7 @@ export const useSquarePayments = () => {
     }
 
     try {
-      const payments = getSquarePayments();
-      if (!payments) {
-        console.error('Square payments not initialized');
-        throw new Error('Square payments not initialized');
-      }
-      
-      console.log('Creating card instance...');
-      const cardInstance = await payments.card();
-      console.log('Card instance created, attaching to element:', cardElementId);
-      
-      // Wait a bit for the DOM element to be ready
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      await cardInstance.attach(`#${cardElementId}`);
-      console.log('Card attached successfully');
+      const cardInstance = await createSquareCard(cardElementId);
       setCard(cardInstance);
       return cardInstance;
     } catch (err: any) {
@@ -97,100 +68,8 @@ export const useSquarePayments = () => {
     setError(null);
 
     try {
-      console.log('Starting tokenization with billingContact:', billingContact);
-      
-      // Ensure all values are properly typed
-      const cleanBillingContact = {
-        givenName: String(billingContact.givenName || ''),
-        familyName: String(billingContact.familyName || ''),
-        email: String(billingContact.email || ''),
-        phone: String(billingContact.phone || '').replace(/\D/g, '')
-      };
-
-      console.log('Clean billing contact:', cleanBillingContact);
-
-      // First attempt: Try without verificationDetails (simpler approach)
-      let tokenizationRequest: {
-        billingContact: typeof cleanBillingContact;
-        verificationDetails?: {
-          billingContact: typeof cleanBillingContact;
-          intent: 'CHARGE';
-          customerInitiated: boolean;
-          sellerKeyedIn: boolean;
-        };
-      } = {
-        billingContact: cleanBillingContact
-      };
-
-      console.log('Square tokenization request (simple):', JSON.stringify(tokenizationRequest, null, 2));
-
-      let tokenResult = await card.tokenize(tokenizationRequest);
-      console.log('Square tokenization result (simple):', JSON.stringify(tokenResult, null, 2));
-
-      // If simple approach fails, try with verificationDetails
-      if (tokenResult.status !== 'OK') {
-        console.log('Simple tokenization failed, trying with verificationDetails...');
-        
-        tokenizationRequest = {
-          billingContact: cleanBillingContact,
-          verificationDetails: {
-            billingContact: cleanBillingContact,
-            intent: 'CHARGE' as const,
-            customerInitiated: Boolean(true),
-            sellerKeyedIn: Boolean(false)
-          }
-        };
-
-        console.log('Square tokenization request (with verification):', JSON.stringify(tokenizationRequest, null, 2));
-        tokenResult = await card.tokenize(tokenizationRequest);
-        console.log('Square tokenization result (with verification):', JSON.stringify(tokenResult, null, 2));
-      }
-
-      if (tokenResult.status === 'OK') {
-        console.log('Square tokenization successful');
-        return {
-          token: tokenResult.token,
-          details: tokenResult.details
-        };
-      } else {
-        console.error('Square tokenization failed:', tokenResult);
-        
-        // Enhanced error handling for Square API errors
-        let errorMessage = 'Payment information is invalid';
-        
-        if (tokenResult.errors && Array.isArray(tokenResult.errors)) {
-          const errorDetails = tokenResult.errors.map((error: any) => {
-            console.error('Square error details:', error);
-            
-            // Handle specific Square error codes
-            if (error.code === 'INVALID_CARD_DATA') {
-              return 'Invalid card information provided';
-            }
-            if (error.code === 'CARD_EXPIRED') {
-              return 'Card has expired';
-            }
-            if (error.code === 'CVV_FAILURE') {
-              return 'Invalid CVV code';
-            }
-            if (error.code === 'ADDRESS_VERIFICATION_FAILURE') {
-              return 'Billing address verification failed';
-            }
-            if (error.code === 'INSUFFICIENT_PERMISSIONS') {
-              return 'Payment processing not authorized';
-            }
-            if (error.code === 'INVALID_REQUEST_ERROR') {
-              return 'Invalid payment request';
-            }
-            
-            // Fallback to error detail or message
-            return error.detail || error.message || 'Payment processing error';
-          });
-          
-          errorMessage = errorDetails.join('. ');
-        }
-        
-        throw new Error(errorMessage);
-      }
+      const tokenData = await processTokenization(card, billingContact);
+      return tokenData;
     } catch (err: any) {
       console.error('Square tokenization error:', err);
       const errorMessage = err.message || 'Payment processing failed';

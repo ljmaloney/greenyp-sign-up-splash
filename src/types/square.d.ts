@@ -1,4 +1,6 @@
 
+export * from './square';
+
 declare global {
   interface Window {
     Square: {
