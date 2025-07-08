@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { initializeSquare, getSquarePayments } from '@/config/square';
 
 export interface SquareCardData {
@@ -49,7 +49,7 @@ export const useSquarePayments = () => {
     };
   }, []);
 
-  const initializeCard = async (cardElementId: string) => {
+  const initializeCard = useCallback(async (cardElementId: string) => {
     console.log('initializeCard called with elementId:', cardElementId);
     
     if (!isSquareReady) {
@@ -86,9 +86,9 @@ export const useSquarePayments = () => {
       setError(errorMessage);
       throw new Error(errorMessage);
     }
-  };
+  }, [isSquareReady, error]);
 
-  const tokenizeCard = async (billingContact: any): Promise<SquareCardData> => {
+  const tokenizeCard = useCallback(async (billingContact: any): Promise<SquareCardData> => {
     if (!card) {
       throw new Error('Card not initialized');
     }
@@ -151,7 +151,9 @@ export const useSquarePayments = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [card]);
+
+  const clearError = useCallback(() => setError(null), []);
 
   return {
     isSquareReady,
@@ -159,6 +161,6 @@ export const useSquarePayments = () => {
     error,
     initializeCard,
     tokenizeCard,
-    clearError: () => setError(null)
+    clearError
   };
 };

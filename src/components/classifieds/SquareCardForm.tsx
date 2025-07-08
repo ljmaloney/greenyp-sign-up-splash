@@ -38,7 +38,7 @@ const SquareCardForm = ({
     let isMounted = true;
 
     const initializeCardInstance = async () => {
-      // Don't initialize if already initialized or if conditions aren't met
+      // Don't initialize if already initialized, if conditions aren't met, or if there's an error
       if (isInitializedRef.current || !isSquareReady || error || !cardElementRef.current) {
         console.log('Skipping initialization - initialized:', isInitializedRef.current, 'ready:', isSquareReady, 'error:', !!error, 'element:', !!cardElementRef.current);
         return;
@@ -66,13 +66,14 @@ const SquareCardForm = ({
       }
     };
 
-    // Only initialize when Square is ready and no error
+    // Only initialize when Square is ready, no error, and not already initialized
     if (isSquareReady && !error && !isInitializedRef.current) {
       initializeCardInstance();
     }
 
     return () => {
       isMounted = false;
+      // Clean up card instance when component unmounts
       if (cardInstanceRef.current && isInitializedRef.current) {
         console.log('Destroying card instance...');
         try {
