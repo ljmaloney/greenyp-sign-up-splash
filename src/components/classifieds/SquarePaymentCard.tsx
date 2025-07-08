@@ -114,7 +114,7 @@ const SquarePaymentCard = ({ billingContact, billingAddress, onPaymentProcessed 
         const verificationResult = await payments.verifyBuyer(result.token, verificationDetails);
         console.log('Verification result:', verificationResult);
 
-        if (verificationResult.status === 'OK') {
+        if (verificationResult && verificationResult.token) {
           console.log('Payment verified successfully, submitting to backend...');
           
           // Submit payment to backend
