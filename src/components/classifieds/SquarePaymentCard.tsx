@@ -51,10 +51,7 @@ const SquarePaymentCard = ({ billingContact, billingAddress, onPaymentProcessed 
         const { payments: paymentsFunction } = await import('@square/web-sdk');
         
         // Initialize Square Payments
-        const paymentsInstance = paymentsFunction({
-          appId: appId,
-          locationId: locationId,
-        });
+        const paymentsInstance = await paymentsFunction(appId, locationId);
         
         setPayments(paymentsInstance);
         
