@@ -125,14 +125,22 @@ export const useSquarePayments = () => {
     setError(null);
 
     try {
-      const tokenResult = await card.tokenize({
-        billingContact,
-        verificationDetails: {
-          intent: 'CHARGE',
-          customerInitiated: true,
-          sellerKeyedIn: false
+      console.log('Starting tokenization with billingContact:', billingContact);
+      
+      // Create the tokenization request with the correct structure
+      const tokenizationRequest = {
+        billingContact: {
+          givenName: billingContact.givenName || '',
+          familyName: billingContact.familyName || '',
+          email: billingContact.email || '',
+          phone: billingContact.phone || ''
         }
-      });
+      };
+
+      console.log('Tokenization request:', tokenizationRequest);
+
+      const tokenResult = await card.tokenize(tokenizationRequest);
+      console.log('Tokenization result:', tokenResult);
 
       if (tokenResult.status === 'OK') {
         console.log('Square tokenization successful:', tokenResult);
