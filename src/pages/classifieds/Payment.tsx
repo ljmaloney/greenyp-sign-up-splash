@@ -55,7 +55,7 @@ const Payment = () => {
 
       toast({
         title: "Information Copied",
-        description: "Contact and address information has been copied from your ad details.",
+        description: "Contact and billing address information has been copied from your ad details.",
       });
     }
   };
