@@ -21,7 +21,7 @@ const NewPaymentContainer = ({ classifiedId }: NewPaymentContainerProps) => {
       const response = await apiClient.get(`/classified/${classifiedId}/customer`, { requireAuth: false });
       return response.response;
     },
-    enabled: !!classifiedId
+    enabled: !!classifiedId && classifiedId !== ':classifiedId'
   });
 
   if (isLoading) {
