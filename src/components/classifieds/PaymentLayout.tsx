@@ -5,10 +5,17 @@ import NewAdPreviewCard from './NewAdPreviewCard';
 import NewPaymentInformationCard from './NewPaymentInformationCard';
 
 interface ClassifiedData {
+  classifiedId: string;
+  title: string;
+  description: string;
   address: string;
   city: string;
   state: string;
   postalCode: string;
+  price: number;
+  perUnitType: string;
+  createDate: string;
+  adTypeId: string;
 }
 
 interface CustomerData {
