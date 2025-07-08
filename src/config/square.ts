@@ -3,8 +3,8 @@
 export const SQUARE_CONFIG = {
   // Use sandbox for development, production for live
   environment: 'sandbox', // Change to 'production' for live payments
-  applicationId: process.env.SQUARE_APPLICATION_ID || '', // Replace with your actual Square Application ID
-  locationId: process.env.SQUARE_LOCATION_ID || '', // Replace with your actual Square Location ID
+  applicationId: import.meta.env.VITE_SQUARE_APPLICATION_ID || '', // Replace with your actual Square Application ID
+  locationId: import.meta.env.VITE_SQUARE_LOCATION_ID || '', // Replace with your actual Square Location ID
 };
 
 // Square Web SDK instance
