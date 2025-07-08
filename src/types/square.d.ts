@@ -3,7 +3,7 @@ export * from './square';
 
 declare global {
   interface Window {
-    Square: {
+    Square?: {
       payments: (applicationId: string, locationId: string) => {
         card: () => Promise<{
           attach: (selector: string) => Promise<void>;

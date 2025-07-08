@@ -135,7 +135,7 @@ export const initializeSquare = async () => {
       console.log('Creating Square payments instance...');
       payments = window.Square.payments(SQUARE_CONFIG.applicationId, SQUARE_CONFIG.locationId);
       console.log('Square payments instance created successfully');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to create Square payments instance:', error);
       throw new Error(`Failed to initialize Square payments: ${error.message}`);
     }
