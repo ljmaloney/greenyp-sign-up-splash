@@ -60,6 +60,7 @@ export const initializeSquare = async () => {
       payments = {
         card: async () => ({
           attach: async (selector: string) => {
+            console.log('Mock Square card attach called with selector:', selector);
             const element = document.querySelector(selector);
             if (element) {
               element.innerHTML = `
@@ -71,6 +72,10 @@ export const initializeSquare = async () => {
                   </p>
                 </div>
               `;
+              console.log('Mock Square card element populated successfully');
+            } else {
+              console.error('Mock Square card attach failed: element not found for selector:', selector);
+              throw new Error(`Element not found for selector: ${selector}`);
             }
             return Promise.resolve();
           },
@@ -107,7 +112,9 @@ export const initializeSquare = async () => {
               }
             };
           },
-          destroy: () => {}
+          destroy: () => {
+            console.log('Mock Square card destroy called');
+          }
         })
       };
       

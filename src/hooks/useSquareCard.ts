@@ -10,12 +10,14 @@ export const useSquareCard = (isSquareReady: boolean, squareError: string | null
   const initializeCard = useCallback(async (cardElementId: string) => {
     if (!isSquareReady) {
       console.error('Square is not ready');
-      throw new Error('Square is not ready');
+      setError('Square is not ready');
+      return null;
     }
 
     if (squareError) {
       console.error('Square configuration error:', squareError);
-      throw new Error(`Square configuration error: ${squareError}`);
+      setError(`Square configuration error: ${squareError}`);
+      return null;
     }
 
     // Don't initialize if already initialized
@@ -26,10 +28,10 @@ export const useSquareCard = (isSquareReady: boolean, squareError: string | null
 
     try {
       console.log('Initializing card with element ID:', cardElementId);
+      setError(null);
       const cardInstance = await createSquareCard(cardElementId);
       setCard(cardInstance);
       setIsInitialized(true);
-      setError(null);
       console.log('Card initialized and state updated successfully');
       return cardInstance;
     } catch (err: any) {
@@ -38,7 +40,7 @@ export const useSquareCard = (isSquareReady: boolean, squareError: string | null
       setError(errorMessage);
       setIsInitialized(false);
       setCard(null);
-      throw new Error(errorMessage);
+      return null;
     }
   }, [isSquareReady, squareError, isInitialized, card]);
 
