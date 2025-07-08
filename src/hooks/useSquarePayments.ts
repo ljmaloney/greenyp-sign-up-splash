@@ -110,7 +110,15 @@ export const useSquarePayments = () => {
       console.log('Clean billing contact:', cleanBillingContact);
 
       // First attempt: Try without verificationDetails (simpler approach)
-      let tokenizationRequest = {
+      let tokenizationRequest: {
+        billingContact: typeof cleanBillingContact;
+        verificationDetails?: {
+          billingContact: typeof cleanBillingContact;
+          intent: 'CHARGE';
+          customerInitiated: boolean;
+          sellerKeyedIn: boolean;
+        };
+      } = {
         billingContact: cleanBillingContact
       };
 
