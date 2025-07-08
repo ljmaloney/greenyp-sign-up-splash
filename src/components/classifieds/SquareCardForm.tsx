@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { useSquarePayments, SquareCardData } from '@/hooks/useSquarePayments';
 import { useToast } from '@/hooks/use-toast';
@@ -31,46 +31,48 @@ const SquareCardForm = ({
   const cardElementRef = useRef<HTMLDivElement>(null);
   const cardInstanceRef = useRef<any>(null);
   const isInitializedRef = useRef(false);
-  const initializingRef = useRef(false);
 
   console.log('SquareCardForm render - isSquareReady:', isSquareReady, 'error:', error, 'isLoading:', isLoading, 'isInitialized:', isInitializedRef.current);
 
   useEffect(() => {
+    let isMounted = true;
+
     const initializeCardInstance = async () => {
-      // Prevent multiple simultaneous initializations
-      if (isInitializedRef.current || initializingRef.current) {
-        console.log('Card already initialized or initializing, skipping...');
+      // Don't initialize if already initialized or if conditions aren't met
+      if (isInitializedRef.current || !isSquareReady || error || !cardElementRef.current) {
+        console.log('Skipping initialization - initialized:', isInitializedRef.current, 'ready:', isSquareReady, 'error:', !!error, 'element:', !!cardElementRef.current);
         return;
       }
-
-      if (!isSquareReady || error || !cardElementRef.current) {
-        console.log('Square not ready for initialization - isSquareReady:', isSquareReady, 'error:', error, 'elementExists:', !!cardElementRef.current);
-        return;
-      }
-
-      initializingRef.current = true;
 
       try {
         console.log('Initializing Square card...');
         const cardInstance = await initializeCard('square-card');
-        cardInstanceRef.current = cardInstance;
-        isInitializedRef.current = true;
-        console.log('Square card initialized successfully');
+        
+        // Only set refs if component is still mounted
+        if (isMounted) {
+          cardInstanceRef.current = cardInstance;
+          isInitializedRef.current = true;
+          console.log('Square card initialized successfully');
+        }
       } catch (initError: any) {
         console.error('Failed to initialize Square card:', initError);
-        toast({
-          title: "Payment Error",
-          description: initError.message || "Failed to initialize payment form.",
-          variant: "destructive"
-        });
-      } finally {
-        initializingRef.current = false;
+        if (isMounted) {
+          toast({
+            title: "Payment Error",
+            description: initError.message || "Failed to initialize payment form.",
+            variant: "destructive"
+          });
+        }
       }
     };
 
-    initializeCardInstance();
+    // Only initialize when conditions are right
+    if (isSquareReady && !error && !isInitializedRef.current) {
+      initializeCardInstance();
+    }
 
     return () => {
+      isMounted = false;
       if (cardInstanceRef.current && isInitializedRef.current) {
         console.log('Destroying card instance...');
         try {
@@ -80,10 +82,9 @@ const SquareCardForm = ({
         }
         cardInstanceRef.current = null;
         isInitializedRef.current = false;
-        initializingRef.current = false;
       }
     };
-  }, [isSquareReady, error, initializeCard, toast]);
+  }, [isSquareReady, error]); // Only depend on stable values
 
   const handleTokenize = async () => {
     if (isProcessing || !cardInstanceRef.current) return;
