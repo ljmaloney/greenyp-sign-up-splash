@@ -99,7 +99,7 @@ export const useSquarePayments = () => {
     try {
       console.log('Starting tokenization with billingContact:', billingContact);
       
-      // Create the tokenization request with verificationDetails
+      // Create the tokenization request with complete verificationDetails
       const tokenizationRequest = {
         billingContact: {
           givenName: billingContact.givenName || '',
@@ -114,11 +114,13 @@ export const useSquarePayments = () => {
             email: billingContact.email || '',
             phone: billingContact.phone || ''
           },
-          intent: 'CHARGE'
+          intent: 'CHARGE',
+          customerInitiated: true,
+          sellerKeyedIn: false
         }
       };
 
-      console.log('Tokenization request with verificationDetails:', tokenizationRequest);
+      console.log('Tokenization request with complete verificationDetails:', tokenizationRequest);
 
       const tokenResult = await card.tokenize(tokenizationRequest);
       console.log('Tokenization result:', tokenResult);
