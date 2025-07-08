@@ -12,9 +12,10 @@ interface BillingAddressCardProps {
     zipCode: string;
   };
   onInputChange: (field: string, value: string) => void;
+  isProcessing?: boolean;
 }
 
-const BillingAddressCard = ({ paymentForm, onInputChange }: BillingAddressCardProps) => {
+const BillingAddressCard = ({ paymentForm, onInputChange, isProcessing = false }: BillingAddressCardProps) => {
   return (
     <Card>
       <CardHeader>
@@ -28,6 +29,7 @@ const BillingAddressCard = ({ paymentForm, onInputChange }: BillingAddressCardPr
             placeholder="123 Main St"
             value={paymentForm.billingAddress}
             onChange={(e) => onInputChange('billingAddress', e.target.value)}
+            disabled={isProcessing}
           />
         </div>
 
@@ -39,6 +41,7 @@ const BillingAddressCard = ({ paymentForm, onInputChange }: BillingAddressCardPr
               placeholder="San Francisco"
               value={paymentForm.city}
               onChange={(e) => onInputChange('city', e.target.value)}
+              disabled={isProcessing}
             />
           </div>
           <div>
@@ -48,6 +51,7 @@ const BillingAddressCard = ({ paymentForm, onInputChange }: BillingAddressCardPr
               placeholder="CA"
               value={paymentForm.state}
               onChange={(e) => onInputChange('state', e.target.value)}
+              disabled={isProcessing}
             />
           </div>
         </div>
@@ -59,6 +63,7 @@ const BillingAddressCard = ({ paymentForm, onInputChange }: BillingAddressCardPr
             placeholder="94102"
             value={paymentForm.zipCode}
             onChange={(e) => onInputChange('zipCode', e.target.value)}
+            disabled={isProcessing}
           />
         </div>
       </CardContent>

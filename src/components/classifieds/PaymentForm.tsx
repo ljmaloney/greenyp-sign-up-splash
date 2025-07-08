@@ -38,9 +38,14 @@ const PaymentForm = ({ classifiedId, classifiedData, packageData, onPaymentSucce
 
   const handleCopyFromClassified = () => {
     if (classifiedData) {
+      console.log('Copying from classified data:', classifiedData);
+      
+      // Construct cardholder name from first and last name
+      const cardholderName = `${classifiedData.firstName || ''} ${classifiedData.lastName || ''}`.trim();
+      
       setPaymentForm(prev => ({
         ...prev,
-        cardholderName: `${classifiedData.firstName || ''} ${classifiedData.lastName || ''}`.trim(),
+        cardholderName: cardholderName,
         email: classifiedData.emailAddress || '',
         phoneNumber: classifiedData.phoneNumber || '',
         billingAddress: classifiedData.address || '',
@@ -167,6 +172,7 @@ const PaymentForm = ({ classifiedId, classifiedData, packageData, onPaymentSucce
           zipCode: paymentForm.zipCode
         }}
         onInputChange={handleInputChange}
+        isProcessing={isProcessingPayment}
       />
 
       <PaymentTotalCard 

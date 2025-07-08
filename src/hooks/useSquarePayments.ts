@@ -106,12 +106,32 @@ export const useSquarePayments = () => {
           details: tokenResult.details
         };
       } else {
-        const errorMessage = tokenResult.errors?.map((e: any) => e.detail).join(', ') || 'Tokenization failed';
+        console.error('Square tokenization failed:', tokenResult);
+        
+        // Better error handling for Square API errors
+        let errorMessage = 'Payment information is invalid';
+        
+        if (tokenResult.errors && Array.isArray(tokenResult.errors)) {
+          const errorMessages = tokenResult.errors
+            .map((error: any) => {
+              if (error.detail) return error.detail;
+              if (error.message) return error.message;
+              if (typeof error === 'string') return error;
+              return null;
+            })
+            .filter(Boolean);
+          
+          if (errorMessages.length > 0) {
+            errorMessage = errorMessages.join('. ');
+          }
+        }
+        
         throw new Error(errorMessage);
       }
     } catch (err: any) {
       console.error('Square tokenization error:', err);
-      setError(err.message || 'Payment processing failed');
+      const errorMessage = err.message || 'Payment processing failed';
+      setError(errorMessage);
       throw err;
     } finally {
       setIsLoading(false);
