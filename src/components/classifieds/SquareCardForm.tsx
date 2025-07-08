@@ -1,12 +1,13 @@
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { Lock, Copy, CreditCard, AlertCircle } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 import { useSquarePayments, SquareCardData } from '@/hooks/useSquarePayments';
 import { useToast } from '@/hooks/use-toast';
+import SquareCardFormHeader from './SquareCardFormHeader';
+import SquareCardFormError from './SquareCardFormError';
+import SquareCardFormFields from './SquareCardFormFields';
+import SquareCardFormPayment from './SquareCardFormPayment';
+import SquareCardFormActions from './SquareCardFormActions';
 
 interface SquareCardFormProps {
   billingInfo: {
@@ -109,110 +110,33 @@ const SquareCardForm = ({
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center">
-            <Lock className="w-5 h-5 mr-2 text-greenyp-600" />
-            Secure Payment
-          </div>
-          {onCopyFromClassified && classifiedData && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onCopyFromClassified}
-              className="text-xs"
-            >
-              <Copy className="w-3 h-3 mr-1" />
-              Copy from Ad
-            </Button>
-          )}
-        </CardTitle>
-      </CardHeader>
+      <SquareCardFormHeader 
+        onCopyFromClassified={onCopyFromClassified}
+        classifiedData={classifiedData}
+      />
       <CardContent className="space-y-4">
-        {error && (
-          <div className="flex items-center p-4 text-amber-800 bg-amber-50 border border-amber-200 rounded-lg">
-            <AlertCircle className="w-5 h-5 mr-3 flex-shrink-0" />
-            <div>
-              <p className="font-medium">Square Configuration Required</p>
-              <p className="text-sm mt-1">
-                {error.includes('credentials') 
-                  ? 'Please set up your Square Application ID and Location ID in the project configuration to enable payments.'
-                  : error
-                }
-              </p>
-            </div>
-          </div>
-        )}
+        {error && <SquareCardFormError error={error} />}
 
-        <div>
-          <Label htmlFor="cardholderName">Cardholder Name *</Label>
-          <Input
-            id="cardholderName"
-            placeholder="John Doe"
-            value={billingInfo.cardholderName}
-            onChange={(e) => onInputChange('cardholderName', e.target.value)}
-            disabled={isProcessing}
-          />
-        </div>
+        <SquareCardFormFields 
+          billingInfo={billingInfo}
+          onInputChange={onInputChange}
+          isProcessing={isProcessing}
+        />
 
-        <div>
-          <Label htmlFor="email">Email Address *</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="john@example.com"
-            value={billingInfo.email}
-            onChange={(e) => onInputChange('email', e.target.value)}
-            disabled={isProcessing}
-          />
-        </div>
+        <SquareCardFormPayment 
+          cardElementRef={cardElementRef}
+          isSquareReady={isSquareReady}
+          error={error}
+          isProcessing={isProcessing}
+        />
 
-        <div>
-          <Label htmlFor="phoneNumber">Phone Number *</Label>
-          <Input
-            id="phoneNumber"
-            type="tel"
-            placeholder="(555) 123-4567"
-            value={billingInfo.phoneNumber}
-            onChange={(e) => onInputChange('phoneNumber', e.target.value)}
-            disabled={isProcessing}
-          />
-        </div>
-
-        <div>
-          <Label>Card Information *</Label>
-          <div 
-            id="square-card" 
-            ref={cardElementRef}
-            className="min-h-[60px] border border-gray-300 rounded-md p-3 bg-white"
-            style={{
-              opacity: (isSquareReady && !error) ? 1 : 0.5,
-              pointerEvents: (isProcessing || error) ? 'none' : 'auto'
-            }}
-          >
-            {(!isSquareReady || error) && (
-              <div className="flex items-center justify-center h-full text-gray-500">
-                {error ? 'Payment form unavailable - configuration required' : 'Loading secure payment form...'}
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="pt-4">
-          <Button 
-            onClick={handleTokenizeCard}
-            disabled={!cardInitialized || isLoading || isProcessing || !!error}
-            className="w-full bg-greenyp-600 hover:bg-greenyp-700"
-          >
-            <CreditCard className="w-4 h-4 mr-2" />
-            {isLoading ? 'Processing...' : 'Validate Payment Information'}
-          </Button>
-        </div>
-
-        <div className="flex items-center justify-center text-xs text-gray-500">
-          <Lock className="w-3 h-3 mr-1" />
-          Secured by Square - PCI DSS Compliant
-        </div>
+        <SquareCardFormActions 
+          onTokenizeCard={handleTokenizeCard}
+          cardInitialized={cardInitialized}
+          isLoading={isLoading}
+          isProcessing={isProcessing}
+          error={error}
+        />
       </CardContent>
     </Card>
   );
