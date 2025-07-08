@@ -14,7 +14,7 @@ let isSquareScriptLoaded = false;
 // Helper function to load Square script
 const loadSquareScript = (): Promise<void> => {
   return new Promise((resolve, reject) => {
-    if (window.Square || isSquareScriptLoaded) {
+    if ((window as any).Square || isSquareScriptLoaded) {
       resolve();
       return;
     }
@@ -126,14 +126,14 @@ export const initializeSquare = async () => {
   }
 
   // Initialize Square payments
-  if (!window.Square) {
+  if (!(window as any).Square) {
     throw new Error('Square Web SDK not available after loading script');
   }
 
   if (!payments) {
     try {
       console.log('Creating Square payments instance...');
-      payments = window.Square.payments(SQUARE_CONFIG.applicationId, SQUARE_CONFIG.locationId);
+      payments = (window as any).Square.payments(SQUARE_CONFIG.applicationId, SQUARE_CONFIG.locationId);
       console.log('Square payments instance created successfully');
     } catch (error: any) {
       console.error('Failed to create Square payments instance:', error);

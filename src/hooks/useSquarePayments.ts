@@ -3,7 +3,7 @@ import { useSquareInitialization } from './useSquareInitialization';
 import { useSquareCard } from './useSquareCard';
 import { useSquareTokenization } from './useSquareTokenization';
 
-export { SquareCardData } from '@/types/square';
+export type { SquareCardData } from '@/types/square';
 
 export const useSquarePayments = () => {
   const { isSquareReady, error: initError, clearError: clearInitError } = useSquareInitialization();
