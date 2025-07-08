@@ -99,7 +99,7 @@ export const useSquarePayments = () => {
     try {
       console.log('Starting tokenization with billingContact:', billingContact);
       
-      // Create the tokenization request with complete verificationDetails
+      // Create the tokenization request with proper Square API structure
       const tokenizationRequest = {
         billingContact: {
           givenName: billingContact.givenName || '',
@@ -114,19 +114,19 @@ export const useSquarePayments = () => {
             email: billingContact.email || '',
             phone: billingContact.phone || ''
           },
-          intent: 'CHARGE',
+          intent: 'CHARGE' as const,
           customerInitiated: true,
           sellerKeyedIn: false
         }
       };
 
-      console.log('Tokenization request with complete verificationDetails:', tokenizationRequest);
+      console.log('Square tokenization request:', JSON.stringify(tokenizationRequest, null, 2));
 
       const tokenResult = await card.tokenize(tokenizationRequest);
-      console.log('Tokenization result:', tokenResult);
+      console.log('Square tokenization result:', JSON.stringify(tokenResult, null, 2));
 
       if (tokenResult.status === 'OK') {
-        console.log('Square tokenization successful:', tokenResult);
+        console.log('Square tokenization successful');
         return {
           token: tokenResult.token,
           details: tokenResult.details
@@ -134,22 +134,38 @@ export const useSquarePayments = () => {
       } else {
         console.error('Square tokenization failed:', tokenResult);
         
-        // Better error handling for Square API errors
+        // Enhanced error handling for Square API errors
         let errorMessage = 'Payment information is invalid';
         
         if (tokenResult.errors && Array.isArray(tokenResult.errors)) {
-          const errorMessages = tokenResult.errors
-            .map((error: any) => {
-              if (error.detail) return error.detail;
-              if (error.message) return error.message;
-              if (typeof error === 'string') return error;
-              return null;
-            })
-            .filter(Boolean);
+          const errorDetails = tokenResult.errors.map((error: any) => {
+            console.error('Square error details:', error);
+            
+            // Handle specific Square error codes
+            if (error.code === 'INVALID_CARD_DATA') {
+              return 'Invalid card information provided';
+            }
+            if (error.code === 'CARD_EXPIRED') {
+              return 'Card has expired';
+            }
+            if (error.code === 'CVV_FAILURE') {
+              return 'Invalid CVV code';
+            }
+            if (error.code === 'ADDRESS_VERIFICATION_FAILURE') {
+              return 'Billing address verification failed';
+            }
+            if (error.code === 'INSUFFICIENT_PERMISSIONS') {
+              return 'Payment processing not authorized';
+            }
+            if (error.code === 'INVALID_REQUEST_ERROR') {
+              return 'Invalid payment request';
+            }
+            
+            // Fallback to error detail or message
+            return error.detail || error.message || 'Payment processing error';
+          });
           
-          if (errorMessages.length > 0) {
-            errorMessage = errorMessages.join('. ');
-          }
+          errorMessage = errorDetails.join('. ');
         }
         
         throw new Error(errorMessage);

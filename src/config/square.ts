@@ -75,7 +75,24 @@ export const initializeSquare = async () => {
             return Promise.resolve();
           },
           tokenize: async (options: any) => {
-            console.log('Mock tokenization with options:', options);
+            console.log('Mock tokenization with options:', JSON.stringify(options, null, 2));
+            
+            // Validate the structure matches Square API requirements
+            if (!options.verificationDetails || 
+                !options.verificationDetails.intent ||
+                typeof options.verificationDetails.customerInitiated !== 'boolean' ||
+                typeof options.verificationDetails.sellerKeyedIn !== 'boolean') {
+              console.error('Mock tokenization failed - invalid structure');
+              return {
+                status: 'ERROR',
+                errors: [{
+                  type: 'INVALID_REQUEST_ERROR',
+                  code: 'INVALID_REQUEST_ERROR',
+                  detail: 'Missing or invalid verificationDetails structure'
+                }]
+              };
+            }
+            
             // Mock successful tokenization for development
             return {
               status: 'OK',

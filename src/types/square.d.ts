@@ -17,6 +17,22 @@ declare global {
               postalCode?: string;
               country?: string;
             };
+            verificationDetails?: {
+              billingContact?: {
+                givenName?: string;
+                familyName?: string;
+                email?: string;
+                phone?: string;
+                addressLines?: string[];
+                city?: string;
+                state?: string;
+                postalCode?: string;
+                country?: string;
+              };
+              intent: 'CHARGE' | 'STORE';
+              customerInitiated: boolean;
+              sellerKeyedIn: boolean;
+            };
           }) => Promise<{
             status: string;
             token?: string;
@@ -32,8 +48,10 @@ declare global {
               type: string;
               field?: string;
               detail: string;
+              code?: string;
             }>;
           }>;
+          destroy: () => void;
         }>;
       };
     };
