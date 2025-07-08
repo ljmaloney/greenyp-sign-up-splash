@@ -177,6 +177,8 @@ const PaymentForm = ({ classifiedId, classifiedData, packageData, onPaymentSucce
         }}
         onInputChange={handleInputChange}
         isProcessing={isProcessingPayment}
+        onCopyFromClassified={handleCopyFromClassified}
+        classifiedData={classifiedData}
       />
 
       <SquareCardForm 
@@ -187,8 +189,6 @@ const PaymentForm = ({ classifiedId, classifiedData, packageData, onPaymentSucce
         }}
         onInputChange={handleInputChange}
         onTokenReceived={handleSquareTokenReceived}
-        onCopyFromClassified={handleCopyFromClassified}
-        classifiedData={classifiedData}
         isProcessing={isProcessingPayment}
       />
 
