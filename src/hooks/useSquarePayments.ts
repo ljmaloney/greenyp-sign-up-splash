@@ -99,31 +99,44 @@ export const useSquarePayments = () => {
     try {
       console.log('Starting tokenization with billingContact:', billingContact);
       
-      // Create the tokenization request with REQUIRED verificationDetails
-      const tokenizationRequest = {
-        billingContact: {
-          givenName: billingContact.givenName || '',
-          familyName: billingContact.familyName || '',
-          email: billingContact.email || '',
-          phone: billingContact.phone || ''
-        },
-        verificationDetails: {
-          billingContact: {
-            givenName: billingContact.givenName || '',
-            familyName: billingContact.familyName || '',
-            email: billingContact.email || '',
-            phone: billingContact.phone || ''
-          },
-          intent: 'CHARGE' as const,
-          customerInitiated: true,
-          sellerKeyedIn: false
-        }
+      // Ensure all values are properly typed
+      const cleanBillingContact = {
+        givenName: String(billingContact.givenName || ''),
+        familyName: String(billingContact.familyName || ''),
+        email: String(billingContact.email || ''),
+        phone: String(billingContact.phone || '').replace(/\D/g, '')
       };
 
-      console.log('Square tokenization request with verificationDetails:', JSON.stringify(tokenizationRequest, null, 2));
+      console.log('Clean billing contact:', cleanBillingContact);
 
-      const tokenResult = await card.tokenize(tokenizationRequest);
-      console.log('Square tokenization result:', JSON.stringify(tokenResult, null, 2));
+      // First attempt: Try without verificationDetails (simpler approach)
+      let tokenizationRequest = {
+        billingContact: cleanBillingContact
+      };
+
+      console.log('Square tokenization request (simple):', JSON.stringify(tokenizationRequest, null, 2));
+
+      let tokenResult = await card.tokenize(tokenizationRequest);
+      console.log('Square tokenization result (simple):', JSON.stringify(tokenResult, null, 2));
+
+      // If simple approach fails, try with verificationDetails
+      if (tokenResult.status !== 'OK') {
+        console.log('Simple tokenization failed, trying with verificationDetails...');
+        
+        tokenizationRequest = {
+          billingContact: cleanBillingContact,
+          verificationDetails: {
+            billingContact: cleanBillingContact,
+            intent: 'CHARGE' as const,
+            customerInitiated: Boolean(true),
+            sellerKeyedIn: Boolean(false)
+          }
+        };
+
+        console.log('Square tokenization request (with verification):', JSON.stringify(tokenizationRequest, null, 2));
+        tokenResult = await card.tokenize(tokenizationRequest);
+        console.log('Square tokenization result (with verification):', JSON.stringify(tokenResult, null, 2));
+      }
 
       if (tokenResult.status === 'OK') {
         console.log('Square tokenization successful');

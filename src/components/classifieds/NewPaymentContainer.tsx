@@ -17,6 +17,7 @@ const NewPaymentContainer = ({ classifiedId }: NewPaymentContainerProps) => {
   const { data: classifiedData, isLoading } = useQuery({
     queryKey: ['classified-customer', classifiedId],
     queryFn: async () => {
+      console.log('Fetching classified data for ID:', classifiedId);
       const response = await apiClient.get(`/classified/${classifiedId}/customer`, { requireAuth: false });
       return response.response;
     },
