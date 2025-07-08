@@ -2,9 +2,9 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useApiClient } from '@/hooks/useApiClient';
-import NewOrderSummaryCard from './NewOrderSummaryCard';
-import NewAdPreviewCard from './NewAdPreviewCard';
-import NewPaymentInformationCard from './NewPaymentInformationCard';
+import PaymentLoadingState from './PaymentLoadingState';
+import PaymentErrorState from './PaymentErrorState';
+import PaymentLayout from './PaymentLayout';
 
 interface NewPaymentContainerProps {
   classifiedId: string;
@@ -24,37 +24,18 @@ const NewPaymentContainer = ({ classifiedId }: NewPaymentContainerProps) => {
   });
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center py-12">
-        <div className="text-gray-500">Loading payment information...</div>
-      </div>
-    );
+    return <PaymentLoadingState />;
   }
 
   if (!classifiedData) {
-    return (
-      <div className="flex justify-center items-center py-12">
-        <div className="text-red-500">Failed to load classified information</div>
-      </div>
-    );
+    return <PaymentErrorState />;
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      {/* Left Column */}
-      <div className="space-y-6">
-        <NewOrderSummaryCard classified={classifiedData.classified} />
-        <NewAdPreviewCard classified={classifiedData.classified} />
-      </div>
-
-      {/* Right Column */}
-      <div className="space-y-6">
-        <NewPaymentInformationCard 
-          classified={classifiedData.classified}
-          customer={classifiedData.customer}
-        />
-      </div>
-    </div>
+    <PaymentLayout 
+      classified={classifiedData.classified}
+      customer={classifiedData.customer}
+    />
   );
 };
 
