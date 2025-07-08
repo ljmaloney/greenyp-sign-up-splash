@@ -39,17 +39,17 @@ const NewBillingAddressCard = ({ classified, customer }: NewBillingAddressCardPr
     zipCode: customer?.postalCode || ''
   });
 
-  const handleCopyFromAd = () => {
+  const handleCopyFromCustomer = () => {
     setBillingAddress({
-      address: classified?.address || '',
-      city: classified?.city || '',
-      state: classified?.state || '',
-      zipCode: classified?.postalCode || ''
+      address: customer?.address || '',
+      city: customer?.city || '',
+      state: customer?.state || '',
+      zipCode: customer?.postalCode || ''
     });
     
     toast({
       title: "Address Copied",
-      description: "Billing address has been copied from the classified ad.",
+      description: "Billing address has been copied from customer information.",
     });
   };
 
@@ -65,11 +65,11 @@ const NewBillingAddressCard = ({ classified, customer }: NewBillingAddressCardPr
           <Button
             variant="outline"
             size="sm"
-            onClick={handleCopyFromAd}
+            onClick={handleCopyFromCustomer}
             className="text-xs"
           >
             <Copy className="w-3 h-3 mr-1" />
-            Copy from Ad
+            Copy from Customer
           </Button>
         </CardTitle>
       </CardHeader>
