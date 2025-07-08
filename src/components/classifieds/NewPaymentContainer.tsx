@@ -43,7 +43,7 @@ const NewPaymentContainer = ({ classifiedId }: NewPaymentContainerProps) => {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       {/* Left Column */}
       <div className="space-y-6">
-        <NewOrderSummaryCard />
+        <NewOrderSummaryCard classified={classifiedData.classified} />
         <NewAdPreviewCard classified={classifiedData.classified} />
       </div>
 
