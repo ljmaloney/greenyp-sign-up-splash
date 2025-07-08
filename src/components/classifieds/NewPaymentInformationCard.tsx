@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { formatPhoneNumber } from '@/utils/phoneFormatting';
@@ -28,9 +28,10 @@ interface CustomerData {
 interface NewPaymentInformationCardProps {
   classified: ClassifiedData;
   customer: CustomerData;
+  onBillingInfoChange?: (contact: any, address: any) => void;
 }
 
-const NewPaymentInformationCard = ({ classified, customer }: NewPaymentInformationCardProps) => {
+const NewPaymentInformationCard = ({ classified, customer, onBillingInfoChange }: NewPaymentInformationCardProps) => {
   const { toast } = useToast();
   
   const [billingContact, setBillingContact] = useState({
@@ -47,19 +48,28 @@ const NewPaymentInformationCard = ({ classified, customer }: NewPaymentInformati
     zipCode: customer?.postalCode || ''
   });
 
+  // Notify parent component of billing info changes
+  useEffect(() => {
+    onBillingInfoChange?.(billingContact, billingAddress);
+  }, [billingContact, billingAddress, onBillingInfoChange]);
+
   const handleCopyFromCustomer = () => {
-    setBillingContact({
+    const newContact = {
       firstName: customer?.firstName || '',
       lastName: customer?.lastName || '',
       email: customer?.emailAddress || '',
       phone: formatPhoneNumber(customer?.phoneNumber || '')
-    });
-    setBillingAddress({
+    };
+    
+    const newAddress = {
       address: customer?.address || '',
       city: customer?.city || '',
       state: customer?.state || '',
       zipCode: customer?.postalCode || ''
-    });
+    };
+    
+    setBillingContact(newContact);
+    setBillingAddress(newAddress);
     
     toast({
       title: "Information Copied",

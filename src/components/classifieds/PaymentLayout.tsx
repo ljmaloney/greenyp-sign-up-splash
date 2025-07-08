@@ -3,6 +3,7 @@ import React from 'react';
 import NewOrderSummaryCard from './NewOrderSummaryCard';
 import NewAdPreviewCard from './NewAdPreviewCard';
 import NewPaymentInformationCard from './NewPaymentInformationCard';
+import SquarePaymentCard from './SquarePaymentCard';
 
 interface ClassifiedData {
   classifiedId: string;
@@ -35,6 +36,30 @@ interface PaymentLayoutProps {
 }
 
 const PaymentLayout = ({ classified, customer }: PaymentLayoutProps) => {
+  const [billingInfo, setBillingInfo] = React.useState({
+    contact: {
+      firstName: customer?.firstName || '',
+      lastName: customer?.lastName || '',
+      email: customer?.emailAddress || '',
+      phone: customer?.phoneNumber || ''
+    },
+    address: {
+      address: customer?.address || '',
+      city: customer?.city || '',
+      state: customer?.state || '',
+      zipCode: customer?.postalCode || ''
+    }
+  });
+
+  const handlePaymentProcessed = (result: any) => {
+    console.log('Payment processed successfully:', result);
+    // Handle successful payment here
+  };
+
+  const handleBillingInfoUpdate = (contact: any, address: any) => {
+    setBillingInfo({ contact, address });
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       {/* Left Column */}
@@ -48,6 +73,12 @@ const PaymentLayout = ({ classified, customer }: PaymentLayoutProps) => {
         <NewPaymentInformationCard 
           classified={classified}
           customer={customer}
+          onBillingInfoChange={handleBillingInfoUpdate}
+        />
+        <SquarePaymentCard
+          billingContact={billingInfo.contact}
+          billingAddress={billingInfo.address}
+          onPaymentProcessed={handlePaymentProcessed}
         />
       </div>
     </div>
