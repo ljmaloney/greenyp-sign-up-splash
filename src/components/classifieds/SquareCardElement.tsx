@@ -5,65 +5,50 @@ import { useSquarePayments } from '@/hooks/useSquarePayments';
 import { useToast } from '@/hooks/use-toast';
 
 interface SquareCardElementProps {
-  isSquareReady: boolean;
-  error: string | null;
   onCardInitialized: (cardInstance: any) => void;
 }
 
-const SquareCardElement = ({ isSquareReady, error, onCardInitialized }: SquareCardElementProps) => {
+const SquareCardElement = ({ onCardInitialized }: SquareCardElementProps) => {
   const { toast } = useToast();
-  const { initializeCard } = useSquarePayments();
+  const { isSquareReady, error, card, isCardInitialized, initializeCard } = useSquarePayments();
   const cardElementRef = useRef<HTMLDivElement>(null);
-  const cardInstanceRef = useRef<any>(null);
-  const isInitializedRef = useRef(false);
+  const hasAttemptedInit = useRef(false);
 
   useEffect(() => {
-    let isMounted = true;
-
     const initializeCardInstance = async () => {
-      if (isInitializedRef.current || !isSquareReady || error || !cardElementRef.current) {
+      if (hasAttemptedInit.current || !isSquareReady || error || !cardElementRef.current || isCardInitialized) {
         return;
       }
+
+      hasAttemptedInit.current = true;
 
       try {
         console.log('Initializing Square card...');
         const cardInstance = await initializeCard('square-card-element');
-        
-        if (isMounted) {
-          cardInstanceRef.current = cardInstance;
-          isInitializedRef.current = true;
-          onCardInitialized(cardInstance);
-          console.log('Square card initialized successfully');
-        }
+        onCardInitialized(cardInstance);
+        console.log('Square card initialized successfully');
       } catch (initError: any) {
         console.error('Failed to initialize Square card:', initError);
-        if (isMounted) {
-          toast({
-            title: "Payment Error",
-            description: initError.message || "Failed to initialize payment form.",
-            variant: "destructive"
-          });
-        }
+        toast({
+          title: "Payment Error",
+          description: initError.message || "Failed to initialize payment form.",
+          variant: "destructive"
+        });
+        hasAttemptedInit.current = false; // Allow retry
       }
     };
 
-    if (isSquareReady && !error && !isInitializedRef.current) {
+    if (isSquareReady && !error && !isCardInitialized) {
       initializeCardInstance();
     }
+  }, [isSquareReady, error, isCardInitialized, initializeCard, onCardInitialized, toast]);
 
-    return () => {
-      isMounted = false;
-      if (cardInstanceRef.current && isInitializedRef.current) {
-        try {
-          cardInstanceRef.current.destroy();
-        } catch (destroyError) {
-          console.warn('Error destroying card instance:', destroyError);
-        }
-        cardInstanceRef.current = null;
-        isInitializedRef.current = false;
-      }
-    };
-  }, [isSquareReady, error, initializeCard, onCardInitialized, toast]);
+  // Notify parent when card is available
+  useEffect(() => {
+    if (card && isCardInitialized) {
+      onCardInitialized(card);
+    }
+  }, [card, isCardInitialized, onCardInitialized]);
 
   return (
     <div>

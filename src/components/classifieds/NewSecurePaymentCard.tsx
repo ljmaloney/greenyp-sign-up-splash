@@ -23,11 +23,12 @@ interface NewSecurePaymentCardProps {
 
 const NewSecurePaymentCard = ({ customer }: NewSecurePaymentCardProps) => {
   const { toast } = useToast();
-  const { isSquareReady, isLoading, error, tokenizeCard } = useSquarePayments();
+  const { isSquareReady, isLoading, error, isCardInitialized, tokenizeCard } = useSquarePayments();
   const { paymentInfo, handleInputChange } = usePaymentInfo(customer);
   const cardInstanceRef = useRef<any>(null);
 
   const handleCardInitialized = (cardInstance: any) => {
+    console.log('Card initialized callback received:', !!cardInstance);
     cardInstanceRef.current = cardInstance;
   };
 
@@ -49,7 +50,7 @@ const NewSecurePaymentCard = ({ customer }: NewSecurePaymentCardProps) => {
         phone: paymentInfo.phone.replace(/\D/g, ''), // Remove formatting for API
       };
 
-      console.log('Tokenizing with simplified billing contact:', billingContact);
+      console.log('Tokenizing with billing contact:', billingContact);
       const tokenData = await tokenizeCard(billingContact);
       
       toast({
@@ -88,8 +89,6 @@ const NewSecurePaymentCard = ({ customer }: NewSecurePaymentCardProps) => {
         />
 
         <SquareCardElement
-          isSquareReady={isSquareReady}
-          error={error}
           onCardInitialized={handleCardInitialized}
         />
 
@@ -97,7 +96,7 @@ const NewSecurePaymentCard = ({ customer }: NewSecurePaymentCardProps) => {
         <div className="pt-4">
           <Button 
             onClick={handleTokenize}
-            disabled={!isSquareReady || isLoading || !!error}
+            disabled={!isSquareReady || isLoading || !!error || !isCardInitialized}
             className="w-full bg-greenyp-600 hover:bg-greenyp-700"
           >
             <CreditCard className="w-4 h-4 mr-2" />

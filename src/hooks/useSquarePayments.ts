@@ -7,7 +7,7 @@ export type { SquareCardData } from '@/types/square';
 
 export const useSquarePayments = () => {
   const { isSquareReady, error: initError, clearError: clearInitError } = useSquareInitialization();
-  const { card, error: cardError, initializeCard, clearError: clearCardError } = useSquareCard(isSquareReady, initError);
+  const { card, error: cardError, isInitialized, initializeCard, clearError: clearCardError, resetCard } = useSquareCard(isSquareReady, initError);
   const { isLoading, error: tokenError, tokenizeCard, clearError: clearTokenError } = useSquareTokenization(card);
 
   // Combine errors from all sources
@@ -23,8 +23,11 @@ export const useSquarePayments = () => {
     isSquareReady,
     isLoading,
     error,
+    card,
+    isCardInitialized: isInitialized,
     initializeCard,
     tokenizeCard,
-    clearError
+    clearError,
+    resetCard
   };
 };
