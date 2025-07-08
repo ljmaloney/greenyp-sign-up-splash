@@ -33,18 +33,18 @@ interface NewBillingAddressCardProps {
 const NewBillingAddressCard = ({ classified, customer }: NewBillingAddressCardProps) => {
   const { toast } = useToast();
   const [billingAddress, setBillingAddress] = useState({
-    address: '',
-    city: '',
-    state: '',
-    zipCode: ''
+    address: customer?.address || '',
+    city: customer?.city || '',
+    state: customer?.state || '',
+    zipCode: customer?.postalCode || ''
   });
 
   const handleCopyFromAd = () => {
     setBillingAddress({
-      address: classified.address,
-      city: classified.city,
-      state: classified.state,
-      zipCode: classified.postalCode
+      address: classified?.address || '',
+      city: classified?.city || '',
+      state: classified?.state || '',
+      zipCode: classified?.postalCode || ''
     });
     
     toast({
