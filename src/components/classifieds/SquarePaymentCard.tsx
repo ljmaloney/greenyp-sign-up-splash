@@ -3,6 +3,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Payments } from '@square/web-payments-sdk';
+import { useParams } from 'react-router-dom';
+import { useApiClient } from '@/hooks/useApiClient';
+import { useToast } from '@/hooks/use-toast';
 
 interface BillingContactData {
   firstName: string;
@@ -25,19 +28,30 @@ interface SquarePaymentCardProps {
 }
 
 const SquarePaymentCard = ({ billingContact, billingAddress, onPaymentProcessed }: SquarePaymentCardProps) => {
+  const { classifiedId } = useParams<{ classifiedId: string }>();
   const cardContainerRef = useRef<HTMLDivElement>(null);
   const [payments, setPayments] = useState<any>(null);
   const [card, setCard] = useState<any>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const apiClient = useApiClient();
+  const { toast } = useToast();
 
   useEffect(() => {
     const initializeSquare = async () => {
       try {
+        // Use environment variables for Square configuration
+        const appId = import.meta.env.VITE_SQUARE_APPLICATION_ID;
+        const locationId = import.meta.env.VITE_SQUARE_LOCATION_ID;
+        
+        if (!appId || !locationId) {
+          throw new Error('Square application ID or location ID not configured');
+        }
+
         // Initialize Square Payments
         const paymentsInstance = await Payments({
-          appId: 'sandbox-sq0idb-your-app-id', // Replace with your actual app ID
-          locationId: 'your-location-id', // Replace with your actual location ID
+          appId: appId,
+          locationId: locationId,
         });
         
         setPayments(paymentsInstance);
@@ -58,8 +72,8 @@ const SquarePaymentCard = ({ billingContact, billingAddress, onPaymentProcessed 
   }, []);
 
   const handlePayment = async () => {
-    if (!card || !payments) {
-      setError('Payment form not initialized');
+    if (!card || !payments || !classifiedId) {
+      setError('Payment form not initialized or missing classified ID');
       return;
     }
 
@@ -102,8 +116,34 @@ const SquarePaymentCard = ({ billingContact, billingAddress, onPaymentProcessed 
         console.log('Verification result:', verificationResult);
 
         if (verificationResult.status === 'OK') {
-          console.log('Payment processed successfully!');
-          onPaymentProcessed?.(verificationResult);
+          console.log('Payment verified successfully, submitting to backend...');
+          
+          // Submit payment to backend
+          const paymentData = {
+            classifiedId: classifiedId,
+            paymentToken: result.token,
+            verificationToken: verificationResult.token,
+            firstName: billingContact.firstName,
+            lastName: billingContact.lastName,
+            address: billingAddress.address,
+            city: billingAddress.city || 'Oakland',
+            state: billingAddress.state || 'CA',
+            postalCode: billingAddress.zipCode,
+            phoneNumber: billingContact.phone,
+            emailAddress: billingContact.email
+          };
+
+          console.log('Submitting payment data:', paymentData);
+          
+          const paymentResponse = await apiClient.post('/classified/payment', paymentData, { requireAuth: false });
+          console.log('Payment submission response:', paymentResponse);
+          
+          toast({
+            title: "Payment Successful",
+            description: "Your payment has been processed successfully.",
+          });
+          
+          onPaymentProcessed?.(paymentResponse);
         } else {
           console.error('Verification failed:', verificationResult.errors);
           setError('Payment verification failed');
@@ -115,6 +155,11 @@ const SquarePaymentCard = ({ billingContact, billingAddress, onPaymentProcessed 
     } catch (err) {
       console.error('Payment processing error:', err);
       setError('Payment processing failed');
+      toast({
+        title: "Payment Failed",
+        description: "There was an error processing your payment. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsProcessing(false);
     }
