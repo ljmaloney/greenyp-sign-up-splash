@@ -9,13 +9,45 @@ export const SQUARE_CONFIG = {
 
 // Square Web SDK instance
 let payments: any = null;
+let isSquareScriptLoaded = false;
+
+// Helper function to load Square script
+const loadSquareScript = (): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    if (window.Square || isSquareScriptLoaded) {
+      resolve();
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = 'https://sandbox.web.squarecdn.com/v1/square.js'; // Use production URL for live
+    script.async = true;
+    
+    script.onload = () => {
+      console.log('Square script loaded successfully');
+      isSquareScriptLoaded = true;
+      resolve();
+    };
+    
+    script.onerror = () => {
+      console.error('Failed to load Square Web SDK');
+      reject(new Error('Failed to load Square Web SDK'));
+    };
+    
+    document.head.appendChild(script);
+  });
+};
 
 export const initializeSquare = async () => {
+  console.log('Initializing Square with config:', SQUARE_CONFIG);
+  
   // Check if we have valid Square credentials
   const hasValidCredentials = SQUARE_CONFIG.applicationId && 
                              SQUARE_CONFIG.locationId && 
                              !SQUARE_CONFIG.applicationId.includes('YOUR_') && 
                              !SQUARE_CONFIG.locationId.includes('YOUR_');
+
+  console.log('Has valid Square credentials:', hasValidCredentials);
 
   // If no valid credentials, return mock for development
   if (!hasValidCredentials) {
@@ -43,6 +75,7 @@ export const initializeSquare = async () => {
             return Promise.resolve();
           },
           tokenize: async (options: any) => {
+            console.log('Mock tokenization with options:', options);
             // Mock successful tokenization for development
             return {
               status: 'OK',
@@ -67,13 +100,28 @@ export const initializeSquare = async () => {
     }
   }
 
-  // Only initialize Square if we have valid credentials
+  // Load Square script if not already loaded
+  try {
+    await loadSquareScript();
+  } catch (error) {
+    console.error('Failed to load Square script:', error);
+    throw error;
+  }
+
+  // Initialize Square payments
   if (!window.Square) {
-    throw new Error('Square Web SDK not loaded');
+    throw new Error('Square Web SDK not available after loading script');
   }
 
   if (!payments) {
-    payments = window.Square.payments(SQUARE_CONFIG.applicationId, SQUARE_CONFIG.locationId);
+    try {
+      console.log('Creating Square payments instance...');
+      payments = window.Square.payments(SQUARE_CONFIG.applicationId, SQUARE_CONFIG.locationId);
+      console.log('Square payments instance created successfully');
+    } catch (error) {
+      console.error('Failed to create Square payments instance:', error);
+      throw new Error(`Failed to initialize Square payments: ${error.message}`);
+    }
   }
 
   return payments;

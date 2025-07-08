@@ -66,7 +66,7 @@ const SquareCardForm = ({
       }
     };
 
-    // Only initialize when conditions are right
+    // Only initialize when Square is ready and no error
     if (isSquareReady && !error && !isInitializedRef.current) {
       initializeCardInstance();
     }
@@ -84,10 +84,13 @@ const SquareCardForm = ({
         isInitializedRef.current = false;
       }
     };
-  }, [isSquareReady, error]); // Only depend on stable values
+  }, [isSquareReady, error, initializeCard, toast]);
 
   const handleTokenize = async () => {
-    if (isProcessing || !cardInstanceRef.current) return;
+    if (isProcessing || !cardInstanceRef.current) {
+      console.log('Cannot tokenize - processing:', isProcessing, 'cardInstance:', !!cardInstanceRef.current);
+      return;
+    }
 
     try {
       const billingContact = {
@@ -97,9 +100,15 @@ const SquareCardForm = ({
         phone: billingInfo.phoneNumber,
       };
 
+      console.log('Tokenizing with billing contact:', billingContact);
       const tokenData = await tokenizeCard(billingContact);
       onTokenReceived(tokenData);
       clearError();
+      
+      toast({
+        title: "Payment Validated",
+        description: "Your payment information has been validated successfully.",
+      });
     } catch (tokenizeError: any) {
       console.error('Tokenization error:', tokenizeError);
       toast({

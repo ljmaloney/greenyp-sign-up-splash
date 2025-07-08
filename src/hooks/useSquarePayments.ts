@@ -21,60 +21,32 @@ export const useSquarePayments = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let isMounted = true;
+
     const loadSquare = async () => {
       try {
         console.log('Loading Square SDK...');
+        setError(null);
         
-        // Check if we have Square credentials
-        const hasCredentials = import.meta.env.VITE_SQUARE_APPLICATION_ID && import.meta.env.VITE_SQUARE_LOCATION_ID;
+        await initializeSquare();
         
-        if (!hasCredentials) {
-          console.log('No Square credentials found, using development mode');
-          await initializeSquare();
+        if (isMounted) {
+          console.log('Square initialized successfully');
           setIsSquareReady(true);
-          return;
-        }
-
-        // Load Square Web SDK script only if we have credentials
-        if (!window.Square) {
-          console.log('Square not found in window, loading script...');
-          const script = document.createElement('script');
-          script.src = 'https://sandbox.web.squarecdn.com/v1/square.js'; // Use production URL for live
-          script.async = true;
-          script.onload = async () => {
-            console.log('Square script loaded successfully');
-            try {
-              await initializeSquare();
-              console.log('Square initialized successfully');
-              setIsSquareReady(true);
-            } catch (initError: any) {
-              console.error('Square initialization error:', initError);
-              setError(initError.message || 'Failed to initialize Square payments');
-            }
-          };
-          script.onerror = () => {
-            console.error('Failed to load Square Web SDK');
-            setError('Failed to load Square Web SDK');
-          };
-          document.head.appendChild(script);
-        } else {
-          console.log('Square already loaded, initializing...');
-          try {
-            await initializeSquare();
-            console.log('Square initialized successfully');
-            setIsSquareReady(true);
-          } catch (initError: any) {
-            console.error('Square initialization error:', initError);
-            setError(initError.message || 'Failed to initialize Square payments');
-          }
         }
       } catch (err: any) {
         console.error('Error loading Square:', err);
-        setError(err.message || 'Failed to initialize Square payments');
+        if (isMounted) {
+          setError(err.message || 'Failed to initialize Square payments');
+        }
       }
     };
 
     loadSquare();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const initializeCard = async (cardElementId: string) => {
@@ -127,18 +99,13 @@ export const useSquarePayments = () => {
     try {
       console.log('Starting tokenization with billingContact:', billingContact);
       
-      // Create the tokenization request with the required structure including verificationDetails
+      // Create a simple tokenization request - Square's mock doesn't need verificationDetails
       const tokenizationRequest = {
         billingContact: {
           givenName: billingContact.givenName || '',
           familyName: billingContact.familyName || '',
           email: billingContact.email || '',
           phone: billingContact.phone || ''
-        },
-        verificationDetails: {
-          intent: 'CHARGE',
-          customerInitiated: true,
-          sellerKeyedIn: false
         }
       };
 
