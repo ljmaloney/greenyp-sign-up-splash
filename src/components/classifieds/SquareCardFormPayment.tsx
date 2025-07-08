@@ -10,8 +10,8 @@ interface SquareCardFormPaymentProps {
 }
 
 const SquareCardFormPayment = ({ cardElementRef, isSquareReady, error, isProcessing }: SquareCardFormPaymentProps) => {
-  console.log('SquareCardFormPayment render - isSquareReady:', isSquareReady, 'error:', error, 'isProcessing:', isProcessing);
-  console.log('Square card element div rendered with ID: square-card');
+  const isDevelopment = import.meta.env.DEV;
+  const hasSquareCredentials = import.meta.env.VITE_SQUARE_APPLICATION_ID && import.meta.env.VITE_SQUARE_LOCATION_ID;
 
   return (
     <div>
@@ -27,7 +27,18 @@ const SquareCardFormPayment = ({ cardElementRef, isSquareReady, error, isProcess
       >
         {(!isSquareReady || error) && (
           <div className="flex items-center justify-center h-full text-gray-500">
-            {error ? 'Payment form unavailable - configuration required' : 'Loading secure payment form...'}
+            {error ? (
+              isDevelopment && !hasSquareCredentials ? (
+                <div className="text-center">
+                  <p className="text-sm">Development Mode</p>
+                  <p className="text-xs mt-1">Configure Square credentials to enable payments</p>
+                </div>
+              ) : (
+                'Payment form unavailable - configuration required'
+              )
+            ) : (
+              'Loading secure payment form...'
+            )}
           </div>
         )}
       </div>
