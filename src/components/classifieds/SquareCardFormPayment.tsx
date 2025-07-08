@@ -10,7 +10,6 @@ interface SquareCardFormPaymentProps {
 }
 
 const SquareCardFormPayment = ({ cardElementRef, isSquareReady, error, isProcessing }: SquareCardFormPaymentProps) => {
-  const isDevelopment = import.meta.env.DEV;
   const hasSquareCredentials = import.meta.env.VITE_SQUARE_APPLICATION_ID && import.meta.env.VITE_SQUARE_LOCATION_ID;
 
   return (
@@ -28,7 +27,7 @@ const SquareCardFormPayment = ({ cardElementRef, isSquareReady, error, isProcess
         {(!isSquareReady || error) && (
           <div className="flex items-center justify-center h-full text-gray-500">
             {error ? (
-              isDevelopment && !hasSquareCredentials ? (
+              !hasSquareCredentials ? (
                 <div className="text-center">
                   <p className="text-sm">Development Mode</p>
                   <p className="text-xs mt-1">Configure Square credentials to enable payments</p>

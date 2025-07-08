@@ -24,7 +24,18 @@ export const useSquarePayments = () => {
     const loadSquare = async () => {
       try {
         console.log('Loading Square SDK...');
-        // Load Square Web SDK script
+        
+        // Check if we have Square credentials
+        const hasCredentials = import.meta.env.VITE_SQUARE_APPLICATION_ID && import.meta.env.VITE_SQUARE_LOCATION_ID;
+        
+        if (!hasCredentials) {
+          console.log('No Square credentials found, using development mode');
+          await initializeSquare();
+          setIsSquareReady(true);
+          return;
+        }
+
+        // Load Square Web SDK script only if we have credentials
         if (!window.Square) {
           console.log('Square not found in window, loading script...');
           const script = document.createElement('script');
