@@ -56,9 +56,9 @@ const PaymentLayout = ({ classified, customer }: PaymentLayoutProps) => {
     // Handle successful payment here
   };
 
-  const handleBillingInfoUpdate = (contact: any, address: any) => {
+  const handleBillingInfoUpdate = React.useCallback((contact: any, address: any) => {
     setBillingInfo({ contact, address });
-  };
+  }, []);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
