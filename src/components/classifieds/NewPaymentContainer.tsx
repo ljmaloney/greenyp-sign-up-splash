@@ -4,8 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useApiClient } from '@/hooks/useApiClient';
 import NewOrderSummaryCard from './NewOrderSummaryCard';
 import NewAdPreviewCard from './NewAdPreviewCard';
-import NewBillingAddressCard from './NewBillingAddressCard';
-import NewSecurePaymentCard from './NewSecurePaymentCard';
+import NewPaymentInformationCard from './NewPaymentInformationCard';
 
 interface NewPaymentContainerProps {
   classifiedId: string;
@@ -50,11 +49,8 @@ const NewPaymentContainer = ({ classifiedId }: NewPaymentContainerProps) => {
 
       {/* Right Column */}
       <div className="space-y-6">
-        <NewBillingAddressCard 
+        <NewPaymentInformationCard 
           classified={classifiedData.classified}
-          customer={classifiedData.customer}
-        />
-        <NewSecurePaymentCard 
           customer={classifiedData.customer}
         />
       </div>
