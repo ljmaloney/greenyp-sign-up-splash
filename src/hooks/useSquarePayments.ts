@@ -127,13 +127,18 @@ export const useSquarePayments = () => {
     try {
       console.log('Starting tokenization with billingContact:', billingContact);
       
-      // Create the tokenization request with the correct structure
+      // Create the tokenization request with the required structure including verificationDetails
       const tokenizationRequest = {
         billingContact: {
           givenName: billingContact.givenName || '',
           familyName: billingContact.familyName || '',
           email: billingContact.email || '',
           phone: billingContact.phone || ''
+        },
+        verificationDetails: {
+          intent: 'CHARGE',
+          customerInitiated: true,
+          sellerKeyedIn: false
         }
       };
 
