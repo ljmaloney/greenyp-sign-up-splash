@@ -1,4 +1,5 @@
 
+
 // Square configuration
 export const SQUARE_CONFIG = {
   // Use sandbox for development, production for live
@@ -32,3 +33,4 @@ export const initializeSquare = async () => {
 };
 
 export const getSquarePayments = () => payments;
+
