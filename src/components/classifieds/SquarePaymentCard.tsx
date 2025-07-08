@@ -2,7 +2,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Payments } from '@square/web-sdk';
 import { useParams } from 'react-router-dom';
 import { useApiClient } from '@/hooks/useApiClient';
 import { useToast } from '@/hooks/use-toast';
@@ -48,8 +47,11 @@ const SquarePaymentCard = ({ billingContact, billingAddress, onPaymentProcessed 
           throw new Error('Square application ID or location ID not configured');
         }
 
+        // Dynamically import Square Web SDK
+        const { payments: paymentsFunction } = await import('@square/web-sdk');
+        
         // Initialize Square Payments
-        const paymentsInstance = await Payments({
+        const paymentsInstance = paymentsFunction({
           appId: appId,
           locationId: locationId,
         });
