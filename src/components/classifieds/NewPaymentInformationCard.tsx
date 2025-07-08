@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Copy, CreditCard } from 'lucide-react';
+import { Copy } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { formatPhoneNumber, formatPhoneAsUserTypes } from '@/utils/phoneFormatting';
 
@@ -79,14 +79,6 @@ const NewPaymentInformationCard = ({ classified, customer }: NewPaymentInformati
 
   const handleAddressChange = (field: string, value: string) => {
     setBillingAddress(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleSubmit = () => {
-    // TODO: Implement payment processing logic
-    toast({
-      title: "Payment Processing",
-      description: "Payment processing will be implemented here.",
-    });
   };
 
   return (
@@ -200,17 +192,6 @@ const NewPaymentInformationCard = ({ classified, customer }: NewPaymentInformati
               />
             </div>
           </div>
-        </div>
-
-        {/* Submit Button */}
-        <div className="pt-4">
-          <Button 
-            onClick={handleSubmit}
-            className="w-full bg-greenyp-600 hover:bg-greenyp-700"
-          >
-            <CreditCard className="w-4 h-4 mr-2" />
-            Process Payment
-          </Button>
         </div>
       </CardContent>
     </Card>
