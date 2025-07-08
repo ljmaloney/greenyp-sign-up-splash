@@ -107,7 +107,7 @@ const NewSecurePaymentCard = ({ customer }: NewSecurePaymentCardProps) => {
         phone: paymentInfo.phone.replace(/\D/g, ''), // Remove formatting for API
       };
 
-      console.log('Tokenizing with billing contact:', billingContact);
+      console.log('Tokenizing with simplified billing contact:', billingContact);
       const tokenData = await tokenizeCard(billingContact);
       
       toast({
