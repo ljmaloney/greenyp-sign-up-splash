@@ -36,27 +36,44 @@ const PaymentForm = ({ classifiedId, classifiedData, packageData, onPaymentSucce
     setPaymentForm(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleCopyFromClassified = () => {
-    if (classifiedData) {
-      console.log('Copying from classified data:', classifiedData);
+  const handleCopyFromClassified = async () => {
+    try {
+      console.log('Fetching customer data for classified:', classifiedId);
       
-      // Construct cardholder name from first and last name
-      const cardholderName = `${classifiedData.firstName || ''} ${classifiedData.lastName || ''}`.trim();
+      const response = await apiClient.get(`/classified/${classifiedId}/customer`, { requireAuth: false });
       
-      setPaymentForm(prev => ({
-        ...prev,
-        cardholderName: cardholderName,
-        email: classifiedData.emailAddress || '',
-        phoneNumber: classifiedData.phoneNumber || '',
-        billingAddress: classifiedData.address || '',
-        city: classifiedData.city || '',
-        state: classifiedData.state || '',
-        zipCode: classifiedData.postalCode || ''
-      }));
+      console.log('Customer data response:', response);
+      
+      if (response?.response?.customer) {
+        const customer = response.response.customer;
+        
+        // Construct cardholder name from first and last name
+        const cardholderName = `${customer.firstName || ''} ${customer.lastName || ''}`.trim();
+        
+        setPaymentForm(prev => ({
+          ...prev,
+          cardholderName: cardholderName,
+          email: customer.emailAddress || '',
+          phoneNumber: customer.phoneNumber || '',
+          billingAddress: customer.address || '',
+          city: customer.city || '',
+          state: customer.state || '',
+          zipCode: customer.postalCode || ''
+        }));
 
+        toast({
+          title: "Information Copied",
+          description: "Customer information has been copied from the classified ad.",
+        });
+      } else {
+        throw new Error('Customer data not found');
+      }
+    } catch (error: any) {
+      console.error('Failed to fetch customer data:', error);
       toast({
-        title: "Information Copied",
-        description: "Contact and billing address information has been copied from your ad details.",
+        title: "Error",
+        description: error.message || "Failed to load customer information. Please enter the details manually.",
+        variant: "destructive"
       });
     }
   };
@@ -151,6 +168,17 @@ const PaymentForm = ({ classifiedId, classifiedData, packageData, onPaymentSucce
 
   return (
     <div className="space-y-6">
+      <BillingAddressCard 
+        paymentForm={{
+          billingAddress: paymentForm.billingAddress,
+          city: paymentForm.city,
+          state: paymentForm.state,
+          zipCode: paymentForm.zipCode
+        }}
+        onInputChange={handleInputChange}
+        isProcessing={isProcessingPayment}
+      />
+
       <SquareCardForm 
         billingInfo={{
           cardholderName: paymentForm.cardholderName,
@@ -161,17 +189,6 @@ const PaymentForm = ({ classifiedId, classifiedData, packageData, onPaymentSucce
         onTokenReceived={handleSquareTokenReceived}
         onCopyFromClassified={handleCopyFromClassified}
         classifiedData={classifiedData}
-        isProcessing={isProcessingPayment}
-      />
-
-      <BillingAddressCard 
-        paymentForm={{
-          billingAddress: paymentForm.billingAddress,
-          city: paymentForm.city,
-          state: paymentForm.state,
-          zipCode: paymentForm.zipCode
-        }}
-        onInputChange={handleInputChange}
         isProcessing={isProcessingPayment}
       />
 
