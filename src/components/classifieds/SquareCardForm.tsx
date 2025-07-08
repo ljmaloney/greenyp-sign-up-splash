@@ -52,11 +52,12 @@ const SquareCardForm = ({
       }
     };
 
-    if (isSquareReady && !error) {
+    // Only initialize if Square is ready, no error, and DOM element exists
+    if (isSquareReady && !error && cardElementRef.current) {
       console.log('Square is ready, initializing card...');
       initialize();
     } else {
-      console.log('Square not ready or has error - isSquareReady:', isSquareReady, 'error:', error);
+      console.log('Square not ready or has error - isSquareReady:', isSquareReady, 'error:', error, 'elementExists:', !!cardElementRef.current);
     }
 
     return () => {

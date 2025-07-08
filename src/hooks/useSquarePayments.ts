@@ -89,6 +89,10 @@ export const useSquarePayments = () => {
       console.log('Creating card instance...');
       const cardInstance = await payments.card();
       console.log('Card instance created, attaching to element:', cardElementId);
+      
+      // Wait a bit for the DOM element to be ready
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       await cardInstance.attach(`#${cardElementId}`);
       console.log('Card attached successfully');
       setCard(cardInstance);
@@ -111,7 +115,12 @@ export const useSquarePayments = () => {
 
     try {
       const tokenResult = await card.tokenize({
-        billingContact
+        billingContact,
+        verificationDetails: {
+          intent: 'CHARGE',
+          customerInitiated: true,
+          sellerKeyedIn: false
+        }
       });
 
       if (tokenResult.status === 'OK') {
