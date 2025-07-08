@@ -1,7 +1,6 @@
 
 import React, { useEffect, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { useSquarePayments, SquareCardData } from '@/hooks/useSquarePayments';
 import { useToast } from '@/hooks/use-toast';
 import SquareCardFormHeader from './SquareCardFormHeader';
 import SquareCardFormFields from './SquareCardFormFields';
@@ -16,7 +15,7 @@ interface SquareCardFormProps {
     phoneNumber: string;
   };
   onInputChange: (field: string, value: string) => void;
-  onTokenReceived: (tokenData: SquareCardData) => void;
+  onTokenReceived: (tokenData: any) => void;
   isProcessing?: boolean;
 }
 
@@ -27,65 +26,14 @@ const SquareCardForm = ({
   isProcessing = false
 }: SquareCardFormProps) => {
   const { toast } = useToast();
-  const { isSquareReady, isLoading, error, initializeCard, tokenizeCard, clearError } = useSquarePayments();
   const cardElementRef = useRef<HTMLDivElement>(null);
   const cardInstanceRef = useRef<any>(null);
   const isInitializedRef = useRef(false);
 
-  console.log('SquareCardForm render - isSquareReady:', isSquareReady, 'error:', error, 'isLoading:', isLoading, 'isInitialized:', isInitializedRef.current);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const initializeCardInstance = async () => {
-      // Don't initialize if already initialized, if conditions aren't met, or if there's an error
-      if (isInitializedRef.current || !isSquareReady || error || !cardElementRef.current) {
-        console.log('Skipping initialization - initialized:', isInitializedRef.current, 'ready:', isSquareReady, 'error:', !!error, 'element:', !!cardElementRef.current);
-        return;
-      }
-
-      try {
-        console.log('Initializing Square card...');
-        const cardInstance = await initializeCard('square-card');
-        
-        // Only set refs if component is still mounted
-        if (isMounted) {
-          cardInstanceRef.current = cardInstance;
-          isInitializedRef.current = true;
-          console.log('Square card initialized successfully');
-        }
-      } catch (initError: any) {
-        console.error('Failed to initialize Square card:', initError);
-        if (isMounted) {
-          toast({
-            title: "Payment Error",
-            description: initError.message || "Failed to initialize payment form.",
-            variant: "destructive"
-          });
-        }
-      }
-    };
-
-    // Only initialize when Square is ready, no error, and not already initialized
-    if (isSquareReady && !error && !isInitializedRef.current) {
-      initializeCardInstance();
-    }
-
-    return () => {
-      isMounted = false;
-      // Clean up card instance when component unmounts
-      if (cardInstanceRef.current && isInitializedRef.current) {
-        console.log('Destroying card instance...');
-        try {
-          cardInstanceRef.current.destroy();
-        } catch (destroyError) {
-          console.warn('Error destroying card instance:', destroyError);
-        }
-        cardInstanceRef.current = null;
-        isInitializedRef.current = false;
-      }
-    };
-  }, [isSquareReady, error, initializeCard, toast]);
+  // Mock Square functionality since we removed Square integration
+  const isSquareReady = true;
+  const isLoading = false;
+  const error = null;
 
   const handleTokenize = async () => {
     if (isProcessing || !cardInstanceRef.current) {
@@ -94,17 +42,20 @@ const SquareCardForm = ({
     }
 
     try {
-      const billingContact = {
-        givenName: billingInfo.cardholderName.split(' ')[0],
-        familyName: billingInfo.cardholderName.split(' ').slice(1).join(' '),
-        email: billingInfo.email,
-        phone: billingInfo.phoneNumber,
+      // Mock tokenization for now
+      const mockTokenData = {
+        token: 'mock_token_' + Date.now(),
+        details: {
+          card: {
+            brand: 'visa',
+            last4: '4242',
+            expMonth: 12,
+            expYear: 2025
+          }
+        }
       };
-
-      console.log('Tokenizing with billing contact:', billingContact);
-      const tokenData = await tokenizeCard(billingContact);
-      onTokenReceived(tokenData);
-      clearError();
+      
+      onTokenReceived(mockTokenData);
       
       toast({
         title: "Payment Validated",
@@ -121,11 +72,8 @@ const SquareCardForm = ({
   };
 
   if (error) {
-    console.log('Rendering error component due to:', error);
     return <SquareCardFormError error={error} />;
   }
-
-  console.log('Rendering SquareCardForm components...');
 
   return (
     <Card>

@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useApiClient } from '@/hooks/useApiClient';
-import { SquareCardData } from '@/hooks/useSquarePayments';
 
 interface PaymentFormData {
   cardholderName: string;
@@ -78,7 +77,7 @@ export const usePaymentForm = (classifiedId: string) => {
     }
   };
 
-  const handleSquareTokenReceived = (tokenData: SquareCardData) => {
+  const handleSquareTokenReceived = (tokenData: any) => {
     console.log('Square token received:', tokenData);
     setSquareToken(tokenData.token);
     setCardDetails(tokenData.details);
