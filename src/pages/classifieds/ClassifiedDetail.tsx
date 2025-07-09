@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, Link, useSearchParams } from 'react-router-dom';
 import PublicHeader from '@/components/PublicHeader';
 import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
 import ContactSellerDialog from '@/components/classifieds/ContactSellerDialog';
+import PaymentSuccessBanner from '@/components/classifieds/PaymentSuccessBanner';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, MapPin, Calendar, Mail, Phone, ExternalLink } from 'lucide-react';
@@ -12,9 +13,23 @@ import { useAdPackages } from '@/hooks/useAdPackages';
 
 const ClassifiedDetail = () => {
   const { id } = useParams<{ id: string }>();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { data: classified, isLoading, error } = useClassifiedDetail(id!);
   const [showContactDialog, setShowContactDialog] = useState(false);
+  const [showSuccessBanner, setShowSuccessBanner] = useState(false);
   const { data: adPackagesData } = useAdPackages();
+
+  // Check for payment success parameter in URL
+  useEffect(() => {
+    const paymentSuccess = searchParams.get('paymentSuccess');
+    if (paymentSuccess === 'true') {
+      setShowSuccessBanner(true);
+      // Remove the parameter from URL without triggering a navigation
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.delete('paymentSuccess');
+      setSearchParams(newSearchParams, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   // Find the ad package for this classified
   const adPackage = adPackagesData?.response?.find(pkg => pkg.adTypeId === classified?.pricingTier);
@@ -57,6 +72,10 @@ const ClassifiedDetail = () => {
       console.log('📬 Opening email client directly');
       window.open(`mailto:${classified?.email}`, '_blank');
     }
+  };
+
+  const handleDismissSuccessBanner = () => {
+    setShowSuccessBanner(false);
   };
 
   if (isLoading) {
@@ -116,6 +135,10 @@ const ClassifiedDetail = () => {
                 </Button>
               </Link>
             </div>
+
+            {showSuccessBanner && (
+              <PaymentSuccessBanner onDismiss={handleDismissSuccessBanner} />
+            )}
 
             <div className="bg-white rounded-lg shadow-lg overflow-hidden">
               <div className="p-6">

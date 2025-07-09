@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useApiClient } from '@/hooks/useApiClient';
 import { useToast } from '@/hooks/use-toast';
 
@@ -28,6 +28,7 @@ interface SquarePaymentCardProps {
 
 const SquarePaymentCard = ({ billingContact, billingAddress, onPaymentProcessed }: SquarePaymentCardProps) => {
   const { classifiedId } = useParams<{ classifiedId: string }>();
+  const navigate = useNavigate();
   const cardContainerRef = useRef<HTMLDivElement>(null);
   const [payments, setPayments] = useState<any>(null);
   const [card, setCard] = useState<any>(null);
@@ -137,10 +138,26 @@ const SquarePaymentCard = ({ billingContact, billingAddress, onPaymentProcessed 
           const paymentResponse = await apiClient.post('/classified/payment', paymentData, { requireAuth: false });
           console.log('Payment submission response:', paymentResponse);
           
-          toast({
-            title: "Payment Successful",
-            description: "Your payment has been processed successfully.",
-          });
+          // Check if payment was completed successfully
+          if (paymentResponse.response?.paymentStatus === 'COMPLETED') {
+            console.log('Payment completed successfully, redirecting to classified detail page');
+            
+            toast({
+              title: "Payment Successful",
+              description: "Your payment has been processed successfully.",
+            });
+            
+            // Redirect to classified detail page with success parameter
+            navigate(`/classifieds/${classifiedId}?paymentSuccess=true`);
+          } else {
+            console.log('Payment not completed, status:', paymentResponse.response?.paymentStatus);
+            setError('Payment was not completed successfully');
+            toast({
+              title: "Payment Issue",
+              description: "There was an issue completing your payment. Please try again.",
+              variant: "destructive",
+            });
+          }
           
           onPaymentProcessed?.(paymentResponse);
         } else {
