@@ -26,8 +26,15 @@ interface AdDetailsFormCardProps {
 
 const AdDetailsFormCard = ({ formData, categories, onFieldChange }: AdDetailsFormCardProps) => {
   const validPerOptions = [
+    'Bale',
+    'Board Foot',
+    'Bushel',
+    'Dozen',
     'Each',
-    'Dozen'
+    'Gallon',
+    'Pint',
+    'Pound',
+    'Quart'
   ];
 
   return (

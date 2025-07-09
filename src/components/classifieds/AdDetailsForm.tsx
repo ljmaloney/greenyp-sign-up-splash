@@ -27,8 +27,15 @@ const AdDetailsForm = ({
   const { data: categoriesData } = useClassifiedCategories();
 
   const validPerOptions = [
+    'Bale',
+    'Board Foot',
+    'Bushel',
+    'Dozen',
     'Each',
-    'Dozen'
+    'Gallon',
+    'Pint',
+    'Pound',
+    'Quart'
   ];
 
   const activeCategories = categoriesData?.response?.filter(cat => cat.active) || [];
