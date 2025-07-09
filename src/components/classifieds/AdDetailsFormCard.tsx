@@ -25,8 +25,9 @@ interface AdDetailsFormCardProps {
 }
 
 const AdDetailsFormCard = ({ formData, categories, onFieldChange }: AdDetailsFormCardProps) => {
-  const predefinedPerOptions = [
-    'Hour', 'Day', 'Each', 'Set', 'Lot', 'Yard', 'Sq Ft'
+  const validPerOptions = [
+    'Each',
+    'Dozen'
   ];
 
   return (
@@ -70,7 +71,7 @@ const AdDetailsFormCard = ({ formData, categories, onFieldChange }: AdDetailsFor
                 <SelectValue placeholder="Select unit" />
               </SelectTrigger>
               <SelectContent className="bg-white z-50">
-                {predefinedPerOptions.map((option) => (
+                {validPerOptions.map((option) => (
                   <SelectItem key={option} value={option}>
                     {option}
                   </SelectItem>
