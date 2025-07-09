@@ -58,22 +58,42 @@ export const useCreateAdForm = () => {
       // Check if there's a pre-selected package from navigation state
       const preSelectedPackage = location.state?.preSelectedPackage;
       
+      console.log('🎯 FORM INIT - Ad packages available:', adPackagesData.response.map(pkg => ({
+        id: pkg.adTypeId,
+        name: pkg.adTypeName
+      })));
+      console.log('🎯 FORM INIT - Pre-selected package from navigation:', preSelectedPackage);
+      
       if (preSelectedPackage) {
-        const selectedPackage = adPackagesData.response.find(pkg => pkg.adTypeId === preSelectedPackage && pkg.active);
+        // Look for exact match first (UUID)
+        let selectedPackage = adPackagesData.response.find(pkg => pkg.adTypeId === preSelectedPackage && pkg.active);
+        
+        // If no exact match, try to find by name (fallback for old logic)
+        if (!selectedPackage) {
+          selectedPackage = adPackagesData.response.find(pkg => 
+            pkg.adTypeName.toLowerCase() === preSelectedPackage.toLowerCase() && pkg.active
+          );
+        }
+        
         if (selectedPackage) {
+          console.log('🎯 FORM INIT - Found matching package:', selectedPackage.adTypeId, selectedPackage.adTypeName);
           setFormData(prev => ({ ...prev, adType: selectedPackage.adTypeId }));
           return;
+        } else {
+          console.log('🎯 FORM INIT - No matching package found for:', preSelectedPackage);
         }
       }
 
       // Fallback to default package
       const defaultPackage = adPackagesData.response.find(pkg => pkg.defaultPackage && pkg.active);
       if (defaultPackage) {
+        console.log('🎯 FORM INIT - Using default package:', defaultPackage.adTypeId, defaultPackage.adTypeName);
         setFormData(prev => ({ ...prev, adType: defaultPackage.adTypeId }));
       } else {
         // Fallback to first active package if no default is found
         const firstActivePackage = adPackagesData.response.find(pkg => pkg.active);
         if (firstActivePackage) {
+          console.log('🎯 FORM INIT - Using first active package:', firstActivePackage.adTypeId, firstActivePackage.adTypeName);
           setFormData(prev => ({ ...prev, adType: firstActivePackage.adTypeId }));
         }
       }
@@ -85,6 +105,16 @@ export const useCreateAdForm = () => {
   const selectedPackage = adPackages.find(pkg => pkg.adTypeId === formData.adType);
 
   const handleInputChange = (field: keyof FormData, value: string) => {
+    console.log('📝 FORM CHANGE - Field:', field, 'Value:', value);
+    if (field === 'adType') {
+      // Ensure we're always setting a valid UUID for adType
+      const selectedPkg = adPackages.find(pkg => pkg.adTypeId === value);
+      if (selectedPkg) {
+        console.log('📝 FORM CHANGE - Valid adType UUID:', value, 'Package:', selectedPkg.adTypeName);
+      } else {
+        console.warn('📝 FORM CHANGE - Invalid adType value:', value);
+      }
+    }
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -105,6 +135,18 @@ export const useCreateAdForm = () => {
         return false;
       }
     }
+    
+    // Additional validation to ensure adType is a valid UUID
+    if (formData.adType && !adPackages.find(pkg => pkg.adTypeId === formData.adType)) {
+      console.error('❌ VALIDATION - Invalid adType UUID:', formData.adType);
+      toast({
+        title: "Validation Error",
+        description: "Please select a valid ad package",
+        variant: "destructive"
+      });
+      return false;
+    }
+    
     return true;
   };
 
@@ -114,7 +156,7 @@ export const useCreateAdForm = () => {
     setIsSubmitting(true);
     try {
       const payload = {
-        adType: formData.adType,
+        adType: formData.adType, // This should now always be a proper UUID
         categoryId: formData.categoryId,
         price: formData.price ? parseFloat(formData.price) : 0,
         pricePerUnitType: formData.pricePerUnitType || 'NA',
@@ -130,14 +172,20 @@ export const useCreateAdForm = () => {
         description: formData.description
       };
 
-      console.log('🚀 Submitting classified ad:', payload);
-      console.log('📤 Payload JSON string:', JSON.stringify(payload, null, 2));
-      console.log('🌐 API Base URL:', apiClient.getBaseUrl());
-      console.log('🎯 Full endpoint URL:', `${apiClient.getBaseUrl()}/classified/create-ad`);
+      console.log('🚀 SUBMIT - Form data:', formData);
+      console.log('🚀 SUBMIT - Selected package:', selectedPackage);
+      console.log('🚀 SUBMIT - Payload being sent:', payload);
+      console.log('🚀 SUBMIT - AdType UUID validation:', {
+        adType: payload.adType,
+        isValidUUID: /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(payload.adType),
+        matchingPackage: adPackages.find(pkg => pkg.adTypeId === payload.adType)?.adTypeName
+      });
+      console.log('📤 SUBMIT - Payload JSON string:', JSON.stringify(payload, null, 2));
+      console.log('🌐 SUBMIT - API Base URL:', apiClient.getBaseUrl());
+      console.log('🎯 SUBMIT - Full endpoint URL:', `${apiClient.getBaseUrl()}/classified/create-ad`);
       
-      // Try using the direct endpoint path that matches your server configuration
       const response = await apiClient.post('/classified/create-ad', payload, { requireAuth: false });
-      console.log('✅ Classified ad created:', response);
+      console.log('✅ SUBMIT - Classified ad created:', response);
 
       if (response?.response?.classifiedId) {
         const classifiedId = response.response.classifiedId;
@@ -160,8 +208,8 @@ export const useCreateAdForm = () => {
         });
       }
     } catch (error) {
-      console.error('❌ Error creating classified ad:', error);
-      console.error('❌ Error details:', {
+      console.error('❌ SUBMIT - Error creating classified ad:', error);
+      console.error('❌ SUBMIT - Error details:', {
         name: error.name,
         message: error.message,
         stack: error.stack
