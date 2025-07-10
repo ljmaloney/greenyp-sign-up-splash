@@ -53,6 +53,11 @@ export const useClassifiedDetail = (id: string) => {
     queryFn: async (): Promise<Classified | null> => {
       console.log('🔍 Fetching classified detail for ID:', id);
       
+      if (!id || id === ':id') {
+        console.error('❌ Invalid or missing classified ID:', id);
+        throw new Error('Invalid classified ID');
+      }
+      
       try {
         const response: ClassifiedDetailApiResponse = await apiClient.get(
           `/classified/${id}`,
@@ -80,7 +85,7 @@ export const useClassifiedDetail = (id: string) => {
         throw error;
       }
     },
-    enabled: !!id,
+    enabled: !!id && id !== ':id',
     staleTime: 5 * 60 * 1000,
     retry: 2
   });

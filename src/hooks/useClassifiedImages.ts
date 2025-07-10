@@ -25,6 +25,11 @@ export const useClassifiedImages = (classifiedId: string, enabled: boolean = tru
     queryFn: async (): Promise<ClassifiedImage[]> => {
       console.log('🖼️ Fetching classified images for ID:', classifiedId);
       
+      if (!classifiedId || classifiedId === ':id') {
+        console.error('❌ Invalid or missing classified ID for images:', classifiedId);
+        return [];
+      }
+      
       const response: ClassifiedImagesResponse = await apiClient.get(
         `/classified/images/${classifiedId}/gallery`,
         { requireAuth: false }
@@ -39,7 +44,7 @@ export const useClassifiedImages = (classifiedId: string, enabled: boolean = tru
       
       return response.response || [];
     },
-    enabled: enabled && !!classifiedId,
+    enabled: enabled && !!classifiedId && classifiedId !== ':id',
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 2
   });

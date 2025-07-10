@@ -24,6 +24,19 @@ const ClassifiedDetail = () => {
   const [showSuccessBanner, setShowSuccessBanner] = useState(false);
   const { data: adPackagesData } = useAdPackages();
 
+  // Handle secret parameter and save it temporarily
+  useEffect(() => {
+    const secret = searchParams.get('secret');
+    if (secret) {
+      console.log('🔑 Secret parameter detected, saving temporarily:', secret);
+      localStorage.setItem('classifiedSecret', secret);
+      // Remove the secret from URL for security
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.delete('secret');
+      setSearchParams(newSearchParams, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
+
   // Check for payment success parameter in URL
   useEffect(() => {
     const paymentSuccess = searchParams.get('paymentSuccess');
