@@ -19,6 +19,27 @@ export const useImageUpload = (classifiedData: any, packageData: any, maxImages:
   const [imageDescriptions, setImageDescriptions] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
 
+  const getExtensionFromMimeType = (mimeType: string) => {
+    const mimeToExtension: { [key: string]: string } = {
+      'image/jpeg': '.jpg',
+      'image/jpg': '.jpg',
+      'image/png': '.png',
+      'image/gif': '.gif',
+      'image/webp': '.webp',
+      'image/bmp': '.bmp',
+      'image/tiff': '.tiff',
+      'image/svg+xml': '.svg'
+    };
+    
+    return mimeToExtension[mimeType.toLowerCase()] || '.jpg';
+  };
+
+  const generateDefaultImageName = (index: number, mimeType: string) => {
+    const paddedIndex = String(index + 1).padStart(4, '0');
+    const extension = getExtensionFromMimeType(mimeType);
+    return `image-${paddedIndex}${extension}`;
+  };
+
   const getFileExtension = (fileName: string) => {
     const lastDotIndex = fileName.lastIndexOf('.');
     return lastDotIndex > 0 ? fileName.substring(lastDotIndex) : '';
@@ -30,7 +51,7 @@ export const useImageUpload = (classifiedData: any, packageData: any, maxImages:
   };
 
   const createRenamedFile = (originalFile: File, newName: string): File => {
-    const extension = getFileExtension(originalFile.name);
+    const extension = getExtensionFromMimeType(originalFile.type);
     const finalName = newName.trim() + extension;
     return new File([originalFile], finalName, { type: originalFile.type });
   };
@@ -72,9 +93,9 @@ export const useImageUpload = (classifiedData: any, packageData: any, maxImages:
       return true;
     });
 
-    const newFilesWithNames = validFiles.map(file => ({
+    const newFilesWithNames = validFiles.map((file, index) => ({
       file,
-      customName: getFileNameWithoutExtension(file.name)
+      customName: getFileNameWithoutExtension(generateDefaultImageName(filesWithNames.length + index, file.type))
     }));
 
     setFilesWithNames(prev => [...prev, ...newFilesWithNames]);
@@ -128,7 +149,6 @@ export const useImageUpload = (classifiedData: any, packageData: any, maxImages:
           fileType: fileToUpload.type
         });
         
-        // Fixed parameter name from imageFileName to imageFilename
         await apiClient.request(`/classified/images/${classifiedId}/gallery?imageFilename=${encodeURIComponent(fileToUpload.name)}&imageDescription=${encodeURIComponent(description)}`, {
           method: 'POST',
           body: formData,

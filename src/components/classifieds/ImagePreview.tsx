@@ -27,9 +27,19 @@ const ImagePreview = ({
 }: ImagePreviewProps) => {
   if (filesWithNames.length === 0) return null;
 
-  const getFileExtension = (fileName: string) => {
-    const lastDotIndex = fileName.lastIndexOf('.');
-    return lastDotIndex > 0 ? fileName.substring(lastDotIndex) : '';
+  const getExtensionFromMimeType = (mimeType: string) => {
+    const mimeToExtension: { [key: string]: string } = {
+      'image/jpeg': '.jpg',
+      'image/jpg': '.jpg',
+      'image/png': '.png',
+      'image/gif': '.gif',
+      'image/webp': '.webp',
+      'image/bmp': '.bmp',
+      'image/tiff': '.tiff',
+      'image/svg+xml': '.svg'
+    };
+    
+    return mimeToExtension[mimeType.toLowerCase()] || '.jpg';
   };
 
   return (
@@ -72,12 +82,12 @@ const ImagePreview = ({
                   className="flex-1"
                 />
                 <span className="text-sm text-gray-500 font-mono">
-                  {getFileExtension(file.name)}
+                  {getExtensionFromMimeType(file.type)}
                 </span>
               </div>
               <p className="text-xs text-gray-500">
                 Final name: {customName.trim() || file.name.substring(0, file.name.lastIndexOf('.')) || file.name}
-                {getFileExtension(file.name)}
+                {getExtensionFromMimeType(file.type)}
               </p>
             </div>
 
