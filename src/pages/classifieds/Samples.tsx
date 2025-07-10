@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import PublicHeader from '@/components/PublicHeader';
 import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
@@ -15,16 +16,21 @@ const Samples = () => {
   const { data: adPackagesData, isLoading } = useAdPackages();
   const [selectedTierId, setSelectedTierId] = useState<string>('');
 
+  console.log('Samples component:', { adPackagesData, selectedTierId, isLoading });
+
   // Set default tier based on defaultPackage property
   useEffect(() => {
     if (adPackagesData?.response && !selectedTierId) {
+      console.log('Available packages:', adPackagesData.response);
       const defaultPackage = adPackagesData.response.find(pkg => pkg.defaultPackage && pkg.active);
       if (defaultPackage) {
+        console.log('Found default package:', defaultPackage);
         setSelectedTierId(defaultPackage.adTypeId);
       } else {
         // Fallback to first active package if no default is found
         const firstActivePackage = adPackagesData.response.find(pkg => pkg.active);
         if (firstActivePackage) {
+          console.log('Using first active package as fallback:', firstActivePackage);
           setSelectedTierId(firstActivePackage.adTypeId);
         }
       }
@@ -33,6 +39,7 @@ const Samples = () => {
 
   // Map ad package names to prototype ads
   const getPrototypeAdByPackageName = (packageName: string): Classified => {
+    console.log('Getting prototype for package:', packageName);
     const prototypeAdsMap: Record<string, Classified> = {
       'Basic': {
         id: 'proto-basic',
@@ -108,7 +115,12 @@ const Samples = () => {
 
   const activePackages = adPackagesData?.response?.filter(pkg => pkg.active) || [];
   const selectedPackage = activePackages.find(pkg => pkg.adTypeId === selectedTierId);
+  
+  console.log('Selected package info:', { selectedPackage, selectedTierId, activePackages });
+  
   const selectedAd = selectedPackage ? getPrototypeAdByPackageName(selectedPackage.adTypeName) : null;
+
+  console.log('Selected ad:', selectedAd);
 
   const handleCreateAdNow = () => {
     navigate('/classifieds/create', {
@@ -118,14 +130,45 @@ const Samples = () => {
     });
   };
 
-  // If no ad is found for the selected tier, show error
-  if (!selectedAd || !selectedPackage) {
+  // If no packages are available
+  if (!activePackages.length) {
     return (
       <div className="min-h-screen flex flex-col">
         <PublicHeader />
         <main className="flex-grow bg-gray-50 py-8">
           <div className="container mx-auto px-4 max-w-4xl">
-            <div className="text-center text-red-600">Error: Ad prototype not found</div>
+            <div className="text-center text-red-600">No ad packages available</div>
+          </div>
+        </main>
+        <ClassifiedsFooter />
+      </div>
+    );
+  }
+
+  // If no tier is selected yet, show loading
+  if (!selectedTierId) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <PublicHeader />
+        <main className="flex-grow bg-gray-50 py-8">
+          <div className="container mx-auto px-4 max-w-4xl">
+            <div className="text-center">Loading packages...</div>
+          </div>
+        </main>
+        <ClassifiedsFooter />
+      </div>
+    );
+  }
+
+  // If no ad is found for the selected tier, show error
+  if (!selectedAd || !selectedPackage) {
+    console.error('Ad prototype not found:', { selectedPackage, selectedTierId, selectedAd });
+    return (
+      <div className="min-h-screen flex flex-col">
+        <PublicHeader />
+        <main className="flex-grow bg-gray-50 py-8">
+          <div className="container mx-auto px-4 max-w-4xl">
+            <div className="text-center text-red-600">Error: Ad prototype not found for selected package</div>
           </div>
         </main>
         <ClassifiedsFooter />

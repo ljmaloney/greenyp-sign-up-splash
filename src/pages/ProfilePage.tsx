@@ -8,12 +8,18 @@ import ProfileLoadingState from '@/components/profile/ProfileLoadingState';
 import ProfileErrorState from '@/components/profile/ProfileErrorState';
 
 const ProfilePage = () => {
-  const { producerId, producerLocationId } = useParams<{ 
-    producerId: string;
-    producerLocationId: string; 
+  const { businessId, producerId, producerLocationId } = useParams<{ 
+    businessId?: string;
+    producerId?: string;
+    producerLocationId?: string; 
   }>();
   
-  const { data: profileResponse, isLoading, error } = useProducerProfile(producerLocationId!);
+  // Use the appropriate ID based on which route was matched
+  const profileId = producerLocationId || businessId;
+  
+  console.log('ProfilePage params:', { businessId, producerId, producerLocationId, profileId });
+  
+  const { data: profileResponse, isLoading, error } = useProducerProfile(profileId!);
 
   if (isLoading) {
     return <ProfileLoadingState />;
