@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { formatPhoneNumber } from '@/utils/phoneFormatting';
 import BillingContactForm from './BillingContactForm';
 import BillingAddressForm from './BillingAddressForm';
 import PaymentInformationHeader from './PaymentInformationHeader';
@@ -35,17 +34,17 @@ const NewPaymentInformationCard = ({ classified, customer, onBillingInfoChange }
   const { toast } = useToast();
   
   const [billingContact, setBillingContact] = useState({
-    firstName: customer?.firstName || '',
-    lastName: customer?.lastName || '',
-    email: customer?.emailAddress || '',
-    phone: formatPhoneNumber(customer?.phoneNumber || '')
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: ''
   });
 
   const [billingAddress, setBillingAddress] = useState({
-    address: customer?.address || '',
-    city: customer?.city || '',
-    state: customer?.state || '',
-    zipCode: customer?.postalCode || ''
+    address: '',
+    city: '',
+    state: '',
+    zipCode: ''
   });
 
   // Notify parent component of billing info changes
@@ -58,7 +57,7 @@ const NewPaymentInformationCard = ({ classified, customer, onBillingInfoChange }
       firstName: customer?.firstName || '',
       lastName: customer?.lastName || '',
       email: customer?.emailAddress || '',
-      phone: formatPhoneNumber(customer?.phoneNumber || '')
+      phone: customer?.phoneNumber || ''
     };
     
     const newAddress = {
