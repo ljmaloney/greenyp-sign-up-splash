@@ -1,5 +1,5 @@
 
-import { normalizePhoneNumber } from '@/utils/phoneUtils';
+import { normalizePhoneForSquare } from '@/utils/phoneUtils';
 
 interface BillingContactData {
   firstName: string;
@@ -32,19 +32,19 @@ export const processSquarePayment = async (
   if (result.status === 'OK') {
     console.log('Card tokenized successfully, token:', result.token);
     
-    // Normalize phone number to US standard format before submission
-    const normalizedPhone = normalizePhoneNumber(billingContact.phone);
+    // Normalize phone number to Square's required format (+1XXXXXXXXXX)
+    const squareFormattedPhone = normalizePhoneForSquare(billingContact.phone);
     console.log('Original phone:', billingContact.phone);
-    console.log('Normalized phone:', normalizedPhone);
+    console.log('Square formatted phone:', squareFormattedPhone);
     
-    // Prepare verification details using billing information with normalized phone
+    // Prepare verification details using billing information with Square-formatted phone
     const verificationDetails = {
       amount: '1.00', // test amount or expected charge
       billingContact: {
         givenName: billingContact.firstName || 'John',
         familyName: billingContact.lastName || 'Doe',
         email: billingContact.email || 'john.doe@example.com',
-        phone: normalizedPhone || '3214563987',
+        phone: squareFormattedPhone || '+13214563987',
         addressLines: [billingAddress.address || '123 Main Street'],
         city: billingAddress.city || 'Oakland',
         state: billingAddress.state || 'CA',
@@ -65,7 +65,7 @@ export const processSquarePayment = async (
     if (verificationResult && verificationResult.token) {
       console.log('Payment verified successfully, submitting to backend...');
       
-      // Submit payment to backend with normalized phone number
+      // Submit payment to backend with Square-formatted phone number
       const paymentData = {
         classifiedId: classifiedId,
         paymentToken: result.token,
@@ -76,11 +76,11 @@ export const processSquarePayment = async (
         city: billingAddress.city || 'Oakland',
         state: billingAddress.state || 'CA',
         postalCode: billingAddress.zipCode,
-        phoneNumber: normalizedPhone, // Use normalized phone number
+        phoneNumber: squareFormattedPhone, // Use Square-formatted phone number
         emailAddress: billingContact.email
       };
 
-      console.log('Submitting payment data with normalized phone:', paymentData);
+      console.log('Submitting payment data with Square-formatted phone:', paymentData);
       
       const paymentResponse = await apiClient.post('/classified/payment', paymentData, { requireAuth: false });
       console.log('Payment submission response:', paymentResponse);
