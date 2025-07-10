@@ -1,3 +1,4 @@
+
 import React, { useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import PublicHeader from '@/components/PublicHeader';
@@ -66,10 +67,58 @@ const SearchResults = () => {
 
   const getSearchSummary = () => {
     const parts = [];
-    if (filters.keyword) parts.push(`"${filters.keyword}"`);
-    if (filters.category) parts.push(`in ${filters.category}`);
-    if (filters.zipCode) parts.push(`near ${filters.zipCode}`);
+    
+    if (filters.keyword) {
+      parts.push(`"${filters.keyword}"`);
+    }
+    
+    if (filters.category) {
+      parts.push(`in ${filters.category}`);
+    }
+    
+    if (filters.zipCode) {
+      const distance = filters.maxMiles ? ` within ${filters.maxMiles} miles` : '';
+      parts.push(`near ${filters.zipCode}${distance}`);
+    } else if (filters.maxMiles) {
+      parts.push(`within ${filters.maxMiles} miles`);
+    }
+    
     return parts.length > 0 ? parts.join(' ') : 'all classifieds';
+  };
+
+  const getSearchDescription = () => {
+    const hasZipCode = filters.zipCode;
+    const hasCategory = filters.category;
+    const hasKeyword = filters.keyword;
+    const hasDistance = filters.maxMiles;
+
+    if (!hasZipCode && !hasCategory && !hasKeyword && !hasDistance) {
+      return 'Showing all classifieds';
+    }
+
+    let description = 'Showing results for ';
+    const parts = [];
+
+    if (hasKeyword) {
+      parts.push(`"${filters.keyword}"`);
+    }
+
+    if (hasCategory) {
+      parts.push(`${hasKeyword ? 'in' : ''} ${filters.category}`);
+    }
+
+    if (hasZipCode) {
+      const distanceText = hasDistance ? ` within ${filters.maxMiles} miles of` : ' near';
+      parts.push(`${distanceText} ${filters.zipCode}`);
+    } else if (hasDistance) {
+      parts.push(`within ${filters.maxMiles} miles`);
+    }
+
+    if (parts.length === 0) {
+      return 'Showing all classifieds';
+    }
+
+    return description + parts.join(' ');
   };
 
   return (
@@ -96,8 +145,7 @@ const SearchResults = () => {
             
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Search Results</h1>
             <p className="text-gray-600">
-              Showing results for {getSearchSummary()}
-              {filters.maxMiles && ` within ${filters.maxMiles} miles`}
+              {getSearchDescription()}
             </p>
           </div>
 
