@@ -29,7 +29,7 @@ interface CustomerData {
 
 interface UsePaymentInformationProps {
   customer?: CustomerData;
-  onBillingInfoChange?: (contact: BillingContactData, address: BillingAddressData) => void;
+  onBillingInfoChange?: (contact: BillingContactData, address: BillingAddressData, emailValidationToken: string) => void;
 }
 
 export const usePaymentInformation = ({ customer, onBillingInfoChange }: UsePaymentInformationProps = {}) => {
@@ -49,10 +49,12 @@ export const usePaymentInformation = ({ customer, onBillingInfoChange }: UsePaym
     zipCode: ''
   });
 
+  const [emailValidationToken, setEmailValidationToken] = useState<string>('');
+
   // Notify parent component of billing info changes
   useEffect(() => {
-    onBillingInfoChange?.(billingContact, billingAddress);
-  }, [billingContact, billingAddress, onBillingInfoChange]);
+    onBillingInfoChange?.(billingContact, billingAddress, emailValidationToken);
+  }, [billingContact, billingAddress, emailValidationToken, onBillingInfoChange]);
 
   const handleCopyFromCustomer = () => {
     if (!customer) return;
@@ -88,11 +90,17 @@ export const usePaymentInformation = ({ customer, onBillingInfoChange }: UsePaym
     setBillingAddress(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleEmailValidationTokenChange = (value: string) => {
+    setEmailValidationToken(value);
+  };
+
   return {
     billingContact,
     billingAddress,
+    emailValidationToken,
     handleCopyFromCustomer,
     handleContactChange,
-    handleAddressChange
+    handleAddressChange,
+    handleEmailValidationTokenChange
   };
 };

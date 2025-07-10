@@ -25,10 +25,11 @@ interface BillingAddressData {
 interface SquarePaymentCardProps {
   billingContact: BillingContactData;
   billingAddress: BillingAddressData;
+  emailValidationToken: string;
   onPaymentProcessed?: (result: any) => void;
 }
 
-const SquarePaymentCard = ({ billingContact, billingAddress, onPaymentProcessed }: SquarePaymentCardProps) => {
+const SquarePaymentCard = ({ billingContact, billingAddress, emailValidationToken, onPaymentProcessed }: SquarePaymentCardProps) => {
   const { classifiedId } = useParams<{ classifiedId: string }>();
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -61,6 +62,17 @@ const SquarePaymentCard = ({ billingContact, billingAddress, onPaymentProcessed 
       return;
     }
 
+    // Validate email validation token
+    if (!emailValidationToken || emailValidationToken.trim() === '') {
+      setError('Email validation token is required');
+      toast({
+        title: "Required Information Missing",
+        description: "Email validation token is required",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsProcessing(true);
     setError(null);
 
@@ -71,7 +83,8 @@ const SquarePaymentCard = ({ billingContact, billingAddress, onPaymentProcessed 
         billingContact,
         billingAddress,
         classifiedId,
-        apiClient
+        apiClient,
+        emailValidationToken
       );
       
       // Check if payment was completed successfully

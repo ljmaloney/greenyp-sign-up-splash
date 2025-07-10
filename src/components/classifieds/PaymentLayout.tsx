@@ -48,7 +48,8 @@ const PaymentLayout = ({ classified, customer }: PaymentLayoutProps) => {
       city: customer?.city || '',
       state: customer?.state || '',
       zipCode: customer?.postalCode || ''
-    }
+    },
+    emailValidationToken: ''
   });
 
   const handlePaymentProcessed = (result: any) => {
@@ -56,8 +57,8 @@ const PaymentLayout = ({ classified, customer }: PaymentLayoutProps) => {
     // Handle successful payment here
   };
 
-  const handleBillingInfoUpdate = React.useCallback((contact: any, address: any) => {
-    setBillingInfo({ contact, address });
+  const handleBillingInfoUpdate = React.useCallback((contact: any, address: any, emailValidationToken: string) => {
+    setBillingInfo({ contact, address, emailValidationToken });
   }, []);
 
   return (
@@ -78,6 +79,7 @@ const PaymentLayout = ({ classified, customer }: PaymentLayoutProps) => {
         <SquarePaymentCard
           billingContact={billingInfo.contact}
           billingAddress={billingInfo.address}
+          emailValidationToken={billingInfo.emailValidationToken}
           onPaymentProcessed={handlePaymentProcessed}
         />
       </div>

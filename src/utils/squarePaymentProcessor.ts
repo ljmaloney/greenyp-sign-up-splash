@@ -21,7 +21,8 @@ export const processSquarePayment = async (
   billingContact: BillingContactData,
   billingAddress: BillingAddressData,
   classifiedId: string,
-  apiClient: any
+  apiClient: any,
+  emailValidationToken: string
 ) => {
   console.log('Starting tokenization process...');
   
@@ -65,7 +66,7 @@ export const processSquarePayment = async (
     if (verificationResult && verificationResult.token) {
       console.log('Payment verified successfully, submitting to backend...');
       
-      // Submit payment to backend with Square-formatted phone number
+      // Submit payment to backend with Square-formatted phone number and email validation token
       const paymentData = {
         classifiedId: classifiedId,
         paymentToken: result.token,
@@ -77,10 +78,11 @@ export const processSquarePayment = async (
         state: billingAddress.state || 'CA',
         postalCode: billingAddress.zipCode,
         phoneNumber: squareFormattedPhone, // Use Square-formatted phone number
-        emailAddress: billingContact.email
+        emailAddress: billingContact.email,
+        emailValidationToken: emailValidationToken // Add email validation token to payload
       };
 
-      console.log('Submitting payment data with Square-formatted phone:', paymentData);
+      console.log('Submitting payment data with email validation token:', paymentData);
       
       const paymentResponse = await apiClient.post('/classified/payment', paymentData, { requireAuth: false });
       console.log('Payment submission response:', paymentResponse);
