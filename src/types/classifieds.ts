@@ -4,6 +4,8 @@ export interface Classified {
   description: string;
   category: string;
   zipCode: string;
+  city?: string;
+  state?: string;
   email: string;
   phone: string;
   images: string[];
@@ -11,6 +13,7 @@ export interface Classified {
   contactObfuscated: boolean;
   createdAt: string;
   expiresAt: string;
+  price?: number; // Add price field
 }
 
 export interface ClassifiedCategory {

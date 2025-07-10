@@ -37,15 +37,18 @@ const transformApiResponseToClassified = (apiResponse: ClassifiedDetailApiRespon
     id: apiResponse.classifiedId,
     title: apiResponse.title,
     description: apiResponse.description,
-    category: 'General', // We'll need to map categoryId to category name later
+    category: apiResponse.categoryId, // Use the actual categoryId from API
     zipCode: apiResponse.postalCode,
+    city: apiResponse.city,
+    state: apiResponse.state,
     email: apiResponse.emailAddress,
     phone: apiResponse.phoneNumber,
     images: [], // Images will be fetched separately using useClassifiedImages
     pricingTier: apiResponse.adTypeId,
     contactObfuscated: false, // Default value, will be determined by ad package
     createdAt: apiResponse.createDate,
-    expiresAt: expirationDate.toISOString()
+    expiresAt: expirationDate.toISOString(),
+    price: apiResponse.price // Add the actual price from the API
   };
 };
 

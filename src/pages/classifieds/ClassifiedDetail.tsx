@@ -63,7 +63,7 @@ const ClassifiedDetail = () => {
   // Find the ad package for this classified
   const adPackage = adPackagesData?.response?.find(pkg => pkg.adTypeId === classified?.pricingTier);
   
-  // Find the category name from the categories list
+  // Find the category name from the categories list using the categoryId
   const categoryName = categoriesData?.response?.find(cat => cat.categoryId === classified?.category)?.name;
   
   // Check if contact should be protected - either by ad package feature OR if contact is obfuscated
@@ -125,7 +125,7 @@ const ClassifiedDetail = () => {
               <ClassifiedDetailHeader 
                 classified={classified}
                 categoryName={categoryName}
-                price={adPackage?.monthlyPrice}
+                price={classified.price}
               />
               
               <div className="px-6 pb-8">
