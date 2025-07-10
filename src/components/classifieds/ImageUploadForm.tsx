@@ -138,7 +138,8 @@ const ImageUploadForm = ({ classifiedData, packageData, maxImages }: ImageUpload
           fileType: fileToUpload.type
         });
         
-        await apiClient.request(`/classified/images/${classifiedId}/gallery?imageFileName=${encodeURIComponent(fileToUpload.name)}&imageDescription=${encodeURIComponent(description)}`, {
+        // Fixed parameter name from imageFileName to imageFilename
+        await apiClient.request(`/classified/images/${classifiedId}/gallery?imageFilename=${encodeURIComponent(fileToUpload.name)}&imageDescription=${encodeURIComponent(description)}`, {
           method: 'POST',
           body: formData,
           requireAuth: false,
