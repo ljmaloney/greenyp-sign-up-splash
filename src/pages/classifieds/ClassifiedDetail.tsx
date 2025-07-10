@@ -14,6 +14,7 @@ import ClassifiedDetailError from '@/components/classifieds/ClassifiedDetailErro
 import { useClassifiedDetail } from '@/hooks/useClassifiedDetail';
 import { useClassifiedImages } from '@/hooks/useClassifiedImages';
 import { useAdPackages } from '@/hooks/useAdPackages';
+import { useClassifiedCategories } from '@/hooks/useClassifiedCategories';
 
 const ClassifiedDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -23,6 +24,7 @@ const ClassifiedDetail = () => {
   const [showContactDialog, setShowContactDialog] = useState(false);
   const [showSuccessBanner, setShowSuccessBanner] = useState(false);
   const { data: adPackagesData } = useAdPackages();
+  const { data: categoriesData } = useClassifiedCategories();
 
   // Handle secret parameter and save it temporarily
   useEffect(() => {
@@ -60,6 +62,9 @@ const ClassifiedDetail = () => {
 
   // Find the ad package for this classified
   const adPackage = adPackagesData?.response?.find(pkg => pkg.adTypeId === classified?.pricingTier);
+  
+  // Find the category name from the categories list
+  const categoryName = categoriesData?.response?.find(cat => cat.categoryId === classified?.category)?.name;
   
   // Check if contact should be protected - either by ad package feature OR if contact is obfuscated
   const hasProtectedContact = (adPackage?.features?.protectContact || classified?.contactObfuscated) || false;
@@ -117,9 +122,13 @@ const ClassifiedDetail = () => {
             )}
 
             <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-              <ClassifiedDetailHeader classified={classified} />
+              <ClassifiedDetailHeader 
+                classified={classified}
+                categoryName={categoryName}
+                price={adPackage?.monthlyPrice}
+              />
               
-              <div className="px-6">
+              <div className="px-6 pb-8">
                 <ClassifiedImageGallery 
                   images={displayImages} 
                   title={classified.title}

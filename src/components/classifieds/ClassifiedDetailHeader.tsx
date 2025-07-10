@@ -9,9 +9,11 @@ import { Classified } from '@/types/classifieds';
 
 interface ClassifiedDetailHeaderProps {
   classified: Classified;
+  categoryName?: string;
+  price?: number;
 }
 
-const ClassifiedDetailHeader = ({ classified }: ClassifiedDetailHeaderProps) => {
+const ClassifiedDetailHeader = ({ classified, categoryName, price }: ClassifiedDetailHeaderProps) => {
   return (
     <>
       <div className="mb-6">
@@ -25,8 +27,17 @@ const ClassifiedDetailHeader = ({ classified }: ClassifiedDetailHeaderProps) => 
 
       <div className="p-6">
         <div className="flex justify-between items-start mb-4">
-          <h1 className="text-3xl font-bold text-gray-900 text-center flex-1">{classified.title}</h1>
-          <Badge variant="secondary" className="ml-4">{classified.category}</Badge>
+          <div className="flex-1">
+            <h1 className="text-3xl font-bold text-gray-900 text-left">{classified.title}</h1>
+          </div>
+          <div className="flex flex-col items-end ml-4 gap-2">
+            {price !== undefined && (
+              <div className="text-2xl font-bold text-greenyp-600">
+                ${price.toFixed(2)}
+              </div>
+            )}
+            <Badge variant="secondary">{categoryName || classified.category}</Badge>
+          </div>
         </div>
 
         <div className="flex items-center text-gray-500 space-x-6 mb-6">
