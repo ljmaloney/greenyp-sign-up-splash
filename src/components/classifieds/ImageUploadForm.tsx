@@ -14,21 +14,36 @@ interface ImageUploadFormProps {
   maxImages: number;
 }
 
+interface FileWithCustomName {
+  file: File;
+  customName: string;
+}
+
 const ImageUploadForm = ({ classifiedData, packageData, maxImages }: ImageUploadFormProps) => {
   const { classifiedId } = useParams();
   const navigate = useNavigate();
   const apiClient = useApiClient();
   const { toast } = useToast();
 
-  const [images, setImages] = useState<File[]>([]);
+  const [filesWithNames, setFilesWithNames] = useState<FileWithCustomName[]>([]);
   const [imageDescriptions, setImageDescriptions] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+
+  const getFileExtension = (fileName: string) => {
+    const lastDotIndex = fileName.lastIndexOf('.');
+    return lastDotIndex > 0 ? fileName.substring(lastDotIndex) : '';
+  };
+
+  const getFileNameWithoutExtension = (fileName: string) => {
+    const lastDotIndex = fileName.lastIndexOf('.');
+    return lastDotIndex > 0 ? fileName.substring(0, lastDotIndex) : fileName;
+  };
 
   const handleFileSelect = (files: FileList | null) => {
     if (!files) return;
 
     const newFiles = Array.from(files);
-    const totalImages = images.length + newFiles.length;
+    const totalImages = filesWithNames.length + newFiles.length;
 
     if (totalImages > maxImages) {
       toast({
@@ -61,12 +76,17 @@ const ImageUploadForm = ({ classifiedData, packageData, maxImages }: ImageUpload
       return true;
     });
 
-    setImages(prev => [...prev, ...validFiles]);
+    const newFilesWithNames = validFiles.map(file => ({
+      file,
+      customName: getFileNameWithoutExtension(file.name)
+    }));
+
+    setFilesWithNames(prev => [...prev, ...newFilesWithNames]);
     setImageDescriptions(prev => [...prev, ...validFiles.map(() => '')]);
   };
 
   const removeImage = (index: number) => {
-    setImages(prev => prev.filter((_, i) => i !== index));
+    setFilesWithNames(prev => prev.filter((_, i) => i !== index));
     setImageDescriptions(prev => prev.filter((_, i) => i !== index));
   };
 
@@ -74,8 +94,20 @@ const ImageUploadForm = ({ classifiedData, packageData, maxImages }: ImageUpload
     setImageDescriptions(prev => prev.map((desc, i) => i === index ? description : desc));
   };
 
+  const updateFileName = (index: number, customName: string) => {
+    setFilesWithNames(prev => prev.map((item, i) => 
+      i === index ? { ...item, customName } : item
+    ));
+  };
+
+  const createRenamedFile = (originalFile: File, newName: string): File => {
+    const extension = getFileExtension(originalFile.name);
+    const finalName = newName.trim() + extension;
+    return new File([originalFile], finalName, { type: originalFile.type });
+  };
+
   const handleUpload = async () => {
-    if (images.length === 0) {
+    if (filesWithNames.length === 0) {
       // Skip to payment if no images
       navigate(`/classifieds/payment/${classifiedId}`, { 
         state: { classifiedData, packageData }
@@ -85,25 +117,32 @@ const ImageUploadForm = ({ classifiedData, packageData, maxImages }: ImageUpload
 
     setIsUploading(true);
     try {
-      for (let i = 0; i < images.length; i++) {
-        const file = images[i];
-        const description = imageDescriptions[i] || file.name;
+      for (let i = 0; i < filesWithNames.length; i++) {
+        const { file: originalFile, customName } = filesWithNames[i];
+        const description = imageDescriptions[i] || '';
+        
+        // Create renamed file if custom name is provided
+        const fileToUpload = customName.trim() 
+          ? createRenamedFile(originalFile, customName.trim())
+          : originalFile;
         
         const formData = new FormData();
-        formData.append('file', file); // Changed from 'image' to 'file' to match server expectation
+        formData.append('file', fileToUpload);
         
         console.log('📤 Uploading file:', {
-          fileName: file.name,
+          originalFileName: originalFile.name,
+          finalFileName: fileToUpload.name,
+          customName,
           description,
-          fileSize: file.size,
-          fileType: file.type
+          fileSize: fileToUpload.size,
+          fileType: fileToUpload.type
         });
         
-        await apiClient.request(`/classified/images/${classifiedId}/gallery?imageFileName=${encodeURIComponent(file.name)}&imageDescription=${encodeURIComponent(description)}`, {
+        await apiClient.request(`/classified/images/${classifiedId}/gallery?imageFileName=${encodeURIComponent(fileToUpload.name)}&imageDescription=${encodeURIComponent(description)}`, {
           method: 'POST',
           body: formData,
           requireAuth: false,
-          headers: {} // Don't set Content-Type for FormData
+          headers: {}
         });
       }
 
@@ -140,7 +179,7 @@ const ImageUploadForm = ({ classifiedData, packageData, maxImages }: ImageUpload
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Upload Images ({images.length}/{maxImages})</CardTitle>
+          <CardTitle>Upload Images ({filesWithNames.length}/{maxImages})</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Upload Zone */}
@@ -169,10 +208,11 @@ const ImageUploadForm = ({ classifiedData, packageData, maxImages }: ImageUpload
 
           {/* Image Previews */}
           <ImagePreview
-            images={images}
+            filesWithNames={filesWithNames}
             imageDescriptions={imageDescriptions}
             onRemoveImage={removeImage}
             onUpdateDescription={updateDescription}
+            onUpdateFileName={updateFileName}
           />
         </CardContent>
       </Card>
@@ -190,7 +230,7 @@ const ImageUploadForm = ({ classifiedData, packageData, maxImages }: ImageUpload
           disabled={isUploading}
           className="bg-greenyp-600 hover:bg-greenyp-700 px-8"
         >
-          {isUploading ? 'Uploading...' : images.length > 0 ? 'Upload & Continue' : 'Skip & Continue'}
+          {isUploading ? 'Uploading...' : filesWithNames.length > 0 ? 'Upload & Continue' : 'Skip & Continue'}
         </Button>
       </div>
     </div>

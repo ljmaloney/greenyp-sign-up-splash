@@ -3,27 +3,39 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { X } from 'lucide-react';
+import { X, Edit2 } from 'lucide-react';
+
+interface FileWithCustomName {
+  file: File;
+  customName: string;
+}
 
 interface ImagePreviewProps {
-  images: File[];
+  filesWithNames: FileWithCustomName[];
   imageDescriptions: string[];
   onRemoveImage: (index: number) => void;
   onUpdateDescription: (index: number, description: string) => void;
+  onUpdateFileName: (index: number, customName: string) => void;
 }
 
 const ImagePreview = ({ 
-  images, 
+  filesWithNames, 
   imageDescriptions, 
   onRemoveImage, 
-  onUpdateDescription 
+  onUpdateDescription,
+  onUpdateFileName
 }: ImagePreviewProps) => {
-  if (images.length === 0) return null;
+  if (filesWithNames.length === 0) return null;
+
+  const getFileExtension = (fileName: string) => {
+    const lastDotIndex = fileName.lastIndexOf('.');
+    return lastDotIndex > 0 ? fileName.substring(lastDotIndex) : '';
+  };
 
   return (
     <div className="space-y-4">
-      {images.map((file, index) => (
-        <div key={index} className="flex items-center gap-4 p-4 border rounded-lg">
+      {filesWithNames.map(({ file, customName }, index) => (
+        <div key={index} className="flex items-start gap-4 p-4 border rounded-lg">
           <div className="relative">
             <img
               src={URL.createObjectURL(file)}
@@ -40,10 +52,40 @@ const ImagePreview = ({
               <X className="w-3 h-3" />
             </Button>
           </div>
-          <div className="flex-1">
-            <div className="text-sm font-medium mb-2">{file.name}</div>
-            <div>
-              <Label htmlFor={`desc-${index}`}>Description (optional)</Label>
+          <div className="flex-1 space-y-4">
+            <div className="text-sm font-medium text-gray-600">
+              Original: {file.name}
+            </div>
+            
+            {/* File Name Editor */}
+            <div className="space-y-2">
+              <Label htmlFor={`filename-${index}`} className="text-sm font-medium flex items-center gap-2">
+                <Edit2 className="h-4 w-4" />
+                File Name (optional)
+              </Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  id={`filename-${index}`}
+                  value={customName}
+                  onChange={(e) => onUpdateFileName(index, e.target.value)}
+                  placeholder="Enter custom file name"
+                  className="flex-1"
+                />
+                <span className="text-sm text-gray-500 font-mono">
+                  {getFileExtension(file.name)}
+                </span>
+              </div>
+              <p className="text-xs text-gray-500">
+                Final name: {customName.trim() || file.name.substring(0, file.name.lastIndexOf('.')) || file.name}
+                {getFileExtension(file.name)}
+              </p>
+            </div>
+
+            {/* Description Editor */}
+            <div className="space-y-2">
+              <Label htmlFor={`desc-${index}`} className="text-sm font-medium">
+                Description (optional)
+              </Label>
               <Input
                 id={`desc-${index}`}
                 value={imageDescriptions[index]}
