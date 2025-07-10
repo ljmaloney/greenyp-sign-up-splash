@@ -22,12 +22,21 @@ const ClassifiedDetail = () => {
   // Check for payment success parameter in URL
   useEffect(() => {
     const paymentSuccess = searchParams.get('paymentSuccess');
+    console.log('🎯 ClassifiedDetail - Checking for paymentSuccess parameter:', {
+      paymentSuccess,
+      allSearchParams: Object.fromEntries(searchParams.entries()),
+      currentUrl: window.location.href
+    });
+    
     if (paymentSuccess === 'true') {
+      console.log('✅ Payment success detected, showing banner');
       setShowSuccessBanner(true);
       // Remove the parameter from URL without triggering a navigation
       const newSearchParams = new URLSearchParams(searchParams);
       newSearchParams.delete('paymentSuccess');
       setSearchParams(newSearchParams, { replace: true });
+    } else {
+      console.log('❌ No payment success parameter found');
     }
   }, [searchParams, setSearchParams]);
 
@@ -75,6 +84,7 @@ const ClassifiedDetail = () => {
   };
 
   const handleDismissSuccessBanner = () => {
+    console.log('🚫 Dismissing success banner');
     setShowSuccessBanner(false);
   };
 

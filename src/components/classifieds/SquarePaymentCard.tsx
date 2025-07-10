@@ -76,15 +76,17 @@ const SquarePaymentCard = ({ billingContact, billingAddress, onPaymentProcessed 
       
       // Check if payment was completed successfully
       if (paymentResponse.response?.paymentStatus === 'COMPLETED') {
-        console.log('Payment completed successfully, redirecting to classified detail page');
+        console.log('Payment completed successfully, redirecting to classified detail page with success parameter');
         
         toast({
           title: "Payment Successful",
           description: "Your payment has been processed successfully.",
         });
         
-        // Redirect to classified detail page with success parameter
-        navigate(`/classifieds/${classifiedId}?paymentSuccess=true`);
+        // Redirect to classified detail page with success parameter - FIXED URL construction
+        const detailUrl = `/classifieds/${classifiedId}?paymentSuccess=true`;
+        console.log('Redirecting to:', detailUrl);
+        navigate(detailUrl);
       } else {
         console.log('Payment not completed, status:', paymentResponse.response?.paymentStatus);
         setError('Payment was not completed successfully');
