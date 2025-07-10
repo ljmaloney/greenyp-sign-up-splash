@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useSearchParams } from 'react-router-dom';
 import PublicHeader from '@/components/PublicHeader';
@@ -9,12 +10,14 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, MapPin, Calendar, Mail, Phone, ExternalLink } from 'lucide-react';
 import { format } from 'date-fns';
 import { useClassifiedDetail } from '@/hooks/useClassifiedDetail';
+import { useClassifiedImages } from '@/hooks/useClassifiedImages';
 import { useAdPackages } from '@/hooks/useAdPackages';
 
 const ClassifiedDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const { data: classified, isLoading, error } = useClassifiedDetail(id!);
+  const { data: classifiedImages = [], isLoading: imagesLoading } = useClassifiedImages(id!, !!classified);
   const [showContactDialog, setShowContactDialog] = useState(false);
   const [showSuccessBanner, setShowSuccessBanner] = useState(false);
   const { data: adPackagesData } = useAdPackages();
@@ -131,6 +134,11 @@ const ClassifiedDetail = () => {
     );
   }
 
+  // Combine classified images with fallback to classified.images array
+  const displayImages = classifiedImages.length > 0 
+    ? classifiedImages.map(img => img.url) 
+    : classified.images || [];
+
   return (
     <>
       <div className="min-h-screen flex flex-col">
@@ -168,11 +176,11 @@ const ClassifiedDetail = () => {
                   </div>
                 </div>
 
-                {classified.images.length > 0 && (
+                {displayImages.length > 0 && (
                   <div className="mb-8">
                     <h3 className="text-xl font-semibold mb-4">Photos</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {classified.images.map((image, index) => (
+                      {displayImages.map((image, index) => (
                         <div key={index} className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
                           <img 
                             src={image} 
