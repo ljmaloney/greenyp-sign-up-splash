@@ -29,6 +29,10 @@ interface ClassifiedDetailApiResponse {
 }
 
 const transformApiResponseToClassified = (apiResponse: ClassifiedDetailApiResponse['response']): Classified => {
+  // Create a proper ISO date string for expiration
+  const expirationDate = new Date(apiResponse.lastActiveDate);
+  expirationDate.setHours(23, 59, 59, 999); // Set to end of day
+  
   return {
     id: apiResponse.classifiedId,
     title: apiResponse.title,
@@ -41,7 +45,7 @@ const transformApiResponseToClassified = (apiResponse: ClassifiedDetailApiRespon
     pricingTier: apiResponse.adTypeId,
     contactObfuscated: false, // Default value, will be determined by ad package
     createdAt: apiResponse.createDate,
-    expiresAt: apiResponse.lastActiveDate + 'T23:59:59Z' // Convert date to ISO string
+    expiresAt: expirationDate.toISOString()
   };
 };
 
