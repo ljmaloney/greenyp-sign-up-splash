@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApiClient } from '@/hooks/useApiClient';
 import { useToast } from '@/hooks/use-toast';
+import { normalizePhoneNumber } from '@/utils/phoneUtils';
 
 interface BillingContactData {
   firstName: string;
@@ -90,14 +91,19 @@ const SquarePaymentCard = ({ billingContact, billingAddress, onPaymentProcessed 
       if (result.status === 'OK') {
         console.log('Card tokenized successfully, token:', result.token);
         
-        // Prepare verification details using billing information
+        // Normalize phone number to US standard format before submission
+        const normalizedPhone = normalizePhoneNumber(billingContact.phone);
+        console.log('Original phone:', billingContact.phone);
+        console.log('Normalized phone:', normalizedPhone);
+        
+        // Prepare verification details using billing information with normalized phone
         const verificationDetails = {
           amount: '1.00', // test amount or expected charge
           billingContact: {
             givenName: billingContact.firstName || 'John',
             familyName: billingContact.lastName || 'Doe',
             email: billingContact.email || 'john.doe@example.com',
-            phone: billingContact.phone || '3214563987',
+            phone: normalizedPhone || '3214563987',
             addressLines: [billingAddress.address || '123 Main Street'],
             city: billingAddress.city || 'Oakland',
             state: billingAddress.state || 'CA',
@@ -118,7 +124,7 @@ const SquarePaymentCard = ({ billingContact, billingAddress, onPaymentProcessed 
         if (verificationResult && verificationResult.token) {
           console.log('Payment verified successfully, submitting to backend...');
           
-          // Submit payment to backend
+          // Submit payment to backend with normalized phone number
           const paymentData = {
             classifiedId: classifiedId,
             paymentToken: result.token,
@@ -129,11 +135,11 @@ const SquarePaymentCard = ({ billingContact, billingAddress, onPaymentProcessed 
             city: billingAddress.city || 'Oakland',
             state: billingAddress.state || 'CA',
             postalCode: billingAddress.zipCode,
-            phoneNumber: billingContact.phone,
+            phoneNumber: normalizedPhone, // Use normalized phone number
             emailAddress: billingContact.email
           };
 
-          console.log('Submitting payment data:', paymentData);
+          console.log('Submitting payment data with normalized phone:', paymentData);
           
           const paymentResponse = await apiClient.post('/classified/payment', paymentData, { requireAuth: false });
           console.log('Payment submission response:', paymentResponse);
