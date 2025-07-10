@@ -2,7 +2,7 @@
 import React from 'react';
 import NewOrderSummaryCard from './NewOrderSummaryCard';
 import NewAdPreviewCard from './NewAdPreviewCard';
-import NewPaymentInformationCard from './NewPaymentInformationCard';
+import PaymentInformationCard from './PaymentInformationCard';
 import SquarePaymentCard from './SquarePaymentCard';
 
 interface ClassifiedData {
@@ -70,7 +70,7 @@ const PaymentLayout = ({ classified, customer }: PaymentLayoutProps) => {
 
       {/* Right Column */}
       <div className="space-y-6">
-        <NewPaymentInformationCard 
+        <PaymentInformationCard 
           classified={classified}
           customer={customer}
           onBillingInfoChange={handleBillingInfoUpdate}
