@@ -29,26 +29,50 @@ interface ClassifiedDetailApiResponse {
 }
 
 const transformApiResponseToClassified = (apiResponse: ClassifiedDetailApiResponse['response']): Classified => {
-  // Create a proper ISO date string for expiration
-  const expirationDate = new Date(apiResponse.lastActiveDate);
-  expirationDate.setHours(23, 59, 59, 999); // Set to end of day
+  // Safari-safe date parsing - create explicit Date objects
+  let expirationDate: Date;
+  try {
+    // Handle different date formats Safari might receive
+    const lastActiveDate = apiResponse.lastActiveDate;
+    if (lastActiveDate.includes('T')) {
+      // ISO format
+      expirationDate = new Date(lastActiveDate);
+    } else {
+      // Fallback for other formats
+      expirationDate = new Date(lastActiveDate + 'T23:59:59.999Z');
+    }
+    
+    // Validate the date is valid
+    if (isNaN(expirationDate.getTime())) {
+      console.warn('⚠️ Invalid lastActiveDate, using fallback:', lastActiveDate);
+      expirationDate = new Date();
+      expirationDate.setMonth(expirationDate.getMonth() + 1); // 1 month from now
+    } else {
+      // Set to end of day
+      expirationDate.setHours(23, 59, 59, 999);
+    }
+  } catch (error) {
+    console.error('❌ Date parsing error:', error);
+    expirationDate = new Date();
+    expirationDate.setMonth(expirationDate.getMonth() + 1);
+  }
   
   return {
     id: apiResponse.classifiedId,
     title: apiResponse.title,
     description: apiResponse.description,
-    category: apiResponse.categoryId, // Use the actual categoryId from API
+    category: apiResponse.categoryId,
     zipCode: apiResponse.postalCode,
     city: apiResponse.city,
     state: apiResponse.state,
     email: apiResponse.emailAddress,
     phone: apiResponse.phoneNumber,
-    images: [], // Images will be fetched separately using useClassifiedImages
+    images: [],
     pricingTier: apiResponse.adTypeId,
-    contactObfuscated: false, // Default value, will be determined by ad package
+    contactObfuscated: false,
     createdAt: apiResponse.createDate,
     expiresAt: expirationDate.toISOString(),
-    price: apiResponse.price // Add the actual price from the API
+    price: apiResponse.price
   };
 };
 

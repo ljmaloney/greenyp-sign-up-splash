@@ -27,29 +27,33 @@ const ClassifiedDetail = () => {
   const { data: adPackagesData } = useAdPackages();
   const { data: categoriesData } = useClassifiedCategories();
 
-  // Determine back navigation context
+  // Safari-safe back navigation handling
   const getBackNavigation = () => {
-    // Check if we came from search results
-    const referrer = document.referrer;
-    const isFromSearch = referrer.includes('/classifieds/search') || location.state?.from === 'search';
-    
-    // Check if there are search parameters in the current URL that indicate search context
-    const hasSearchContext = searchParams.get('fromSearch') === 'true';
-    
-    if (isFromSearch || hasSearchContext) {
-      // Try to reconstruct the search URL from stored parameters or referrer
-      const storedSearchParams = sessionStorage.getItem('lastSearchParams');
-      if (storedSearchParams) {
+    try {
+      // Check if we came from search results
+      const referrer = document.referrer || '';
+      const isFromSearch = referrer.includes('/classifieds/search') || location.state?.from === 'search';
+      
+      // Check if there are search parameters in the current URL that indicate search context
+      const hasSearchContext = searchParams.get('fromSearch') === 'true';
+      
+      if (isFromSearch || hasSearchContext) {
+        // Try to reconstruct the search URL from stored parameters or referrer
+        const storedSearchParams = sessionStorage?.getItem('lastSearchParams');
+        if (storedSearchParams) {
+          return {
+            backUrl: `/classifieds/search?${storedSearchParams}`,
+            backLabel: 'Back to Search Results'
+          };
+        }
+        // Fallback to generic search page
         return {
-          backUrl: `/classifieds/search?${storedSearchParams}`,
+          backUrl: '/classifieds/search',
           backLabel: 'Back to Search Results'
         };
       }
-      // Fallback to generic search page
-      return {
-        backUrl: '/classifieds/search',
-        backLabel: 'Back to Search Results'
-      };
+    } catch (error) {
+      console.warn('⚠️ Safari storage access issue:', error);
     }
     
     // Default back to main classifieds page
@@ -61,37 +65,55 @@ const ClassifiedDetail = () => {
 
   const { backUrl, backLabel } = getBackNavigation();
 
-  // Handle secret parameter and save it temporarily
+  // Safari-safe secret parameter handling
   useEffect(() => {
-    const secret = searchParams.get('secret');
-    if (secret) {
-      console.log('🔑 Secret parameter detected, saving temporarily:', secret);
-      localStorage.setItem('classifiedSecret', secret);
-      // Remove the secret from URL for security
-      const newSearchParams = new URLSearchParams(searchParams);
-      newSearchParams.delete('secret');
-      setSearchParams(newSearchParams, { replace: true });
+    try {
+      const secret = searchParams.get('secret');
+      if (secret) {
+        console.log('🔑 Secret parameter detected, saving temporarily:', secret);
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem('classifiedSecret', secret);
+        }
+        // Safari-safe URL parameter removal
+        const newSearchParams = new URLSearchParams();
+        for (const [key, value] of searchParams.entries()) {
+          if (key !== 'secret') {
+            newSearchParams.set(key, value);
+          }
+        }
+        setSearchParams(newSearchParams, { replace: true });
+      }
+    } catch (error) {
+      console.warn('⚠️ Safari parameter handling issue:', error);
     }
   }, [searchParams, setSearchParams]);
 
-  // Check for payment success parameter in URL
+  // Safari-safe payment success parameter handling
   useEffect(() => {
-    const paymentSuccess = searchParams.get('paymentSuccess');
-    console.log('🎯 ClassifiedDetail - Checking for paymentSuccess parameter:', {
-      paymentSuccess,
-      allSearchParams: Object.fromEntries(searchParams.entries()),
-      currentUrl: window.location.href
-    });
-    
-    if (paymentSuccess === 'true') {
-      console.log('✅ Payment success detected, showing banner');
-      setShowSuccessBanner(true);
-      // Remove the parameter from URL without triggering a navigation
-      const newSearchParams = new URLSearchParams(searchParams);
-      newSearchParams.delete('paymentSuccess');
-      setSearchParams(newSearchParams, { replace: true });
-    } else {
-      console.log('❌ No payment success parameter found');
+    try {
+      const paymentSuccess = searchParams.get('paymentSuccess');
+      console.log('🎯 ClassifiedDetail - Checking for paymentSuccess parameter:', {
+        paymentSuccess,
+        allSearchParams: Object.fromEntries(searchParams.entries()),
+        currentUrl: window.location.href
+      });
+      
+      if (paymentSuccess === 'true') {
+        console.log('✅ Payment success detected, showing banner');
+        setShowSuccessBanner(true);
+        // Safari-safe parameter removal
+        const newSearchParams = new URLSearchParams();
+        for (const [key, value] of searchParams.entries()) {
+          if (key !== 'paymentSuccess') {
+            newSearchParams.set(key, value);
+          }
+        }
+        setSearchParams(newSearchParams, { replace: true });
+      } else {
+        console.log('❌ No payment success parameter found');
+      }
+    } catch (error) {
+      console.warn('⚠️ Safari payment parameter handling issue:', error);
     }
   }, [searchParams, setSearchParams]);
 
@@ -124,7 +146,18 @@ const ClassifiedDetail = () => {
       setShowContactDialog(true);
     } else {
       console.log('📬 Opening email client directly');
-      window.open(`mailto:${classified?.email}`, '_blank');
+      // Safari-safe mailto handling
+      try {
+        const mailtoUrl = `mailto:${classified?.email}`;
+        if (window.open) {
+          window.open(mailtoUrl, '_blank');
+        } else {
+          window.location.href = mailtoUrl;
+        }
+      } catch (error) {
+        console.warn('⚠️ Safari mailto issue:', error);
+        window.location.href = `mailto:${classified?.email}`;
+      }
     }
   };
 
