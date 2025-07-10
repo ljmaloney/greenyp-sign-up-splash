@@ -80,6 +80,8 @@ const ImagePreview = ({
                   onChange={(e) => onUpdateFileName(index, e.target.value)}
                   placeholder="Enter custom file name"
                   className="flex-1"
+                  required={false}
+                  autoComplete="off"
                 />
                 <span className="text-sm text-gray-500 font-mono">
                   {getExtensionFromMimeType(file.type)}
@@ -101,6 +103,8 @@ const ImagePreview = ({
                 value={imageDescriptions[index]}
                 onChange={(e) => onUpdateDescription(index, e.target.value)}
                 placeholder="Enter image description"
+                required={false}
+                autoComplete="off"
               />
             </div>
           </div>
