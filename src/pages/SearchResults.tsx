@@ -23,6 +23,16 @@ const SearchResults = () => {
     page
   } = useSearchResults();
 
+  // Store search parameters for back navigation
+  React.useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const searchParamsString = searchParams.toString();
+    if (searchParamsString) {
+      sessionStorage.setItem('lastSearchParams', searchParamsString);
+      console.log('Stored search params for back navigation:', searchParamsString);
+    }
+  }, []);
+
   if (loading) {
     return <SearchLoadingState />;
   }

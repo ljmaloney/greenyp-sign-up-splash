@@ -1,34 +1,58 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Phone, Globe, ExternalLink, Building2 } from 'lucide-react';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import type { ProducerListing } from '@/services/producerProfileService';
+import { Card, CardContent } from '@/components/ui/card';
+import { MapPin, Phone, Globe, Building2 } from 'lucide-react';
 
-interface ListingCardProps {
-  listing: ProducerListing;
+interface Producer {
+  producerId: string;
+  producerLocationId: string;
+  businessName: string;
+  phone?: string;
+  cellPhone?: string;
+  addressLine1?: string;
+  addressLine2?: string;
+  addressLine3?: string;
+  city?: string;
+  state?: string;
+  postalCode?: string;
+  websiteUrl?: string;
+  latitude?: string;
+  longitude?: string;
+  businessNarrative?: string;
+  iconLink?: string;
 }
 
-const ListingCard = ({ listing }: ListingCardProps) => {
-  // Helper function to create profile URL with the desired format
-  const createProfileUrl = (listing: ProducerListing) => {
-    return `/profile/${listing.producerId}/${listing.producerLocationId}`;
+interface ListingCardProps {
+  producer: Producer;
+  categoryName: string;
+}
+
+const ListingCard = ({ producer, categoryName }: ListingCardProps) => {
+  const fullAddress = [
+    producer.addressLine1,
+    producer.addressLine2,
+    producer.addressLine3,
+    `${producer.city}, ${producer.state} ${producer.postalCode}`
+  ].filter(Boolean).join(', ');
+
+  const truncateText = (text: string, maxLength: number) => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
   };
 
   return (
-    <Card className="hover:shadow-md transition-shadow">
-      <CardContent className="p-6">
-        <div className="flex items-center mb-3">
-          {listing.iconLink ? (
+    <Card className="border-greenyp-200 hover:border-yellow-500 transition-colors duration-200 h-full">
+      <CardContent className="p-6 flex flex-col h-full">
+        <div className="flex items-start mb-4">
+          {producer.iconLink ? (
             <img 
-              src={listing.iconLink} 
-              alt={`${listing.businessName} icon`}
-              className="w-8 h-8 mr-3 rounded object-cover flex-shrink-0"
+              src={producer.iconLink} 
+              alt={`${producer.businessName} icon`}
+              className="w-12 h-12 mr-4 rounded-lg object-cover flex-shrink-0"
               onError={(e) => {
                 const target = e.currentTarget as HTMLImageElement;
                 target.style.display = 'none';
-                // Show fallback icon when image fails to load
                 const fallback = target.nextElementSibling as HTMLElement;
                 if (fallback) {
                   fallback.style.display = 'block';
@@ -36,52 +60,61 @@ const ListingCard = ({ listing }: ListingCardProps) => {
               }}
             />
           ) : (
-            <Building2 className="w-8 h-8 mr-3 text-greenyp-600 flex-shrink-0" />
+            <Building2 className="w-12 h-12 mr-4 text-greenyp-600 flex-shrink-0" />
           )}
-          {listing.iconLink && (
-            <Building2 className="w-8 h-8 mr-3 text-greenyp-600 flex-shrink-0 hidden" />
+          {producer.iconLink && (
+            <Building2 className="w-12 h-12 mr-4 text-greenyp-600 hidden flex-shrink-0" />
           )}
-          <h3 className="text-lg font-semibold text-gray-900 truncate">
-            {listing.businessName}
-          </h3>
-        </div>
-        
-        <div className="space-y-2 mb-4">
-          <div className="flex items-center text-gray-600 text-sm">
-            <MapPin className="w-4 h-4 mr-2 flex-shrink-0" />
-            <span className="truncate">{listing.city}, {listing.state}</span>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-lg font-semibold text-gray-900 mb-1 break-words">
+              {producer.businessName}
+            </h3>
+            {fullAddress && (
+              <div className="flex items-start text-gray-600 mb-2">
+                <MapPin className="w-4 h-4 mr-1 text-greenyp-600 flex-shrink-0 mt-0.5" />
+                <span className="text-sm break-words">{fullAddress}</span>
+              </div>
+            )}
           </div>
-          
-          {listing.phone && (
-            <div className="flex items-center text-gray-600 text-sm">
-              <Phone className="w-4 h-4 mr-2 flex-shrink-0" />
-              <a href={`tel:${listing.phone}`} className="hover:text-greenyp-600 truncate">
-                {listing.phone}
-              </a>
+        </div>
+
+        {producer.businessNarrative && (
+          <div className="mb-4 flex-grow">
+            <p className="text-gray-700 text-sm leading-relaxed">
+              {truncateText(producer.businessNarrative, 150)}
+            </p>
+          </div>
+        )}
+
+        <div className="space-y-2 mb-4">
+          {producer.phone && (
+            <div className="flex items-center text-gray-600">
+              <Phone className="w-4 h-4 mr-2 text-greenyp-600 flex-shrink-0" />
+              <span className="text-sm break-all">{producer.phone}</span>
             </div>
           )}
-          
-          {listing.websiteUrl && (
-            <div className="flex items-center text-gray-600 text-sm">
+          {producer.websiteUrl && (
+            <a 
+              href={producer.websiteUrl} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center text-greenyp-600 hover:text-greenyp-700 group"
+            >
               <Globe className="w-4 h-4 mr-2 flex-shrink-0" />
-              <a 
-                href={listing.websiteUrl} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="hover:text-greenyp-600 truncate flex items-center"
-              >
-                Website
-                <ExternalLink className="w-3 h-3 ml-1" />
-              </a>
-            </div>
+              <span className="text-sm group-hover:underline break-all">Visit Website</span>
+            </a>
           )}
         </div>
-        
-        <Link to={createProfileUrl(listing)}>
-          <Button className="w-full bg-greenyp-600 hover:bg-greenyp-700 text-white">
+
+        <div className="mt-auto">
+          <Link 
+            to={`/profile/${producer.producerId}/${producer.producerLocationId}`}
+            state={{ from: window.location.pathname }}
+            className="inline-block w-full bg-greenyp-600 hover:bg-greenyp-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors duration-200 text-center"
+          >
             View Profile
-          </Button>
-        </Link>
+          </Link>
+        </div>
       </CardContent>
     </Card>
   );
