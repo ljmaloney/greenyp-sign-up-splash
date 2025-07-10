@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams, useLocation } from 'react-router-dom';
 import PublicHeader from '@/components/PublicHeader';
 import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
 import ContactSellerDialog from '@/components/classifieds/ContactSellerDialog';
@@ -19,12 +19,47 @@ import { useClassifiedCategories } from '@/hooks/useClassifiedCategories';
 const ClassifiedDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
   const { data: classified, isLoading, error } = useClassifiedDetail(id!);
   const { data: classifiedImages = [], isLoading: imagesLoading } = useClassifiedImages(id!, !!classified);
   const [showContactDialog, setShowContactDialog] = useState(false);
   const [showSuccessBanner, setShowSuccessBanner] = useState(false);
   const { data: adPackagesData } = useAdPackages();
   const { data: categoriesData } = useClassifiedCategories();
+
+  // Determine back navigation context
+  const getBackNavigation = () => {
+    // Check if we came from search results
+    const referrer = document.referrer;
+    const isFromSearch = referrer.includes('/classifieds/search') || location.state?.from === 'search';
+    
+    // Check if there are search parameters in the current URL that indicate search context
+    const hasSearchContext = searchParams.get('fromSearch') === 'true';
+    
+    if (isFromSearch || hasSearchContext) {
+      // Try to reconstruct the search URL from stored parameters or referrer
+      const storedSearchParams = sessionStorage.getItem('lastSearchParams');
+      if (storedSearchParams) {
+        return {
+          backUrl: `/classifieds/search?${storedSearchParams}`,
+          backLabel: 'Back to Search Results'
+        };
+      }
+      // Fallback to generic search page
+      return {
+        backUrl: '/classifieds/search',
+        backLabel: 'Back to Search Results'
+      };
+    }
+    
+    // Default back to main classifieds page
+    return {
+      backUrl: '/classifieds',
+      backLabel: 'Back to Classifieds'
+    };
+  };
+
+  const { backUrl, backLabel } = getBackNavigation();
 
   // Handle secret parameter and save it temporarily
   useEffect(() => {
@@ -126,6 +161,8 @@ const ClassifiedDetail = () => {
                 classified={classified}
                 categoryName={categoryName}
                 price={classified.price}
+                backUrl={backUrl}
+                backLabel={backLabel}
               />
               
               <div className="px-6 pb-8">

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, MapPin, Calendar } from 'lucide-react';
@@ -11,20 +11,35 @@ interface ClassifiedDetailHeaderProps {
   classified: Classified;
   categoryName?: string;
   price?: number;
+  backUrl?: string;
+  backLabel?: string;
 }
 
-const ClassifiedDetailHeader = ({ classified, categoryName, price }: ClassifiedDetailHeaderProps) => {
+const ClassifiedDetailHeader = ({ 
+  classified, 
+  categoryName, 
+  price, 
+  backUrl = '/classifieds',
+  backLabel = 'Back to Classifieds'
+}: ClassifiedDetailHeaderProps) => {
+  const navigate = useNavigate();
   const locationText = `${classified.city || ''}, ${classified.state || ''} ${classified.zipCode}`.replace(/^,\s*/, '').trim();
+
+  const handleBackClick = () => {
+    navigate(backUrl);
+  };
 
   return (
     <>
       <div className="mb-6">
-        <Link to="/classifieds">
-          <Button variant="outline" className="border-greenyp-600 text-greenyp-600 hover:bg-greenyp-50">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Classifieds
-          </Button>
-        </Link>
+        <Button 
+          variant="outline" 
+          className="border-greenyp-600 text-greenyp-600 hover:bg-greenyp-50"
+          onClick={handleBackClick}
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          {backLabel}
+        </Button>
       </div>
 
       <div className="p-6">

@@ -31,6 +31,14 @@ const SearchResults = () => {
 
   const classifieds = infiniteData?.pages.flatMap(page => page.data) || [];
 
+  // Store search parameters for back navigation
+  useEffect(() => {
+    const searchParamsString = searchParams.toString();
+    if (searchParamsString) {
+      sessionStorage.setItem('lastSearchParams', searchParamsString);
+    }
+  }, [searchParams]);
+
   const handleFiltersChange = (newFilters: ClassifiedFilters) => {
     const params = new URLSearchParams();
     if (newFilters.category) params.set('category', newFilters.category);
