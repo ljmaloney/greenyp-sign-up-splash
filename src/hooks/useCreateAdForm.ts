@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -201,11 +200,6 @@ export const useCreateAdForm = () => {
             state: { classifiedData: response.response, packageData: selectedPackage }
           });
         }
-
-        toast({
-          title: "Success!",
-          description: "Your classified ad has been created successfully!",
-        });
       }
     } catch (error) {
       console.error('❌ SUBMIT - Error creating classified ad:', error);
