@@ -50,30 +50,7 @@ const ClassifiedsFilters = ({ filters, onFiltersChange }: ClassifiedsFiltersProp
     <Card className="mb-6">
       <CardContent className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Category
-              </label>
-              <CategoryDescriptionsDialog />
-            </div>
-            <Select 
-              value={filters.category || 'all'} 
-              onValueChange={(value) => handleFilterChange('category', value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="All Categories" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                {categories.map((category) => (
-                  <SelectItem key={category.categoryId} value={category.name}>
-                    {category.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -104,6 +81,31 @@ const ClassifiedsFilters = ({ filters, onFiltersChange }: ClassifiedsFiltersProp
                   <SelectItem key={miles} value={miles.toString()}>
                     {miles} miles
                   </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Category
+              </label>
+              <CategoryDescriptionsDialog />
+            </div>
+            <Select
+                value={filters.category || 'all'}
+                onValueChange={(value) => handleFilterChange('category', value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="All Categories" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                {categories.map((category) => (
+                    <SelectItem key={category.categoryId} value={category.name}>
+                      {category.name}
+                    </SelectItem>
                 ))}
               </SelectContent>
             </Select>
