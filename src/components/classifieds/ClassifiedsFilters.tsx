@@ -120,7 +120,7 @@ const ClassifiedsFilters = ({ filters, onFiltersChange }: ClassifiedsFiltersProp
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Max Miles
+                Distance (Miles)
               </label>
               <Select 
                 value={localFilters.maxMiles?.toString() || 'all'} 
