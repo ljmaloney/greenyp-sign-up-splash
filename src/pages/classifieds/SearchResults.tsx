@@ -1,10 +1,9 @@
-
 import React, { useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import PublicHeader from '@/components/PublicHeader';
 import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
 import ClassifiedCard from '@/components/classifieds/ClassifiedCard';
-import ClassifiedsFilters from '@/components/classifieds/ClassifiedsFilters';
+import ClassifiedsSearchForm from '@/components/classifieds/ClassifiedsSearchForm';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -64,27 +63,6 @@ const SearchResults = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
-
-  const getSearchSummary = () => {
-    const parts = [];
-    
-    if (filters.keyword) {
-      parts.push(`"${filters.keyword}"`);
-    }
-    
-    if (filters.category) {
-      parts.push(`in ${filters.category}`);
-    }
-    
-    if (filters.zipCode) {
-      const distance = filters.maxMiles ? ` within ${filters.maxMiles} miles` : '';
-      parts.push(`near ${filters.zipCode}${distance}`);
-    } else if (filters.maxMiles) {
-      parts.push(`within ${filters.maxMiles} miles`);
-    }
-    
-    return parts.length > 0 ? parts.join(' ') : 'all classifieds';
-  };
 
   const getSearchDescription = () => {
     const hasZipCode = filters.zipCode;
@@ -149,7 +127,11 @@ const SearchResults = () => {
             </p>
           </div>
 
-          <ClassifiedsFilters filters={filters} onFiltersChange={handleFiltersChange} />
+          <ClassifiedsSearchForm 
+            initialFilters={filters} 
+            onSearch={handleFiltersChange}
+            layout="search"
+          />
 
           {isLoading && classifieds.length === 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

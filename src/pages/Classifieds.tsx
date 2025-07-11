@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import PublicHeader from '@/components/PublicHeader';
 import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
-import ClassifiedsFilters from '@/components/classifieds/ClassifiedsFilters';
+import ClassifiedsFiltersLive from '@/components/classifieds/ClassifiedsFiltersLive';
 import ClassifiedsList from '@/components/classifieds/ClassifiedsList';
 import RecentClassifieds from '@/components/classifieds/RecentClassifieds';
 import { Button } from '@/components/ui/button';
@@ -36,7 +36,7 @@ const Classifieds = () => {
             </div>
           </div>
 
-          <ClassifiedsFilters filters={filters} onFiltersChange={setFilters} />
+          <ClassifiedsFiltersLive filters={filters} onFiltersChange={setFilters} />
           
           <div className="mb-12">
             <RecentClassifieds />
