@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -31,6 +30,7 @@ import SubscribersSubscribe from '@/pages/subscribers/Subscribe';
 import SubscriptionFeatures from '@/pages/subscribers/SubscriptionFeatures';
 import SubscriberCategories from '@/pages/subscribers/SubscriberCategories';
 import SubscriberCategoryPage from '@/pages/subscribers/CategoryPage';
+import SignUpConfirmation from '@/pages/subscribers/SignUpConfirmation';
 
 // Import dashboard pages
 import DashboardIndex from '@/pages/dashboard/Index';
@@ -169,6 +169,7 @@ function App() {
               {/* Subscriber Routes */}
               <Route path="/subscribers" element={<SubscribersIndex />} />
               <Route path="/subscribers/signup" element={<SubscribersSignUp />} />
+              <Route path="/subscriber/signup/confirmation" element={<SignUpConfirmation />} />
               <Route path="/subscribers/subscribe" element={<SubscribersSubscribe />} />
               <Route path="/subscribers/subscription-features" element={<SubscriptionFeatures />} />
               <Route path="/subscribers/contact" element={<Contact />} />
