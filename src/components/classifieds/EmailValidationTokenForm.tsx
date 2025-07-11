@@ -12,6 +12,9 @@ const EmailValidationTokenForm = ({ emailValidationToken, onChange }: EmailValid
   return (
     <div className="space-y-4">
       <h3 className="font-medium text-gray-900">Email Validation</h3>
+        <div className="text-sm text-gray-600">
+        An email validation token is required to ensure the authenticity of the email address provided. Please enter the token sent to your email address.
+        </div>
       <div className="space-y-2">
         <Label htmlFor="emailValidationToken">Email Validation Token *</Label>
         <Input
