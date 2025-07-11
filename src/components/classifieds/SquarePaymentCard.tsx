@@ -6,7 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useSquarePayment } from '@/hooks/useSquarePayment';
 import { validatePaymentFields } from '@/utils/paymentValidation';
 import { processSquarePayment } from '@/utils/squarePaymentProcessor';
-import SquarePaymentForm from './SquarePaymentForm';
+import PaymentMethodCard from './PaymentMethodCard';
 
 interface BillingContactData {
   firstName: string;
@@ -125,7 +125,7 @@ const SquarePaymentCard = ({ billingContact, billingAddress, emailValidationToke
   };
 
   return (
-    <SquarePaymentForm
+    <PaymentMethodCard
       cardContainerRef={cardContainerRef}
       error={error}
       isProcessing={isProcessing}

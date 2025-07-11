@@ -5,7 +5,6 @@ import { usePaymentInformation } from '@/hooks/usePaymentInformation';
 import BillingContactForm from './BillingContactForm';
 import BillingAddressForm from './BillingAddressForm';
 import PaymentInformationHeader from './PaymentInformationHeader';
-import EmailValidationTokenForm from './EmailValidationTokenForm';
 
 interface ClassifiedData {
   address: string;
@@ -26,8 +25,8 @@ interface CustomerData {
 }
 
 interface PaymentInformationCardProps {
-  classified: ClassifiedData;
-  customer: CustomerData;
+  classified?: ClassifiedData;
+  customer?: CustomerData;
   onBillingInfoChange?: (contact: any, address: any, emailValidationToken: string) => void;
 }
 
@@ -57,10 +56,6 @@ const PaymentInformationCard = ({ classified, customer, onBillingInfoChange }: P
         <BillingAddressForm
           billingAddress={billingAddress}
           onChange={handleAddressChange}
-        />
-        <EmailValidationTokenForm
-          emailValidationToken={emailValidationToken}
-          onChange={handleEmailValidationTokenChange}
         />
       </CardContent>
     </Card>

@@ -10,11 +10,11 @@ interface EmailValidationTokenFormProps {
 
 const EmailValidationTokenForm = ({ emailValidationToken, onChange }: EmailValidationTokenFormProps) => {
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <h3 className="font-medium text-gray-900">Email Validation</h3>
-        <div className="text-sm text-gray-600">
+      <div className="text-sm text-gray-600 italic">
         An email validation token is required to ensure the authenticity of the email address provided. Please enter the token sent to your email address.
-        </div>
+      </div>
       <div className="space-y-2">
         <Label htmlFor="emailValidationToken">Email Validation Token *</Label>
         <Input
