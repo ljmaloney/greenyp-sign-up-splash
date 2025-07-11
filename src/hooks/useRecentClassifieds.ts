@@ -26,8 +26,8 @@ interface RecentClassifiedResponse {
 }
 
 interface ApiResponse {
-  response: RecentClassifiedResponse[];
-  errorMessageApi: string | null;
+  response: RecentClassifiedResponse[] | null;
+  errorMessageApi: any | null;
 }
 
 // Convert API response to our existing Classified interface
@@ -50,41 +50,22 @@ const convertToClassified = (item: RecentClassifiedResponse) => ({
   perUnitType: item.perUnitType
 });
 
-// Dummy ad to display when no results
-const dummyAd = {
-  id: 'dummy-1',
-  title: 'Farm Fresh Vegetables',
-  description: 'Fresh, locally grown vegetables available year-round. Perfect for your family meals and healthy lifestyle.',
-  category: 'Produce',
-  zipCode: '30014',
-  city: 'Covington',
-  state: 'GA',
-  email: 'farmer@example.com',
-  phone: '(555) 123-4567',
-  images: [],
-  pricingTier: 'basic',
-  contactObfuscated: false,
-  createdAt: new Date().toISOString(),
-  expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-  price: 15,
-  perUnitType: 'Basket'
-};
-
 const fetchRecentClassifieds = async (apiClient: any) => {
-  try {
-    const response: ApiResponse = await apiClient.get('/classified/mostRecent?number=9');
-    
-    if (response.response && response.response.length > 0) {
-      return response.response.map(convertToClassified);
-    } else {
-      // Return dummy ad if no results
-      return [dummyAd];
-    }
-  } catch (error) {
-    console.error('Error fetching recent classifieds:', error);
-    // Return dummy ad on error
-    return [dummyAd];
+  console.log('Fetching recent classifieds...');
+  
+  const response: ApiResponse = await apiClient.get('/classified/mostRecent?number=9');
+  
+  console.log('API Response:', response);
+  
+  // Check if we have a successful response with data
+  if (response.response && Array.isArray(response.response) && response.response.length > 0) {
+    console.log(`Found ${response.response.length} classifieds`);
+    return response.response.map(convertToClassified);
   }
+  
+  // If there's an API error or no data, return empty array
+  console.log('No classifieds found or API error:', response.errorMessageApi);
+  return [];
 };
 
 export const useRecentClassifieds = () => {
