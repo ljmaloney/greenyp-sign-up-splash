@@ -1,57 +1,106 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { Classified, ClassifiedFilters } from '@/types/classifieds';
+import { useApiClient } from './useApiClient';
 
-// Mock data for now - replace with actual API call
+interface RecentClassifiedResponse {
+  classifiedId: string;
+  activeDate: string;
+  lastActiveDate: string;
+  adTypeId: string;
+  categoryId: string;
+  categoryName: string;
+  price: number;
+  perUnitType: string;
+  title: string;
+  description: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  emailAddress: string;
+  phoneNumber: string;
+  obscureContactInfo: boolean;
+  imageName: string | null;
+  url: string | null;
+  longitude: number;
+  latitude: number;
+}
+
+interface ApiResponse {
+  response: RecentClassifiedResponse[] | null;
+  errorMessageApi: any | null;
+}
+
+// Convert API response to our existing Classified interface
+const convertToClassified = (item: RecentClassifiedResponse) => ({
+  id: item.classifiedId,
+  title: item.title,
+  description: item.description,
+  category: item.categoryName,
+  zipCode: item.postalCode,
+  city: item.city,
+  state: item.state,
+  email: item.emailAddress,
+  phone: item.phoneNumber,
+  images: item.url ? [item.url] : [],
+  pricingTier: item.adTypeId,
+  contactObfuscated: item.obscureContactInfo,
+  createdAt: item.activeDate + 'T00:00:00Z',
+  expiresAt: item.lastActiveDate + 'T00:00:00Z',
+  price: item.price,
+  perUnitType: item.perUnitType
+});
+
+// Mock data as fallback - only used when API fails
 const mockClassifieds: Classified[] = [
   {
-    id: '1',
-    title: 'MacBook Pro 2023 - Excellent Condition',
-    description: 'Barely used MacBook Pro with M2 chip, 16GB RAM, 512GB SSD. Perfect for students or professionals.',
-    category: 'Electronics',
-    zipCode: '94102',
-    email: 'seller1@email.com',
+    id: 'mock-1',
+    title: 'Sample Classified Ad',
+    description: 'This is a sample classified ad to show the layout when no real ads are available.',
+    category: 'Miscellaneous Farm & Garden',
+    zipCode: '12345',
+    city: 'Sample City',
+    state: 'CA',
+    email: 'sample@email.com',
     phone: '(555) 123-4567',
-    images: ['https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=500'],
+    images: [],
     pricingTier: 'standard',
     contactObfuscated: false,
     createdAt: '2024-01-15T10:00:00Z',
-    expiresAt: '2024-02-15T10:00:00Z'
-  },
-  {
-    id: '2',
-    title: '2020 Honda Civic - Low Miles',
-    description: 'Well maintained Honda Civic with only 25k miles. Clean title, no accidents, excellent gas mileage.',
-    category: 'Vehicles',
-    zipCode: '94103',
-    email: 'carseller@email.com',
-    phone: '(555) 987-6543',
-    images: [],
-    pricingTier: 'basic',
-    contactObfuscated: false,
-    createdAt: '2024-01-14T15:30:00Z',
-    expiresAt: '2024-02-14T15:30:00Z'
-  },
-  {
-    id: '3',
-    title: 'Professional Web Development Services',
-    description: 'Full-stack developer offering custom website development, e-commerce solutions, and maintenance services.',
-    category: 'Services',
-    zipCode: '94104',
-    email: 'webdev@email.com',
-    phone: '(555) 456-7890',
-    images: ['https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=500'],
-    pricingTier: 'premium',
-    contactObfuscated: true,
-    createdAt: '2024-01-13T09:15:00Z',
-    expiresAt: '2024-02-13T09:15:00Z'
+    expiresAt: '2024-02-15T10:00:00Z',
+    price: 100,
+    perUnitType: 'item'
   }
 ];
 
-const fetchClassifieds = async (filters: ClassifiedFilters): Promise<Classified[]> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 500));
+const fetchClassifieds = async (filters: ClassifiedFilters, apiClient: any): Promise<Classified[]> => {
+  console.log('Fetching classifieds with filters:', filters);
   
+  // If no filters are applied, get recent classifieds from API
+  const hasFilters = filters.category || filters.zipCode || filters.keyword;
+  
+  if (!hasFilters) {
+    try {
+      const response: ApiResponse = await apiClient.get('/classified/mostRecent?number=9');
+      
+      console.log('API Response for classifieds:', response);
+      
+      // Check if we have a successful response with data
+      if (response.response && Array.isArray(response.response) && response.response.length > 0) {
+        console.log(`Found ${response.response.length} classifieds from API`);
+        return response.response.map(convertToClassified);
+      }
+      
+      // If API returns no data, show mock data
+      console.log('No classifieds found from API, showing mock data');
+      return mockClassifieds;
+    } catch (error) {
+      console.log('API error, showing mock data:', error);
+      return mockClassifieds;
+    }
+  }
+  
+  // For filtered searches, use mock data for now (could be replaced with filtered API endpoint later)
   let filtered = mockClassifieds;
 
   if (filters.category) {
@@ -74,9 +123,11 @@ const fetchClassifieds = async (filters: ClassifiedFilters): Promise<Classified[
 };
 
 export const useClassifieds = (filters: ClassifiedFilters) => {
+  const apiClient = useApiClient();
+  
   return useQuery({
     queryKey: ['classifieds', filters],
-    queryFn: () => fetchClassifieds(filters),
+    queryFn: () => fetchClassifieds(filters, apiClient),
     staleTime: 5 * 60 * 1000,
   });
 };
