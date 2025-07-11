@@ -1,3 +1,4 @@
+
 export interface Classified {
   id: string;
   title: string;
@@ -13,7 +14,8 @@ export interface Classified {
   contactObfuscated: boolean;
   createdAt: string;
   expiresAt: string;
-  price?: number; // Add price field
+  price?: number;
+  perUnitType?: string; // Add perUnitType field
 }
 
 export interface ClassifiedCategory {

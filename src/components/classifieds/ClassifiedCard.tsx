@@ -43,24 +43,30 @@ const ClassifiedCard = ({ classified }: ClassifiedCardProps) => {
     }
   };
 
+  const truncateDescription = (text: string, maxLength: number = 150) => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+  };
+
   return (
     <>
       <Card className="hover:shadow-md hover:border-yellow-500 transition-all duration-200 flex flex-col h-full border-2">
         <CardHeader className="pb-3">
           <div className="flex justify-between items-start mb-2">
-            <h3 className="font-semibold text-lg line-clamp-2 text-center flex-1">{classified.title}</h3>
+            <h3 className="font-semibold text-lg line-clamp-2 text-left flex-1">{classified.title}</h3>
             <Badge variant="secondary" className="ml-2">{classified.category}</Badge>
           </div>
           
-          <div className="flex items-center text-sm text-gray-500 space-x-4">
-            <div className="flex items-center">
+          <div className="flex justify-between items-start">
+            <div className="flex items-center text-sm text-gray-500">
               <MapPin className="w-4 h-4 mr-1 text-greenyp-600" />
-              {classified.zipCode}
+              {classified.city}, {classified.state} {classified.zipCode}
             </div>
-            <div className="flex items-center">
-              <Calendar className="w-4 h-4 mr-1 text-greenyp-600" />
-              {format(new Date(classified.createdAt), 'MMM dd')}
-            </div>
+            {classified.price && classified.perUnitType && (
+              <div className="text-sm font-medium text-greenyp-600">
+                ${classified.price} per {classified.perUnitType}
+              </div>
+            )}
           </div>
         </CardHeader>
 
@@ -76,7 +82,7 @@ const ClassifiedCard = ({ classified }: ClassifiedCardProps) => {
           )}
 
           <p className="text-gray-700 text-sm line-clamp-3 flex-grow text-left">
-            {classified.description}
+            {truncateDescription(classified.description)}
           </p>
 
           <div className="space-y-2">
