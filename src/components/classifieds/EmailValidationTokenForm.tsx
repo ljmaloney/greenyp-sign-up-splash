@@ -2,7 +2,6 @@
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { FormItem, FormControl } from '@/components/ui/form';
 
 interface EmailValidationTokenFormProps {
   emailValidationToken: string;
@@ -13,19 +12,17 @@ const EmailValidationTokenForm = ({ emailValidationToken, onChange }: EmailValid
   return (
     <div className="space-y-4">
       <h3 className="font-medium text-gray-900">Email Validation</h3>
-      <FormItem>
+      <div className="space-y-2">
         <Label htmlFor="emailValidationToken">Email Validation Token *</Label>
-        <FormControl>
-          <Input
-            id="emailValidationToken"
-            type="text"
-            value={emailValidationToken}
-            onChange={(e) => onChange(e.target.value)}
-            placeholder="Enter email validation token"
-            required
-          />
-        </FormControl>
-      </FormItem>
+        <Input
+          id="emailValidationToken"
+          type="text"
+          value={emailValidationToken}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="Enter email validation token"
+          required
+        />
+      </div>
     </div>
   );
 };
