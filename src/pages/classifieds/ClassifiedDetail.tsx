@@ -1,23 +1,127 @@
-import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+
+import React, { useState, useEffect } from 'react';
+import { useParams, useSearchParams, useLocation } from 'react-router-dom';
 import PublicHeader from '@/components/PublicHeader';
 import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
 import ContactSellerDialog from '@/components/classifieds/ContactSellerDialog';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, MapPin, Calendar, Mail, Phone, ExternalLink } from 'lucide-react';
-import { format } from 'date-fns';
+import PaymentSuccessBanner from '@/components/classifieds/PaymentSuccessBanner';
+import ClassifiedDetailHeader from '@/components/classifieds/ClassifiedDetailHeader';
+import ClassifiedImageGallery from '@/components/classifieds/ClassifiedImageGallery';
+import ClassifiedDescription from '@/components/classifieds/ClassifiedDescription';
+import ClassifiedContactInfo from '@/components/classifieds/ClassifiedContactInfo';
+import ClassifiedDetailLoading from '@/components/classifieds/ClassifiedDetailLoading';
+import ClassifiedDetailError from '@/components/classifieds/ClassifiedDetailError';
 import { useClassifiedDetail } from '@/hooks/useClassifiedDetail';
+import { useClassifiedImages } from '@/hooks/useClassifiedImages';
 import { useAdPackages } from '@/hooks/useAdPackages';
+import { useClassifiedCategories } from '@/hooks/useClassifiedCategories';
 
 const ClassifiedDetail = () => {
   const { id } = useParams<{ id: string }>();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
   const { data: classified, isLoading, error } = useClassifiedDetail(id!);
+  const { data: classifiedImages = [], isLoading: imagesLoading } = useClassifiedImages(id!, !!classified);
   const [showContactDialog, setShowContactDialog] = useState(false);
+  const [showSuccessBanner, setShowSuccessBanner] = useState(false);
   const { data: adPackagesData } = useAdPackages();
+  const { data: categoriesData } = useClassifiedCategories();
+
+  // Safari-safe back navigation handling
+  const getBackNavigation = () => {
+    try {
+      // Check if we came from search results
+      const referrer = document.referrer || '';
+      const isFromSearch = referrer.includes('/classifieds/search') || location.state?.from === 'search';
+      
+      // Check if there are search parameters in the current URL that indicate search context
+      const hasSearchContext = searchParams.get('fromSearch') === 'true';
+      
+      if (isFromSearch || hasSearchContext) {
+        // Try to reconstruct the search URL from stored parameters or referrer
+        const storedSearchParams = sessionStorage?.getItem('lastSearchParams');
+        if (storedSearchParams) {
+          return {
+            backUrl: `/classifieds/search?${storedSearchParams}`,
+            backLabel: 'Back to Search Results'
+          };
+        }
+        // Fallback to generic search page
+        return {
+          backUrl: '/classifieds/search',
+          backLabel: 'Back to Search Results'
+        };
+      }
+    } catch (error) {
+      console.warn('⚠️ Safari storage access issue:', error);
+    }
+    
+    // Default back to main classifieds page
+    return {
+      backUrl: '/classifieds',
+      backLabel: 'Back to Classifieds'
+    };
+  };
+
+  const { backUrl, backLabel } = getBackNavigation();
+
+  // Safari-safe secret parameter handling
+  useEffect(() => {
+    try {
+      const secret = searchParams.get('secret');
+      if (secret) {
+        console.log('🔑 Secret parameter detected, saving temporarily:', secret);
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem('classifiedSecret', secret);
+        }
+        // Safari-safe URL parameter removal
+        const newSearchParams = new URLSearchParams();
+        for (const [key, value] of searchParams.entries()) {
+          if (key !== 'secret') {
+            newSearchParams.set(key, value);
+          }
+        }
+        setSearchParams(newSearchParams, { replace: true });
+      }
+    } catch (error) {
+      console.warn('⚠️ Safari parameter handling issue:', error);
+    }
+  }, [searchParams, setSearchParams]);
+
+  // Safari-safe payment success parameter handling
+  useEffect(() => {
+    try {
+      const paymentSuccess = searchParams.get('paymentSuccess');
+      console.log('🎯 ClassifiedDetail - Checking for paymentSuccess parameter:', {
+        paymentSuccess,
+        allSearchParams: Object.fromEntries(searchParams.entries()),
+        currentUrl: window.location.href
+      });
+      
+      if (paymentSuccess === 'true') {
+        console.log('✅ Payment success detected, showing banner');
+        setShowSuccessBanner(true);
+        // Safari-safe parameter removal
+        const newSearchParams = new URLSearchParams();
+        for (const [key, value] of searchParams.entries()) {
+          if (key !== 'paymentSuccess') {
+            newSearchParams.set(key, value);
+          }
+        }
+        setSearchParams(newSearchParams, { replace: true });
+      } else {
+        console.log('❌ No payment success parameter found');
+      }
+    } catch (error) {
+      console.warn('⚠️ Safari payment parameter handling issue:', error);
+    }
+  }, [searchParams, setSearchParams]);
 
   // Find the ad package for this classified
   const adPackage = adPackagesData?.response?.find(pkg => pkg.adTypeId === classified?.pricingTier);
+  
+  // Find the category name from the categories list using the categoryId
+  const categoryName = categoriesData?.response?.find(cat => cat.categoryId === classified?.category)?.name;
   
   // Check if contact should be protected - either by ad package feature OR if contact is obfuscated
   const hasProtectedContact = (adPackage?.features?.protectContact || classified?.contactObfuscated) || false;
@@ -29,19 +133,6 @@ const ClassifiedDetail = () => {
     adPackageProtectContact: adPackage?.features?.protectContact,
     hasProtectedContact
   });
-
-  const formatContact = (contact: string, type: 'email' | 'phone') => {
-    if (!classified?.contactObfuscated) {
-      return contact;
-    }
-    
-    if (type === 'email') {
-      const [username, domain] = contact.split('@');
-      return `${username.slice(0, 2)}***@${domain}`;
-    } else {
-      return `${contact.slice(0, 3)}***${contact.slice(-4)}`;
-    }
-  };
 
   const handleContactSeller = () => {
     console.log('📧 Send Email clicked:', {
@@ -55,52 +146,38 @@ const ClassifiedDetail = () => {
       setShowContactDialog(true);
     } else {
       console.log('📬 Opening email client directly');
-      window.open(`mailto:${classified?.email}`, '_blank');
+      // Safari-safe mailto handling
+      try {
+        const mailtoUrl = `mailto:${classified?.email}`;
+        if (window.open) {
+          window.open(mailtoUrl, '_blank');
+        } else {
+          window.location.href = mailtoUrl;
+        }
+      } catch (error) {
+        console.warn('⚠️ Safari mailto issue:', error);
+        window.location.href = `mailto:${classified?.email}`;
+      }
     }
   };
 
+  const handleDismissSuccessBanner = () => {
+    console.log('🚫 Dismissing success banner');
+    setShowSuccessBanner(false);
+  };
+
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <PublicHeader />
-        <main className="flex-grow bg-gray-50 py-8">
-          <div className="container mx-auto px-4 max-w-4xl">
-            <div className="animate-pulse">
-              <div className="h-8 bg-gray-200 rounded mb-4"></div>
-              <div className="h-64 bg-gray-200 rounded mb-6"></div>
-              <div className="h-4 bg-gray-200 rounded mb-2"></div>
-              <div className="h-4 bg-gray-200 rounded mb-2"></div>
-              <div className="h-4 bg-gray-200 rounded"></div>
-            </div>
-          </div>
-        </main>
-        <ClassifiedsFooter />
-      </div>
-    );
+    return <ClassifiedDetailLoading />;
   }
 
   if (error || !classified) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <PublicHeader />
-        <main className="flex-grow bg-gray-50 py-8">
-          <div className="container mx-auto px-4 max-w-4xl">
-            <div className="text-center py-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Ad Not Found</h2>
-              <p className="text-gray-600 mb-6">The classified ad you're looking for doesn't exist or has been removed.</p>
-              <Link to="/classifieds">
-                <Button className="bg-greenyp-600 hover:bg-greenyp-700">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to Classifieds
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </main>
-        <ClassifiedsFooter />
-      </div>
-    );
+    return <ClassifiedDetailError />;
   }
+
+  // Combine classified images with fallback to classified.images array
+  const displayImages = classifiedImages.length > 0 
+    ? classifiedImages.map(img => img.url) 
+    : classified.images || [];
 
   return (
     <>
@@ -108,93 +185,32 @@ const ClassifiedDetail = () => {
         <PublicHeader />
         <main className="flex-grow bg-gray-50 py-8">
           <div className="container mx-auto px-4 max-w-4xl">
-            <div className="mb-6">
-              <Link to="/classifieds">
-                <Button variant="outline" className="border-greenyp-600 text-greenyp-600 hover:bg-greenyp-50">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to Classifieds
-                </Button>
-              </Link>
-            </div>
+            {showSuccessBanner && (
+              <PaymentSuccessBanner onDismiss={handleDismissSuccessBanner} />
+            )}
 
             <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-              <div className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <h1 className="text-3xl font-bold text-gray-900 text-center flex-1">{classified.title}</h1>
-                  <Badge variant="secondary" className="ml-4">{classified.category}</Badge>
-                </div>
-
-                <div className="flex items-center text-gray-500 space-x-6 mb-6">
-                  <div className="flex items-center">
-                    <MapPin className="w-5 h-5 mr-2 text-greenyp-600" />
-                    <span>{classified.zipCode}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <Calendar className="w-5 h-5 mr-2 text-greenyp-600" />
-                    <span>Posted {format(new Date(classified.createdAt), 'MMMM dd, yyyy')}</span>
-                  </div>
-                </div>
-
-                {classified.images.length > 0 && (
-                  <div className="mb-8">
-                    <h3 className="text-xl font-semibold mb-4">Photos</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {classified.images.map((image, index) => (
-                        <div key={index} className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
-                          <img 
-                            src={image} 
-                            alt={`${classified.title} - Image ${index + 1}`}
-                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-200 cursor-pointer"
-                            onClick={() => window.open(image, '_blank')}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                <div className="mb-8">
-                  <h3 className="text-xl font-semibold mb-4">Description</h3>
-                  <div className="text-gray-700 text-left whitespace-pre-wrap leading-relaxed">
-                    {classified.description}
-                  </div>
-                </div>
-
-                <div className="border-t pt-6">
-                  <h3 className="text-xl font-semibold mb-4">Contact Information</h3>
-                  <div className="space-y-3">
-                    <div className="flex items-center">
-                      <Mail className="w-5 h-5 mr-3 text-greenyp-600" />
-                      <span className="text-gray-700">
-                        {formatContact(classified.email, 'email')}
-                      </span>
-                    </div>
-                    <div className="flex items-center">
-                      <Phone className="w-5 h-5 mr-3 text-greenyp-600" />
-                      <span className="text-gray-700">
-                        {formatContact(classified.phone, 'phone')}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row gap-4 mt-6">
-                    <Button 
-                      className="bg-greenyp-600 hover:bg-greenyp-700 flex-1"
-                      onClick={handleContactSeller}
-                    >
-                      <Mail className="w-4 h-4 mr-2" />
-                      Send Email
-                    </Button>
-                    <Button 
-                      variant="outline"
-                      className="border-greenyp-600 text-greenyp-600 hover:bg-greenyp-50 flex-1"
-                      onClick={() => window.open(`tel:${classified.phone}`, '_blank')}
-                    >
-                      <Phone className="w-4 h-4 mr-2" />
-                      Call Now
-                    </Button>
-                  </div>
-                </div>
+              <ClassifiedDetailHeader 
+                classified={classified}
+                categoryName={categoryName}
+                price={classified.price}
+                backUrl={backUrl}
+                backLabel={backLabel}
+              />
+              
+              <div className="px-6 pb-8">
+                <ClassifiedImageGallery 
+                  images={displayImages} 
+                  title={classified.title}
+                />
+                
+                <ClassifiedDescription description={classified.description} />
+                
+                <ClassifiedContactInfo
+                  classified={classified}
+                  hasProtectedContact={hasProtectedContact}
+                  onContactSeller={handleContactSeller}
+                />
               </div>
             </div>
           </div>

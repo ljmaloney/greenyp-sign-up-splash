@@ -1,78 +1,123 @@
 
 import { useQuery } from '@tanstack/react-query';
+import { useApiClient } from '@/hooks/useApiClient';
 import { Classified } from '@/types/classifieds';
 
-// Mock data - in a real app, this would be an API call
-const mockClassifieds: Classified[] = [
-  {
-    id: '1',
-    title: 'John Deere Riding Mower - Excellent Condition',
-    description: 'Well-maintained John Deere riding mower, perfect for large lawns. Low hours, new blades, runs great.\n\nThis mower has been garage-kept and regularly serviced. It features a 42-inch cutting deck, automatic transmission, and comfortable seating. Perfect for homeowners with large properties or landscaping professionals.\n\nIncludes:\n- Original owner\'s manual\n- Maintenance records\n- Extra set of blades\n- Grass catcher attachment\n\nSerious inquiries only. Cash preferred.',
-    category: 'Lawn & Garden Equipment',
-    zipCode: '30309',
-    email: 'seller1@email.com',
-    phone: '(404) 555-4567',
-    images: [
-      'https://images.unsplash.com/photo-1558618666-9c5e22e6203c?w=500',
-      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=500',
-      'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=500'
-    ],
-    pricingTier: 'standard',
-    contactObfuscated: false,
-    createdAt: '2024-01-15T10:00:00Z',
-    expiresAt: '2024-02-15T10:00:00Z'
-  },
-  {
-    id: '2',
-    title: 'Fresh Organic Tomatoes - Farm Direct',
-    description: 'Vine-ripened organic tomatoes, picked fresh this morning. Various varieties available including Cherokee Purple, Brandywine, and Roma tomatoes.\n\nAll tomatoes are grown using organic farming methods without pesticides or chemical fertilizers. Perfect for restaurants, farmers markets, or families who appreciate quality produce.\n\nAvailable varieties:\n- Cherokee Purple (heirloom)\n- Brandywine (heirloom)\n- Roma (paste tomato)\n- Cherry tomatoes\n\nPricing:\n- $4/lb for heirloom varieties\n- $3/lb for Roma\n- $5/lb for cherry tomatoes\n\nBulk discounts available for orders over 25 lbs.',
-    category: 'Fruits, Vegetables',
-    zipCode: '30305',
-    email: 'farmer@email.com',
-    phone: '(404) 987-6543',
-    images: [
-      'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500',
-      'https://images.unsplash.com/photo-1416431168657-a6c4f5c24e33?w=500'
-    ],
-    pricingTier: 'basic',
-    contactObfuscated: false,
-    createdAt: '2024-01-14T15:30:00Z',
-    expiresAt: '2024-02-14T15:30:00Z'
-  },
-  {
-    id: '3',
-    title: 'Professional Landscaping Services',
-    description: 'Full-service landscaping company offering design, installation, and maintenance services for residential and commercial properties.\n\nOur experienced team provides:\n- Landscape design and consultation\n- Hardscape installation (patios, walkways, retaining walls)\n- Irrigation system installation and repair\n- Regular maintenance and lawn care\n- Tree and shrub planting\n- Seasonal cleanup services\n\nWe\'ve been serving the Atlanta area for over 15 years with hundreds of satisfied customers. Licensed, bonded, and insured.\n\nFree estimates available. Contact us to discuss your landscaping needs and transform your outdoor space.',
-    category: 'Landscaping Services',
-    zipCode: '30308',
-    email: 'landscape@email.com',
-    phone: '(404) 456-7890',
-    images: [
-      'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=500',
-      'https://images.unsplash.com/photo-1416431168657-a6c4f5c24e33?w=500',
-      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=500',
-      'https://images.unsplash.com/photo-1558618666-9c5e22e6203c?w=500'
-    ],
-    pricingTier: 'premium',
-    contactObfuscated: true,
-    createdAt: '2024-01-13T09:15:00Z',
-    expiresAt: '2024-02-13T09:15:00Z'
-  }
-];
+interface ClassifiedDetailApiResponse {
+  response: {
+    classifiedId: string;
+    createDate: string;
+    lastUpdateDate: string;
+    activeDate: string;
+    lastActiveDate: string;
+    renewalCount: number;
+    categoryId: string;
+    adTypeId: string;
+    price?: number;
+    perUnitType?: string;
+    title: string;
+    description: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    emailAddress: string;
+    phoneNumber: string;
+    longitude?: number;
+    latitude?: number;
+  };
+  errorMessageApi?: string | null;
+}
 
-const fetchClassifiedDetail = async (id: string): Promise<Classified | null> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 300));
+const transformApiResponseToClassified = (apiResponse: ClassifiedDetailApiResponse['response']): Classified => {
+  // Safari-safe date parsing - create explicit Date objects
+  let expirationDate: Date;
+  try {
+    // Handle different date formats Safari might receive
+    const lastActiveDate = apiResponse.lastActiveDate;
+    if (lastActiveDate.includes('T')) {
+      // ISO format
+      expirationDate = new Date(lastActiveDate);
+    } else {
+      // Fallback for other formats
+      expirationDate = new Date(lastActiveDate + 'T23:59:59.999Z');
+    }
+    
+    // Validate the date is valid
+    if (isNaN(expirationDate.getTime())) {
+      console.warn('⚠️ Invalid lastActiveDate, using fallback:', lastActiveDate);
+      expirationDate = new Date();
+      expirationDate.setMonth(expirationDate.getMonth() + 1); // 1 month from now
+    } else {
+      // Set to end of day
+      expirationDate.setHours(23, 59, 59, 999);
+    }
+  } catch (error) {
+    console.error('❌ Date parsing error:', error);
+    expirationDate = new Date();
+    expirationDate.setMonth(expirationDate.getMonth() + 1);
+  }
   
-  const classified = mockClassifieds.find(c => c.id === id);
-  return classified || null;
+  return {
+    id: apiResponse.classifiedId,
+    title: apiResponse.title,
+    description: apiResponse.description,
+    category: apiResponse.categoryId,
+    zipCode: apiResponse.postalCode,
+    city: apiResponse.city,
+    state: apiResponse.state,
+    email: apiResponse.emailAddress,
+    phone: apiResponse.phoneNumber,
+    images: [],
+    pricingTier: apiResponse.adTypeId,
+    contactObfuscated: false,
+    createdAt: apiResponse.createDate,
+    expiresAt: expirationDate.toISOString(),
+    price: apiResponse.price
+  };
 };
 
 export const useClassifiedDetail = (id: string) => {
+  const apiClient = useApiClient();
+
   return useQuery({
     queryKey: ['classifiedDetail', id],
-    queryFn: () => fetchClassifiedDetail(id),
-    enabled: !!id,
+    queryFn: async (): Promise<Classified | null> => {
+      console.log('🔍 Fetching classified detail for ID:', id);
+      
+      if (!id || id === ':id') {
+        console.error('❌ Invalid or missing classified ID:', id);
+        throw new Error('Invalid classified ID');
+      }
+      
+      try {
+        const response: ClassifiedDetailApiResponse = await apiClient.get(
+          `/classified/${id}`,
+          { requireAuth: false }
+        );
+        
+        console.log('📋 Classified detail API response:', response);
+        
+        if (response.errorMessageApi) {
+          console.error('❌ Error fetching classified detail:', response.errorMessageApi);
+          throw new Error(response.errorMessageApi);
+        }
+
+        if (!response.response) {
+          console.warn('⚠️ No classified data found for ID:', id);
+          return null;
+        }
+
+        const transformedClassified = transformApiResponseToClassified(response.response);
+        console.log('✅ Transformed classified data:', transformedClassified);
+        
+        return transformedClassified;
+      } catch (error) {
+        console.error('❌ Failed to fetch classified detail:', error);
+        throw error;
+      }
+    },
+    enabled: !!id && id !== ':id',
     staleTime: 5 * 60 * 1000,
+    retry: 2
   });
 };

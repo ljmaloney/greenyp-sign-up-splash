@@ -1,9 +1,12 @@
+
 export interface Classified {
   id: string;
   title: string;
   description: string;
   category: string;
   zipCode: string;
+  city?: string;
+  state?: string;
   email: string;
   phone: string;
   images: string[];
@@ -11,6 +14,8 @@ export interface Classified {
   contactObfuscated: boolean;
   createdAt: string;
   expiresAt: string;
+  price?: number;
+  perUnitType?: string; // Add perUnitType field
 }
 
 export interface ClassifiedCategory {

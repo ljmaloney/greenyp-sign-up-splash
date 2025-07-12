@@ -24,35 +24,19 @@ const AdDetailsForm = ({
   per, 
   onFieldChange 
 }: AdDetailsFormProps) => {
-  const [isCustomPer, setIsCustomPer] = useState(false);
-  const [customPerValue, setCustomPerValue] = useState('');
   const { data: categoriesData } = useClassifiedCategories();
 
-  const predefinedPerOptions = [
-    'Hour',
-    'Day',
+  const validPerOptions = [
+    'Bale',
+    'Board Foot',
+    'Bushel',
+    'Dozen',
     'Each',
-    'Set',
-    'Lot',
-    'Yard',
-    'Sq Ft',
-    'Custom'
+    'Gallon',
+    'Pint',
+    'Pound',
+    'Quart'
   ];
-
-  const handlePerChange = (value: string) => {
-    if (value === 'Custom') {
-      setIsCustomPer(true);
-      onFieldChange('per', customPerValue);
-    } else {
-      setIsCustomPer(false);
-      onFieldChange('per', value);
-    }
-  };
-
-  const handleCustomPerChange = (value: string) => {
-    setCustomPerValue(value);
-    onFieldChange('per', value);
-  };
 
   const activeCategories = categoriesData?.response?.filter(cat => cat.active) || [];
 
@@ -122,38 +106,18 @@ const AdDetailsForm = ({
 
           <div>
             <Label htmlFor="per">Per (optional)</Label>
-            {isCustomPer ? (
-              <div className="flex gap-2">
-                <Input
-                  value={customPerValue}
-                  onChange={(e) => handleCustomPerChange(e.target.value)}
-                  placeholder="Enter custom unit"
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsCustomPer(false);
-                    onFieldChange('per', '');
-                  }}
-                  className="px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded"
-                >
-                  Cancel
-                </button>
-              </div>
-            ) : (
-              <Select value={per || ''} onValueChange={handlePerChange}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select unit" />
-                </SelectTrigger>
-                <SelectContent className="bg-white z-50">
-                  {predefinedPerOptions.map((option) => (
-                    <SelectItem key={option} value={option}>
-                      {option}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
+            <Select value={per || ''} onValueChange={(value) => onFieldChange('per', value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select unit" />
+              </SelectTrigger>
+              <SelectContent className="bg-white z-50">
+                {validPerOptions.map((option) => (
+                  <SelectItem key={option} value={option}>
+                    {option}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </CardContent>

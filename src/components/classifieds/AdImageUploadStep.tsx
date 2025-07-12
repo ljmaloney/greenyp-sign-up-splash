@@ -23,6 +23,24 @@ const AdImageUploadStep = ({
   onBack,
   selectedPackage 
 }: AdImageUploadStepProps) => {
+  const handleFileSelect = (files: FileList | null) => {
+    if (!files) return;
+    
+    const newFiles = Array.from(files);
+    const totalImages = images.length + newFiles.length;
+
+    if (totalImages > maxImages) {
+      // Handle max images exceeded - could show toast here
+      return;
+    }
+
+    const validFiles = newFiles.filter(file => {
+      return file.type.startsWith('image/') && file.size <= 5 * 1024 * 1024;
+    });
+
+    onImagesChange([...images, ...validFiles]);
+  };
+
   return (
     <div className="space-y-6">
       <div className="mb-6">
@@ -49,9 +67,8 @@ const AdImageUploadStep = ({
         </CardHeader>
         <CardContent>
           <ImageUploadZone
-            images={images}
             maxImages={maxImages}
-            onImagesChange={onImagesChange}
+            onFileSelect={handleFileSelect}
           />
         </CardContent>
       </Card>

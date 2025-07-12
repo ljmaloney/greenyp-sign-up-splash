@@ -143,16 +143,10 @@ export const useAdFormSubmission = (
 
       if (response?.response?.classifiedId) {
         console.log('🎉 STEP 3 - SUCCESS - Classified ad created with ID:', response.response.classifiedId);
-        toast({
-          title: "Success!",
-          description: `Your classified ad has been created successfully! ID: ${response.response.classifiedId}`,
-        });
+        // Removed success toast - no longer showing success message
       } else {
         console.log('🎉 STEP 3 - SUCCESS - Classified ad created (no ID in response)');
-        toast({
-          title: "Success!",
-          description: "Your ad has been posted successfully!",
-        });
+        // Removed success toast - no longer showing success message
       }
     } catch (error) {
       console.error('❌ STEP 3 - *** POST REQUEST FAILED ***');

@@ -30,6 +30,7 @@ import SubscribersSubscribe from '@/pages/subscribers/Subscribe';
 import SubscriptionFeatures from '@/pages/subscribers/SubscriptionFeatures';
 import SubscriberCategories from '@/pages/subscribers/SubscriberCategories';
 import SubscriberCategoryPage from '@/pages/subscribers/CategoryPage';
+import SignUpConfirmation from '@/pages/subscribers/SignUpConfirmation';
 
 // Import dashboard pages
 import DashboardIndex from '@/pages/dashboard/Index';
@@ -68,6 +69,7 @@ function App() {
               <Route path="/categories/:lineOfBusinessId" element={<CategoryPage />} />
               <Route path="/category/:lineOfBusinessId" element={<CategoryPage />} />
               <Route path="/business/:businessId" element={<ProfilePage />} />
+              <Route path="/profile/:producerId/:producerLocationId" element={<ProfilePage />} />
               <Route path="/login" element={<Login />} />
 
               {/* Authentication Routes */}
@@ -167,6 +169,7 @@ function App() {
               {/* Subscriber Routes */}
               <Route path="/subscribers" element={<SubscribersIndex />} />
               <Route path="/subscribers/signup" element={<SubscribersSignUp />} />
+              <Route path="/subscriber/signup/confirmation" element={<SignUpConfirmation />} />
               <Route path="/subscribers/subscribe" element={<SubscribersSubscribe />} />
               <Route path="/subscribers/subscription-features" element={<SubscriptionFeatures />} />
               <Route path="/subscribers/contact" element={<Contact />} />

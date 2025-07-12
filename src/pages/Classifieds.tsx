@@ -2,9 +2,8 @@
 import React, { useState } from 'react';
 import PublicHeader from '@/components/PublicHeader';
 import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
-import ClassifiedsFilters from '@/components/classifieds/ClassifiedsFilters';
+import ClassifiedsFiltersLive from '@/components/classifieds/ClassifiedsFiltersLive';
 import ClassifiedsList from '@/components/classifieds/ClassifiedsList';
-import RecentClassifieds from '@/components/classifieds/RecentClassifieds';
 import { Button } from '@/components/ui/button';
 import { Plus, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -36,12 +35,8 @@ const Classifieds = () => {
             </div>
           </div>
 
-          <ClassifiedsFilters filters={filters} onFiltersChange={setFilters} />
+          <ClassifiedsFiltersLive filters={filters} onFiltersChange={setFilters} />
           
-          <div className="mb-12">
-            <RecentClassifieds />
-          </div>
-
           <ClassifiedsList filters={filters} />
         </div>
       </main>

@@ -18,7 +18,7 @@ const PaymentInformationHeader = ({ onCopyFromCustomer }: PaymentInformationHead
         className="text-xs"
       >
         <Copy className="w-3 h-3 mr-1" />
-        Copy from Customer
+        Copy from Ad
       </Button>
     </div>
   );
