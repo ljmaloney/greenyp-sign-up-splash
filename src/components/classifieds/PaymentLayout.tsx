@@ -189,6 +189,13 @@ const PaymentLayout = ({ classified, customer, isSubscription = false, producerI
           emailValidationToken={billingInfo.emailValidationToken}
           onChange={handleEmailValidationTokenChange}
         />
+        <PaymentMethodCard
+          cardContainerRef={cardContainerRef}
+          error={error}
+          isProcessing={isProcessing}
+          onPayment={handlePayment}
+          isCardReady={!!card}
+        />
         {isSubscription && producerId ? (
           <SquareSignUpPaymentCard
             producerId={producerId}

@@ -32,7 +32,7 @@ export const useMultiStepAdForm = () => {
     if (adPackagesData?.response && adPackagesData.response.length > 0 && !formData.pricingTier) {
       // Check if there's a pre-selected package from navigation state
       const preSelectedPackage = location.state?.preSelectedPackage;
-      
+
       if (preSelectedPackage) {
         const selectedPackage = adPackagesData.response.find(pkg => pkg.adTypeId === preSelectedPackage && pkg.active);
         if (selectedPackage) {
