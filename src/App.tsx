@@ -26,6 +26,7 @@ import CategoryDescriptions from '@/pages/classifieds/CategoryDescriptions';
 // Import subscriber pages
 import SubscribersIndex from '@/pages/subscribers/Index';
 import SubscribersSignUp from '@/pages/subscribers/SignUp';
+import SubscribersSignUpPayment from '@/pages/subscribers/SignUpPayment';
 import SubscribersSubscribe from '@/pages/subscribers/Subscribe';
 import SubscriptionFeatures from '@/pages/subscribers/SubscriptionFeatures';
 import SubscriberCategories from '@/pages/subscribers/SubscriberCategories';
@@ -169,6 +170,7 @@ function App() {
               {/* Subscriber Routes */}
               <Route path="/subscribers" element={<SubscribersIndex />} />
               <Route path="/subscribers/signup" element={<SubscribersSignUp />} />
+              <Route path="/subscriber/signup/payment" element={<SubscribersSignUpPayment />} />
               <Route path="/subscriber/signup/confirmation" element={<SignUpConfirmation />} />
               <Route path="/subscribers/subscribe" element={<SubscribersSubscribe />} />
               <Route path="/subscribers/subscription-features" element={<SubscriptionFeatures />} />

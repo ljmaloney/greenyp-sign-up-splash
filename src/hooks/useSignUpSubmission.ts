@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from "@/components/ui/sonner";
 import { SignUpFormSchema } from '@/utils/signUpValidation';
 import { createSignUpPayload, submitSignUpData } from '@/services/signUpService';
-import { createConfirmationParams } from '@/utils/signUpConfirmationUtils';
 
 export const useSignUpSubmission = () => {
   const [loading, setLoading] = useState(false);
@@ -30,16 +29,22 @@ export const useSignUpSubmission = () => {
         const responseData = await response.json();
         console.log('Success response data:', responseData);
         
-        toast.success("Account created successfully! Welcome to GreenYP!");
+        toast.success("Account created successfully! Please complete your payment to activate your subscription.");
         
-        const confirmationParams = createConfirmationParams(
-          responseData, 
-          data, 
-          selectedSubscription, 
-          categories
-        );
+        // Redirect to payment page with producer ID and form data
+        const paymentParams = new URLSearchParams();
+        paymentParams.set('producerId', responseData.producerId || responseData.id);
+        paymentParams.set('subscription', selectedSubscription?.subscriptionId || '');
+        paymentParams.set('email', data.emailAddress);
+        paymentParams.set('firstName', data.firstName);
+        paymentParams.set('lastName', data.lastName);
+        paymentParams.set('phone', data.phoneNumber);
+        paymentParams.set('address', data.addressLine1);
+        paymentParams.set('city', data.city);
+        paymentParams.set('state', data.state);
+        paymentParams.set('postalCode', data.postalCode);
         
-        navigate(`/subscriber/signup/confirmation?${confirmationParams.toString()}`);
+        navigate(`/subscriber/signup/payment?${paymentParams.toString()}`);
         return;
       }
 
