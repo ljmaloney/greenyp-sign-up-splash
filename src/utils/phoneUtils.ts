@@ -1,23 +1,41 @@
+export const normalizePhoneForSquare = (phone: string): string => {
+  if (!phone) return '';
+  
+  // Remove all non-digit characters
+  const digits = phone.replace(/\D/g, '');
+  
+  // If it starts with 1 and has 11 digits, format as +1XXXXXXXXXX
+  if (digits.length === 11 && digits.startsWith('1')) {
+    return `+${digits}`;
+  }
+  
+  // If it has 10 digits, assume US number and add +1
+  if (digits.length === 10) {
+    return `+1${digits}`;
+  }
+  
+  // Return original if we can't normalize it
+  return phone;
+};
+
 export const normalizePhoneNumber = (phone: string): string => {
   if (!phone) return '';
   
   // Remove all non-digit characters
   const digits = phone.replace(/\D/g, '');
   
-  // Handle different formats
-  let normalizedDigits = digits;
+  // Format as (XXX) XXX-XXXX for 10-digit US numbers
+  if (digits.length === 10) {
+    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+  }
   
-  // If it starts with 1 and has 11 digits, remove the leading 1
+  // Format as +1 (XXX) XXX-XXXX for 11-digit numbers starting with 1
   if (digits.length === 11 && digits.startsWith('1')) {
-    normalizedDigits = digits.slice(1);
+    const remaining = digits.slice(1);
+    return `+1 (${remaining.slice(0, 3)}) ${remaining.slice(3, 6)}-${remaining.slice(6)}`;
   }
   
-  // If we have exactly 10 digits, format as (123) 123-1234
-  if (normalizedDigits.length === 10) {
-    return `(${normalizedDigits.slice(0, 3)}) ${normalizedDigits.slice(3, 6)}-${normalizedDigits.slice(6)}`;
-  }
-  
-  // If we don't have 10 digits, return the original input
+  // Return original if we can't normalize it
   return phone;
 };
 

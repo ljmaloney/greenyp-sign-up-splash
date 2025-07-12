@@ -5,6 +5,7 @@ import NewAdPreviewCard from './NewAdPreviewCard';
 import PaymentInformationCard from './PaymentInformationCard';
 import EmailValidationCard from './EmailValidationCard';
 import PaymentMethodCard from './PaymentMethodCard';
+import SquareSignUpPaymentCard from '@/components/subscribers/SquareSignUpPaymentCard';
 import { useSquarePayment } from '@/hooks/useSquarePayment';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApiClient } from '@/hooks/useApiClient';
@@ -41,9 +42,11 @@ interface CustomerData {
 interface PaymentLayoutProps {
   classified: ClassifiedData;
   customer: CustomerData;
+  isSubscription?: boolean;
+  producerId?: string | null;
 }
 
-const PaymentLayout = ({ classified, customer }: PaymentLayoutProps) => {
+const PaymentLayout = ({ classified, customer, isSubscription = false, producerId }: PaymentLayoutProps) => {
   const { classifiedId } = useParams<{ classifiedId: string }>();
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -193,6 +196,22 @@ const PaymentLayout = ({ classified, customer }: PaymentLayoutProps) => {
           onPayment={handlePayment}
           isCardReady={!!card}
         />
+        {isSubscription && producerId ? (
+          <SquareSignUpPaymentCard
+            producerId={producerId}
+            billingContact={billingInfo.contact}
+            billingAddress={billingInfo.address}
+            emailValidationToken={billingInfo.emailValidationToken}
+          />
+        ) : (
+          <PaymentMethodCard
+            cardContainerRef={cardContainerRef}
+            error={error}
+            isProcessing={isProcessing}
+            onPayment={handlePayment}
+            isCardReady={!!card}
+          />
+        )}
       </div>
     </div>
   );
