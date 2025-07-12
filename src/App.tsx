@@ -170,7 +170,7 @@ function App() {
               {/* Subscriber Routes */}
               <Route path="/subscribers" element={<SubscribersIndex />} />
               <Route path="/subscribers/signup" element={<SubscribersSignUp />} />
-              <Route path="/subscriber/signup/payment" element={<SubscribersSignUpPayment />} />
+              <Route path="/subscribers/signup/payment" element={<SubscribersSignUpPayment />} />
               <Route path="/subscriber/signup/confirmation" element={<SignUpConfirmation />} />
               <Route path="/subscribers/subscribe" element={<SubscribersSubscribe />} />
               <Route path="/subscribers/subscription-features" element={<SubscriptionFeatures />} />
