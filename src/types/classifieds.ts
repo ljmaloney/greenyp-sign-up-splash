@@ -1,4 +1,3 @@
-
 export interface Classified {
   id: string;
   title: string;
@@ -16,6 +15,7 @@ export interface Classified {
   expiresAt: string;
   price?: number;
   perUnitType?: string; // Add perUnitType field
+  distance?: number | null; // Add distance field
 }
 
 export interface ClassifiedCategory {

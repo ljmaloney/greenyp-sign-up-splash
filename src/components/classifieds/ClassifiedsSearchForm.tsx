@@ -45,7 +45,15 @@ const ClassifiedsSearchForm = ({
     e.preventDefault();
     
     if (onSearch) {
-      onSearch(filters);
+      // Convert category name to categoryId for API call
+      const apiFilters = { ...filters };
+      if (filters.category) {
+        const selectedCategory = categories.find(cat => cat.name === filters.category);
+        if (selectedCategory) {
+          apiFilters.category = selectedCategory.categoryId; // Use categoryId for API
+        }
+      }
+      onSearch(apiFilters);
     } else {
       // Navigate to search page with filters
       const searchParams = new URLSearchParams();
