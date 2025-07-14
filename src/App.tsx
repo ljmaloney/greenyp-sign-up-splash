@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -20,6 +19,7 @@ import Samples from '@/pages/classifieds/Samples.tsx';
 import CreateAd from '@/pages/classifieds/CreateAd';
 import UploadImages from '@/pages/classifieds/UploadImages';
 import Payment from '@/pages/classifieds/Payment';
+import PaymentConfirmation from '@/pages/classifieds/PaymentConfirmation';
 import SearchResultsClassifieds from '@/pages/classifieds/SearchResults';
 import ClassifiedDetail from '@/pages/classifieds/ClassifiedDetail';
 import CategoryDescriptions from '@/pages/classifieds/CategoryDescriptions';
@@ -185,6 +185,7 @@ function App() {
               <Route path="/classifieds/create" element={<CreateAd />} />
               <Route path="/classifieds/uploadimages/:classifiedId" element={<UploadImages />} />
               <Route path="/classifieds/payment/:classifiedId" element={<Payment />} />
+              <Route path="/classifieds/payment/confirmation/:classifiedId" element={<PaymentConfirmation />} />
               <Route path="/classifieds/search" element={<SearchResultsClassifieds />} />
               <Route path="/classifieds/categories" element={<CategoryDescriptions />} />
               <Route path="/classifieds/:id" element={<ClassifiedDetail />} />

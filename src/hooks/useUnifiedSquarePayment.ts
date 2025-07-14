@@ -102,17 +102,17 @@ export const useUnifiedSquarePayment = ({
         
         // Check if payment was completed successfully
         if (paymentResponse.response?.paymentStatus === 'COMPLETED') {
-          console.log('Payment completed successfully, redirecting to classified detail page with success parameter');
+          console.log('Payment completed successfully, redirecting to confirmation page');
           
           toast({
             title: "Payment Successful",
             description: "Your payment has been processed successfully.",
           });
           
-          // Redirect to classified detail page with success parameter
-          const detailUrl = `/classifieds/${classifiedId}?paymentSuccess=true`;
-          console.log('Redirecting to:', detailUrl);
-          navigate(detailUrl);
+          // Redirect to payment confirmation page
+          const confirmationUrl = `/classifieds/payment/confirmation/${classifiedId}?paymentSuccess=true`;
+          console.log('Redirecting to:', confirmationUrl);
+          navigate(confirmationUrl);
         } else {
           console.log('Payment not completed, status:', paymentResponse.response?.paymentStatus);
           setError('Payment was not completed successfully');
