@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useSquarePayment } from '@/hooks/useSquarePayment';
 import PaymentInformationCard from '@/components/payment/PaymentInformationCard';
@@ -89,6 +90,8 @@ const SubscriptionPaymentLayout = ({ planName, planPrice, customerData, producer
         <PaymentInformationCard
           customer={customerData}
           onBillingInfoChange={handleBillingInfoChange}
+          emailValidationToken={emailValidationToken}
+          onEmailValidationTokenChange={handleEmailValidationTokenChange}
         />
         <UnifiedSquarePaymentCard
           billingContact={billingContact}
