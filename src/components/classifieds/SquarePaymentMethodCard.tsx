@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApiClient } from '@/hooks/useApiClient';
 import { useToast } from '@/hooks/use-toast';
-import { useSquarePayment } from '@/hooks/useSquarePayment';
 import { validatePaymentFields } from '@/utils/paymentValidation';
 import { processSquarePayment } from '@/utils/squarePaymentProcessor';
 import PaymentMethodCard from './PaymentMethodCard';
@@ -26,12 +25,22 @@ interface SquarePaymentMethodCardProps {
   billingContact: BillingContactData;
   billingAddress: BillingAddressData;
   emailValidationToken: string;
+  cardContainerRef: React.RefObject<HTMLDivElement>;
+  payments: any;
+  card: any;
+  squareError: string | null;
+  setSquareError: (error: string | null) => void;
 }
 
 const SquarePaymentMethodCard = ({ 
   billingContact, 
   billingAddress, 
-  emailValidationToken 
+  emailValidationToken,
+  cardContainerRef,
+  payments,
+  card,
+  squareError,
+  setSquareError
 }: SquarePaymentMethodCardProps) => {
   const { classifiedId } = useParams<{ classifiedId: string }>();
   const navigate = useNavigate();
@@ -39,24 +48,16 @@ const SquarePaymentMethodCard = ({
   const apiClient = useApiClient();
   const { toast } = useToast();
 
-  const {
-    cardContainerRef,
-    payments,
-    card,
-    error,
-    setError
-  } = useSquarePayment();
-
   const handlePayment = async () => {
     if (!card || !payments || !classifiedId) {
-      setError('Payment form not initialized or missing classified ID');
+      setSquareError('Payment form not initialized or missing classified ID');
       return;
     }
 
     // Validate all required fields before proceeding
     const validationError = validatePaymentFields(billingContact, billingAddress);
     if (validationError) {
-      setError(validationError);
+      setSquareError(validationError);
       toast({
         title: "Required Information Missing",
         description: validationError,
@@ -67,7 +68,7 @@ const SquarePaymentMethodCard = ({
 
     // Validate email validation token
     if (!emailValidationToken || emailValidationToken.trim() === '') {
-      setError('Email validation token is required');
+      setSquareError('Email validation token is required');
       toast({
         title: "Required Information Missing",
         description: "Email validation token is required",
@@ -77,7 +78,7 @@ const SquarePaymentMethodCard = ({
     }
 
     setIsProcessing(true);
-    setError(null);
+    setSquareError(null);
 
     try {
       const paymentResponse = await processSquarePayment(
@@ -105,7 +106,7 @@ const SquarePaymentMethodCard = ({
         navigate(detailUrl);
       } else {
         console.log('Payment not completed, status:', paymentResponse.response?.paymentStatus);
-        setError('Payment was not completed successfully');
+        setSquareError('Payment was not completed successfully');
         toast({
           title: "Payment Issue",
           description: "There was an issue completing your payment. Please try again.",
@@ -114,7 +115,7 @@ const SquarePaymentMethodCard = ({
       }
     } catch (err) {
       console.error('Payment processing error:', err);
-      setError('Payment processing failed');
+      setSquareError('Payment processing failed');
       toast({
         title: "Payment Failed",
         description: "There was an error processing your payment. Please try again.",
@@ -128,7 +129,7 @@ const SquarePaymentMethodCard = ({
   return (
     <PaymentMethodCard
       cardContainerRef={cardContainerRef}
-      error={error}
+      error={squareError}
       isProcessing={isProcessing}
       onPayment={handlePayment}
       isCardReady={!!card}

@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { useSquarePayment } from '@/hooks/useSquarePayment';
 import { useSignUpPayment } from '@/hooks/useSignUpPayment';
 import PaymentMethodCard from '@/components/classifieds/PaymentMethodCard';
 
@@ -23,22 +22,24 @@ interface SquareSignUpPaymentCardProps {
   billingContact: BillingContactData;
   billingAddress: BillingAddressData;
   emailValidationToken: string;
+  cardContainerRef: React.RefObject<HTMLDivElement>;
+  payments: any;
+  card: any;
+  squareError: string | null;
+  setSquareError: (error: string | null) => void;
 }
 
 const SquareSignUpPaymentCard = ({ 
   producerId, 
   billingContact, 
   billingAddress, 
-  emailValidationToken 
+  emailValidationToken,
+  cardContainerRef,
+  payments,
+  card,
+  squareError,
+  setSquareError
 }: SquareSignUpPaymentCardProps) => {
-  const {
-    cardContainerRef,
-    payments,
-    card,
-    error: squareError,
-    setError: setSquareError
-  } = useSquarePayment();
-
   const {
     isProcessing,
     error: paymentError,
@@ -51,7 +52,7 @@ const SquareSignUpPaymentCard = ({
     emailValidationToken
   });
 
-  // Combine errors from both hooks
+  // Combine errors from Square and payment processing
   const error = squareError || paymentError;
   const setError = (errorMessage: string | null) => {
     setSquareError(errorMessage);

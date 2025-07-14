@@ -8,6 +8,7 @@ import SquarePaymentMethodCard from './SquarePaymentMethodCard';
 import SquareSignUpPaymentCard from '@/components/subscribers/SquareSignUpPaymentCard';
 import { useParams } from 'react-router-dom';
 import { useState } from 'react';
+import { useSquarePayment } from '@/hooks/useSquarePayment';
 
 interface ClassifiedData {
   classifiedId: string;
@@ -43,6 +44,15 @@ interface PaymentLayoutProps {
 
 const PaymentLayout = ({ classified, customer, isSubscription = false, producerId }: PaymentLayoutProps) => {
   const { classifiedId } = useParams<{ classifiedId: string }>();
+
+  // Initialize Square payment once at the layout level
+  const {
+    cardContainerRef,
+    payments,
+    card,
+    error: squareError,
+    setError: setSquareError
+  } = useSquarePayment();
 
   const [billingInfo, setBillingInfo] = React.useState({
     contact: {
@@ -93,12 +103,22 @@ const PaymentLayout = ({ classified, customer, isSubscription = false, producerI
             billingContact={billingInfo.contact}
             billingAddress={billingInfo.address}
             emailValidationToken={billingInfo.emailValidationToken}
+            cardContainerRef={cardContainerRef}
+            payments={payments}
+            card={card}
+            squareError={squareError}
+            setSquareError={setSquareError}
           />
         ) : (
           <SquarePaymentMethodCard
             billingContact={billingInfo.contact}
             billingAddress={billingInfo.address}
             emailValidationToken={billingInfo.emailValidationToken}
+            cardContainerRef={cardContainerRef}
+            payments={payments}
+            card={card}
+            squareError={squareError}
+            setSquareError={setSquareError}
           />
         )}
       </div>
