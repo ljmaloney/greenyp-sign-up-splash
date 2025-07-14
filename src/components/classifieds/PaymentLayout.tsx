@@ -4,8 +4,7 @@ import NewOrderSummaryCard from './NewOrderSummaryCard';
 import NewAdPreviewCard from './NewAdPreviewCard';
 import PaymentInformationCard from './PaymentInformationCard';
 import EmailValidationCard from './EmailValidationCard';
-import SquarePaymentMethodCard from './SquarePaymentMethodCard';
-import SquareSignUpPaymentCard from '@/components/subscribers/SquareSignUpPaymentCard';
+import UnifiedSquarePaymentCard from './UnifiedSquarePaymentCard';
 import { useParams } from 'react-router-dom';
 import { useState } from 'react';
 import { useSquarePayment } from '@/hooks/useSquarePayment';
@@ -97,30 +96,18 @@ const PaymentLayout = ({ classified, customer, isSubscription = false, producerI
           emailValidationToken={billingInfo.emailValidationToken}
           onChange={handleEmailValidationTokenChange}
         />
-        {isSubscription && producerId ? (
-          <SquareSignUpPaymentCard
-            producerId={producerId}
-            billingContact={billingInfo.contact}
-            billingAddress={billingInfo.address}
-            emailValidationToken={billingInfo.emailValidationToken}
-            cardContainerRef={cardContainerRef}
-            payments={payments}
-            card={card}
-            squareError={squareError}
-            setSquareError={setSquareError}
-          />
-        ) : (
-          <SquarePaymentMethodCard
-            billingContact={billingInfo.contact}
-            billingAddress={billingInfo.address}
-            emailValidationToken={billingInfo.emailValidationToken}
-            cardContainerRef={cardContainerRef}
-            payments={payments}
-            card={card}
-            squareError={squareError}
-            setSquareError={setSquareError}
-          />
-        )}
+        <UnifiedSquarePaymentCard
+          billingContact={billingInfo.contact}
+          billingAddress={billingInfo.address}
+          emailValidationToken={billingInfo.emailValidationToken}
+          cardContainerRef={cardContainerRef}
+          payments={payments}
+          card={card}
+          squareError={squareError}
+          setSquareError={setSquareError}
+          paymentType={isSubscription ? 'subscription' : 'classified'}
+          producerId={producerId || undefined}
+        />
       </div>
     </div>
   );

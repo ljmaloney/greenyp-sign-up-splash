@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { useSignUpPayment } from '@/hooks/useSignUpPayment';
-import PaymentMethodCard from '@/components/classifieds/PaymentMethodCard';
+import { useUnifiedSquarePayment } from '@/hooks/useUnifiedSquarePayment';
+import PaymentMethodCard from './PaymentMethodCard';
 
 interface BillingContactData {
   firstName: string;
@@ -17,8 +17,7 @@ interface BillingAddressData {
   zipCode: string;
 }
 
-interface SquareSignUpPaymentCardProps {
-  producerId: string;
+interface UnifiedSquarePaymentCardProps {
   billingContact: BillingContactData;
   billingAddress: BillingAddressData;
   emailValidationToken: string;
@@ -27,10 +26,11 @@ interface SquareSignUpPaymentCardProps {
   card: any;
   squareError: string | null;
   setSquareError: (error: string | null) => void;
+  paymentType: 'classified' | 'subscription';
+  producerId?: string;
 }
 
-const SquareSignUpPaymentCard = ({ 
-  producerId, 
+const UnifiedSquarePaymentCard = ({ 
   billingContact, 
   billingAddress, 
   emailValidationToken,
@@ -38,18 +38,21 @@ const SquareSignUpPaymentCard = ({
   payments,
   card,
   squareError,
-  setSquareError
-}: SquareSignUpPaymentCardProps) => {
+  setSquareError,
+  paymentType,
+  producerId
+}: UnifiedSquarePaymentCardProps) => {
   const {
     isProcessing,
     error: paymentError,
     setError: setPaymentError,
     processPayment
-  } = useSignUpPayment({
-    producerId,
+  } = useUnifiedSquarePayment({
     billingContact,
     billingAddress,
-    emailValidationToken
+    emailValidationToken,
+    paymentType,
+    producerId
   });
 
   // Combine errors from Square and payment processing
@@ -74,4 +77,4 @@ const SquareSignUpPaymentCard = ({
   );
 };
 
-export default SquareSignUpPaymentCard;
+export default UnifiedSquarePaymentCard;
