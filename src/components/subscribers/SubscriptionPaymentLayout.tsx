@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { useSquareWebSDK } from '@/hooks/useSquareWebSDK';
+import { useSquarePayment } from '@/hooks/useSquarePayment';
 import PaymentInformationCard from '@/components/payment/PaymentInformationCard';
 import EmailValidationCard from '@/components/payment/EmailValidationCard';
 import UnifiedSquarePaymentCard from '@/components/classifieds/UnifiedSquarePaymentCard';
@@ -53,7 +52,7 @@ const SubscriptionPaymentLayout = ({ planName, planPrice, customerData, producer
 
   const [emailValidationToken, setEmailValidationToken] = useState<string>('');
 
-  const { cardContainerRef, payments, card, error: squareError, setError: setSquareError } = useSquareWebSDK();
+  const { cardContainerRef, payments, card, error: squareError, setError: setSquareError } = useSquarePayment();
 
   const handleBillingInfoChange = (
     contact: BillingContactData, 
