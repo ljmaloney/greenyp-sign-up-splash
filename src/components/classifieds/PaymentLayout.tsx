@@ -86,14 +86,14 @@ const PaymentLayout = ({ classified, customer, isSubscription = false, producerI
 
       {/* Right Column */}
       <div className="space-y-6">
+        <EmailValidationCard
+            emailValidationToken={billingInfo.emailValidationToken}
+            onChange={handleEmailValidationTokenChange}
+        />
         <PaymentInformationCard 
           classified={classified}
           customer={customer}
           onBillingInfoChange={handleBillingInfoUpdate}
-        />
-        <EmailValidationCard
-          emailValidationToken={billingInfo.emailValidationToken}
-          onChange={handleEmailValidationTokenChange}
         />
         <UnifiedSquarePaymentCard
           billingContact={billingInfo.contact}

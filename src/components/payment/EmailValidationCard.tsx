@@ -17,7 +17,8 @@ const EmailValidationCard = ({ emailValidationToken, onChange }: EmailValidation
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="text-sm text-gray-600 italic">
-          An email validation token is required to ensure the authenticity of the email address provided. Please enter the token sent to your email address.
+            A verified email address is required to place your ad. We've sent a verification code to [insert email].
+            Please check your email and enter the code below.
         </div>
         <div className="space-y-2">
           <Label htmlFor="emailValidationToken">Email Validation Token *</Label>

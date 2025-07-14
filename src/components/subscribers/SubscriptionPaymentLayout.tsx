@@ -80,16 +80,14 @@ const SubscriptionPaymentLayout = ({ planName, planPrice, customerData, producer
 
       {/* Right Column - Payment Information */}
       <div className="space-y-6">
+        <EmailValidationCard
+            emailValidationToken={emailValidationToken}
+            onChange={handleEmailValidationTokenChange}
+        />
         <PaymentInformationCard
           customer={customerData}
           onBillingInfoChange={handleBillingInfoChange}
         />
-
-        <EmailValidationCard
-          emailValidationToken={emailValidationToken}
-          onChange={handleEmailValidationTokenChange}
-        />
-
         <UnifiedSquarePaymentCard
           billingContact={billingContact}
           billingAddress={billingAddress}
