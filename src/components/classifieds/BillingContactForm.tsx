@@ -31,8 +31,8 @@ const BillingContactForm = ({ billingContact, onChange }: BillingContactFormProp
   };
 
   const handlePhoneKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    // Allow backspace, delete, and navigation keys
-    if (e.key === 'Backspace' || e.key === 'Delete' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+    // Allow backspace, delete, navigation keys, and Tab key
+    if (e.key === 'Backspace' || e.key === 'Delete' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Tab') {
       return;
     }
     
