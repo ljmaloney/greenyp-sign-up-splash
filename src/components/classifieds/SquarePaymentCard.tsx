@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApiClient } from '@/hooks/useApiClient';
@@ -6,7 +5,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useSquarePayment } from '@/hooks/useSquarePayment';
 import { validatePaymentFields } from '@/utils/paymentValidation';
 import { processSquarePayment } from '@/utils/squarePaymentProcessor';
-import PaymentMethodCard from './PaymentMethodCard';
+import PaymentMethodCard from '../payment/PaymentMethodCard';
 
 interface BillingContactData {
   firstName: string;
