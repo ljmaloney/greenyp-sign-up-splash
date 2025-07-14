@@ -81,8 +81,10 @@ const SubscriptionPaymentLayout = ({ planName, planPrice, customerData, producer
       {/* Right Column - Payment Information */}
       <div className="space-y-6">
         <EmailValidationCard
-            emailValidationToken={emailValidationToken}
-            onChange={handleEmailValidationTokenChange}
+          emailValidationToken={emailValidationToken}
+          onChange={handleEmailValidationTokenChange}
+          emailAddress={customerData?.emailAddress}
+          helperText="A verified email address is required before creating your subscription"
         />
         <PaymentInformationCard
           customer={customerData}

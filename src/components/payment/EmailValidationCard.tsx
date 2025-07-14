@@ -7,9 +7,16 @@ import { Label } from '@/components/ui/label';
 interface EmailValidationCardProps {
   emailValidationToken: string;
   onChange: (value: string) => void;
+  emailAddress?: string;
+  helperText?: string;
 }
 
-const EmailValidationCard = ({ emailValidationToken, onChange }: EmailValidationCardProps) => {
+const EmailValidationCard = ({ 
+  emailValidationToken, 
+  onChange, 
+  emailAddress = '[insert email]',
+  helperText = 'A verified email address is required'
+}: EmailValidationCardProps) => {
   return (
     <Card>
       <CardHeader>
@@ -17,8 +24,8 @@ const EmailValidationCard = ({ emailValidationToken, onChange }: EmailValidation
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="text-sm text-gray-600 italic">
-            A verified email address is required to place your ad. We've sent a verification code to [insert email].
-            Please check your email and enter the code below.
+          {helperText}. We've sent a verification code to {emailAddress}.
+          Please check your email and enter the code below.
         </div>
         <div className="space-y-2">
           <Label htmlFor="emailValidationToken">Email Validation Token *</Label>
