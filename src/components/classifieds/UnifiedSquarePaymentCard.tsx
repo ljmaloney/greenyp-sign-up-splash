@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { useUnifiedSquarePayment } from '@/hooks/useUnifiedSquarePayment';
-import PaymentMethodCard from './PaymentMethodCard';
+import PaymentMethodCard from '../payment/PaymentMethodCard';
 
 interface BillingContactData {
   firstName: string;

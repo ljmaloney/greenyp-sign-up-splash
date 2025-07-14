@@ -1,9 +1,8 @@
-
 import React from 'react';
 import NewOrderSummaryCard from './NewOrderSummaryCard';
 import NewAdPreviewCard from './NewAdPreviewCard';
-import PaymentInformationCard from './PaymentInformationCard';
-import EmailValidationCard from './EmailValidationCard';
+import PaymentInformationCard from '../payment/PaymentInformationCard';
+import EmailValidationCard from '../payment/EmailValidationCard';
 import UnifiedSquarePaymentCard from './UnifiedSquarePaymentCard';
 import { useParams } from 'react-router-dom';
 import { useState } from 'react';
