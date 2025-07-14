@@ -13,6 +13,9 @@ const PaymentConfirmation = () => {
   const { classifiedId } = useParams<{ classifiedId: string }>();
   const [searchParams] = useSearchParams();
   const paymentSuccess = searchParams.get('paymentSuccess');
+  const orderRef = searchParams.get('orderRef');
+  const paymentRef = searchParams.get('paymentRef');
+  const receiptNumber = searchParams.get('receiptNumber');
   const apiClient = useApiClient();
 
   const { data: classifiedData, isLoading, error } = useQuery({
@@ -57,6 +60,9 @@ const PaymentConfirmation = () => {
           classified={classifiedData.classified}
           customer={classifiedData.customer}
           paymentSuccess={paymentSuccess === 'true'}
+          orderRef={orderRef || undefined}
+          paymentRef={paymentRef || undefined}
+          receiptNumber={receiptNumber || undefined}
         />
       </main>
       <ClassifiedsFooter />
