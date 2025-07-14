@@ -19,6 +19,7 @@ import Samples from '@/pages/classifieds/Samples.tsx';
 import CreateAd from '@/pages/classifieds/CreateAd';
 import UploadImages from '@/pages/classifieds/UploadImages';
 import Payment from '@/pages/classifieds/Payment';
+import PaymentConfirmation from '@/pages/classifieds/PaymentConfirmation';
 import SearchResultsClassifieds from '@/pages/classifieds/SearchResults';
 import ClassifiedDetail from '@/pages/classifieds/ClassifiedDetail';
 import CategoryDescriptions from '@/pages/classifieds/CategoryDescriptions';
@@ -31,6 +32,7 @@ import SubscriptionFeatures from '@/pages/subscribers/SubscriptionFeatures';
 import SubscriberCategories from '@/pages/subscribers/SubscriberCategories';
 import SubscriberCategoryPage from '@/pages/subscribers/CategoryPage';
 import SignUpConfirmation from '@/pages/subscribers/SignUpConfirmation';
+import SignUpPayment from '@/pages/subscribers/SignUpPayment';
 
 // Import dashboard pages
 import DashboardIndex from '@/pages/dashboard/Index';
@@ -170,6 +172,7 @@ function App() {
               <Route path="/subscribers" element={<SubscribersIndex />} />
               <Route path="/subscribers/signup" element={<SubscribersSignUp />} />
               <Route path="/subscriber/signup/confirmation" element={<SignUpConfirmation />} />
+              <Route path="/subscriber/signup/payment" element={<SignUpPayment />} />
               <Route path="/subscribers/subscribe" element={<SubscribersSubscribe />} />
               <Route path="/subscribers/subscription-features" element={<SubscriptionFeatures />} />
               <Route path="/subscribers/contact" element={<Contact />} />
@@ -182,6 +185,7 @@ function App() {
               <Route path="/classifieds/create" element={<CreateAd />} />
               <Route path="/classifieds/uploadimages/:classifiedId" element={<UploadImages />} />
               <Route path="/classifieds/payment/:classifiedId" element={<Payment />} />
+              <Route path="/classifieds/payment/confirmation/:classifiedId" element={<PaymentConfirmation />} />
               <Route path="/classifieds/search" element={<SearchResultsClassifieds />} />
               <Route path="/classifieds/categories" element={<CategoryDescriptions />} />
               <Route path="/classifieds/:id" element={<ClassifiedDetail />} />

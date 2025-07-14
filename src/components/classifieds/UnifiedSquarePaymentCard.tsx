@@ -1,8 +1,6 @@
-
 import React from 'react';
-import { useSquarePayment } from '@/hooks/useSquarePayment';
-import { useSignUpPayment } from '@/hooks/useSignUpPayment';
-import PaymentMethodCard from '@/components/classifieds/PaymentMethodCard';
+import { useUnifiedSquarePayment } from '@/hooks/useUnifiedSquarePayment';
+import PaymentMethodCard from '../payment/PaymentMethodCard';
 
 interface BillingContactData {
   firstName: string;
@@ -18,40 +16,45 @@ interface BillingAddressData {
   zipCode: string;
 }
 
-interface SquareSignUpPaymentCardProps {
-  producerId: string;
+interface UnifiedSquarePaymentCardProps {
   billingContact: BillingContactData;
   billingAddress: BillingAddressData;
   emailValidationToken: string;
+  cardContainerRef: React.RefObject<HTMLDivElement>;
+  payments: any;
+  card: any;
+  squareError: string | null;
+  setSquareError: (error: string | null) => void;
+  paymentType: 'classified' | 'subscription';
+  producerId?: string;
 }
 
-const SquareSignUpPaymentCard = ({ 
-  producerId, 
+const UnifiedSquarePaymentCard = ({ 
   billingContact, 
   billingAddress, 
-  emailValidationToken 
-}: SquareSignUpPaymentCardProps) => {
-  const {
-    cardContainerRef,
-    payments,
-    card,
-    error: squareError,
-    setError: setSquareError
-  } = useSquarePayment();
-
+  emailValidationToken,
+  cardContainerRef,
+  payments,
+  card,
+  squareError,
+  setSquareError,
+  paymentType,
+  producerId
+}: UnifiedSquarePaymentCardProps) => {
   const {
     isProcessing,
     error: paymentError,
     setError: setPaymentError,
     processPayment
-  } = useSignUpPayment({
-    producerId,
+  } = useUnifiedSquarePayment({
     billingContact,
     billingAddress,
-    emailValidationToken
+    emailValidationToken,
+    paymentType,
+    producerId
   });
 
-  // Combine errors from both hooks
+  // Combine errors from Square and payment processing
   const error = squareError || paymentError;
   const setError = (errorMessage: string | null) => {
     setSquareError(errorMessage);
@@ -73,4 +76,4 @@ const SquareSignUpPaymentCard = ({
   );
 };
 
-export default SquareSignUpPaymentCard;
+export default UnifiedSquarePaymentCard;

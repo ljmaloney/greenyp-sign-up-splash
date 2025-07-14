@@ -30,9 +30,16 @@ interface CustomerData {
 interface UsePaymentInformationProps {
   customer?: CustomerData;
   onBillingInfoChange?: (contact: BillingContactData, address: BillingAddressData, emailValidationToken: string) => void;
+  emailValidationToken?: string;
+  onEmailValidationTokenChange?: (token: string) => void;
 }
 
-export const usePaymentInformation = ({ customer, onBillingInfoChange }: UsePaymentInformationProps = {}) => {
+export const usePaymentInformation = ({ 
+  customer, 
+  onBillingInfoChange,
+  emailValidationToken: externalEmailValidationToken,
+  onEmailValidationTokenChange
+}: UsePaymentInformationProps = {}) => {
   const { toast } = useToast();
   
   const [billingContact, setBillingContact] = useState<BillingContactData>({
@@ -49,7 +56,14 @@ export const usePaymentInformation = ({ customer, onBillingInfoChange }: UsePaym
     zipCode: ''
   });
 
-  const [emailValidationToken, setEmailValidationToken] = useState<string>('');
+  const [emailValidationToken, setEmailValidationToken] = useState<string>(externalEmailValidationToken || '');
+
+  // Sync external email validation token
+  useEffect(() => {
+    if (externalEmailValidationToken !== undefined) {
+      setEmailValidationToken(externalEmailValidationToken);
+    }
+  }, [externalEmailValidationToken]);
 
   // Notify parent component of billing info changes
   useEffect(() => {
@@ -76,9 +90,14 @@ export const usePaymentInformation = ({ customer, onBillingInfoChange }: UsePaym
     setBillingContact(newContact);
     setBillingAddress(newAddress);
     
+    // Clear email validation token when copying customer data
+    const newToken = '';
+    setEmailValidationToken(newToken);
+    onEmailValidationTokenChange?.(newToken);
+    
     toast({
       title: "Information Copied",
-      description: "Payment information has been copied from customer information.",
+      description: "Payment information has been copied from customer information. Email validation token has been cleared.",
     });
   };
 
@@ -92,6 +111,7 @@ export const usePaymentInformation = ({ customer, onBillingInfoChange }: UsePaym
 
   const handleEmailValidationTokenChange = (value: string) => {
     setEmailValidationToken(value);
+    onEmailValidationTokenChange?.(value);
   };
 
   return {

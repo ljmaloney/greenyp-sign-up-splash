@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import SquarePaymentForm from './SquarePaymentForm';
+import SquarePaymentForm from '../classifieds/SquarePaymentForm';
 
 interface BillingContactData {
   firstName: string;

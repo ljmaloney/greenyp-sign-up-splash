@@ -28,18 +28,29 @@ interface PaymentInformationCardProps {
   classified?: ClassifiedData;
   customer?: CustomerData;
   onBillingInfoChange?: (contact: any, address: any, emailValidationToken: string) => void;
+  emailValidationToken?: string;
+  onEmailValidationTokenChange?: (token: string) => void;
 }
 
-const PaymentInformationCard = ({ classified, customer, onBillingInfoChange }: PaymentInformationCardProps) => {
+const PaymentInformationCard = ({ 
+  classified, 
+  customer, 
+  onBillingInfoChange,
+  emailValidationToken,
+  onEmailValidationTokenChange
+}: PaymentInformationCardProps) => {
   const {
     billingContact,
     billingAddress,
-    emailValidationToken,
     handleCopyFromCustomer,
     handleContactChange,
-    handleAddressChange,
-    handleEmailValidationTokenChange
-  } = usePaymentInformation({ customer, onBillingInfoChange });
+    handleAddressChange
+  } = usePaymentInformation({ 
+    customer, 
+    onBillingInfoChange,
+    emailValidationToken,
+    onEmailValidationTokenChange
+  });
 
   return (
     <Card>

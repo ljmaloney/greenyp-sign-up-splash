@@ -19,10 +19,26 @@ interface BillingContactFormProps {
 const BillingContactForm = ({ billingContact, onChange }: BillingContactFormProps) => {
   const handleContactChange = (field: string, value: string) => {
     if (field === 'phone') {
-      const formatted = formatPhoneAsUserTypes(value);
-      onChange(field, formatted);
+      // Only format if the user is typing (not deleting)
+      const cleaned = value.replace(/\D/g, '');
+      if (cleaned.length <= 10) {
+        const formatted = formatPhoneAsUserTypes(value);
+        onChange(field, formatted);
+      }
     } else {
       onChange(field, value);
+    }
+  };
+
+  const handlePhoneKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Allow backspace, delete, navigation keys, and Tab key
+    if (e.key === 'Backspace' || e.key === 'Delete' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Tab') {
+      return;
+    }
+    
+    // Only allow numbers and basic formatting characters
+    if (!/[\d\(\)\-\s]/.test(e.key)) {
+      e.preventDefault();
     }
   };
 
@@ -67,9 +83,10 @@ const BillingContactForm = ({ billingContact, onChange }: BillingContactFormProp
           <Input
             id="phone"
             type="tel"
-            placeholder="+1(555) 123-4567"
+            placeholder="(555) 123-4567"
             value={billingContact.phone}
             onChange={(e) => handleContactChange('phone', e.target.value)}
+            onKeyDown={handlePhoneKeyDown}
           />
         </div>
       </div>

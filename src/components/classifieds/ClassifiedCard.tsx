@@ -61,6 +61,11 @@ const ClassifiedCard = ({ classified }: ClassifiedCardProps) => {
             <div className="flex items-center text-sm text-gray-500">
               <MapPin className="w-4 h-4 mr-1 text-greenyp-600" />
               {classified.city}, {classified.state} {classified.zipCode}
+              {classified.distance && (
+                <span className="ml-2 text-greenyp-600 font-medium">
+                  ({classified.distance} mi)
+                </span>
+              )}
             </div>
             {classified.price && classified.perUnitType && (
               <div className="text-sm font-medium text-greenyp-600">

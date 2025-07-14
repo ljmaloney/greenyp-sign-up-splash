@@ -6,12 +6,18 @@ import Footer from '@/components/Footer';
 import ConfirmationHeader from '@/components/signup/confirmation/ConfirmationHeader';
 import AccountSummaryCard from '@/components/signup/confirmation/AccountSummaryCard';
 import ListingDetailsCard from '@/components/signup/confirmation/ListingDetailsCard';
+import PaymentReferenceCard from '@/components/signup/confirmation/PaymentReferenceCard';
 import NextStepsCard from '@/components/signup/confirmation/NextStepsCard';
 import ConfirmationActions from '@/components/signup/confirmation/ConfirmationActions';
 import SupportSection from '@/components/signup/confirmation/SupportSection';
 
 const SignUpConfirmation = () => {
   const [searchParams] = useSearchParams();
+  
+  // Extract payment reference information
+  const orderRef = searchParams.get('orderRef');
+  const paymentRef = searchParams.get('paymentRef');
+  const receiptNumber = searchParams.get('receiptNumber');
   
   const accountData = {
     businessName: searchParams.get('businessName') || 'Your Business',
@@ -43,8 +49,19 @@ const SignUpConfirmation = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-grow bg-gray-50 py-12">
-        <div className="container mx-auto px-4 max-w-4xl">
+        <div className="container mx-auto px-4 max-w-6xl">
           <ConfirmationHeader />
+
+          {/* Payment Reference Information - Show first if payment was successful */}
+          {(orderRef || paymentRef || receiptNumber) && (
+            <div className="mb-8">
+              <PaymentReferenceCard
+                orderRef={orderRef || undefined}
+                paymentRef={paymentRef || undefined}
+                receiptNumber={receiptNumber || undefined}
+              />
+            </div>
+          )}
 
           <div className="grid gap-8 md:grid-cols-2">
             <AccountSummaryCard
