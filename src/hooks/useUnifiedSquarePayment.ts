@@ -162,8 +162,21 @@ export const useUnifiedSquarePayment = ({
             description: "Your subscription has been activated successfully!",
           });
           
-          // Redirect to confirmation page
-          navigate('/subscriber/signup/confirmation?paymentSuccess=true');
+          // Extract payment reference information from response
+          const responseData = paymentResponse.response || {};
+          const orderRef = responseData.orderRef || '';
+          const paymentRef = responseData.paymentRef || '';
+          const receiptNumber = responseData.receiptNumber || '';
+          
+          // Build confirmation URL with payment reference data
+          const confirmationParams = new URLSearchParams();
+          confirmationParams.set('paymentSuccess', 'true');
+          if (orderRef) confirmationParams.set('orderRef', orderRef);
+          if (paymentRef) confirmationParams.set('paymentRef', paymentRef);
+          if (receiptNumber) confirmationParams.set('receiptNumber', receiptNumber);
+          
+          // Redirect to confirmation page with payment reference data
+          navigate(`/subscriber/signup/confirmation?${confirmationParams.toString()}`);
         } else {
           console.log('Payment not completed, status:', paymentResponse.response?.paymentStatus);
           setError('Payment was not completed successfully');
