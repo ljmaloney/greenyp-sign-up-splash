@@ -28,12 +28,11 @@ const SignUpPaymentContainer = () => {
     }
   }, [producerId, email, firstName, lastName, navigate]);
 
-  // Find the selected subscription
+  // Find the selected subscription from the cached reference data
   const selectedSubscription = subscriptions?.find(sub => sub.subscriptionId === subscriptionId);
 
-  // If we don't have the subscription data yet, show loading or use fallback
-  const planName = selectedSubscription?.displayName || 'GreenYP Subscription';
-  const planPrice = selectedSubscription?.annualBillAmount || 99;
+  console.log('SignUpPaymentContainer - Selected subscription:', selectedSubscription);
+  console.log('SignUpPaymentContainer - Available subscriptions:', subscriptions);
 
   const customerData = {
     firstName: firstName || '',
@@ -51,10 +50,18 @@ const SignUpPaymentContainer = () => {
     return null;
   }
 
+  // Show loading state if subscriptions haven't loaded yet
+  if (!subscriptions) {
+    return (
+      <div className="flex justify-center items-center p-8">
+        <div className="text-gray-600">Loading subscription details...</div>
+      </div>
+    );
+  }
+
   return (
     <SubscriptionPaymentLayout 
-      planName={planName}
-      planPrice={planPrice}
+      selectedSubscription={selectedSubscription}
       customerData={customerData}
       producerId={producerId}
     />

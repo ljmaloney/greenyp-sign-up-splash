@@ -2,20 +2,27 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Check } from 'lucide-react';
+import { SubscriptionWithFormatting } from '@/types/subscription';
 
 interface SubscriptionSummaryCardProps {
-  planName: string;
-  planPrice: number;
+  selectedSubscription: SubscriptionWithFormatting;
 }
 
-const SubscriptionSummaryCard = ({ planName, planPrice }: SubscriptionSummaryCardProps) => {
-  const features = [
-    'Business directory listing',
-    'Enhanced search visibility',
-    'Customer contact management',
-    'Business analytics dashboard',
-    'Priority customer support'
-  ];
+const SubscriptionSummaryCard = ({ selectedSubscription }: SubscriptionSummaryCardProps) => {
+  console.log('SubscriptionSummaryCard - Rendering with subscription:', selectedSubscription);
+
+  const {
+    displayName,
+    annualBillAmount,
+    monthlyAutopayAmount,
+    formattedFeatures,
+    shortDescription
+  } = selectedSubscription;
+
+  // Use the actual annual bill amount from the subscription
+  const displayPrice = annualBillAmount || monthlyAutopayAmount * 12;
+  const billingPeriod = annualBillAmount ? 'year' : 'month';
+  const periodPrice = annualBillAmount || monthlyAutopayAmount;
 
   return (
     <Card>
@@ -24,21 +31,26 @@ const SubscriptionSummaryCard = ({ planName, planPrice }: SubscriptionSummaryCar
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="text-center p-6 bg-greenyp-50 rounded-lg">
-          <h3 className="text-2xl font-bold text-greenyp-700 mb-2">{planName}</h3>
+          <h3 className="text-2xl font-bold text-greenyp-700 mb-2">{displayName}</h3>
           <div className="text-3xl font-bold text-gray-900 mb-1">
-            ${planPrice}
-            <span className="text-lg font-normal text-gray-600">/year</span>
+            ${periodPrice}
+            <span className="text-lg font-normal text-gray-600">/{billingPeriod}</span>
           </div>
-          <p className="text-sm text-gray-600">Billed annually</p>
+          {billingPeriod === 'year' && (
+            <p className="text-sm text-gray-600">Billed annually</p>
+          )}
+          {shortDescription && (
+            <p className="text-sm text-gray-600 mt-2">{shortDescription}</p>
+          )}
         </div>
 
         <div>
           <h4 className="font-semibold text-gray-900 mb-3">What's included:</h4>
           <ul className="space-y-2">
-            {features.map((feature, index) => (
-              <li key={index} className="flex items-center text-sm text-gray-700">
+            {formattedFeatures.map((feature) => (
+              <li key={feature.id} className="flex items-center text-sm text-gray-700">
                 <Check className="w-4 h-4 text-greenyp-600 mr-2 flex-shrink-0" />
-                {feature}
+                {feature.name}
               </li>
             ))}
           </ul>
@@ -47,7 +59,7 @@ const SubscriptionSummaryCard = ({ planName, planPrice }: SubscriptionSummaryCar
         <div className="pt-4 border-t border-gray-200">
           <div className="flex justify-between items-center font-semibold">
             <span>Total:</span>
-            <span className="text-lg">${planPrice}/year</span>
+            <span className="text-lg">${periodPrice}/{billingPeriod}</span>
           </div>
         </div>
       </CardContent>

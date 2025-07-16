@@ -6,6 +6,7 @@ import PaymentInformationCard from '@/components/payment/PaymentInformationCard'
 import EmailValidationCard from '@/components/payment/EmailValidationCard';
 import UnifiedSquarePaymentCard from '@/components/classifieds/UnifiedSquarePaymentCard';
 import SubscriptionSummaryCard from './SubscriptionSummaryCard';
+import { SubscriptionWithFormatting } from '@/types/subscription';
 
 interface BillingContactData {
   firstName: string;
@@ -22,8 +23,7 @@ interface BillingAddressData {
 }
 
 interface SubscriptionPaymentLayoutProps {
-  planName: string;
-  planPrice: number;
+  selectedSubscription?: SubscriptionWithFormatting;
   customerData: {
     firstName: string;
     lastName: string;
@@ -37,7 +37,7 @@ interface SubscriptionPaymentLayoutProps {
   producerId?: string;
 }
 
-const SubscriptionPaymentLayout = ({ planName, planPrice, customerData, producerId }: SubscriptionPaymentLayoutProps) => {
+const SubscriptionPaymentLayout = ({ selectedSubscription, customerData, producerId }: SubscriptionPaymentLayoutProps) => {
   const [billingContact, setBillingContact] = useState<BillingContactData>({
     firstName: '',
     lastName: '',
@@ -90,14 +90,23 @@ const SubscriptionPaymentLayout = ({ planName, planPrice, customerData, producer
     validateEmail(emailValidationToken);
   };
 
+  // Show fallback message if no subscription is found
+  if (!selectedSubscription) {
+    return (
+      <div className="flex justify-center items-center p-8">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Subscription Not Found</h2>
+          <p className="text-gray-600">Unable to load subscription details. Please try again.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       {/* Left Column - Subscription Details */}
       <div className="space-y-6">
-        <SubscriptionSummaryCard 
-          planName={planName}
-          planPrice={planPrice}
-        />
+        <SubscriptionSummaryCard selectedSubscription={selectedSubscription} />
       </div>
 
       {/* Right Column - Payment Information */}
