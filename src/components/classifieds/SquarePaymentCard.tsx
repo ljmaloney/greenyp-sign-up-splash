@@ -96,8 +96,21 @@ const SquarePaymentCard = ({ billingContact, billingAddress, emailValidationToke
           description: "Your payment has been processed successfully.",
         });
         
-        // Redirect to payment confirmation page
-        const confirmationUrl = `/classifieds/payment/confirmation/${classifiedId}?paymentSuccess=true`;
+        // Extract payment reference information from response
+        const responseData = paymentResponse.response || {};
+        const orderRef = responseData.orderRef || '';
+        const paymentRef = responseData.paymentRef || '';
+        const receiptNumber = responseData.receiptNumber || '';
+        
+        // Build confirmation URL with payment reference data
+        const confirmationParams = new URLSearchParams();
+        confirmationParams.set('paymentSuccess', 'true');
+        if (orderRef) confirmationParams.set('orderRef', orderRef);
+        if (paymentRef) confirmationParams.set('paymentRef', paymentRef);
+        if (receiptNumber) confirmationParams.set('receiptNumber', receiptNumber);
+        
+        // Redirect to payment confirmation page with payment reference data
+        const confirmationUrl = `/classifieds/payment/confirmation/${classifiedId}?${confirmationParams.toString()}`;
         console.log('Redirecting to:', confirmationUrl);
         navigate(confirmationUrl);
       } else {
