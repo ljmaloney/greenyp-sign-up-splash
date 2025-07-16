@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from "@/components/ui/sonner";
 import { SignUpFormSchema } from '@/utils/signUpValidation';
 import { createSignUpPayload, submitSignUpData } from '@/services/signUpService';
+import { APIResponse } from '@/types/responseBody';
 
 export const useSignUpSubmission = () => {
   const [loading, setLoading] = useState(false);
@@ -24,28 +25,55 @@ export const useSignUpSubmission = () => {
       const payload = createSignUpPayload(data);
       const { response, status } = await submitSignUpData(payload);
 
+      console.log('API Response Status:', status);
+
       // Handle success responses (200 or 201)
       if (status === 200 || status === 201) {
-        const responseData = await response.json();
-        console.log('Success response data:', responseData);
-        
-        toast.success("Account created successfully! Please complete your payment to activate your subscription.");
-        
-        // Redirect to payment page with producer ID and form data
-        const paymentParams = new URLSearchParams();
-        paymentParams.set('producerId', responseData.producerId || responseData.id);
-        paymentParams.set('subscription', selectedSubscription?.subscriptionId || '');
-        paymentParams.set('email', data.emailAddress);
-        paymentParams.set('firstName', data.firstName);
-        paymentParams.set('lastName', data.lastName);
-        paymentParams.set('phone', data.phoneNumber);
-        paymentParams.set('address', data.addressLine1);
-        paymentParams.set('city', data.city);
-        paymentParams.set('state', data.state);
-        paymentParams.set('postalCode', data.postalCode);
-        
-        navigate(`/subscriber/signup/payment?${paymentParams.toString()}`);
-        return;
+        try {
+          const responseData: APIResponse<any> = await response.json();
+          console.log('Success response data:', responseData);
+          
+          // Check if errorMessageApi indicates an error even with 200 status
+          if (responseData.errorMessageApi) {
+            console.error('API returned error despite 200 status:', responseData.errorMessageApi);
+            const errorMessage = responseData.errorMessageApi.displayMessage || 
+                              responseData.errorMessageApi.errorDetails || 
+                              'An error occurred during account creation';
+            setError(errorMessage);
+            return;
+          }
+
+          // Only proceed if no API error and we have valid response data
+          if (responseData.response && (responseData.response.producerId || responseData.response.id)) {
+            console.log('Account creation successful, proceeding to payment');
+            
+            toast.success("Account created successfully! Please complete your payment to activate your subscription.");
+            
+            // Redirect to payment page with producer ID and form data
+            const paymentParams = new URLSearchParams();
+            paymentParams.set('producerId', responseData.response.producerId || responseData.response.id);
+            paymentParams.set('subscription', selectedSubscription?.subscriptionId || '');
+            paymentParams.set('email', data.emailAddress);
+            paymentParams.set('firstName', data.firstName);
+            paymentParams.set('lastName', data.lastName);
+            paymentParams.set('phone', data.phoneNumber);
+            paymentParams.set('address', data.addressLine1);
+            paymentParams.set('city', data.city);
+            paymentParams.set('state', data.state);
+            paymentParams.set('postalCode', data.postalCode);
+            
+            navigate(`/subscriber/signup/payment?${paymentParams.toString()}`);
+            return;
+          } else {
+            console.error('Invalid response structure - missing producer ID');
+            setError('Account creation failed - invalid response from server');
+            return;
+          }
+        } catch (parseError) {
+          console.error('Failed to parse success response:', parseError);
+          setError('Invalid response format from server');
+          return;
+        }
       }
 
       // Handle 500-series errors (system errors)
@@ -58,7 +86,7 @@ export const useSignUpSubmission = () => {
       // Handle 400-series errors (client errors)
       if (status >= 400 && status < 500) {
         try {
-          const errorData = await response.json();
+          const errorData: APIResponse<any> = await response.json();
           console.log('Error response data:', errorData);
           
           // Extract error message from the API response structure
