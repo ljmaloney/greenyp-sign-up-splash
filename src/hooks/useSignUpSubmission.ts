@@ -33,9 +33,9 @@ export const useSignUpSubmission = () => {
           const responseData: APIResponse<any> = await response.json();
           console.log('Success response data:', responseData);
           
-          // Check if errorMessageApi indicates an error even with 200 status
+          // Check if errorMessageApi indicates an error even with 200/201 status
           if (responseData.errorMessageApi) {
-            console.error('API returned error despite 200 status:', responseData.errorMessageApi);
+            console.error('API returned error despite success status:', responseData.errorMessageApi);
             const errorMessage = responseData.errorMessageApi.displayMessage || 
                               responseData.errorMessageApi.errorDetails || 
                               'An error occurred during account creation';
@@ -43,32 +43,54 @@ export const useSignUpSubmission = () => {
             return;
           }
 
-          // Only proceed if no API error and we have valid response data
-          if (responseData.response && (responseData.response.producerId || responseData.response.id)) {
-            console.log('Account creation successful, proceeding to payment');
-            
-            toast.success("Account created successfully! Please complete your payment to activate your subscription.");
-            
-            // Redirect to payment page with producer ID and form data
-            const paymentParams = new URLSearchParams();
-            paymentParams.set('producerId', responseData.response.producerId || responseData.response.id);
-            paymentParams.set('subscription', selectedSubscription?.subscriptionId || '');
-            paymentParams.set('email', data.emailAddress);
-            paymentParams.set('firstName', data.firstName);
-            paymentParams.set('lastName', data.lastName);
-            paymentParams.set('phone', data.phoneNumber);
-            paymentParams.set('address', data.addressLine1);
-            paymentParams.set('city', data.city);
-            paymentParams.set('state', data.state);
-            paymentParams.set('postalCode', data.postalCode);
-            
-            navigate(`/subscriber/signup/payment?${paymentParams.toString()}`);
-            return;
-          } else {
-            console.error('Invalid response structure - missing producer ID');
+          // The API response structure is: { response: { producer: { producerId, subscriptions: [...] } } }
+          const producerData = responseData.response?.producer;
+          if (!producerData) {
+            console.error('Invalid response structure - missing producer data:', responseData);
             setError('Account creation failed - invalid response from server');
             return;
           }
+
+          const producerId = producerData.producerId;
+          const producerSubscriptions = producerData.subscriptions || [];
+          
+          console.log('Producer data:', {
+            producerId,
+            subscriptionsCount: producerSubscriptions.length,
+            subscriptions: producerSubscriptions
+          });
+
+          if (!producerId) {
+            console.error('Invalid response structure - missing producer ID');
+            setError('Account creation failed - missing producer ID');
+            return;
+          }
+
+          console.log('Account creation successful, proceeding to payment');
+          
+          toast.success("Account created successfully! Please complete your payment to activate your subscription.");
+          
+          // Redirect to payment page with producer ID, form data, and subscription data
+          const paymentParams = new URLSearchParams();
+          paymentParams.set('producerId', producerId);
+          paymentParams.set('subscription', selectedSubscription?.subscriptionId || '');
+          paymentParams.set('email', data.emailAddress);
+          paymentParams.set('firstName', data.firstName);
+          paymentParams.set('lastName', data.lastName);
+          paymentParams.set('phone', data.phoneNumber);
+          paymentParams.set('address', data.addressLine1);
+          paymentParams.set('city', data.city);
+          paymentParams.set('state', data.state);
+          paymentParams.set('postalCode', data.postalCode);
+          
+          // Add the actual subscription data from the API response
+          if (producerSubscriptions.length > 0) {
+            paymentParams.set('subscriptionData', JSON.stringify(producerSubscriptions[0]));
+          }
+          
+          navigate(`/subscriber/signup/payment?${paymentParams.toString()}`);
+          return;
+          
         } catch (parseError) {
           console.error('Failed to parse success response:', parseError);
           setError('Invalid response format from server');

@@ -37,13 +37,20 @@ interface SubscriptionPaymentLayoutProps {
     emailAddress: string;
   };
   producerId?: string;
+  apiSubscriptionData?: any;
 }
 
-const SubscriptionPaymentLayout = ({ selectedSubscription, customerData, producerId }: SubscriptionPaymentLayoutProps) => {
+const SubscriptionPaymentLayout = ({ 
+  selectedSubscription, 
+  customerData, 
+  producerId,
+  apiSubscriptionData 
+}: SubscriptionPaymentLayoutProps) => {
   console.log('SubscriptionPaymentLayout - Props received:', {
     selectedSubscription,
     customerData,
-    producerId
+    producerId,
+    apiSubscriptionData
   });
 
   const [billingContact, setBillingContact] = useState<BillingContactData>({
@@ -133,7 +140,10 @@ const SubscriptionPaymentLayout = ({ selectedSubscription, customerData, produce
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Left Column - Subscription Details */}
         <div className="space-y-6">
-          <SubscriptionSummaryCard selectedSubscription={selectedSubscription} />
+          <SubscriptionSummaryCard 
+            selectedSubscription={selectedSubscription}
+            apiSubscriptionData={apiSubscriptionData}
+          />
         </div>
 
         {/* Right Column - Payment Information */}

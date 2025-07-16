@@ -13,6 +13,7 @@ const SignUpPaymentContainer = () => {
   
   const producerId = searchParams.get('producerId');
   const subscriptionId = searchParams.get('subscription');
+  const subscriptionDataParam = searchParams.get('subscriptionData');
   const email = searchParams.get('email');
   const firstName = searchParams.get('firstName');
   const lastName = searchParams.get('lastName');
@@ -32,8 +33,20 @@ const SignUpPaymentContainer = () => {
     address,
     city,
     state,
-    postalCode
+    postalCode,
+    hasSubscriptionData: !!subscriptionDataParam
   });
+
+  // Parse the subscription data from the API response if available
+  let apiSubscriptionData = null;
+  if (subscriptionDataParam) {
+    try {
+      apiSubscriptionData = JSON.parse(subscriptionDataParam);
+      console.log('Parsed API subscription data:', apiSubscriptionData);
+    } catch (error) {
+      console.error('Failed to parse subscription data from URL:', error);
+    }
+  }
 
   console.log('SignUpPaymentContainer - Subscriptions loading state:', {
     isLoading,
@@ -129,6 +142,7 @@ const SignUpPaymentContainer = () => {
       selectedSubscription={selectedSubscription}
       customerData={customerData}
       producerId={producerId}
+      apiSubscriptionData={apiSubscriptionData}
     />
   );
 };

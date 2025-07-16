@@ -5,62 +5,95 @@ import { Check } from 'lucide-react';
 import { SubscriptionWithFormatting } from '@/types/subscription';
 
 interface SubscriptionSummaryCardProps {
-  selectedSubscription: SubscriptionWithFormatting;
+  selectedSubscription?: SubscriptionWithFormatting;
+  apiSubscriptionData?: any;
 }
 
-const SubscriptionSummaryCard = ({ selectedSubscription }: SubscriptionSummaryCardProps) => {
-  console.log('SubscriptionSummaryCard - Rendering with subscription:', selectedSubscription);
+const SubscriptionSummaryCard = ({ selectedSubscription, apiSubscriptionData }: SubscriptionSummaryCardProps) => {
+  console.log('SubscriptionSummaryCard - Props:', { selectedSubscription, apiSubscriptionData });
 
-  const {
-    displayName,
-    annualBillAmount,
-    monthlyAutopayAmount,
-    formattedFeatures,
-    shortDescription
-  } = selectedSubscription;
+  // Use API subscription data if available, otherwise fall back to reference data
+  const displayData = apiSubscriptionData || selectedSubscription;
+  
+  if (!displayData) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Subscription Summary</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-gray-600">Loading subscription details...</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
-  // Use the actual annual bill amount from the subscription
-  const displayPrice = annualBillAmount || monthlyAutopayAmount * 12;
-  const billingPeriod = annualBillAmount ? 'year' : 'month';
-  const periodPrice = annualBillAmount || monthlyAutopayAmount;
+  // Extract subscription details based on data source
+  const subscriptionName = apiSubscriptionData?.subscriptionDisplayName || 
+                          selectedSubscription?.displayName || 
+                          'Selected Plan';
+  
+  const monthlyPrice = apiSubscriptionData?.monthlyAutopayAmount || 
+                      selectedSubscription?.monthlyAutopayAmount || 
+                      0;
+  
+  const formattedPrice = `$${(monthlyPrice / 100).toFixed(2)}`;
+  
+  // Get features from API data or reference data
+  let features = [];
+  if (apiSubscriptionData?.features) {
+    features = apiSubscriptionData.features
+      .filter((f: any) => f.display)
+      .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+      .map((f: any) => ({
+        id: f.feature,
+        name: f.featureName || f.feature,
+        description: f.feature
+      }));
+  } else if (selectedSubscription?.formattedFeatures) {
+    features = selectedSubscription.formattedFeatures;
+  }
+
+  console.log('SubscriptionSummaryCard - Display data:', {
+    subscriptionName,
+    monthlyPrice,
+    formattedPrice,
+    featuresCount: features.length,
+    features
+  });
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl text-greenyp-700">Subscription Summary</CardTitle>
+        <CardTitle>Subscription Summary</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="text-center p-6 bg-greenyp-50 rounded-lg">
-          <h3 className="text-2xl font-bold text-greenyp-700 mb-2">{displayName}</h3>
-          <div className="text-3xl font-bold text-gray-900 mb-1">
-            ${periodPrice}
-            <span className="text-lg font-normal text-gray-600">/{billingPeriod}</span>
-          </div>
-          {billingPeriod === 'year' && (
-            <p className="text-sm text-gray-600">Billed annually</p>
-          )}
-          {shortDescription && (
-            <p className="text-sm text-gray-600 mt-2">{shortDescription}</p>
-          )}
+        <div>
+          <h3 className="text-2xl font-bold text-green-800">{subscriptionName}</h3>
+          <p className="text-3xl font-bold text-gray-900 mt-2">
+            {formattedPrice}
+            <span className="text-lg font-normal text-gray-600">/month</span>
+          </p>
         </div>
 
-        <div>
-          <h4 className="font-semibold text-gray-900 mb-3">What's included:</h4>
-          <ul className="space-y-2">
-            {formattedFeatures.map((feature) => (
-              <li key={feature.id} className="flex items-center text-sm text-gray-700">
-                <Check className="w-4 h-4 text-greenyp-600 mr-2 flex-shrink-0" />
-                {feature.name}
-              </li>
-            ))}
-          </ul>
-        </div>
+        {features.length > 0 && (
+          <div>
+            <h4 className="font-semibold text-gray-900 mb-3">Included Features:</h4>
+            <ul className="space-y-2">
+              {features.map((feature) => (
+                <li key={feature.id} className="flex items-start">
+                  <Check className="h-5 w-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-700">{feature.name}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         <div className="pt-4 border-t border-gray-200">
-          <div className="flex justify-between items-center font-semibold">
-            <span>Total:</span>
-            <span className="text-lg">${periodPrice}/{billingPeriod}</span>
-          </div>
+          <p className="text-sm text-gray-600">
+            Your subscription will be activated immediately after payment is processed.
+          </p>
         </div>
       </CardContent>
     </Card>
