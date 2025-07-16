@@ -7,6 +7,8 @@ import EmailValidationCard from '@/components/payment/EmailValidationCard';
 import UnifiedSquarePaymentCard from '@/components/classifieds/UnifiedSquarePaymentCard';
 import SubscriptionSummaryCard from './SubscriptionSummaryCard';
 import { SubscriptionWithFormatting } from '@/types/subscription';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
 
 interface BillingContactData {
   firstName: string;
@@ -38,6 +40,12 @@ interface SubscriptionPaymentLayoutProps {
 }
 
 const SubscriptionPaymentLayout = ({ selectedSubscription, customerData, producerId }: SubscriptionPaymentLayoutProps) => {
+  console.log('SubscriptionPaymentLayout - Props received:', {
+    selectedSubscription,
+    customerData,
+    producerId
+  });
+
   const [billingContact, setBillingContact] = useState<BillingContactData>({
     firstName: '',
     lastName: '',
@@ -92,62 +100,96 @@ const SubscriptionPaymentLayout = ({ selectedSubscription, customerData, produce
 
   // Show fallback message if no subscription is found
   if (!selectedSubscription) {
+    console.error('SubscriptionPaymentLayout - No subscription provided');
     return (
       <div className="flex justify-center items-center p-8">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Subscription Not Found</h2>
-          <p className="text-gray-600">Unable to load subscription details. Please try again.</p>
-        </div>
+        <Alert variant="destructive" className="max-w-md">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            Subscription details are missing. Please return to the signup page and try again.
+          </AlertDescription>
+        </Alert>
       </div>
     );
   }
 
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      {/* Left Column - Subscription Details */}
-      <div className="space-y-6">
-        <SubscriptionSummaryCard selectedSubscription={selectedSubscription} />
+  // Validate customer data
+  if (!customerData?.emailAddress || !customerData?.firstName || !customerData?.lastName) {
+    console.error('SubscriptionPaymentLayout - Invalid customer data:', customerData);
+    return (
+      <div className="flex justify-center items-center p-8">
+        <Alert variant="destructive" className="max-w-md">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            Customer information is incomplete. Please return to the signup page and try again.
+          </AlertDescription>
+        </Alert>
       </div>
+    );
+  }
 
-      {/* Right Column - Payment Information */}
-      <div className="space-y-6">
-        <EmailValidationCard
-          emailValidationToken={emailValidationToken}
-          onChange={handleEmailValidationTokenChange}
-          emailAddress={customerData?.emailAddress}
-          helperText="A verified email address is required before creating your subscription"
-          isValidating={isValidating}
-          isValidated={isValidated}
-          validationError={validationError}
-          onValidate={handleValidateEmail}
-        />
-        
-        <div className={!isValidated ? 'opacity-50 pointer-events-none' : ''}>
-          <PaymentInformationCard
-            customer={customerData}
-            onBillingInfoChange={handleBillingInfoChange}
-            emailValidationToken={emailValidationToken}
-            onEmailValidationTokenChange={handleEmailValidationTokenChange}
-          />
+  try {
+    return (
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Left Column - Subscription Details */}
+        <div className="space-y-6">
+          <SubscriptionSummaryCard selectedSubscription={selectedSubscription} />
         </div>
-        
-        <div className={!isValidated ? 'opacity-50 pointer-events-none' : ''}>
-          <UnifiedSquarePaymentCard
-            billingContact={billingContact}
-            billingAddress={billingAddress}
+
+        {/* Right Column - Payment Information */}
+        <div className="space-y-6">
+          <EmailValidationCard
             emailValidationToken={emailValidationToken}
-            cardContainerRef={cardContainerRef}
-            payments={payments}
-            card={card}
-            squareError={squareError}
-            setSquareError={setSquareError}
-            paymentType="subscription"
-            producerId={producerId}
+            onChange={handleEmailValidationTokenChange}
+            emailAddress={customerData?.emailAddress}
+            helperText="A verified email address is required before creating your subscription"
+            isValidating={isValidating}
+            isValidated={isValidated}
+            validationError={validationError}
+            onValidate={handleValidateEmail}
           />
+          
+          <div className={!isValidated ? 'opacity-50 pointer-events-none' : ''}>
+            <PaymentInformationCard
+              customer={customerData}
+              onBillingInfoChange={handleBillingInfoChange}
+              emailValidationToken={emailValidationToken}
+              onEmailValidationTokenChange={handleEmailValidationTokenChange}
+            />
+          </div>
+          
+          <div className={!isValidated ? 'opacity-50 pointer-events-none' : ''}>
+            <UnifiedSquarePaymentCard
+              billingContact={billingContact}
+              billingAddress={billingAddress}
+              emailValidationToken={emailValidationToken}
+              cardContainerRef={cardContainerRef}
+              payments={payments}
+              card={card}
+              squareError={squareError}
+              setSquareError={setSquareError}
+              paymentType="subscription"
+              producerId={producerId}
+            />
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  } catch (error) {
+    console.error('SubscriptionPaymentLayout - Render error:', error);
+    return (
+      <div className="flex justify-center items-center p-8">
+        <Alert variant="destructive" className="max-w-md">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            An error occurred while loading the payment page. Please try refreshing or contact support.
+            <br />
+            <small>Error: {error instanceof Error ? error.message : 'Unknown error'}</small>
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
 };
 
 export default SubscriptionPaymentLayout;
