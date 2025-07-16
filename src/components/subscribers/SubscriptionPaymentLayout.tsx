@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { useSquarePayment } from '@/hooks/useSquarePayment';
+import { useEmailValidation } from '@/hooks/useEmailValidation';
 import PaymentInformationCard from '@/components/payment/PaymentInformationCard';
 import EmailValidationCard from '@/components/payment/EmailValidationCard';
 import UnifiedSquarePaymentCard from '@/components/classifieds/UnifiedSquarePaymentCard';
@@ -55,6 +56,18 @@ const SubscriptionPaymentLayout = ({ planName, planPrice, customerData, producer
 
   const { cardContainerRef, payments, card, error: squareError, setError: setSquareError } = useSquarePayment();
 
+  const {
+    isValidating,
+    isValidated,
+    validationError,
+    validateEmail,
+    resetValidation
+  } = useEmailValidation({
+    emailAddress: customerData?.emailAddress || '',
+    context: 'subscribers',
+    producerId: producerId
+  });
+
   const handleBillingInfoChange = (
     contact: BillingContactData, 
     address: BillingAddressData, 
@@ -67,6 +80,14 @@ const SubscriptionPaymentLayout = ({ planName, planPrice, customerData, producer
 
   const handleEmailValidationTokenChange = (value: string) => {
     setEmailValidationToken(value);
+    // Reset validation state when token changes
+    if (isValidated) {
+      resetValidation();
+    }
+  };
+
+  const handleValidateEmail = () => {
+    validateEmail(emailValidationToken);
   };
 
   return (
@@ -86,25 +107,35 @@ const SubscriptionPaymentLayout = ({ planName, planPrice, customerData, producer
           onChange={handleEmailValidationTokenChange}
           emailAddress={customerData?.emailAddress}
           helperText="A verified email address is required before creating your subscription"
+          isValidating={isValidating}
+          isValidated={isValidated}
+          validationError={validationError}
+          onValidate={handleValidateEmail}
         />
-        <PaymentInformationCard
-          customer={customerData}
-          onBillingInfoChange={handleBillingInfoChange}
-          emailValidationToken={emailValidationToken}
-          onEmailValidationTokenChange={handleEmailValidationTokenChange}
-        />
-        <UnifiedSquarePaymentCard
-          billingContact={billingContact}
-          billingAddress={billingAddress}
-          emailValidationToken={emailValidationToken}
-          cardContainerRef={cardContainerRef}
-          payments={payments}
-          card={card}
-          squareError={squareError}
-          setSquareError={setSquareError}
-          paymentType="subscription"
-          producerId={producerId}
-        />
+        
+        <div className={!isValidated ? 'opacity-50 pointer-events-none' : ''}>
+          <PaymentInformationCard
+            customer={customerData}
+            onBillingInfoChange={handleBillingInfoChange}
+            emailValidationToken={emailValidationToken}
+            onEmailValidationTokenChange={handleEmailValidationTokenChange}
+          />
+        </div>
+        
+        <div className={!isValidated ? 'opacity-50 pointer-events-none' : ''}>
+          <UnifiedSquarePaymentCard
+            billingContact={billingContact}
+            billingAddress={billingAddress}
+            emailValidationToken={emailValidationToken}
+            cardContainerRef={cardContainerRef}
+            payments={payments}
+            card={card}
+            squareError={squareError}
+            setSquareError={setSquareError}
+            paymentType="subscription"
+            producerId={producerId}
+          />
+        </div>
       </div>
     </div>
   );
