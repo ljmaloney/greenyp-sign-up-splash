@@ -105,9 +105,12 @@ const SubscriptionPaymentLayout = ({
     validateEmail(emailValidationToken);
   };
 
-  // Show fallback message if no subscription is found
-  if (!selectedSubscription) {
-    console.error('SubscriptionPaymentLayout - No subscription provided');
+  // Check if we have any subscription data (either from reference data or API)
+  const hasSubscriptionData = !!(selectedSubscription || apiSubscriptionData);
+  
+  // Show fallback message if no subscription data is found
+  if (!hasSubscriptionData) {
+    console.error('SubscriptionPaymentLayout - No subscription data provided');
     return (
       <div className="flex justify-center items-center p-8">
         <Alert variant="destructive" className="max-w-md">

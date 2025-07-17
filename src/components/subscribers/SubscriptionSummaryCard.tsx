@@ -12,10 +12,11 @@ interface SubscriptionSummaryCardProps {
 const SubscriptionSummaryCard = ({ selectedSubscription, apiSubscriptionData }: SubscriptionSummaryCardProps) => {
   console.log('SubscriptionSummaryCard - Props:', { selectedSubscription, apiSubscriptionData });
 
-  // Use API subscription data if available, otherwise fall back to reference data
-  const displayData = apiSubscriptionData || selectedSubscription;
+  // Prefer API subscription data if available, otherwise fall back to reference data
+  const hasApiData = !!apiSubscriptionData;
+  const hasReferenceData = !!selectedSubscription;
   
-  if (!displayData) {
+  if (!hasApiData && !hasReferenceData) {
     return (
       <Card>
         <CardHeader>
@@ -29,37 +30,44 @@ const SubscriptionSummaryCard = ({ selectedSubscription, apiSubscriptionData }: 
   }
 
   // Extract subscription details based on data source
-  const subscriptionName = apiSubscriptionData?.subscriptionDisplayName || 
-                          selectedSubscription?.displayName || 
-                          'Selected Plan';
-  
-  const monthlyPrice = apiSubscriptionData?.monthlyAutopayAmount || 
-                      selectedSubscription?.monthlyAutopayAmount || 
-                      0;
+  let subscriptionName = 'Selected Plan';
+  let monthlyPrice = 0;
+  let features = [];
+
+  if (hasApiData) {
+    // Use API data if available
+    subscriptionName = apiSubscriptionData.subscriptionDisplayName || 
+                      apiSubscriptionData.displayName || 
+                      'Selected Plan';
+    
+    monthlyPrice = apiSubscriptionData.monthlyAutopayAmount || 0;
+    
+    if (apiSubscriptionData.features) {
+      features = apiSubscriptionData.features
+        .filter((f: any) => f.display)
+        .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+        .map((f: any) => ({
+          id: f.feature,
+          name: f.featureName || f.feature,
+          description: f.feature
+        }));
+    }
+  } else if (hasReferenceData) {
+    // Fall back to reference data
+    subscriptionName = selectedSubscription.displayName;
+    monthlyPrice = selectedSubscription.monthlyAutopayAmount;
+    features = selectedSubscription.formattedFeatures || [];
+  }
   
   const formattedPrice = `$${(monthlyPrice / 100).toFixed(2)}`;
-  
-  // Get features from API data or reference data
-  let features = [];
-  if (apiSubscriptionData?.features) {
-    features = apiSubscriptionData.features
-      .filter((f: any) => f.display)
-      .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-      .map((f: any) => ({
-        id: f.feature,
-        name: f.featureName || f.feature,
-        description: f.feature
-      }));
-  } else if (selectedSubscription?.formattedFeatures) {
-    features = selectedSubscription.formattedFeatures;
-  }
 
   console.log('SubscriptionSummaryCard - Display data:', {
     subscriptionName,
     monthlyPrice,
     formattedPrice,
     featuresCount: features.length,
-    features
+    features,
+    dataSource: hasApiData ? 'API' : 'Reference'
   });
 
   return (

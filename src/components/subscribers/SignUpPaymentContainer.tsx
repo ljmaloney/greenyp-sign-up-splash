@@ -34,7 +34,8 @@ const SignUpPaymentContainer = () => {
     city,
     state,
     postalCode,
-    hasSubscriptionData: !!subscriptionDataParam
+    hasSubscriptionData: !!subscriptionDataParam,
+    subscriptionDataParam: subscriptionDataParam ? subscriptionDataParam.substring(0, 100) + '...' : null
   });
 
   // Parse the subscription data from the API response if available
@@ -45,6 +46,7 @@ const SignUpPaymentContainer = () => {
       console.log('Parsed API subscription data:', apiSubscriptionData);
     } catch (error) {
       console.error('Failed to parse subscription data from URL:', error);
+      console.log('Raw subscription data param:', subscriptionDataParam);
     }
   }
 
@@ -104,8 +106,8 @@ const SignUpPaymentContainer = () => {
     );
   }
 
-  // Show loading state if subscriptions haven't loaded yet
-  if (isLoading) {
+  // Show loading state if subscriptions haven't loaded yet and we don't have API data
+  if (isLoading && !apiSubscriptionData) {
     return (
       <div className="flex justify-center items-center p-8">
         <div className="text-gray-600">Loading subscription details...</div>
@@ -113,8 +115,9 @@ const SignUpPaymentContainer = () => {
     );
   }
 
-  // Show warning if subscription not found but continue with fallback
-  if (!selectedSubscription && subscriptionId) {
+  // If we have API subscription data, we can proceed even if reference data isn't found
+  // If we don't have API data but have a subscription ID, we need the reference data
+  if (!apiSubscriptionData && subscriptionId && !selectedSubscription) {
     console.warn('Selected subscription not found:', {
       searchedId: subscriptionId,
       availableSubscriptions: subscriptions?.map(sub => ({
