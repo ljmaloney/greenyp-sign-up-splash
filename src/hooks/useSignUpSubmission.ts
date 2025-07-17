@@ -12,38 +12,61 @@ export const useSignUpSubmission = () => {
   const [isSystemError, setIsSystemError] = useState(false);
   const navigate = useNavigate();
 
+  const formatErrorMessage = (errorData: any): string => {
+    console.log('🔍 Formatting error message from data:', errorData);
+    
+    // Handle direct error response structure (errorCode, displayMessage, errorDetails)
+    if (errorData.errorCode && errorData.displayMessage) {
+      const message = errorData.displayMessage;
+      const details = errorData.errorDetails;
+      console.log('✅ Using direct error format:', { message, details });
+      return details ? `${message}: ${details}` : message;
+    }
+    
+    // Handle nested error response structure (errorMessageApi)
+    if (errorData.errorMessageApi) {
+      const apiError = errorData.errorMessageApi;
+      const message = apiError.displayMessage || apiError.errorDetails || 'An error occurred';
+      console.log('✅ Using nested error format:', { apiError, message });
+      return message;
+    }
+    
+    // Fallback for other error structures
+    const fallbackMessage = errorData.message || errorData.error || 'An unexpected error occurred';
+    console.log('⚠️ Using fallback error format:', { fallbackMessage });
+    return fallbackMessage;
+  };
+
   const handleSubmit = async (
     data: SignUpFormSchema, 
     selectedSubscription: any, 
     categories: any[]
   ) => {
+    console.log('🚀 Starting signup submission');
+    console.log('📝 Form data:', { email: data.emailAddress, businessName: data.businessName });
+    console.log('📋 Selected subscription:', selectedSubscription?.subscriptionId);
+    
     setLoading(true);
     setError(null);
     setIsSystemError(false);
     
-    console.log('Starting signup submission with data:', {
-      selectedSubscription,
-      formData: data
-    });
-    
     try {
       const payload = createSignUpPayload(data);
+      console.log('📤 Sending payload to API');
+      
       const { response, status } = await submitSignUpData(payload);
-
-      console.log('API Response Status:', status);
+      console.log('📡 API Response Status:', status);
 
       // Handle success responses (200 or 201)
       if (status === 200 || status === 201) {
         try {
           const responseData: APIResponse<any> = await response.json();
-          console.log('Success response data:', responseData);
+          console.log('✅ Success response received:', responseData);
           
           // Check if errorMessageApi indicates an error even with 200/201 status
           if (responseData.errorMessageApi) {
-            console.error('API returned error despite success status:', responseData.errorMessageApi);
-            const errorMessage = responseData.errorMessageApi.displayMessage || 
-                              responseData.errorMessageApi.errorDetails || 
-                              'An error occurred during account creation';
+            const errorMessage = formatErrorMessage(responseData);
+            console.error('❌ API returned error despite success status:', errorMessage);
             setError(errorMessage);
             return;
           }
@@ -51,7 +74,7 @@ export const useSignUpSubmission = () => {
           // The API response structure is: { response: { producer: { producerId, subscriptions: [...] } } }
           const producerData = responseData.response?.producer;
           if (!producerData) {
-            console.error('Invalid response structure - missing producer data:', responseData);
+            console.error('❌ Invalid response structure - missing producer data');
             setError('Account creation failed - invalid response from server');
             return;
           }
@@ -59,38 +82,30 @@ export const useSignUpSubmission = () => {
           const producerId = producerData.producerId;
           const producerSubscriptions = producerData.subscriptions || [];
           
-          console.log('Producer data:', {
+          console.log('🎉 Account creation successful:', {
             producerId,
-            subscriptionsCount: producerSubscriptions.length,
-            subscriptions: producerSubscriptions
+            subscriptionsCount: producerSubscriptions.length
           });
 
           if (!producerId) {
-            console.error('Invalid response structure - missing producer ID');
+            console.error('❌ Missing producer ID in response');
             setError('Account creation failed - missing producer ID');
             return;
           }
 
-          console.log('Account creation successful, proceeding to payment');
-          
           toast.success("Account created successfully! Please complete your payment to activate your subscription.");
           
           // Get the subscription ID from the producer's subscription data (API response)
-          // This is the actual subscription created for this producer
           const producerSubscriptionId = producerSubscriptions.length > 0 ? 
             producerSubscriptions[0].subscriptionId : 
             selectedSubscription?.subscriptionId || '';
           
-          console.log('Using subscription ID for payment:', {
-            producerSubscriptionId,
-            fallbackSubscriptionId: selectedSubscription?.subscriptionId,
-            finalSubscriptionId: producerSubscriptionId
-          });
+          console.log('🔗 Redirecting to payment with subscription ID:', producerSubscriptionId);
           
           // Redirect to payment page with producer ID, form data, and subscription data
           const paymentParams = new URLSearchParams();
           paymentParams.set('producerId', producerId);
-          paymentParams.set('subscription', producerSubscriptionId); // Use the producer's subscription ID
+          paymentParams.set('subscription', producerSubscriptionId);
           paymentParams.set('email', data.emailAddress);
           paymentParams.set('firstName', data.firstName);
           paymentParams.set('lastName', data.lastName);
@@ -106,12 +121,12 @@ export const useSignUpSubmission = () => {
           }
           
           const paymentUrl = `/subscriber/signup/payment?${paymentParams.toString()}`;
-          console.log('Redirecting to payment page:', paymentUrl);
+          console.log('🎯 Navigating to:', paymentUrl);
           navigate(paymentUrl);
           return;
           
         } catch (parseError) {
-          console.error('Failed to parse success response:', parseError);
+          console.error('❌ Failed to parse success response:', parseError);
           setError('Invalid response format from server');
           return;
         }
@@ -119,59 +134,44 @@ export const useSignUpSubmission = () => {
 
       // Handle 500-series errors (system errors)
       if (status >= 500) {
-        console.error('System error:', status);
+        console.error('🔥 System error detected:', status);
         setIsSystemError(true);
         return;
       }
 
       // Handle 400-series errors (client errors)
       if (status >= 400 && status < 500) {
+        console.log('⚠️ Client error detected, parsing response...');
         try {
           const errorData = await response.json();
-          console.log('Error response data:', errorData);
+          console.log('📄 Error response data:', errorData);
           
-          // Handle direct error response structure (errorCode, displayMessage, errorDetails)
-          if (errorData.errorCode && errorData.displayMessage) {
-            console.error('Direct error response:', errorData);
-            const errorMessage = errorData.displayMessage + 
-                              (errorData.errorDetails ? `: ${errorData.errorDetails}` : '');
-            setError(errorMessage);
-            return;
-          }
-          
-          // Handle nested error response structure (errorMessageApi)
-          if (errorData.errorMessageApi) {
-            const errorMessage = errorData.errorMessageApi.displayMessage || 
-                              errorData.errorMessageApi.errorDetails || 
-                              `Request failed with status ${status}`;
-            console.error('Nested error response:', errorData.errorMessageApi);
-            setError(errorMessage);
-            return;
-          }
-          
-          // Fallback for other error structures
-          const errorMessage = errorData.message || 
-                              errorData.error || 
-                              `Request failed with status ${status}`;
-          console.error('Fallback error handling:', errorData);
+          const errorMessage = formatErrorMessage(errorData);
+          console.log('💬 Final error message:', errorMessage);
           setError(errorMessage);
         } catch (parseError) {
-          console.error('Failed to parse error response:', parseError);
+          console.error('❌ Failed to parse error response:', parseError);
           setError(`Request failed with status ${status}`);
         }
         return;
       }
 
       // Handle any other unexpected status codes
-      const errorText = await response.text();
-      console.error('Unexpected response:', status, errorText);
-      setError(`Unexpected error occurred. Please try again.`);
+      console.error('❓ Unexpected response status:', status);
+      try {
+        const errorText = await response.text();
+        console.error('📄 Response text:', errorText);
+      } catch (e) {
+        console.error('❌ Could not read response text');
+      }
+      setError('Unexpected error occurred. Please try again.');
 
     } catch (error) {
-      console.error('Network error:', error);
+      console.error('🌐 Network error occurred:', error);
       setError("Network error. Please check your connection and try again.");
     } finally {
       setLoading(false);
+      console.log('🏁 Signup submission completed');
     }
   };
 

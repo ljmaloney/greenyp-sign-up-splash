@@ -26,11 +26,22 @@ const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
   const selectedSubscription = subscriptions?.find(sub => sub.subscriptionId === selectedPlan);
 
   const handleSubmit = (data: any) => {
+    console.log('📋 SignUpForm: Form submission triggered');
+    console.log('📝 SignUpForm: Form data valid, calling onSubmit');
     onSubmit(data, selectedSubscription, categories);
   };
 
+  // Debug error state
+  console.log('🐛 SignUpForm: Error state debug:', {
+    hasError: !!error,
+    errorMessage: error,
+    isSystemError,
+    errorLength: error?.length
+  });
+
   // Show system error page for 500-series errors
   if (isSystemError) {
+    console.log('🔥 SignUpForm: Showing system error page');
     return (
       <div className="bg-white rounded-lg shadow-lg p-8">
         <SystemErrorCard />
@@ -42,7 +53,13 @@ const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
     <div className="bg-white rounded-lg shadow-lg p-8">
       <SignUpFormHeader selectedSubscription={selectedSubscription} />
 
-      {error && <ErrorMessage message={error} />}
+      {/* Single error display at the top */}
+      {error && (
+        <>
+          <ErrorMessage message={error} />
+          {console.log('⚠️ SignUpForm: Displaying error message:', error)}
+        </>
+      )}
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
@@ -54,8 +71,6 @@ const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
           <SignUpFormSubmitSection loading={loading} />
         </form>
       </Form>
-
-      {error && <ErrorMessage message={error} />}
     </div>
   );
 };
