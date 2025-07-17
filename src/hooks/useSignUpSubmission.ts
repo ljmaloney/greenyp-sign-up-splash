@@ -5,6 +5,7 @@ import { toast } from "@/components/ui/sonner";
 import { SignUpFormSchema } from '@/utils/signUpValidation';
 import { createSignUpPayload, submitSignUpData } from '@/services/signUpService';
 import { APIResponse } from '@/types/responseBody';
+import { getApiUrl } from '@/config/api';
 
 export const useSignUpSubmission = () => {
   const [loading, setLoading] = useState(false);
@@ -37,6 +38,28 @@ export const useSignUpSubmission = () => {
     return fallbackMessage;
   };
 
+  const fetchAccountData = async (producerId: string) => {
+    console.log('📋 Fetching complete account data for producer:', producerId);
+    
+    try {
+      const accountResponse = await fetch(getApiUrl(`/account/${producerId}`));
+      console.log('📡 Account fetch response status:', accountResponse.status);
+      
+      if (!accountResponse.ok) {
+        console.error('❌ Failed to fetch account data:', accountResponse.status);
+        return null;
+      }
+      
+      const accountData = await accountResponse.json();
+      console.log('✅ Account data fetched successfully:', accountData);
+      
+      return accountData;
+    } catch (error) {
+      console.error('❌ Error fetching account data:', error);
+      return null;
+    }
+  };
+
   const handleSubmit = async (
     data: SignUpFormSchema, 
     selectedSubscription: any, 
@@ -51,6 +74,7 @@ export const useSignUpSubmission = () => {
     setIsSystemError(false);
     
     try {
+      // Step 1: Create the account
       const payload = createSignUpPayload(data);
       console.log('📤 Sending payload to API');
       
@@ -84,39 +108,48 @@ export const useSignUpSubmission = () => {
           const producerId = producerData.producerId;
           console.log('🆔 Producer ID extracted:', producerId);
 
-          // Extract subscriptions - check multiple possible locations
+          if (!producerId) {
+            console.error('❌ Missing producer ID in response');
+            setError('Account creation failed - missing producer ID');
+            return;
+          }
+
+          // Step 2: Fetch complete account data including subscriptions
+          console.log('🔄 Fetching complete account data with subscriptions...');
+          const accountData = await fetchAccountData(producerId);
+          
           let producerSubscriptions = [];
           
-          // First check producer.subscriptions
-          if (producerData.subscriptions && Array.isArray(producerData.subscriptions)) {
-            producerSubscriptions = producerData.subscriptions;
-            console.log('📋 Found subscriptions in producer.subscriptions:', producerSubscriptions.length);
+          if (accountData && accountData.response) {
+            // Check for subscriptions in the account data response
+            if (accountData.response.producer?.subscriptions) {
+              producerSubscriptions = accountData.response.producer.subscriptions;
+              console.log('📋 Found subscriptions in account data:', producerSubscriptions.length);
+            } else if (accountData.response.subscriptions) {
+              producerSubscriptions = accountData.response.subscriptions;
+              console.log('📋 Found subscriptions in response root:', producerSubscriptions.length);
+            }
           }
           
-          // If no subscriptions in producer, check if there's a separate subscriptions array in response
-          if (producerSubscriptions.length === 0 && responseData.response?.subscriptions) {
-            producerSubscriptions = responseData.response.subscriptions;
-            console.log('📋 Found subscriptions in response.subscriptions:', producerSubscriptions.length);
+          // Fallback: Check original response for subscriptions
+          if (producerSubscriptions.length === 0 && producerData.subscriptions) {
+            producerSubscriptions = producerData.subscriptions;
+            console.log('📋 Using subscriptions from original response:', producerSubscriptions.length);
           }
           
           // Log the subscription data structure
           if (producerSubscriptions.length > 0) {
             console.log('📋 First subscription structure:', JSON.stringify(producerSubscriptions[0], null, 2));
           } else {
-            console.warn('⚠️ No subscriptions found in API response');
+            console.warn('⚠️ No subscriptions found in any response');
             console.log('🔍 Producer data structure:', JSON.stringify(producerData, null, 2));
+            console.log('🔍 Account data structure:', JSON.stringify(accountData, null, 2));
           }
           
           console.log('🎉 Account creation successful:', {
             producerId,
             subscriptionsCount: producerSubscriptions.length
           });
-
-          if (!producerId) {
-            console.error('❌ Missing producer ID in response');
-            setError('Account creation failed - missing producer ID');
-            return;
-          }
 
           toast.success("Account created successfully! Please complete your payment to activate your subscription.");
           
