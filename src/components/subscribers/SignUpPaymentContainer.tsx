@@ -38,14 +38,25 @@ const SignUpPaymentContainer = () => {
     subscriptionDataLength: subscriptionDataParam?.length
   });
 
+  // Validate required parameters
+  const hasRequiredData = !!(producerId && subscriptionId && email && firstName && lastName);
+  console.log('SignUpPaymentContainer - Required data check:', {
+    hasRequiredData,
+    producerId: !!producerId,
+    subscriptionId: !!subscriptionId,
+    email: !!email,
+    firstName: !!firstName,
+    lastName: !!lastName
+  });
+
   // Parse the subscription data from the API response if available
   let apiSubscriptionData = null;
   if (subscriptionDataParam) {
     try {
       apiSubscriptionData = JSON.parse(subscriptionDataParam);
-      console.log('Parsed API subscription data:', apiSubscriptionData);
+      console.log('✅ Parsed API subscription data:', apiSubscriptionData);
     } catch (error) {
-      console.error('Failed to parse subscription data from URL:', error);
+      console.error('❌ Failed to parse subscription data from URL:', error);
       console.log('Raw subscription data param (first 200 chars):', subscriptionDataParam?.substring(0, 200));
     }
   }
@@ -59,16 +70,17 @@ const SignUpPaymentContainer = () => {
 
   // Redirect if essential data is missing (indicates account creation may have failed)
   useEffect(() => {
-    if (!producerId || !email || !firstName || !lastName) {
-      console.warn('Missing required signup data, redirecting to signup page:', {
+    if (!hasRequiredData) {
+      console.warn('❌ Missing required signup data, redirecting to signup page:', {
         producerId: !!producerId,
+        subscriptionId: !!subscriptionId,
         email: !!email,
         firstName: !!firstName,
         lastName: !!lastName
       });
       navigate('/subscribers/signup');
     }
-  }, [producerId, email, firstName, lastName, navigate]);
+  }, [hasRequiredData, navigate, producerId, subscriptionId, email, firstName, lastName]);
 
   // Find the selected subscription from the cached reference data
   const selectedSubscription = subscriptions?.find(sub => {
@@ -101,13 +113,13 @@ const SignUpPaymentContainer = () => {
   };
 
   // Don't render if essential data is missing
-  if (!producerId || !email || !firstName || !lastName) {
+  if (!hasRequiredData) {
     return null;
   }
 
   // Show error if subscriptions failed to load
   if (subscriptionsError) {
-    console.error('Subscriptions loading error:', subscriptionsError);
+    console.error('❌ Subscriptions loading error:', subscriptionsError);
     return (
       <div className="flex justify-center items-center p-8">
         <Alert variant="destructive" className="max-w-md">
@@ -122,21 +134,21 @@ const SignUpPaymentContainer = () => {
     );
   }
 
-  // Show loading state if subscriptions haven't loaded yet and we don't have API data
+  // Priority: API subscription data > Reference subscription data
+  const hasValidSubscriptionData = !!(apiSubscriptionData || selectedSubscription);
+  
+  // Show loading only if we're waiting for reference data AND don't have API data
   if (isLoading && !apiSubscriptionData) {
-    console.log('Showing loading state - waiting for subscriptions data');
+    console.log('⏳ Showing loading state - waiting for subscriptions data');
     return (
       <div className="flex justify-center items-center p-8">
         <div className="text-gray-600">Loading subscription details...</div>
       </div>
     );
   }
-
-  // Check if we have subscription data (either from API or reference data)
-  const hasValidSubscriptionData = !!(apiSubscriptionData || selectedSubscription);
   
   if (!hasValidSubscriptionData) {
-    console.error('No valid subscription data found:', {
+    console.error('❌ No valid subscription data found:', {
       hasApiData: !!apiSubscriptionData,
       hasSelectedSubscription: !!selectedSubscription,
       subscriptionId,
@@ -160,7 +172,7 @@ const SignUpPaymentContainer = () => {
     );
   }
 
-  console.log('SignUpPaymentContainer - Rendering payment layout with:', {
+  console.log('✅ SignUpPaymentContainer - Rendering payment layout with:', {
     hasSelectedSubscription: !!selectedSubscription,
     hasApiSubscriptionData: !!apiSubscriptionData,
     customerDataValid: !!(customerData.emailAddress && customerData.firstName && customerData.lastName),

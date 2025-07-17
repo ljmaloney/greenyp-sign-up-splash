@@ -62,6 +62,7 @@ export const useSignUpSubmission = () => {
         try {
           const responseData: APIResponse<any> = await response.json();
           console.log('✅ Success response received:', responseData);
+          console.log('🔍 Full response structure:', JSON.stringify(responseData, null, 2));
           
           // Check if errorMessageApi indicates an error even with 200/201 status
           if (responseData.errorMessageApi) {
@@ -71,16 +72,40 @@ export const useSignUpSubmission = () => {
             return;
           }
 
-          // The API response structure is: { response: { producer: { producerId, subscriptions: [...] } } }
+          // Extract producer data - handle nested response structure
           const producerData = responseData.response?.producer;
           if (!producerData) {
             console.error('❌ Invalid response structure - missing producer data');
+            console.log('🔍 Available response keys:', Object.keys(responseData.response || {}));
             setError('Account creation failed - invalid response from server');
             return;
           }
 
           const producerId = producerData.producerId;
-          const producerSubscriptions = producerData.subscriptions || [];
+          console.log('🆔 Producer ID extracted:', producerId);
+
+          // Extract subscriptions - check multiple possible locations
+          let producerSubscriptions = [];
+          
+          // First check producer.subscriptions
+          if (producerData.subscriptions && Array.isArray(producerData.subscriptions)) {
+            producerSubscriptions = producerData.subscriptions;
+            console.log('📋 Found subscriptions in producer.subscriptions:', producerSubscriptions.length);
+          }
+          
+          // If no subscriptions in producer, check if there's a separate subscriptions array in response
+          if (producerSubscriptions.length === 0 && responseData.response?.subscriptions) {
+            producerSubscriptions = responseData.response.subscriptions;
+            console.log('📋 Found subscriptions in response.subscriptions:', producerSubscriptions.length);
+          }
+          
+          // Log the subscription data structure
+          if (producerSubscriptions.length > 0) {
+            console.log('📋 First subscription structure:', JSON.stringify(producerSubscriptions[0], null, 2));
+          } else {
+            console.warn('⚠️ No subscriptions found in API response');
+            console.log('🔍 Producer data structure:', JSON.stringify(producerData, null, 2));
+          }
           
           console.log('🎉 Account creation successful:', {
             producerId,
@@ -95,17 +120,30 @@ export const useSignUpSubmission = () => {
 
           toast.success("Account created successfully! Please complete your payment to activate your subscription.");
           
-          // Get the subscription ID from the producer's subscription data (API response)
-          const producerSubscriptionId = producerSubscriptions.length > 0 ? 
-            producerSubscriptions[0].subscriptionId : 
-            selectedSubscription?.subscriptionId || '';
+          // Determine subscription ID - prefer API data, fall back to selected subscription
+          let subscriptionIdForUrl = '';
+          let subscriptionDataForUrl = null;
           
-          console.log('🔗 Redirecting to payment with subscription ID:', producerSubscriptionId);
+          if (producerSubscriptions.length > 0) {
+            const firstSubscription = producerSubscriptions[0];
+            subscriptionIdForUrl = firstSubscription.subscriptionId || firstSubscription.id || '';
+            subscriptionDataForUrl = firstSubscription;
+            console.log('🔗 Using API subscription ID:', subscriptionIdForUrl);
+          } else if (selectedSubscription?.subscriptionId) {
+            subscriptionIdForUrl = selectedSubscription.subscriptionId;
+            console.log('🔗 Falling back to selected subscription ID:', subscriptionIdForUrl);
+          }
           
-          // Redirect to payment page with producer ID, form data, and subscription data
+          if (!subscriptionIdForUrl) {
+            console.error('❌ No subscription ID available for payment page');
+            setError('Account created but subscription details are missing. Please contact support.');
+            return;
+          }
+          
+          // Redirect to payment page with all necessary data
           const paymentParams = new URLSearchParams();
           paymentParams.set('producerId', producerId);
-          paymentParams.set('subscription', producerSubscriptionId);
+          paymentParams.set('subscription', subscriptionIdForUrl);
           paymentParams.set('email', data.emailAddress);
           paymentParams.set('firstName', data.firstName);
           paymentParams.set('lastName', data.lastName);
@@ -115,9 +153,10 @@ export const useSignUpSubmission = () => {
           paymentParams.set('state', data.state);
           paymentParams.set('postalCode', data.postalCode);
           
-          // Add the actual subscription data from the API response
-          if (producerSubscriptions.length > 0) {
-            paymentParams.set('subscriptionData', JSON.stringify(producerSubscriptions[0]));
+          // Add the actual subscription data from the API response if available
+          if (subscriptionDataForUrl) {
+            paymentParams.set('subscriptionData', JSON.stringify(subscriptionDataForUrl));
+            console.log('📦 Adding subscription data to URL:', subscriptionDataForUrl.subscriptionId);
           }
           
           const paymentUrl = `/subscriber/signup/payment?${paymentParams.toString()}`;

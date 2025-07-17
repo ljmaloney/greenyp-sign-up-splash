@@ -22,7 +22,7 @@ const SubscriptionSummaryCard = ({ selectedSubscription, apiSubscriptionData }: 
   const hasReferenceData = !!selectedSubscription;
   
   if (!hasApiData && !hasReferenceData) {
-    console.warn('SubscriptionSummaryCard - No subscription data provided');
+    console.warn('⚠️ SubscriptionSummaryCard - No subscription data provided');
     return (
       <Card>
         <CardHeader>
@@ -48,7 +48,18 @@ const SubscriptionSummaryCard = ({ selectedSubscription, apiSubscriptionData }: 
                       apiSubscriptionData.displayName || 
                       'Selected Plan';
     
-    monthlyPrice = apiSubscriptionData.monthlyAutopayAmount || 0;
+    // Handle different possible price field names from API
+    monthlyPrice = apiSubscriptionData.monthlyAutopayAmount || 
+                   apiSubscriptionData.monthlyPrice || 
+                   apiSubscriptionData.price || 
+                   0;
+    
+    console.log('📊 API subscription price extraction:', {
+      monthlyAutopayAmount: apiSubscriptionData.monthlyAutopayAmount,
+      monthlyPrice: apiSubscriptionData.monthlyPrice,
+      price: apiSubscriptionData.price,
+      finalPrice: monthlyPrice
+    });
     
     if (apiSubscriptionData.features) {
       features = apiSubscriptionData.features
@@ -68,12 +79,14 @@ const SubscriptionSummaryCard = ({ selectedSubscription, apiSubscriptionData }: 
     features = selectedSubscription.formattedFeatures || [];
   }
   
-  const formattedPrice = `$${(monthlyPrice / 100).toFixed(2)}`;
+  // Ensure price is a valid number and format it
+  const numericPrice = typeof monthlyPrice === 'number' ? monthlyPrice : 0;
+  const formattedPrice = `$${(numericPrice / 100).toFixed(2)}`;
 
-  console.log('SubscriptionSummaryCard - Display data:', {
+  console.log('📋 SubscriptionSummaryCard - Display data:', {
     dataSource,
     subscriptionName,
-    monthlyPrice,
+    monthlyPrice: numericPrice,
     formattedPrice,
     featuresCount: features.length,
     features: features.map(f => f.name)
