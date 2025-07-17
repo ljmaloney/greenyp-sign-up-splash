@@ -11,7 +11,8 @@ import AccountCredentialsCard from './AccountCredentialsCard';
 import SignUpFormHeader from './SignUpFormHeader';
 import SignUpFormSubmitSection from './SignUpFormSubmitSection';
 import SystemErrorCard from './SystemErrorCard';
-import ErrorMessage from './ErrorMessage';
+import SignUpErrorHandler from './SignUpErrorHandler';
+import { findSubscriptionMatch } from '@/utils/subscriptionMatching';
 
 interface SignUpFormProps {
   selectedPlan: string;
@@ -20,10 +21,19 @@ interface SignUpFormProps {
 const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
   const { data: subscriptions } = useSubscriptions();
   const { data: categories } = useCategories();
-  const { form, loading, onSubmit, error, isSystemError } = useSignUpForm(selectedPlan);
+  const { form, loading, onSubmit, error, isSystemError, isDuplicateEmail, resetError } = useSignUpForm(selectedPlan);
 
-  // Find the selected subscription to display its name
-  const selectedSubscription = subscriptions?.find(sub => sub.subscriptionId === selectedPlan);
+  // Find the selected subscription using improved matching
+  const selectedSubscription = findSubscriptionMatch(subscriptions, selectedPlan);
+
+  console.log('📋 SignUpForm: Subscription matching result:', {
+    selectedPlan,
+    foundSubscription: selectedSubscription ? {
+      id: selectedSubscription.subscriptionId,
+      name: selectedSubscription.displayName
+    } : null,
+    totalSubscriptions: subscriptions?.length
+  });
 
   const handleSubmit = (data: any) => {
     console.log('📋 SignUpForm: Form submission triggered');
@@ -31,16 +41,33 @@ const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
     onSubmit(data, selectedSubscription, categories);
   };
 
+  const handleRetry = () => {
+    console.log('🔄 SignUpForm: Retrying form submission');
+    resetError();
+  };
+
+  const handleEmailChange = () => {
+    console.log('📧 SignUpForm: User wants to change email');
+    resetError();
+    // Focus on email field to make it easy to change
+    const emailField = document.querySelector('input[name="emailAddress"]') as HTMLInputElement;
+    if (emailField) {
+      emailField.focus();
+      emailField.select();
+    }
+  };
+
   // Debug error state
   console.log('🐛 SignUpForm: Error state debug:', {
     hasError: !!error,
     errorMessage: error,
     isSystemError,
+    isDuplicateEmail,
     errorLength: error?.length
   });
 
   // Show system error page for 500-series errors
-  if (isSystemError) {
+  if (isSystemError && !error) {
     console.log('🔥 SignUpForm: Showing system error page');
     return (
       <div className="bg-white rounded-lg shadow-lg p-8">
@@ -53,12 +80,15 @@ const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
     <div className="bg-white rounded-lg shadow-lg p-8">
       <SignUpFormHeader selectedSubscription={selectedSubscription} />
 
-      {/* Single error display at the top */}
+      {/* Improved error display */}
       {error && (
-        <>
-          <ErrorMessage message={error} />
-          {console.log('⚠️ SignUpForm: Displaying error message:', error)}
-        </>
+        <SignUpErrorHandler 
+          error={error}
+          isSystemError={isSystemError}
+          isDuplicateEmail={isDuplicateEmail}
+          onRetry={handleRetry}
+          onEmailChange={handleEmailChange}
+        />
       )}
 
       <Form {...form}>

@@ -5,6 +5,7 @@ import { useSubscriptions } from '@/hooks/useSubscriptions';
 import SubscriptionPaymentLayout from './SubscriptionPaymentLayout';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
+import { findSubscriptionMatch, validateSubscriptionData } from '@/utils/subscriptionMatching';
 
 const SignUpPaymentContainer = () => {
   const [searchParams] = useSearchParams();
@@ -40,14 +41,7 @@ const SignUpPaymentContainer = () => {
 
   // Validate required parameters
   const hasRequiredData = !!(producerId && subscriptionId && email && firstName && lastName);
-  console.log('SignUpPaymentContainer - Required data check:', {
-    hasRequiredData,
-    producerId: !!producerId,
-    subscriptionId: !!subscriptionId,
-    email: !!email,
-    firstName: !!firstName,
-    lastName: !!lastName
-  });
+  console.log('SignUpPaymentContainer - Required data check:', hasRequiredData);
 
   // Parse the subscription data from the API response if available
   let apiSubscriptionData = null;
@@ -55,51 +49,27 @@ const SignUpPaymentContainer = () => {
     try {
       apiSubscriptionData = JSON.parse(subscriptionDataParam);
       console.log('✅ Parsed API subscription data:', apiSubscriptionData);
+      
+      if (!validateSubscriptionData(apiSubscriptionData)) {
+        console.warn('⚠️ API subscription data is invalid:', apiSubscriptionData);
+        apiSubscriptionData = null;
+      }
     } catch (error) {
       console.error('❌ Failed to parse subscription data from URL:', error);
-      console.log('Raw subscription data param (first 200 chars):', subscriptionDataParam?.substring(0, 200));
+      apiSubscriptionData = null;
     }
   }
 
-  console.log('SignUpPaymentContainer - Subscriptions state:', {
-    isLoading,
-    subscriptionsError,
-    subscriptionsCount: subscriptions?.length,
-    hasApiSubscriptionData: !!apiSubscriptionData
-  });
-
-  // Redirect if essential data is missing (indicates account creation may have failed)
+  // Redirect if essential data is missing
   useEffect(() => {
     if (!hasRequiredData) {
-      console.warn('❌ Missing required signup data, redirecting to signup page:', {
-        producerId: !!producerId,
-        subscriptionId: !!subscriptionId,
-        email: !!email,
-        firstName: !!firstName,
-        lastName: !!lastName
-      });
+      console.warn('❌ Missing required signup data, redirecting to signup page');
       navigate('/subscribers/signup');
     }
-  }, [hasRequiredData, navigate, producerId, subscriptionId, email, firstName, lastName]);
+  }, [hasRequiredData, navigate]);
 
-  // Find the selected subscription from the cached reference data
-  const selectedSubscription = subscriptions?.find(sub => {
-    const match = sub.subscriptionId === subscriptionId;
-    console.log('Comparing subscription:', {
-      refSubscriptionId: sub.subscriptionId,
-      urlSubscriptionId: subscriptionId,
-      match
-    });
-    return match;
-  });
-
-  console.log('SignUpPaymentContainer - Selected subscription result:', {
-    selectedSubscription: selectedSubscription ? {
-      id: selectedSubscription.subscriptionId,
-      name: selectedSubscription.displayName
-    } : null,
-    searchedId: subscriptionId
-  });
+  // Find the selected subscription using improved matching
+  const selectedSubscription = findSubscriptionMatch(subscriptions, subscriptionId);
 
   const customerData = {
     firstName: firstName || '',
@@ -172,12 +142,7 @@ const SignUpPaymentContainer = () => {
     );
   }
 
-  console.log('✅ SignUpPaymentContainer - Rendering payment layout with:', {
-    hasSelectedSubscription: !!selectedSubscription,
-    hasApiSubscriptionData: !!apiSubscriptionData,
-    customerDataValid: !!(customerData.emailAddress && customerData.firstName && customerData.lastName),
-    producerId
-  });
+  console.log('✅ SignUpPaymentContainer - Rendering payment layout with valid data');
 
   return (
     <SubscriptionPaymentLayout 

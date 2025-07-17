@@ -6,17 +6,28 @@ import { SignUpFormSchema } from '@/utils/signUpValidation';
 import { createSignUpPayload, submitSignUpData } from '@/services/signUpService';
 import { APIResponse } from '@/types/responseBody';
 import { getApiUrl } from '@/config/api';
+import { useEmailDuplicateCheck } from './useEmailDuplicateCheck';
 
 export const useSignUpSubmission = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSystemError, setIsSystemError] = useState(false);
+  const [isDuplicateEmail, setIsDuplicateEmail] = useState(false);
   const navigate = useNavigate();
+  const { checkEmailExists } = useEmailDuplicateCheck();
 
   const formatErrorMessage = (errorData: any): string => {
     console.log('🔍 Formatting error message from data:', errorData);
     
-    // Handle direct error response structure (errorCode, displayMessage, errorDetails)
+    // Check for duplicate email/username error
+    if (errorData.errorCode === 'DUPLICATE_USER' || 
+        errorData.displayMessage?.toLowerCase().includes('already exists') ||
+        errorData.errorDetails?.toLowerCase().includes('already exists')) {
+      setIsDuplicateEmail(true);
+      return 'A user already exists for this email address';
+    }
+    
+    // Handle direct error response structure
     if (errorData.errorCode && errorData.displayMessage) {
       const message = errorData.displayMessage;
       const details = errorData.errorDetails;
@@ -24,7 +35,7 @@ export const useSignUpSubmission = () => {
       return details ? `${message}: ${details}` : message;
     }
     
-    // Handle nested error response structure (errorMessageApi)
+    // Handle nested error response structure
     if (errorData.errorMessageApi) {
       const apiError = errorData.errorMessageApi;
       const message = apiError.displayMessage || apiError.errorDetails || 'An error occurred';
@@ -60,6 +71,12 @@ export const useSignUpSubmission = () => {
     }
   };
 
+  const resetError = () => {
+    setError(null);
+    setIsSystemError(false);
+    setIsDuplicateEmail(false);
+  };
+
   const handleSubmit = async (
     data: SignUpFormSchema, 
     selectedSubscription: any, 
@@ -70,11 +87,22 @@ export const useSignUpSubmission = () => {
     console.log('📋 Selected subscription:', selectedSubscription?.subscriptionId);
     
     setLoading(true);
-    setError(null);
-    setIsSystemError(false);
+    resetError();
     
     try {
-      // Step 1: Create the account
+      // Step 1: Check if email already exists
+      console.log('🔍 Pre-checking email availability...');
+      const emailExists = await checkEmailExists(data.emailAddress);
+      
+      if (emailExists) {
+        console.log('❌ Email already exists, stopping submission');
+        setIsDuplicateEmail(true);
+        setError('A user already exists for this email address');
+        setLoading(false);
+        return;
+      }
+
+      // Step 2: Create the account
       const payload = createSignUpPayload(data);
       console.log('📤 Sending payload to API');
       
@@ -86,7 +114,6 @@ export const useSignUpSubmission = () => {
         try {
           const responseData: APIResponse<any> = await response.json();
           console.log('✅ Success response received:', responseData);
-          console.log('🔍 Full response structure:', JSON.stringify(responseData, null, 2));
           
           // Check if errorMessageApi indicates an error even with 200/201 status
           if (responseData.errorMessageApi) {
@@ -96,11 +123,10 @@ export const useSignUpSubmission = () => {
             return;
           }
 
-          // Extract producer data - handle nested response structure
+          // Extract producer data
           const producerData = responseData.response?.producer;
-          if (!producerData) {
+          if (!producerData?.producerId) {
             console.error('❌ Invalid response structure - missing producer data');
-            console.log('🔍 Available response keys:', Object.keys(responseData.response || {}));
             setError('Account creation failed - invalid response from server');
             return;
           }
@@ -108,42 +134,14 @@ export const useSignUpSubmission = () => {
           const producerId = producerData.producerId;
           console.log('🆔 Producer ID extracted:', producerId);
 
-          if (!producerId) {
-            console.error('❌ Missing producer ID in response');
-            setError('Account creation failed - missing producer ID');
-            return;
-          }
-
-          // Step 2: Fetch complete account data including subscriptions
-          console.log('🔄 Fetching complete account data with subscriptions...');
+          // Step 3: Fetch complete account data
           const accountData = await fetchAccountData(producerId);
           
           let producerSubscriptions = [];
-          
-          if (accountData && accountData.response) {
-            // Check for subscriptions in the account data response
-            if (accountData.response.producer?.subscriptions) {
-              producerSubscriptions = accountData.response.producer.subscriptions;
-              console.log('📋 Found subscriptions in account data:', producerSubscriptions.length);
-            } else if (accountData.response.subscriptions) {
-              producerSubscriptions = accountData.response.subscriptions;
-              console.log('📋 Found subscriptions in response root:', producerSubscriptions.length);
-            }
-          }
-          
-          // Fallback: Check original response for subscriptions
-          if (producerSubscriptions.length === 0 && producerData.subscriptions) {
+          if (accountData?.response?.producer?.subscriptions) {
+            producerSubscriptions = accountData.response.producer.subscriptions;
+          } else if (producerData.subscriptions) {
             producerSubscriptions = producerData.subscriptions;
-            console.log('📋 Using subscriptions from original response:', producerSubscriptions.length);
-          }
-          
-          // Log the subscription data structure
-          if (producerSubscriptions.length > 0) {
-            console.log('📋 First subscription structure:', JSON.stringify(producerSubscriptions[0], null, 2));
-          } else {
-            console.warn('⚠️ No subscriptions found in any response');
-            console.log('🔍 Producer data structure:', JSON.stringify(producerData, null, 2));
-            console.log('🔍 Account data structure:', JSON.stringify(accountData, null, 2));
           }
           
           console.log('🎉 Account creation successful:', {
@@ -153,30 +151,10 @@ export const useSignUpSubmission = () => {
 
           toast.success("Account created successfully! Please complete your payment to activate your subscription.");
           
-          // Determine subscription ID - prefer API data, fall back to selected subscription
-          let subscriptionIdForUrl = '';
-          let subscriptionDataForUrl = null;
-          
-          if (producerSubscriptions.length > 0) {
-            const firstSubscription = producerSubscriptions[0];
-            subscriptionIdForUrl = firstSubscription.subscriptionId || firstSubscription.id || '';
-            subscriptionDataForUrl = firstSubscription;
-            console.log('🔗 Using API subscription ID:', subscriptionIdForUrl);
-          } else if (selectedSubscription?.subscriptionId) {
-            subscriptionIdForUrl = selectedSubscription.subscriptionId;
-            console.log('🔗 Falling back to selected subscription ID:', subscriptionIdForUrl);
-          }
-          
-          if (!subscriptionIdForUrl) {
-            console.error('❌ No subscription ID available for payment page');
-            setError('Account created but subscription details are missing. Please contact support.');
-            return;
-          }
-          
-          // Redirect to payment page with all necessary data
+          // Navigate to payment page
           const paymentParams = new URLSearchParams();
           paymentParams.set('producerId', producerId);
-          paymentParams.set('subscription', subscriptionIdForUrl);
+          paymentParams.set('subscription', selectedSubscription?.subscriptionId || '');
           paymentParams.set('email', data.emailAddress);
           paymentParams.set('firstName', data.firstName);
           paymentParams.set('lastName', data.lastName);
@@ -186,10 +164,8 @@ export const useSignUpSubmission = () => {
           paymentParams.set('state', data.state);
           paymentParams.set('postalCode', data.postalCode);
           
-          // Add the actual subscription data from the API response if available
-          if (subscriptionDataForUrl) {
-            paymentParams.set('subscriptionData', JSON.stringify(subscriptionDataForUrl));
-            console.log('📦 Adding subscription data to URL:', subscriptionDataForUrl.subscriptionId);
+          if (producerSubscriptions.length > 0) {
+            paymentParams.set('subscriptionData', JSON.stringify(producerSubscriptions[0]));
           }
           
           const paymentUrl = `/subscriber/signup/payment?${paymentParams.toString()}`;
@@ -204,10 +180,19 @@ export const useSignUpSubmission = () => {
         }
       }
 
+      // Handle 412 specifically (likely duplicate email)
+      if (status === 412) {
+        console.log('❌ 412 Precondition Failed - likely duplicate email');
+        setIsDuplicateEmail(true);
+        setError('A user already exists for this email address');
+        return;
+      }
+
       // Handle 500-series errors (system errors)
       if (status >= 500) {
         console.error('🔥 System error detected:', status);
         setIsSystemError(true);
+        setError('System temporarily unavailable. Please try again later.');
         return;
       }
 
@@ -230,12 +215,6 @@ export const useSignUpSubmission = () => {
 
       // Handle any other unexpected status codes
       console.error('❓ Unexpected response status:', status);
-      try {
-        const errorText = await response.text();
-        console.error('📄 Response text:', errorText);
-      } catch (e) {
-        console.error('❌ Could not read response text');
-      }
       setError('Unexpected error occurred. Please try again.');
 
     } catch (error) {
@@ -251,6 +230,8 @@ export const useSignUpSubmission = () => {
     loading,
     error,
     isSystemError,
-    handleSubmit
+    isDuplicateEmail,
+    handleSubmit,
+    resetError
   };
 };
