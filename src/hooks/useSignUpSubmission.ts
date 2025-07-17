@@ -21,6 +21,11 @@ export const useSignUpSubmission = () => {
     setError(null);
     setIsSystemError(false);
     
+    console.log('Starting signup submission with data:', {
+      selectedSubscription,
+      formData: data
+    });
+    
     try {
       const payload = createSignUpPayload(data);
       const { response, status } = await submitSignUpData(payload);
@@ -70,10 +75,22 @@ export const useSignUpSubmission = () => {
           
           toast.success("Account created successfully! Please complete your payment to activate your subscription.");
           
+          // Get the subscription ID from the producer's subscription data (API response)
+          // This is the actual subscription created for this producer
+          const producerSubscriptionId = producerSubscriptions.length > 0 ? 
+            producerSubscriptions[0].subscriptionId : 
+            selectedSubscription?.subscriptionId || '';
+          
+          console.log('Using subscription ID for payment:', {
+            producerSubscriptionId,
+            fallbackSubscriptionId: selectedSubscription?.subscriptionId,
+            finalSubscriptionId: producerSubscriptionId
+          });
+          
           // Redirect to payment page with producer ID, form data, and subscription data
           const paymentParams = new URLSearchParams();
           paymentParams.set('producerId', producerId);
-          paymentParams.set('subscription', selectedSubscription?.subscriptionId || '');
+          paymentParams.set('subscription', producerSubscriptionId); // Use the producer's subscription ID
           paymentParams.set('email', data.emailAddress);
           paymentParams.set('firstName', data.firstName);
           paymentParams.set('lastName', data.lastName);
@@ -88,7 +105,9 @@ export const useSignUpSubmission = () => {
             paymentParams.set('subscriptionData', JSON.stringify(producerSubscriptions[0]));
           }
           
-          navigate(`/subscriber/signup/payment?${paymentParams.toString()}`);
+          const paymentUrl = `/subscriber/signup/payment?${paymentParams.toString()}`;
+          console.log('Redirecting to payment page:', paymentUrl);
+          navigate(paymentUrl);
           return;
           
         } catch (parseError) {

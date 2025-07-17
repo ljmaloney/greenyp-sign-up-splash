@@ -35,7 +35,7 @@ const SignUpPaymentContainer = () => {
     state,
     postalCode,
     hasSubscriptionData: !!subscriptionDataParam,
-    subscriptionDataParam: subscriptionDataParam ? subscriptionDataParam.substring(0, 100) + '...' : null
+    subscriptionDataLength: subscriptionDataParam?.length
   });
 
   // Parse the subscription data from the API response if available
@@ -46,32 +46,48 @@ const SignUpPaymentContainer = () => {
       console.log('Parsed API subscription data:', apiSubscriptionData);
     } catch (error) {
       console.error('Failed to parse subscription data from URL:', error);
-      console.log('Raw subscription data param:', subscriptionDataParam);
+      console.log('Raw subscription data param (first 200 chars):', subscriptionDataParam?.substring(0, 200));
     }
   }
 
-  console.log('SignUpPaymentContainer - Subscriptions loading state:', {
+  console.log('SignUpPaymentContainer - Subscriptions state:', {
     isLoading,
     subscriptionsError,
     subscriptionsCount: subscriptions?.length,
-    subscriptions
+    hasApiSubscriptionData: !!apiSubscriptionData
   });
 
   // Redirect if essential data is missing (indicates account creation may have failed)
   useEffect(() => {
     if (!producerId || !email || !firstName || !lastName) {
-      console.log('Missing required signup data, redirecting to signup page');
+      console.warn('Missing required signup data, redirecting to signup page:', {
+        producerId: !!producerId,
+        email: !!email,
+        firstName: !!firstName,
+        lastName: !!lastName
+      });
       navigate('/subscribers/signup');
     }
   }, [producerId, email, firstName, lastName, navigate]);
 
   // Find the selected subscription from the cached reference data
   const selectedSubscription = subscriptions?.find(sub => {
-    console.log('Comparing subscription:', sub.subscriptionId, 'with URL param:', subscriptionId);
-    return sub.subscriptionId === subscriptionId;
+    const match = sub.subscriptionId === subscriptionId;
+    console.log('Comparing subscription:', {
+      refSubscriptionId: sub.subscriptionId,
+      urlSubscriptionId: subscriptionId,
+      match
+    });
+    return match;
   });
 
-  console.log('SignUpPaymentContainer - Selected subscription:', selectedSubscription);
+  console.log('SignUpPaymentContainer - Selected subscription result:', {
+    selectedSubscription: selectedSubscription ? {
+      id: selectedSubscription.subscriptionId,
+      name: selectedSubscription.displayName
+    } : null,
+    searchedId: subscriptionId
+  });
 
   const customerData = {
     firstName: firstName || '',
@@ -108,6 +124,7 @@ const SignUpPaymentContainer = () => {
 
   // Show loading state if subscriptions haven't loaded yet and we don't have API data
   if (isLoading && !apiSubscriptionData) {
+    console.log('Showing loading state - waiting for subscriptions data');
     return (
       <div className="flex justify-center items-center p-8">
         <div className="text-gray-600">Loading subscription details...</div>
@@ -115,11 +132,14 @@ const SignUpPaymentContainer = () => {
     );
   }
 
-  // If we have API subscription data, we can proceed even if reference data isn't found
-  // If we don't have API data but have a subscription ID, we need the reference data
-  if (!apiSubscriptionData && subscriptionId && !selectedSubscription) {
-    console.warn('Selected subscription not found:', {
-      searchedId: subscriptionId,
+  // Check if we have subscription data (either from API or reference data)
+  const hasValidSubscriptionData = !!(apiSubscriptionData || selectedSubscription);
+  
+  if (!hasValidSubscriptionData) {
+    console.error('No valid subscription data found:', {
+      hasApiData: !!apiSubscriptionData,
+      hasSelectedSubscription: !!selectedSubscription,
+      subscriptionId,
       availableSubscriptions: subscriptions?.map(sub => ({
         id: sub.subscriptionId,
         name: sub.displayName
@@ -131,14 +151,21 @@ const SignUpPaymentContainer = () => {
         <Alert variant="destructive" className="max-w-md">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            The selected subscription plan could not be found. Please return to the signup page and select a plan.
+            Subscription details are missing or invalid. Please return to the signup page and try again.
             <br />
-            <small>Subscription ID: {subscriptionId}</small>
+            <small>Subscription ID: {subscriptionId || 'Not provided'}</small>
           </AlertDescription>
         </Alert>
       </div>
     );
   }
+
+  console.log('SignUpPaymentContainer - Rendering payment layout with:', {
+    hasSelectedSubscription: !!selectedSubscription,
+    hasApiSubscriptionData: !!apiSubscriptionData,
+    customerDataValid: !!(customerData.emailAddress && customerData.firstName && customerData.lastName),
+    producerId
+  });
 
   return (
     <SubscriptionPaymentLayout 

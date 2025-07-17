@@ -10,13 +10,19 @@ interface SubscriptionSummaryCardProps {
 }
 
 const SubscriptionSummaryCard = ({ selectedSubscription, apiSubscriptionData }: SubscriptionSummaryCardProps) => {
-  console.log('SubscriptionSummaryCard - Props:', { selectedSubscription, apiSubscriptionData });
+  console.log('SubscriptionSummaryCard - Input props:', { 
+    hasSelectedSubscription: !!selectedSubscription,
+    hasApiSubscriptionData: !!apiSubscriptionData,
+    selectedSubscriptionId: selectedSubscription?.subscriptionId,
+    apiSubscriptionId: apiSubscriptionData?.subscriptionId
+  });
 
   // Prefer API subscription data if available, otherwise fall back to reference data
   const hasApiData = !!apiSubscriptionData;
   const hasReferenceData = !!selectedSubscription;
   
   if (!hasApiData && !hasReferenceData) {
+    console.warn('SubscriptionSummaryCard - No subscription data provided');
     return (
       <Card>
         <CardHeader>
@@ -33,9 +39,11 @@ const SubscriptionSummaryCard = ({ selectedSubscription, apiSubscriptionData }: 
   let subscriptionName = 'Selected Plan';
   let monthlyPrice = 0;
   let features = [];
+  let dataSource = 'unknown';
 
   if (hasApiData) {
-    // Use API data if available
+    // Use API data if available (this is the producer's actual subscription)
+    dataSource = 'API';
     subscriptionName = apiSubscriptionData.subscriptionDisplayName || 
                       apiSubscriptionData.displayName || 
                       'Selected Plan';
@@ -53,7 +61,8 @@ const SubscriptionSummaryCard = ({ selectedSubscription, apiSubscriptionData }: 
         }));
     }
   } else if (hasReferenceData) {
-    // Fall back to reference data
+    // Fall back to reference data (this is from the cached subscription list)
+    dataSource = 'Reference';
     subscriptionName = selectedSubscription.displayName;
     monthlyPrice = selectedSubscription.monthlyAutopayAmount;
     features = selectedSubscription.formattedFeatures || [];
@@ -62,12 +71,12 @@ const SubscriptionSummaryCard = ({ selectedSubscription, apiSubscriptionData }: 
   const formattedPrice = `$${(monthlyPrice / 100).toFixed(2)}`;
 
   console.log('SubscriptionSummaryCard - Display data:', {
+    dataSource,
     subscriptionName,
     monthlyPrice,
     formattedPrice,
     featuresCount: features.length,
-    features,
-    dataSource: hasApiData ? 'API' : 'Reference'
+    features: features.map(f => f.name)
   });
 
   return (
@@ -81,6 +90,9 @@ const SubscriptionSummaryCard = ({ selectedSubscription, apiSubscriptionData }: 
           <p className="text-3xl font-bold text-gray-900 mt-2">
             {formattedPrice}
             <span className="text-lg font-normal text-gray-600">/month</span>
+          </p>
+          <p className="text-xs text-gray-500 mt-1">
+            Data source: {dataSource}
           </p>
         </div>
 
