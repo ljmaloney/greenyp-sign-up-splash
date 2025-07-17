@@ -108,15 +108,33 @@ export const useSignUpSubmission = () => {
       // Handle 400-series errors (client errors)
       if (status >= 400 && status < 500) {
         try {
-          const errorData: APIResponse<any> = await response.json();
+          const errorData = await response.json();
           console.log('Error response data:', errorData);
           
-          // Extract error message from the API response structure
-          const errorMessage = errorData.errorMessageApi?.displayMessage || 
-                              errorData.errorMessageApi?.errorDetails || 
-                              `Request failed with status ${status}`;
+          // Handle direct error response structure (errorCode, displayMessage, errorDetails)
+          if (errorData.errorCode && errorData.displayMessage) {
+            console.error('Direct error response:', errorData);
+            const errorMessage = errorData.displayMessage + 
+                              (errorData.errorDetails ? `: ${errorData.errorDetails}` : '');
+            setError(errorMessage);
+            return;
+          }
           
-          console.error('Client error:', errorData);
+          // Handle nested error response structure (errorMessageApi)
+          if (errorData.errorMessageApi) {
+            const errorMessage = errorData.errorMessageApi.displayMessage || 
+                              errorData.errorMessageApi.errorDetails || 
+                              `Request failed with status ${status}`;
+            console.error('Nested error response:', errorData.errorMessageApi);
+            setError(errorMessage);
+            return;
+          }
+          
+          // Fallback for other error structures
+          const errorMessage = errorData.message || 
+                              errorData.error || 
+                              `Request failed with status ${status}`;
+          console.error('Fallback error handling:', errorData);
           setError(errorMessage);
         } catch (parseError) {
           console.error('Failed to parse error response:', parseError);
