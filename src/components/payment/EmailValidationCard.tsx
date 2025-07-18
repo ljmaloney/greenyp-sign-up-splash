@@ -73,6 +73,9 @@ const EmailValidationCard = ({
               required
               disabled={isValidated}
               aria-describedby={validationStatus ? "validation-status" : undefined}
+              autoComplete="off"
+              data-form-type="other"
+              data-lpignore="true"
             />
             <Button
               type="button"

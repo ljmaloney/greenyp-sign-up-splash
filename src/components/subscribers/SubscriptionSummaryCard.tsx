@@ -14,7 +14,8 @@ const SubscriptionSummaryCard = ({ selectedSubscription, apiSubscriptionData }: 
     hasSelectedSubscription: !!selectedSubscription,
     hasApiSubscriptionData: !!apiSubscriptionData,
     selectedSubscriptionId: selectedSubscription?.subscriptionId,
-    apiSubscriptionId: apiSubscriptionData?.subscriptionId
+    apiSubscriptionId: apiSubscriptionData?.subscriptionId,
+    fullApiData: apiSubscriptionData
   });
 
   // Prefer API subscription data if available, otherwise fall back to reference data
@@ -48,17 +49,23 @@ const SubscriptionSummaryCard = ({ selectedSubscription, apiSubscriptionData }: 
                       apiSubscriptionData.displayName || 
                       'Selected Plan';
     
-    // Handle different possible price field names from API
-    monthlyPrice = apiSubscriptionData.monthlyAutopayAmount || 
-                   apiSubscriptionData.monthlyPrice || 
-                   apiSubscriptionData.price || 
-                   0;
-    
-    console.log('📊 API subscription price extraction:', {
+    // Handle different possible price field names from API - with detailed logging
+    console.log('🔍 Raw API subscription data for price extraction:', {
       monthlyAutopayAmount: apiSubscriptionData.monthlyAutopayAmount,
       monthlyPrice: apiSubscriptionData.monthlyPrice,
       price: apiSubscriptionData.price,
-      finalPrice: monthlyPrice
+      rawData: apiSubscriptionData
+    });
+    
+    // Try to extract price from various possible field names
+    monthlyPrice = apiSubscriptionData.monthlyAutopayAmount ?? 
+                   apiSubscriptionData.monthlyPrice ?? 
+                   apiSubscriptionData.price ?? 
+                   0;
+    
+    console.log('📊 API subscription price extraction result:', {
+      extractedPrice: monthlyPrice,
+      priceType: typeof monthlyPrice
     });
     
     if (apiSubscriptionData.features) {
@@ -80,13 +87,25 @@ const SubscriptionSummaryCard = ({ selectedSubscription, apiSubscriptionData }: 
   }
   
   // Ensure price is a valid number and format it
-  const numericPrice = typeof monthlyPrice === 'number' ? monthlyPrice : 0;
-  const formattedPrice = `$${(numericPrice / 100).toFixed(2)}`;
+  const numericPrice = typeof monthlyPrice === 'number' && !isNaN(monthlyPrice) ? monthlyPrice : 0;
+  
+  // Handle price formatting - check if price is already in dollars or cents
+  let formattedPrice;
+  if (numericPrice === 0) {
+    formattedPrice = '$0.00';
+  } else if (numericPrice < 100) {
+    // If price is less than 100, assume it's already in dollars
+    formattedPrice = `$${numericPrice.toFixed(2)}`;
+  } else {
+    // If price is 100 or more, assume it's in cents
+    formattedPrice = `$${(numericPrice / 100).toFixed(2)}`;
+  }
 
   console.log('📋 SubscriptionSummaryCard - Display data:', {
     dataSource,
     subscriptionName,
-    monthlyPrice: numericPrice,
+    rawPrice: monthlyPrice,
+    numericPrice,
     formattedPrice,
     featuresCount: features.length,
     features: features.map(f => f.name)
@@ -105,7 +124,7 @@ const SubscriptionSummaryCard = ({ selectedSubscription, apiSubscriptionData }: 
             <span className="text-lg font-normal text-gray-600">/month</span>
           </p>
           <p className="text-xs text-gray-500 mt-1">
-            Data source: {dataSource}
+            Data source: {dataSource} | Raw price: {monthlyPrice}
           </p>
         </div>
 
