@@ -26,31 +26,38 @@ export const validateEmailToken = async ({
   const { apiClient } = await import('@/utils/apiClient');
   
   try {
-    let endpoint: string;
-    let payload: any;
-
+    // Use unified endpoint for all email validation
+    const endpoint = '/email/validate';
+    
+    // Map context-specific IDs to externRef
+    let externRef: string;
     if (context === 'classifieds') {
-      endpoint = `/classified/${classifiedId}/validate`;
-      payload = {
-        emailValidationToken: token,
-        email: emailAddress  // Changed from emailAddress to email
-      };
+      if (!classifiedId) {
+        return { success: false, error: 'Missing classified ID for validation' };
+      }
+      externRef = classifiedId;
     } else {
-      endpoint = `/account/${producerId}/validate`;
-      payload = {
-        emailValidationToken: token,
-        email: emailAddress  // Changed from emailAddress to email
-      };
+      if (!producerId) {
+        return { success: false, error: 'Missing producer ID for validation' };
+      }
+      externRef = producerId;
     }
+
+    // Create unified payload structure
+    const payload = {
+      email: emailAddress,
+      emailValidationToken: token,
+      externRef: externRef,
+      context: context
+    };
 
     console.log('🔍 Email validation request:', {
       endpoint,
       context,
       emailAddress,
       hasToken: !!token,
-      classifiedId,
-      producerId,
-      payload  // Added payload to debug logs
+      externRef,
+      payload
     });
 
     const response = await apiClient.post(endpoint, payload, { requireAuth: false });
