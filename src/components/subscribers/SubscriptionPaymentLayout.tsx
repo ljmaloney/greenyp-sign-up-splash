@@ -1,6 +1,6 @@
 
 import React, { useState, useCallback } from 'react';
-import { useSquarePayment } from '@/hooks/useSquarePayment';
+import { useImprovedSquarePayment } from '@/hooks/useImprovedSquarePayment';
 import { useEmailValidation } from '@/hooks/useEmailValidation';
 import PaymentInformationCard from '@/components/payment/PaymentInformationCard';
 import EmailValidationCard from '@/components/payment/EmailValidationCard';
@@ -46,11 +46,11 @@ const SubscriptionPaymentLayout = ({
   producerId,
   apiSubscriptionData 
 }: SubscriptionPaymentLayoutProps) => {
-  console.log('SubscriptionPaymentLayout - Props received:', {
-    selectedSubscription,
-    customerData,
-    producerId,
-    apiSubscriptionData
+  console.log('📋 SubscriptionPaymentLayout - Props received:', {
+    hasSelectedSubscription: !!selectedSubscription,
+    hasCustomerData: !!customerData,
+    hasApiSubscriptionData: !!apiSubscriptionData,
+    customerEmail: customerData?.emailAddress
   });
 
   const [billingContact, setBillingContact] = useState<BillingContactData>({
@@ -69,7 +69,17 @@ const SubscriptionPaymentLayout = ({
 
   const [emailValidationToken, setEmailValidationToken] = useState<string>('');
 
-  const { cardContainerRef, payments, card, error: squareError, setError: setSquareError } = useSquarePayment();
+  const {
+    cardContainerRef,
+    payments,
+    card,
+    error: squareError,
+    isInitialized,
+    isInitializing,
+    retryCount,
+    setError: setSquareError,
+    retryInitialization
+  } = useImprovedSquarePayment();
 
   const {
     isValidating,
@@ -96,7 +106,6 @@ const SubscriptionPaymentLayout = ({
 
   const handleEmailValidationTokenChange = useCallback((value: string) => {
     setEmailValidationToken(value);
-    // Reset validation state when token changes
     if (isValidated) {
       resetValidation();
     }
@@ -111,7 +120,7 @@ const SubscriptionPaymentLayout = ({
   
   // Show fallback message if no subscription data is found
   if (!hasSubscriptionData) {
-    console.error('SubscriptionPaymentLayout - No subscription data provided');
+    console.error('❌ SubscriptionPaymentLayout - No subscription data provided');
     return (
       <div className="flex justify-center items-center p-8">
         <Alert variant="destructive" className="max-w-md">
@@ -126,7 +135,7 @@ const SubscriptionPaymentLayout = ({
 
   // Validate customer data
   if (!customerData?.emailAddress || !customerData?.firstName || !customerData?.lastName) {
-    console.error('SubscriptionPaymentLayout - Invalid customer data:', customerData);
+    console.error('❌ SubscriptionPaymentLayout - Invalid customer data:', customerData);
     return (
       <div className="flex justify-center items-center p-8">
         <Alert variant="destructive" className="max-w-md">
@@ -138,6 +147,37 @@ const SubscriptionPaymentLayout = ({
       </div>
     );
   }
+
+  // Show Square initialization error with retry option
+  if (squareError && retryCount < 3) {
+    return (
+      <div className="flex justify-center items-center p-8">
+        <Alert variant="destructive" className="max-w-md">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            <div className="space-y-3">
+              <div>Payment form failed to initialize: {squareError}</div>
+              <button 
+                onClick={retryInitialization}
+                className="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+              >
+                Retry Payment Setup (Attempt {retryCount + 1}/3)
+              </button>
+            </div>
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
+
+  console.log('📊 SubscriptionPaymentLayout - Square payment state:', {
+    isInitialized,
+    isInitializing,
+    hasCard: !!card,
+    hasPayments: !!payments,
+    squareError,
+    retryCount
+  });
 
   try {
     return (
@@ -191,7 +231,7 @@ const SubscriptionPaymentLayout = ({
       </div>
     );
   } catch (error) {
-    console.error('SubscriptionPaymentLayout - Render error:', error);
+    console.error('❌ SubscriptionPaymentLayout - Render error:', error);
     return (
       <div className="flex justify-center items-center p-8">
         <Alert variant="destructive" className="max-w-md">
