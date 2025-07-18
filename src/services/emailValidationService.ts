@@ -33,13 +33,13 @@ export const validateEmailToken = async ({
       endpoint = `/classified/${classifiedId}/validate`;
       payload = {
         emailValidationToken: token,
-        emailAddress: emailAddress
+        email: emailAddress  // Changed from emailAddress to email
       };
     } else {
       endpoint = `/account/${producerId}/validate`;
       payload = {
         emailValidationToken: token,
-        emailAddress: emailAddress
+        email: emailAddress  // Changed from emailAddress to email
       };
     }
 
@@ -49,7 +49,8 @@ export const validateEmailToken = async ({
       emailAddress,
       hasToken: !!token,
       classifiedId,
-      producerId
+      producerId,
+      payload  // Added payload to debug logs
     });
 
     const response = await apiClient.post(endpoint, payload, { requireAuth: false });
@@ -71,6 +72,12 @@ export const validateEmailToken = async ({
     // Extract error message from API response if available
     if (error instanceof Error) {
       const errorMessage = error.message;
+      
+      // Enhanced error handling for specific status codes
+      if (errorMessage.includes('412')) {
+        console.error('🚨 Payload validation error - API expects different field structure');
+        return { success: false, error: 'Invalid email validation request format. Please contact support if this persists.' };
+      }
       if (errorMessage.includes('400')) {
         return { success: false, error: 'Invalid email validation token' };
       }
