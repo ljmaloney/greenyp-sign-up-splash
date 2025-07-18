@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useSquarePayment } from '@/hooks/useSquarePayment';
 import { useEmailValidation } from '@/hooks/useEmailValidation';
 import PaymentInformationCard from '@/components/payment/PaymentInformationCard';
@@ -83,7 +83,8 @@ const SubscriptionPaymentLayout = ({
     producerId: producerId
   });
 
-  const handleBillingInfoChange = (
+  // Memoize callback functions to prevent infinite re-renders
+  const handleBillingInfoChange = useCallback((
     contact: BillingContactData, 
     address: BillingAddressData, 
     token: string
@@ -91,19 +92,19 @@ const SubscriptionPaymentLayout = ({
     setBillingContact(contact);
     setBillingAddress(address);
     setEmailValidationToken(token);
-  };
+  }, []);
 
-  const handleEmailValidationTokenChange = (value: string) => {
+  const handleEmailValidationTokenChange = useCallback((value: string) => {
     setEmailValidationToken(value);
     // Reset validation state when token changes
     if (isValidated) {
       resetValidation();
     }
-  };
+  }, [isValidated, resetValidation]);
 
-  const handleValidateEmail = () => {
+  const handleValidateEmail = useCallback(() => {
     validateEmail(emailValidationToken);
-  };
+  }, [validateEmail, emailValidationToken]);
 
   // Check if we have any subscription data (either from reference data or API)
   const hasSubscriptionData = !!(selectedSubscription || apiSubscriptionData);
