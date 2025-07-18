@@ -1,4 +1,3 @@
-
 import React from 'react';
 import SubscriptionPlan from './SubscriptionPlan';
 import { useNavigate } from 'react-router-dom';
@@ -20,7 +19,7 @@ const PricingSectionSubscribe = () => {
     
     // Scroll to top before navigation
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    navigate(`/subscriber/signup?plan=${subscriptionId}`);
+    navigate(`/subscribers/signup?plan=${subscriptionId}`);
   };
 
   if (isLoading) {

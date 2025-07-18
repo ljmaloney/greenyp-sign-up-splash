@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,7 +31,7 @@ const SubscriptionForm = () => {
       return;
     }
     
-    // Redirect to sign-up page with plan information
+    // Redirect to sign-up page with plan information (using plural form)
     const params = new URLSearchParams();
     params.set('email', email);
     if (businessName) params.set('businessName', businessName);
@@ -41,13 +40,14 @@ const SubscriptionForm = () => {
     
     // Scroll to top before navigation
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    navigate(`/subscriber/signup?${params.toString()}`);
+    navigate(`/subscribers/signup?${params.toString()}`);
   };
 
   const handleStartFreeTrialClick = () => {
     // Scroll to top before navigation
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    navigate('/subscriber/signup');
+    // Updated to use plural form
+    navigate('/subscribers/signup');
   };
 
   return (

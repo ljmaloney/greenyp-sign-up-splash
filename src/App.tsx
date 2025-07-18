@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -168,11 +169,11 @@ function App() {
                 </ProtectedRoute>
               } />
 
-              {/* Subscriber Routes */}
+              {/* Subscriber Routes - Updated to use consistent plural routing */}
               <Route path="/subscribers" element={<SubscribersIndex />} />
               <Route path="/subscribers/signup" element={<SubscribersSignUp />} />
-              <Route path="/subscriber/signup/confirmation" element={<SignUpConfirmation />} />
-              <Route path="/subscriber/signup/payment" element={<SignUpPayment />} />
+              <Route path="/subscribers/signup/confirmation" element={<SignUpConfirmation />} />
+              <Route path="/subscribers/signup/payment" element={<SignUpPayment />} />
               <Route path="/subscribers/subscribe" element={<SubscribersSubscribe />} />
               <Route path="/subscribers/subscription-features" element={<SubscriptionFeatures />} />
               <Route path="/subscribers/contact" element={<Contact />} />

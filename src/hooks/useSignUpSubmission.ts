@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from "@/components/ui/sonner";
@@ -156,7 +155,7 @@ export const useSignUpSubmission = () => {
 
           toast.success("Account created successfully! Please complete your payment to activate your subscription.");
           
-          // Navigate to payment page with improved parameter handling
+          // Navigate to payment page with improved parameter handling (using plural form)
           const paymentParams = new URLSearchParams();
           paymentParams.set('producerId', producerId);
           
@@ -184,7 +183,8 @@ export const useSignUpSubmission = () => {
             paymentParams.set('subscriptionData', JSON.stringify(producerSubscriptions[0]));
           }
           
-          const paymentUrl = `/subscriber/signup/payment?${paymentParams.toString()}`;
+          // Updated to use plural form
+          const paymentUrl = `/subscribers/signup/payment?${paymentParams.toString()}`;
           console.log('🎯 Navigating to payment page:', {
             url: paymentUrl,
             parametersSet: {
