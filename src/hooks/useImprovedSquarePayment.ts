@@ -125,8 +125,7 @@ export const useImprovedSquarePayment = () => {
         style: {
           '.input-container': {
             borderColor: '#E2E8F0',
-            borderRadius: '6px',
-            padding: '12px'
+            borderRadius: '6px'
           },
           '.input-container.is-focus': {
             borderColor: '#3B82F6'
@@ -253,6 +252,7 @@ export const useImprovedSquarePayment = () => {
   }, [cleanupSquareInstances, initializeSquare]);
 
   useEffect(() => {
+    console.log('🎬 useImprovedSquarePayment effect triggered');
     isMountedRef.current = true;
     
     // Add a small delay to ensure the component is fully mounted
@@ -268,7 +268,7 @@ export const useImprovedSquarePayment = () => {
       isMountedRef.current = false;
       cleanupSquareInstances();
     };
-  }, [initializeSquare, cleanupSquareInstances]);
+  }, []);
 
   return {
     ...state,

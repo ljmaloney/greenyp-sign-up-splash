@@ -5,6 +5,7 @@ import { useApiClient } from '@/hooks/useApiClient';
 import { useToast } from '@/hooks/use-toast';
 import { validatePaymentFields } from '@/utils/paymentValidation';
 import { processSquarePayment } from '@/utils/squarePaymentProcessor';
+import { processSquareSubscriptionPayment } from '@/utils/squareSubscriptionPaymentProcessor';
 
 interface BillingContactData {
   firstName: string;
@@ -109,8 +110,15 @@ export const useUnifiedSquarePayment = ({
         );
       } else {
         // Process subscription payment
-        // TODO: Implement subscription payment processing
-        throw new Error('Subscription payment processing not yet implemented');
+        paymentResponse = await processSquareSubscriptionPayment(
+          card,
+          payments,
+          billingContact,
+          billingAddress,
+          producerId!,
+          apiClient,
+          emailValidationToken
+        );
       }
       
       // Check if payment was completed successfully

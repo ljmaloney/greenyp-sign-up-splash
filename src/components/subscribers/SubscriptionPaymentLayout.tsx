@@ -1,6 +1,6 @@
 
 import React, { useState, useCallback } from 'react';
-import { useImprovedSquarePayment } from '@/hooks/useImprovedSquarePayment';
+import { useStableSquarePayment } from '@/hooks/useStableSquarePayment';
 import { useEmailValidation } from '@/hooks/useEmailValidation';
 import PaymentInformationCard from '@/components/payment/PaymentInformationCard';
 import EmailValidationCard from '@/components/payment/EmailValidationCard';
@@ -46,13 +46,14 @@ const SubscriptionPaymentLayout = ({
   producerId,
   apiSubscriptionData 
 }: SubscriptionPaymentLayoutProps) => {
-  console.log('📋 SubscriptionPaymentLayout - Props received:', {
+  console.log('📋 SubscriptionPaymentLayout - Stable version loading:', {
     hasSelectedSubscription: !!selectedSubscription,
     hasCustomerData: !!customerData,
     hasApiSubscriptionData: !!apiSubscriptionData,
     customerEmail: customerData?.emailAddress
   });
 
+  // Always call hooks in the same order
   const [billingContact, setBillingContact] = useState<BillingContactData>({
     firstName: '',
     lastName: '',
@@ -69,6 +70,7 @@ const SubscriptionPaymentLayout = ({
 
   const [emailValidationToken, setEmailValidationToken] = useState<string>('');
 
+  // Use stable Square payment hook
   const {
     cardContainerRef,
     payments,
@@ -79,8 +81,9 @@ const SubscriptionPaymentLayout = ({
     retryCount,
     setError: setSquareError,
     retryInitialization
-  } = useImprovedSquarePayment();
+  } = useStableSquarePayment();
 
+  // Email validation hook
   const {
     isValidating,
     isValidated,
@@ -93,7 +96,7 @@ const SubscriptionPaymentLayout = ({
     producerId: producerId
   });
 
-  // Memoize callback functions to prevent infinite re-renders
+  // Callback functions
   const handleBillingInfoChange = useCallback((
     contact: BillingContactData, 
     address: BillingAddressData, 
@@ -115,10 +118,9 @@ const SubscriptionPaymentLayout = ({
     validateEmail(emailValidationToken);
   }, [validateEmail, emailValidationToken]);
 
-  // Check if we have any subscription data (either from reference data or API)
+  // Early returns after all hooks are called
   const hasSubscriptionData = !!(selectedSubscription || apiSubscriptionData);
   
-  // Show fallback message if no subscription data is found
   if (!hasSubscriptionData) {
     console.error('❌ SubscriptionPaymentLayout - No subscription data provided');
     return (
@@ -133,7 +135,6 @@ const SubscriptionPaymentLayout = ({
     );
   }
 
-  // Validate customer data
   if (!customerData?.emailAddress || !customerData?.firstName || !customerData?.lastName) {
     console.error('❌ SubscriptionPaymentLayout - Invalid customer data:', customerData);
     return (
@@ -148,7 +149,6 @@ const SubscriptionPaymentLayout = ({
     );
   }
 
-  // Show Square initialization error with retry option
   if (squareError && retryCount < 3) {
     return (
       <div className="flex justify-center items-center p-8">
@@ -170,7 +170,7 @@ const SubscriptionPaymentLayout = ({
     );
   }
 
-  console.log('📊 SubscriptionPaymentLayout - Square payment state:', {
+  console.log('📊 SubscriptionPaymentLayout - Square state:', {
     isInitialized,
     isInitializing,
     hasCard: !!card,
@@ -179,72 +179,56 @@ const SubscriptionPaymentLayout = ({
     retryCount
   });
 
-  try {
-    return (
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Left Column - Subscription Details */}
-        <div className="space-y-6">
-          <SubscriptionSummaryCard 
-            selectedSubscription={selectedSubscription}
-            apiSubscriptionData={apiSubscriptionData}
-          />
-        </div>
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* Left Column - Subscription Details */}
+      <div className="space-y-6">
+        <SubscriptionSummaryCard 
+          selectedSubscription={selectedSubscription}
+          apiSubscriptionData={apiSubscriptionData}
+        />
+      </div>
 
-        {/* Right Column - Payment Information */}
-        <div className="space-y-6">
-          <EmailValidationCard
+      {/* Right Column - Payment Information */}
+      <div className="space-y-6">
+        <EmailValidationCard
+          emailValidationToken={emailValidationToken}
+          onChange={handleEmailValidationTokenChange}
+          emailAddress={customerData?.emailAddress}
+          helperText="A verified email address is required before creating your subscription"
+          isValidating={isValidating}
+          isValidated={isValidated}
+          validationError={validationError}
+          onValidate={handleValidateEmail}
+        />
+        
+        <div className={!isValidated ? 'opacity-50 pointer-events-none' : ''}>
+          <PaymentInformationCard
+            customer={customerData}
+            onBillingInfoChange={handleBillingInfoChange}
             emailValidationToken={emailValidationToken}
-            onChange={handleEmailValidationTokenChange}
-            emailAddress={customerData?.emailAddress}
-            helperText="A verified email address is required before creating your subscription"
-            isValidating={isValidating}
+            onEmailValidationTokenChange={handleEmailValidationTokenChange}
             isValidated={isValidated}
-            validationError={validationError}
-            onValidate={handleValidateEmail}
           />
-          
-          <div className={!isValidated ? 'opacity-50 pointer-events-none' : ''}>
-            <PaymentInformationCard
-              customer={customerData}
-              onBillingInfoChange={handleBillingInfoChange}
-              emailValidationToken={emailValidationToken}
-              onEmailValidationTokenChange={handleEmailValidationTokenChange}
-              isValidated={isValidated}
-            />
-          </div>
-          
-          <div className={!isValidated ? 'opacity-50 pointer-events-none' : ''}>
-            <UnifiedSquarePaymentCard
-              billingContact={billingContact}
-              billingAddress={billingAddress}
-              emailValidationToken={emailValidationToken}
-              cardContainerRef={cardContainerRef}
-              payments={payments}
-              card={card}
-              squareError={squareError}
-              setSquareError={setSquareError}
-              paymentType="subscription"
-              producerId={producerId}
-            />
-          </div>
+        </div>
+        
+        <div className={!isValidated ? 'opacity-50 pointer-events-none' : ''}>
+          <UnifiedSquarePaymentCard
+            billingContact={billingContact}
+            billingAddress={billingAddress}
+            emailValidationToken={emailValidationToken}
+            cardContainerRef={cardContainerRef}
+            payments={payments}
+            card={card}
+            squareError={squareError}
+            setSquareError={setSquareError}
+            paymentType="subscription"
+            producerId={producerId}
+          />
         </div>
       </div>
-    );
-  } catch (error) {
-    console.error('❌ SubscriptionPaymentLayout - Render error:', error);
-    return (
-      <div className="flex justify-center items-center p-8">
-        <Alert variant="destructive" className="max-w-md">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            An error occurred while loading the payment page. Please try refreshing or contact support.
-            <br />
-            <small>Error: {error instanceof Error ? error.message : 'Unknown error'}</small>
-          </AlertDescription>
-        </Alert>
-      </div>
-    );
-  }
+    </div>
+  );
 };
 
 export default SubscriptionPaymentLayout;
