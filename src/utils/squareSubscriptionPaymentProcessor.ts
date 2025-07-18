@@ -40,6 +40,11 @@ export const processSquareSubscriptionPayment = async (
     throw new Error('Billing address is required');
   }
   
+  if (!billingAddress.city || billingAddress.city.trim() === '') {
+    console.error('❌ Missing required billing city');
+    throw new Error('Billing city is required');
+  }
+  
   if (!billingContact.firstName || billingContact.firstName.trim() === '') {
     console.error('❌ Missing required first name');
     throw new Error('First name is required');
@@ -97,7 +102,7 @@ export const processSquareSubscriptionPayment = async (
     if (verificationResult && verificationResult.token) {
       console.log('🎯 Payment verified successfully for subscription, submitting to backend...');
       
-      // Prepare payload with explicit field mapping and validation
+      // Prepare payload with EXACT field names the backend expects
       const subscriptionPaymentData = {
         producerId: producerId,
         sourceId: result.token,
@@ -106,20 +111,25 @@ export const processSquareSubscriptionPayment = async (
         lastName: billingContact.lastName.trim(),
         emailAddress: billingContact.email.trim(),
         phoneNumber: squareFormattedPhone,
-        payorAddress1: billingAddress.address.trim(), // This is the critical field the backend needs
-        locality: billingAddress.city?.trim() || 'Oakland',
+        payorAddress1: billingAddress.address.trim(), // Backend expects payorAddress1
+        payorCity: billingAddress.city.trim(), // Backend expects payorCity (NOT locality)
         administrativeDistrictLevel1: billingAddress.state?.trim() || 'CA',
         postalCode: billingAddress.zipCode?.trim() || '',
         country: 'US',
         emailValidationToken: emailValidationToken.trim()
       };
 
-      console.log('📤 Final subscription payment payload (with validation):', subscriptionPaymentData);
+      console.log('📤 Final subscription payment payload with correct field names:', subscriptionPaymentData);
       
       // Additional validation before sending
       if (!subscriptionPaymentData.payorAddress1) {
         console.error('❌ Critical error: payorAddress1 is still empty after processing');
         throw new Error('Billing address cannot be empty');
+      }
+      
+      if (!subscriptionPaymentData.payorCity) {
+        console.error('❌ Critical error: payorCity is still empty after processing');
+        throw new Error('Billing city cannot be empty');
       }
       
       // Submit to backend endpoint
