@@ -68,26 +68,27 @@ export const processSquareSubscriptionPayment = async (
     if (verificationResult && verificationResult.token) {
       console.log('🎯 Payment verified successfully for subscription, submitting to backend...');
       
-      // Submit subscription payment to backend
+      // Updated payload structure for /account/applyInitialPayment endpoint
       const subscriptionPaymentData = {
         producerId: producerId,
-        paymentToken: result.token,
+        sourceId: result.token,
         verificationToken: verificationResult.token,
-        firstName: billingContact.firstName,
-        lastName: billingContact.lastName,
-        address: billingAddress.address,
-        city: billingAddress.city || 'Oakland',
-        state: billingAddress.state || 'CA',
-        postalCode: billingAddress.zipCode,
-        phoneNumber: squareFormattedPhone,
+        givenName: billingContact.firstName,
+        familyName: billingContact.lastName,
         emailAddress: billingContact.email,
+        phoneNumber: squareFormattedPhone,
+        addressLine1: billingAddress.address,
+        locality: billingAddress.city || 'Oakland',
+        administrativeDistrictLevel1: billingAddress.state || 'CA',
+        postalCode: billingAddress.zipCode,
+        country: 'US',
         emailValidationToken: emailValidationToken
       };
 
-      console.log('📤 Submitting subscription payment data:', subscriptionPaymentData);
+      console.log('📤 Submitting subscription payment data to /account/applyInitialPayment:', subscriptionPaymentData);
       
-      // TODO: Update this endpoint when subscription payment API is available
-      const paymentResponse = await apiClient.post('/subscription/payment', subscriptionPaymentData, { requireAuth: false });
+      // Updated endpoint and authentication settings
+      const paymentResponse = await apiClient.post('/account/applyInitialPayment', subscriptionPaymentData, { requireAuth: true });
       console.log('📊 Subscription payment submission response:', paymentResponse);
       
       return paymentResponse;
