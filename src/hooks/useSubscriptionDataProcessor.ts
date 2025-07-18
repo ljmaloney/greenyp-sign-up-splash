@@ -8,7 +8,7 @@ interface ProcessedSubscriptionData {
   selectedSubscription: SubscriptionWithFormatting | null;
   apiSubscriptionData: any | null;
   hasValidSubscriptionData: boolean;
-  dataSource: 'API' | 'Reference' | 'None';
+  dataSource: 'API' | 'Reference' | 'FirstAvailable' | 'None';
   processingError: string | null;
 }
 
@@ -24,11 +24,12 @@ export const useSubscriptionDataProcessor = ({
   const { data: subscriptions, isLoading: subscriptionsLoading, error: subscriptionsError } = useSubscriptions();
 
   return useMemo(() => {
-    console.log('🔄 Processing subscription data with enhanced validation:', {
+    console.log('🔄 Enhanced subscription data processing starting:', {
       subscriptionId,
       hasSubscriptionDataParam: !!subscriptionDataParam,
       subscriptionsLoading,
-      subscriptionsError: subscriptionsError?.message
+      subscriptionsError: subscriptionsError?.message,
+      availableSubscriptions: subscriptions?.length || 0
     });
 
     // Parse and validate API subscription data if available
@@ -40,34 +41,24 @@ export const useSubscriptionDataProcessor = ({
         const rawApiData = JSON.parse(subscriptionDataParam);
         console.log('📥 Raw API subscription data parsed:', rawApiData);
         
-        // Use enhanced validation with normalization
         const { isValid, normalizedData } = validateAndNormalizeSubscriptionData(rawApiData);
         
         if (isValid && normalizedData) {
           apiSubscriptionData = normalizedData;
           console.log('✅ API subscription data validated and normalized successfully');
         } else {
-          console.warn('⚠️ API subscription data validation failed after normalization attempt');
-          console.log('🔍 Validation failure details:', {
-            rawData: rawApiData,
-            normalizedData: normalizedData,
-            isValid: isValid
-          });
-          
-          // Don't immediately fail - let reference data be the fallback
-          processingError = 'API subscription data format is invalid, using reference data as fallback';
+          console.warn('⚠️ API subscription data validation failed, continuing with reference fallback');
         }
       } catch (error) {
-        console.error('❌ Failed to parse subscription data from URL:', error);
-        processingError = 'Failed to parse subscription data from URL';
+        console.warn('⚠️ Failed to parse subscription data from URL, continuing with reference fallback:', error);
       }
     }
 
     // Find reference subscription data
     const selectedSubscription = findSubscriptionMatch(subscriptions, subscriptionId);
 
-    // Determine data source and validity with improved fallback logic
-    let dataSource: 'API' | 'Reference' | 'None' = 'None';
+    // Enhanced fallback logic - determine best available data source
+    let dataSource: 'API' | 'Reference' | 'FirstAvailable' | 'None' = 'None';
     let hasValidSubscriptionData = false;
 
     if (apiSubscriptionData) {
@@ -77,22 +68,28 @@ export const useSubscriptionDataProcessor = ({
     } else if (selectedSubscription) {
       dataSource = 'Reference';
       hasValidSubscriptionData = true;
-      console.log('✅ Using reference subscription data as fallback');
-      
-      // Clear the processing error if we have valid reference data as fallback
-      if (processingError && processingError.includes('using reference data as fallback')) {
-        processingError = null;
-      }
+      console.log('✅ Using reference subscription data');
+    } else if (!subscriptionsLoading && subscriptions && subscriptions.length > 0) {
+      // Ultimate fallback: use the first available subscription
+      dataSource = 'FirstAvailable';
+      hasValidSubscriptionData = true;
+      console.log('⚠️ Using first available subscription as ultimate fallback:', subscriptions[0]);
     } else if (subscriptionsError) {
       processingError = `Failed to load subscriptions: ${subscriptionsError.message}`;
       console.error('❌ Subscriptions loading error:', subscriptionsError.message);
-    } else if (subscriptionsLoading && !apiSubscriptionData) {
+    } else if (subscriptionsLoading) {
       // Still loading, don't mark as error yet
-      dataSource = 'None';
       console.log('⏳ Still loading subscription data');
     } else {
-      processingError = 'No valid subscription data found';
-      console.error('❌ No valid subscription data available');
+      processingError = 'No subscription data available';
+      console.error('❌ No valid subscription data found');
+    }
+
+    // For the "FirstAvailable" fallback, we'll return the first subscription as selectedSubscription
+    let finalSelectedSubscription = selectedSubscription;
+    if (dataSource === 'FirstAvailable' && subscriptions && subscriptions.length > 0) {
+      finalSelectedSubscription = subscriptions[0];
+      console.log('🔄 Using first available subscription:', finalSelectedSubscription);
     }
 
     console.log('📊 Enhanced subscription data processing result:', {
@@ -100,13 +97,14 @@ export const useSubscriptionDataProcessor = ({
       hasValidSubscriptionData,
       hasApiData: !!apiSubscriptionData,
       hasReferenceData: !!selectedSubscription,
+      usingFirstAvailable: dataSource === 'FirstAvailable',
       processingError,
-      stillLoading: subscriptionsLoading && !apiSubscriptionData,
-      fallbackUsed: dataSource === 'Reference' && subscriptionDataParam
+      stillLoading: subscriptionsLoading,
+      totalSubscriptions: subscriptions?.length || 0
     });
 
     return {
-      selectedSubscription,
+      selectedSubscription: finalSelectedSubscription,
       apiSubscriptionData,
       hasValidSubscriptionData,
       dataSource,

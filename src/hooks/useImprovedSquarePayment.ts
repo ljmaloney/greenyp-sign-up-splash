@@ -23,23 +23,22 @@ export const useImprovedSquarePayment = () => {
     retryCount: 0
   });
   
-  // Refs to track Square instances for cleanup
   const paymentsInstanceRef = useRef<any>(null);
   const cardInstanceRef = useRef<any>(null);
   const initializationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const attachRetryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isMountedRef = useRef(true);
+  const maxRetries = 3;
 
   const setError = useCallback((error: string | null) => {
     if (!isMountedRef.current) return;
+    console.log('🔧 Square payment error updated:', error);
     setState(prev => ({ ...prev, error }));
   }, []);
 
-  // Cleanup function to properly destroy Square instances
   const cleanupSquareInstances = useCallback(() => {
     console.log('🧹 Cleaning up Square instances...');
     
-    // Clear any pending timeouts
     if (initializationTimeoutRef.current) {
       clearTimeout(initializationTimeoutRef.current);
       initializationTimeoutRef.current = null;
@@ -50,7 +49,6 @@ export const useImprovedSquarePayment = () => {
       attachRetryTimeoutRef.current = null;
     }
 
-    // Destroy card instance if it exists
     if (cardInstanceRef.current) {
       try {
         console.log('🗑️ Destroying Square card instance...');
@@ -63,10 +61,8 @@ export const useImprovedSquarePayment = () => {
       cardInstanceRef.current = null;
     }
 
-    // Clear payment instance reference
     paymentsInstanceRef.current = null;
 
-    // Reset state
     if (isMountedRef.current) {
       setState(prev => ({
         ...prev,
@@ -78,37 +74,41 @@ export const useImprovedSquarePayment = () => {
     }
   }, []);
 
-  const attachCard = useCallback(async (paymentsInstance: any, retryCount = 0) => {
-    const maxRetries = 3;
-    const retryDelay = 300;
+  const waitForCardContainer = useCallback(async (maxWaitTime = 5000): Promise<HTMLElement> => {
+    return new Promise((resolve, reject) => {
+      const startTime = Date.now();
+      
+      const checkContainer = () => {
+        const cardContainer = document.getElementById('card-container');
+        
+        if (cardContainer && cardContainer.isConnected) {
+          console.log('✅ Card container found and connected');
+          resolve(cardContainer);
+          return;
+        }
+        
+        if (Date.now() - startTime > maxWaitTime) {
+          reject(new Error('Card container not found within timeout period'));
+          return;
+        }
+        
+        setTimeout(checkContainer, 100);
+      };
+      
+      checkContainer();
+    });
+  }, []);
 
+  const attachCard = useCallback(async (paymentsInstance: any) => {
     if (!isMountedRef.current) return;
 
-    // Check if component is still mounted and DOM element exists
-    const cardContainer = document.getElementById('card-container');
-    if (!cardContainer && retryCount < maxRetries) {
-      console.log(`🔄 Card container not found, retrying... (${retryCount + 1}/${maxRetries})`);
-      
-      attachRetryTimeoutRef.current = setTimeout(() => {
-        if (paymentsInstanceRef.current === paymentsInstance && isMountedRef.current) {
-          attachCard(paymentsInstance, retryCount + 1);
-        }
-      }, retryDelay);
-      return;
-    }
-
-    if (!cardContainer) {
-      throw new Error('Card container element not found after maximum retries');
-    }
-
-    if (!cardContainer.isConnected) {
-      throw new Error('Card container element is not connected to the DOM');
-    }
-
     try {
-      console.log('🎯 Creating and attaching Square card...');
+      console.log('🎯 Starting card attachment process...');
       
-      // Cleanup any existing card instance before creating a new one
+      // Wait for card container to be available
+      const cardContainer = await waitForCardContainer();
+      
+      // Cleanup any existing card instance
       if (cardInstanceRef.current) {
         try {
           if (typeof cardInstanceRef.current.destroy === 'function') {
@@ -120,27 +120,31 @@ export const useImprovedSquarePayment = () => {
         cardInstanceRef.current = null;
       }
 
+      console.log('🔧 Creating Square card instance...');
       const cardInstance = await paymentsInstance.card({
         style: {
           '.input-container': {
             borderColor: '#E2E8F0',
-            borderRadius: '6px'
+            borderRadius: '6px',
+            padding: '12px'
           },
           '.input-container.is-focus': {
             borderColor: '#3B82F6'
           },
           '.input-container.is-error': {
             borderColor: '#EF4444'
+          },
+          '.message-text': {
+            color: '#EF4444'
           }
         }
       });
       
-      // Store reference before attaching
       cardInstanceRef.current = cardInstance;
       
+      console.log('🔗 Attaching card to container...');
       await cardInstance.attach('#card-container');
       
-      // Only update state if the component is still mounted and this is the current instance
       if (paymentsInstanceRef.current === paymentsInstance && isMountedRef.current) {
         setState(prev => ({
           ...prev,
@@ -154,7 +158,6 @@ export const useImprovedSquarePayment = () => {
     } catch (err) {
       console.error('❌ Failed to attach Square card:', err);
       
-      // Clean up on error
       if (cardInstanceRef.current) {
         try {
           if (typeof cardInstanceRef.current.destroy === 'function') {
@@ -166,9 +169,9 @@ export const useImprovedSquarePayment = () => {
         cardInstanceRef.current = null;
       }
       
-      throw err;
+      throw new Error(`Card attachment failed: ${err.message}`);
     }
-  }, []);
+  }, [waitForCardContainer]);
 
   const initializeSquare = useCallback(async () => {
     if (state.isInitialized || state.isInitializing) {
@@ -176,65 +179,68 @@ export const useImprovedSquarePayment = () => {
       return;
     }
 
+    if (state.retryCount >= maxRetries) {
+      console.error('❌ Maximum retry attempts reached for Square initialization');
+      setError(`Failed to initialize payment form after ${maxRetries} attempts`);
+      return;
+    }
+
+    console.log(`🚀 Initializing Square Web SDK (attempt ${state.retryCount + 1}/${maxRetries})...`);
     setState(prev => ({ ...prev, isInitializing: true, error: null }));
 
     try {
-      // Use environment variables for Square configuration
       const appId = import.meta.env.VITE_SQUARE_APPLICATION_ID;
       const locationId = import.meta.env.VITE_SQUARE_LOCATION_ID;
       
       if (!appId || !locationId) {
-        throw new Error('Square application ID or location ID not configured');
+        throw new Error('Square configuration missing: APPLICATION_ID or LOCATION_ID not found in environment variables');
       }
 
-      console.log('🚀 Initializing Square Web SDK...');
-      
-      // Dynamically import Square Web SDK
+      console.log('📦 Loading Square Web SDK...');
       const { payments: paymentsFunction } = await import('@square/web-sdk');
       
-      // Initialize Square Payments
+      console.log('🔧 Creating Square payments instance...');
       const paymentsInstance = await paymentsFunction(appId, locationId);
       
-      // Store reference for cleanup
       paymentsInstanceRef.current = paymentsInstance;
       
       if (isMountedRef.current) {
         setState(prev => ({ ...prev, payments: paymentsInstance }));
       }
       
-      console.log('✅ Square payments instance created, waiting for DOM...');
+      console.log('✅ Square payments instance created successfully');
       
-      // Wait for DOM to be ready with a longer delay to ensure stability
+      // Add a delay to ensure DOM is ready
       initializationTimeoutRef.current = setTimeout(async () => {
         try {
           if (paymentsInstanceRef.current === paymentsInstance && isMountedRef.current) {
             await attachCard(paymentsInstance);
           }
         } catch (err) {
-          console.error('❌ Failed to initialize Square card:', err);
+          console.error('❌ Failed to attach card during initialization:', err);
           if (isMountedRef.current) {
             setState(prev => ({
               ...prev,
-              error: 'Failed to initialize payment form',
+              error: `Payment form initialization failed: ${err.message}`,
               isInitializing: false,
               retryCount: prev.retryCount + 1
             }));
           }
         }
-      }, 400);
+      }, 500);
       
     } catch (err) {
       console.error('❌ Failed to initialize Square payments:', err);
       if (isMountedRef.current) {
         setState(prev => ({
           ...prev,
-          error: 'Failed to initialize payment form',
+          error: `Failed to initialize payment form: ${err.message}`,
           isInitializing: false,
           retryCount: prev.retryCount + 1
         }));
       }
     }
-  }, [state.isInitialized, state.isInitializing, attachCard]);
+  }, [state.isInitialized, state.isInitializing, state.retryCount, attachCard, setError]);
 
   const retryInitialization = useCallback(() => {
     console.log('🔄 Retrying Square initialization...');
@@ -243,15 +249,22 @@ export const useImprovedSquarePayment = () => {
       if (isMountedRef.current) {
         initializeSquare();
       }
-    }, 500);
+    }, 1000);
   }, [cleanupSquareInstances, initializeSquare]);
 
   useEffect(() => {
     isMountedRef.current = true;
-    initializeSquare();
+    
+    // Add a small delay to ensure the component is fully mounted
+    const initDelay = setTimeout(() => {
+      if (isMountedRef.current) {
+        initializeSquare();
+      }
+    }, 100);
 
     return () => {
       console.log('🧹 useImprovedSquarePayment cleanup triggered');
+      clearTimeout(initDelay);
       isMountedRef.current = false;
       cleanupSquareInstances();
     };

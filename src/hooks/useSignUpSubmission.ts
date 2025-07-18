@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from "@/components/ui/sonner";
@@ -18,7 +19,6 @@ export const useSignUpSubmission = () => {
   const formatErrorMessage = (errorData: any): string => {
     console.log('🔍 Formatting error message from data:', errorData);
     
-    // Check for duplicate email/username error
     if (errorData.errorCode === 'DUPLICATE_USER' || 
         errorData.displayMessage?.toLowerCase().includes('already exists') ||
         errorData.errorDetails?.toLowerCase().includes('already exists')) {
@@ -26,7 +26,6 @@ export const useSignUpSubmission = () => {
       return 'A user already exists for this email address';
     }
     
-    // Handle direct error response structure
     if (errorData.errorCode && errorData.displayMessage) {
       const message = errorData.displayMessage;
       const details = errorData.errorDetails;
@@ -34,7 +33,6 @@ export const useSignUpSubmission = () => {
       return details ? `${message}: ${details}` : message;
     }
     
-    // Handle nested error response structure
     if (errorData.errorMessageApi) {
       const apiError = errorData.errorMessageApi;
       const message = apiError.displayMessage || apiError.errorDetails || 'An error occurred';
@@ -42,7 +40,6 @@ export const useSignUpSubmission = () => {
       return message;
     }
     
-    // Fallback for other error structures
     const fallbackMessage = errorData.message || errorData.error || 'An unexpected error occurred';
     console.log('⚠️ Using fallback error format:', { fallbackMessage });
     return fallbackMessage;
@@ -76,12 +73,75 @@ export const useSignUpSubmission = () => {
     setIsDuplicateEmail(false);
   };
 
+  const buildPaymentUrl = (
+    producerId: string, 
+    data: SignUpFormSchema, 
+    selectedSubscription: any, 
+    producerSubscriptions: any[]
+  ) => {
+    console.log('🔗 Building payment URL with improved parameter handling');
+    
+    const paymentParams = new URLSearchParams();
+    
+    // Essential parameters - these are required
+    paymentParams.set('producerId', producerId);
+    paymentParams.set('email', data.emailAddress);
+    paymentParams.set('firstName', data.firstName);
+    paymentParams.set('lastName', data.lastName);
+    
+    // Optional contact parameters
+    if (data.phoneNumber) paymentParams.set('phone', data.phoneNumber);
+    if (data.addressLine1) paymentParams.set('address', data.addressLine1);
+    if (data.city) paymentParams.set('city', data.city);
+    if (data.state) paymentParams.set('state', data.state);
+    if (data.postalCode) paymentParams.set('postalCode', data.postalCode);
+    
+    // Handle subscription ID with multiple fallbacks
+    let subscriptionIdToPass = '';
+    
+    // Priority order: selectedSubscription > form data > API data
+    if (selectedSubscription?.subscriptionId) {
+      subscriptionIdToPass = selectedSubscription.subscriptionId;
+      console.log('🎯 Using selectedSubscription ID:', subscriptionIdToPass);
+    } else if (data.subscriptionId) {
+      subscriptionIdToPass = data.subscriptionId;
+      console.log('🎯 Using form data subscription ID:', subscriptionIdToPass);
+    } else if (producerSubscriptions.length > 0 && producerSubscriptions[0].subscriptionId) {
+      subscriptionIdToPass = producerSubscriptions[0].subscriptionId;
+      console.log('🎯 Using API subscription ID as fallback:', subscriptionIdToPass);
+    }
+    
+    // Always set subscription parameter, even if empty (for validation)
+    paymentParams.set('subscription', subscriptionIdToPass);
+    
+    // Add API subscription data if available for fallback
+    if (producerSubscriptions.length > 0) {
+      console.log('📋 Adding API subscription data to URL parameters:', producerSubscriptions[0]);
+      paymentParams.set('subscriptionData', JSON.stringify(producerSubscriptions[0]));
+    }
+    
+    const paymentUrl = `/subscribers/signup/payment?${paymentParams.toString()}`;
+    
+    console.log('🎯 Payment URL construction details:', {
+      subscriptionSources: {
+        selectedSubscription: selectedSubscription?.subscriptionId || 'not available',
+        formData: data.subscriptionId || 'not available',
+        apiData: producerSubscriptions.length > 0 ? producerSubscriptions[0].subscriptionId : 'not available'
+      },
+      finalSubscriptionId: subscriptionIdToPass,
+      hasApiSubscriptionData: producerSubscriptions.length > 0,
+      fullUrl: paymentUrl
+    });
+    
+    return paymentUrl;
+  };
+
   const handleSubmit = async (
     data: SignUpFormSchema, 
     selectedSubscription: any, 
     categories: any[]
   ) => {
-    console.log('🚀 Starting signup submission');
+    console.log('🚀 Starting signup submission with enhanced error handling');
     console.log('📝 Form data:', { email: data.emailAddress, businessName: data.businessName });
     console.log('📋 Selected subscription details:', {
       subscriptionId: selectedSubscription?.subscriptionId,
@@ -93,7 +153,7 @@ export const useSignUpSubmission = () => {
     resetError();
     
     try {
-      // Step 1: Check if email already exists
+      // Step 1: Pre-check email availability
       console.log('🔍 Pre-checking email availability...');
       const emailExists = await checkEmailExists(data.emailAddress);
       
@@ -118,7 +178,6 @@ export const useSignUpSubmission = () => {
           const responseData: APIResponse<any> = await response.json();
           console.log('✅ Success response received:', responseData);
           
-          // Check if errorMessageApi indicates an error even with 200/201 status
           if (responseData.errorMessageApi) {
             const errorMessage = formatErrorMessage(responseData);
             console.error('❌ API returned error despite success status:', errorMessage);
@@ -126,7 +185,6 @@ export const useSignUpSubmission = () => {
             return;
           }
 
-          // Extract producer data
           const producerData = responseData.response?.producer;
           if (!producerData?.producerId) {
             console.error('❌ Invalid response structure - missing producer data');
@@ -155,45 +213,10 @@ export const useSignUpSubmission = () => {
 
           toast.success("Account created successfully! Please complete your payment to activate your subscription.");
           
-          // Navigate to payment page with improved parameter handling (using plural form)
-          const paymentParams = new URLSearchParams();
-          paymentParams.set('producerId', producerId);
+          // Step 4: Build and navigate to payment URL with enhanced parameter handling
+          const paymentUrl = buildPaymentUrl(producerId, data, selectedSubscription, producerSubscriptions);
           
-          // Ensure subscription ID is properly set
-          const subscriptionIdToPass = selectedSubscription?.subscriptionId || data.subscriptionId || '';
-          console.log('🔗 Setting subscription parameter:', {
-            fromSelectedSubscription: selectedSubscription?.subscriptionId,
-            fromFormData: data.subscriptionId,
-            finalSubscriptionId: subscriptionIdToPass
-          });
-          
-          paymentParams.set('subscription', subscriptionIdToPass);
-          paymentParams.set('email', data.emailAddress);
-          paymentParams.set('firstName', data.firstName);
-          paymentParams.set('lastName', data.lastName);
-          paymentParams.set('phone', data.phoneNumber);
-          paymentParams.set('address', data.addressLine1);
-          paymentParams.set('city', data.city);
-          paymentParams.set('state', data.state);
-          paymentParams.set('postalCode', data.postalCode);
-          
-          // Add API subscription data if available
-          if (producerSubscriptions.length > 0) {
-            console.log('📋 Adding API subscription data to URL parameters:', producerSubscriptions[0]);
-            paymentParams.set('subscriptionData', JSON.stringify(producerSubscriptions[0]));
-          }
-          
-          // Updated to use plural form
-          const paymentUrl = `/subscribers/signup/payment?${paymentParams.toString()}`;
-          console.log('🎯 Navigating to payment page:', {
-            url: paymentUrl,
-            parametersSet: {
-              producerId,
-              subscription: subscriptionIdToPass,
-              hasApiSubscriptionData: producerSubscriptions.length > 0
-            }
-          });
-          
+          console.log('🎯 Navigating to payment page:', paymentUrl);
           navigate(paymentUrl);
           return;
           
@@ -237,7 +260,6 @@ export const useSignUpSubmission = () => {
         return;
       }
 
-      // Handle any other unexpected status codes
       console.error('❓ Unexpected response status:', status);
       setError('Unexpected error occurred. Please try again.');
 
