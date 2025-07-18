@@ -45,10 +45,9 @@ export const validateEmailToken = async ({
 
     // Create unified payload structure
     const payload = {
-      email: emailAddress,
-      emailValidationToken: token,
+      emailAddress: emailAddress,
+      token: token,
       externRef: externRef,
-      context: context
     };
 
     console.log('🔍 Email validation request:', {
