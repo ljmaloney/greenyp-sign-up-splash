@@ -87,8 +87,8 @@ export const processSquareSubscriptionPayment = async (
 
       console.log('📤 Submitting subscription payment data to /account/applyInitialPayment:', subscriptionPaymentData);
       
-      // Updated endpoint and authentication settings
-      const paymentResponse = await apiClient.post('/account/applyInitialPayment', subscriptionPaymentData, { requireAuth: true });
+      // Updated endpoint and authentication settings - changed to requireAuth: false for signup flow
+      const paymentResponse = await apiClient.post('/account/applyInitialPayment', subscriptionPaymentData, { requireAuth: false });
       console.log('📊 Subscription payment submission response:', paymentResponse);
       
       return paymentResponse;
