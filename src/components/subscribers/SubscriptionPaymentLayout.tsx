@@ -169,6 +169,7 @@ const SubscriptionPaymentLayout = ({
               onBillingInfoChange={handleBillingInfoChange}
               emailValidationToken={emailValidationToken}
               onEmailValidationTokenChange={handleEmailValidationTokenChange}
+              isValidated={isValidated}
             />
           </div>
           

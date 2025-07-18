@@ -32,13 +32,15 @@ interface UsePaymentInformationProps {
   onBillingInfoChange?: (contact: BillingContactData, address: BillingAddressData, emailValidationToken: string) => void;
   emailValidationToken?: string;
   onEmailValidationTokenChange?: (token: string) => void;
+  isValidated?: boolean;
 }
 
 export const usePaymentInformation = ({ 
   customer, 
   onBillingInfoChange,
   emailValidationToken: externalEmailValidationToken,
-  onEmailValidationTokenChange
+  onEmailValidationTokenChange,
+  isValidated = false
 }: UsePaymentInformationProps = {}) => {
   const { toast } = useToast();
   
@@ -90,15 +92,24 @@ export const usePaymentInformation = ({
     setBillingContact(newContact);
     setBillingAddress(newAddress);
     
-    // Clear email validation token when copying customer data
-    const newToken = '';
-    setEmailValidationToken(newToken);
-    onEmailValidationTokenChange?.(newToken);
-    
-    toast({
-      title: "Information Copied",
-      description: "Payment information has been copied from customer information. Email validation token has been cleared.",
-    });
+    // Conditionally handle email validation token based on validation state
+    if (isValidated) {
+      // If email is validated, preserve the token and validation state
+      toast({
+        title: "Information Copied",
+        description: "Payment information has been copied from customer information. Email validation has been preserved.",
+      });
+    } else {
+      // If email is not validated, clear the token (original behavior)
+      const newToken = '';
+      setEmailValidationToken(newToken);
+      onEmailValidationTokenChange?.(newToken);
+      
+      toast({
+        title: "Information Copied",
+        description: "Payment information has been copied from customer information. Email validation token has been cleared.",
+      });
+    }
   };
 
   const handleContactChange = (field: string, value: string) => {
