@@ -68,13 +68,13 @@ export const processSquareSubscriptionPayment = async (
     if (verificationResult && verificationResult.token) {
       console.log('🎯 Payment verified successfully for subscription, submitting to backend...');
       
-      // Updated payload structure for /account/applyInitialPayment endpoint
+      // Corrected payload structure for /account/applyInitialPayment endpoint with backend field names
       const subscriptionPaymentData = {
         producerId: producerId,
         sourceId: result.token,
         verificationToken: verificationResult.token,
-        givenName: billingContact.firstName,
-        familyName: billingContact.lastName,
+        firstName: billingContact.firstName,
+        lastName: billingContact.lastName,
         emailAddress: billingContact.email,
         phoneNumber: squareFormattedPhone,
         addressLine1: billingAddress.address,
