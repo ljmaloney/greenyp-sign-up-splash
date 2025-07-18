@@ -1,6 +1,9 @@
+
 import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useUnifiedSquarePayment } from '@/hooks/useUnifiedSquarePayment';
-import PaymentMethodCard from '../payment/PaymentMethodCard';
+import SquarePaymentForm from './SquarePaymentForm';
+import SquarePaymentWrapper from '../payment/SquarePaymentWrapper';
 
 interface BillingContactData {
   firstName: string;
@@ -29,9 +32,9 @@ interface UnifiedSquarePaymentCardProps {
   producerId?: string;
 }
 
-const UnifiedSquarePaymentCard = ({ 
-  billingContact, 
-  billingAddress, 
+const UnifiedSquarePaymentCard = ({
+  billingContact,
+  billingAddress,
   emailValidationToken,
   cardContainerRef,
   payments,
@@ -43,8 +46,8 @@ const UnifiedSquarePaymentCard = ({
 }: UnifiedSquarePaymentCardProps) => {
   const {
     isProcessing,
-    error: paymentError,
-    setError: setPaymentError,
+    error,
+    setError,
     processPayment
   } = useUnifiedSquarePayment({
     billingContact,
@@ -54,25 +57,39 @@ const UnifiedSquarePaymentCard = ({
     producerId
   });
 
-  // Combine errors from Square and payment processing
-  const error = squareError || paymentError;
-  const setError = (errorMessage: string | null) => {
-    setSquareError(errorMessage);
-    setPaymentError(errorMessage);
-  };
-
   const handlePayment = async () => {
+    // Clear any existing errors
+    setError(null);
+    setSquareError(null);
+    
     await processPayment(card, payments);
   };
 
+  const handleRetry = () => {
+    // Clear all errors on retry
+    setError(null);
+    setSquareError(null);
+  };
+
+  const displayError = error || squareError;
+
   return (
-    <PaymentMethodCard
-      cardContainerRef={cardContainerRef}
-      error={error}
-      isProcessing={isProcessing}
-      onPayment={handlePayment}
-      isCardReady={!!card}
-    />
+    <SquarePaymentWrapper onRetry={handleRetry}>
+      <Card>
+        <CardHeader>
+          <CardTitle>Payment Method</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <SquarePaymentForm
+            cardContainerRef={cardContainerRef}
+            error={displayError}
+            isProcessing={isProcessing}
+            onPayment={handlePayment}
+            isCardReady={!!card}
+          />
+        </CardContent>
+      </Card>
+    </SquarePaymentWrapper>
   );
 };
 

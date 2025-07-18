@@ -7,6 +7,7 @@ import { useSquarePayment } from '@/hooks/useSquarePayment';
 import { validatePaymentFields } from '@/utils/paymentValidation';
 import { processSquarePayment } from '@/utils/squarePaymentProcessor';
 import PaymentMethodCard from '../payment/PaymentMethodCard';
+import SquarePaymentWrapper from '../payment/SquarePaymentWrapper';
 
 interface BillingContactData {
   firstName: string;
@@ -41,7 +42,8 @@ const SquarePaymentCard = ({ billingContact, billingAddress, emailValidationToke
     payments,
     card,
     error,
-    setError
+    setError,
+    cleanup
   } = useSquarePayment();
 
   const handlePayment = async () => {
@@ -137,14 +139,22 @@ const SquarePaymentCard = ({ billingContact, billingAddress, emailValidationToke
     }
   };
 
+  const handleRetry = () => {
+    // Clear error and trigger cleanup/reinit
+    setError(null);
+    cleanup();
+  };
+
   return (
-    <PaymentMethodCard
-      cardContainerRef={cardContainerRef}
-      error={error}
-      isProcessing={isProcessing}
-      onPayment={handlePayment}
-      isCardReady={!!card}
-    />
+    <SquarePaymentWrapper onRetry={handleRetry}>
+      <PaymentMethodCard
+        cardContainerRef={cardContainerRef}
+        error={error}
+        isProcessing={isProcessing}
+        onPayment={handlePayment}
+        isCardReady={!!card}
+      />
+    </SquarePaymentWrapper>
   );
 };
 
