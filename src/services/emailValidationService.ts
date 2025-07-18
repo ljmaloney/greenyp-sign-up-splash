@@ -30,13 +30,13 @@ export const validateEmailToken = async ({
     let payload: any;
 
     if (context === 'classifieds') {
-      endpoint = `/classified/${classifiedId}/validateEmail`;
+      endpoint = `/classified/${classifiedId}/validate`;
       payload = {
         emailValidationToken: token,
         emailAddress: emailAddress
       };
     } else {
-      endpoint = `/account/${producerId}/validateEmail`;
+      endpoint = `/account/${producerId}/validate`;
       payload = {
         emailValidationToken: token,
         emailAddress: emailAddress
