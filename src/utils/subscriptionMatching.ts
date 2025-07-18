@@ -6,12 +6,17 @@ export const findSubscriptionMatch = (
   subscriptionId: string | null
 ): SubscriptionWithFormatting | null => {
   if (!subscriptions || !subscriptionId) {
-    console.log('❌ No subscriptions data or subscription ID provided');
+    console.log('❌ No subscriptions data or subscription ID provided:', {
+      hasSubscriptions: !!subscriptions,
+      subscriptionId,
+      subscriptionsCount: subscriptions?.length
+    });
     return null;
   }
 
   console.log('🔍 Looking for subscription match:', {
     subscriptionId,
+    subscriptionIdLength: subscriptionId.length,
     availableSubscriptions: subscriptions.map(sub => ({
       id: sub.subscriptionId,
       name: sub.displayName
@@ -51,19 +56,35 @@ export const findSubscriptionMatch = (
 };
 
 export const validateSubscriptionData = (subscription: any): boolean => {
-  if (!subscription) return false;
+  if (!subscription) {
+    console.log('❌ Subscription validation failed: No subscription data');
+    return false;
+  }
   
-  const hasRequiredFields = !!(
-    subscription.subscriptionId &&
-    subscription.displayName &&
-    subscription.monthlyPrice !== undefined
+  // Check for required fields with multiple possible field names
+  const hasSubscriptionId = !!(subscription.subscriptionId);
+  const hasDisplayName = !!(subscription.displayName || subscription.subscriptionDisplayName);
+  
+  // Check for price fields - API uses monthlyAutopayAmount, some contexts may use monthlyPrice
+  const hasPrice = !!(
+    subscription.monthlyAutopayAmount !== undefined || 
+    subscription.monthlyPrice !== undefined ||
+    subscription.price !== undefined
   );
 
-  console.log('🔍 Subscription validation:', {
+  const hasRequiredFields = hasSubscriptionId && hasDisplayName && hasPrice;
+
+  console.log('🔍 Subscription validation details:', {
+    hasSubscriptionId,
+    hasDisplayName,
+    hasPrice,
     hasRequiredFields,
     subscriptionId: subscription.subscriptionId,
-    displayName: subscription.displayName,
-    monthlyPrice: subscription.monthlyPrice
+    displayName: subscription.displayName || subscription.subscriptionDisplayName,
+    monthlyAutopayAmount: subscription.monthlyAutopayAmount,
+    monthlyPrice: subscription.monthlyPrice,
+    price: subscription.price,
+    fullData: subscription
   });
 
   return hasRequiredFields;

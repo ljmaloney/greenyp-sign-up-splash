@@ -10,11 +10,12 @@ interface SubscriptionSummaryCardProps {
 }
 
 const SubscriptionSummaryCard = ({ selectedSubscription, apiSubscriptionData }: SubscriptionSummaryCardProps) => {
-  console.log('SubscriptionSummaryCard - Input props:', { 
+  console.log('📋 SubscriptionSummaryCard - Input props analysis:', { 
     hasSelectedSubscription: !!selectedSubscription,
     hasApiSubscriptionData: !!apiSubscriptionData,
     selectedSubscriptionId: selectedSubscription?.subscriptionId,
     apiSubscriptionId: apiSubscriptionData?.subscriptionId,
+    apiSubscriptionStructure: apiSubscriptionData ? Object.keys(apiSubscriptionData) : [],
     fullApiData: apiSubscriptionData
   });
 
@@ -54,10 +55,11 @@ const SubscriptionSummaryCard = ({ selectedSubscription, apiSubscriptionData }: 
       monthlyAutopayAmount: apiSubscriptionData.monthlyAutopayAmount,
       monthlyPrice: apiSubscriptionData.monthlyPrice,
       price: apiSubscriptionData.price,
+      allFields: Object.keys(apiSubscriptionData),
       rawData: apiSubscriptionData
     });
     
-    // Try to extract price from various possible field names
+    // Try to extract price from various possible field names - prioritize monthlyAutopayAmount
     monthlyPrice = apiSubscriptionData.monthlyAutopayAmount ?? 
                    apiSubscriptionData.monthlyPrice ?? 
                    apiSubscriptionData.price ?? 
@@ -65,7 +67,10 @@ const SubscriptionSummaryCard = ({ selectedSubscription, apiSubscriptionData }: 
     
     console.log('📊 API subscription price extraction result:', {
       extractedPrice: monthlyPrice,
-      priceType: typeof monthlyPrice
+      priceType: typeof monthlyPrice,
+      priceSource: apiSubscriptionData.monthlyAutopayAmount !== undefined ? 'monthlyAutopayAmount' :
+                   apiSubscriptionData.monthlyPrice !== undefined ? 'monthlyPrice' :
+                   apiSubscriptionData.price !== undefined ? 'price' : 'none'
     });
     
     if (apiSubscriptionData.features) {
@@ -89,19 +94,16 @@ const SubscriptionSummaryCard = ({ selectedSubscription, apiSubscriptionData }: 
   // Ensure price is a valid number and format it
   const numericPrice = typeof monthlyPrice === 'number' && !isNaN(monthlyPrice) ? monthlyPrice : 0;
   
-  // Handle price formatting - check if price is already in dollars or cents
+  // Handle price formatting - assume API returns price in dollars, not cents
   let formattedPrice;
   if (numericPrice === 0) {
     formattedPrice = '$0.00';
-  } else if (numericPrice < 100) {
-    // If price is less than 100, assume it's already in dollars
-    formattedPrice = `$${numericPrice.toFixed(2)}`;
   } else {
-    // If price is 100 or more, assume it's in cents
-    formattedPrice = `$${(numericPrice / 100).toFixed(2)}`;
+    // For API data, assume price is already in dollars
+    formattedPrice = `$${numericPrice.toFixed(2)}`;
   }
 
-  console.log('📋 SubscriptionSummaryCard - Display data:', {
+  console.log('📋 SubscriptionSummaryCard - Final display data:', {
     dataSource,
     subscriptionName,
     rawPrice: monthlyPrice,

@@ -24,9 +24,11 @@ const SignUpPaymentContainer = () => {
   const state = searchParams.get('state');
   const postalCode = searchParams.get('postalCode');
 
-  console.log('SignUpPaymentContainer - URL Parameters:', {
+  console.log('🔍 SignUpPaymentContainer - URL Parameters Analysis:', {
     producerId,
     subscriptionId,
+    subscriptionIdLength: subscriptionId?.length,
+    subscriptionIdEmpty: subscriptionId === '' || subscriptionId === null,
     email,
     firstName,
     lastName,
@@ -36,12 +38,21 @@ const SignUpPaymentContainer = () => {
     state,
     postalCode,
     hasSubscriptionData: !!subscriptionDataParam,
-    subscriptionDataLength: subscriptionDataParam?.length
+    subscriptionDataLength: subscriptionDataParam?.length,
+    fullUrlParams: Object.fromEntries(searchParams.entries())
   });
 
   // Validate required parameters
-  const hasRequiredData = !!(producerId && subscriptionId && email && firstName && lastName);
-  console.log('SignUpPaymentContainer - Required data check:', hasRequiredData);
+  const hasRequiredData = !!(producerId && email && firstName && lastName);
+  console.log('✅ SignUpPaymentContainer - Required data check:', {
+    hasRequiredData,
+    missingFields: {
+      producerId: !producerId,
+      email: !email,
+      firstName: !firstName,
+      lastName: !lastName
+    }
+  });
 
   // Parse the subscription data from the API response if available
   let apiSubscriptionData = null;
@@ -50,8 +61,14 @@ const SignUpPaymentContainer = () => {
       apiSubscriptionData = JSON.parse(subscriptionDataParam);
       console.log('✅ Parsed API subscription data:', apiSubscriptionData);
       
-      if (!validateSubscriptionData(apiSubscriptionData)) {
-        console.warn('⚠️ API subscription data is invalid:', apiSubscriptionData);
+      const isValidApiData = validateSubscriptionData(apiSubscriptionData);
+      console.log('🔍 API subscription data validation result:', {
+        isValid: isValidApiData,
+        data: apiSubscriptionData
+      });
+      
+      if (!isValidApiData) {
+        console.warn('⚠️ API subscription data is invalid, setting to null');
         apiSubscriptionData = null;
       }
     } catch (error) {
@@ -70,6 +87,14 @@ const SignUpPaymentContainer = () => {
 
   // Find the selected subscription using improved matching
   const selectedSubscription = findSubscriptionMatch(subscriptions, subscriptionId);
+  
+  console.log('🔍 Subscription matching results:', {
+    subscriptionId,
+    hasSelectedSubscription: !!selectedSubscription,
+    selectedSubscriptionName: selectedSubscription?.displayName,
+    hasApiSubscriptionData: !!apiSubscriptionData,
+    apiSubscriptionName: apiSubscriptionData?.displayName || apiSubscriptionData?.subscriptionDisplayName
+  });
 
   const customerData = {
     firstName: firstName || '',
@@ -107,6 +132,13 @@ const SignUpPaymentContainer = () => {
   // Priority: API subscription data > Reference subscription data
   const hasValidSubscriptionData = !!(apiSubscriptionData || selectedSubscription);
   
+  console.log('📊 Final subscription data assessment:', {
+    hasValidSubscriptionData,
+    dataSource: apiSubscriptionData ? 'API' : selectedSubscription ? 'Reference' : 'None',
+    willShowLoading: isLoading && !apiSubscriptionData,
+    finalDecision: hasValidSubscriptionData ? 'Render payment layout' : 'Show error'
+  });
+  
   // Show loading only if we're waiting for reference data AND don't have API data
   if (isLoading && !apiSubscriptionData) {
     console.log('⏳ Showing loading state - waiting for subscriptions data');
@@ -118,14 +150,20 @@ const SignUpPaymentContainer = () => {
   }
   
   if (!hasValidSubscriptionData) {
-    console.error('❌ No valid subscription data found:', {
+    console.error('❌ No valid subscription data found - showing error:', {
       hasApiData: !!apiSubscriptionData,
       hasSelectedSubscription: !!selectedSubscription,
       subscriptionId,
+      subscriptionIdIsEmpty: !subscriptionId || subscriptionId === '',
       availableSubscriptions: subscriptions?.map(sub => ({
         id: sub.subscriptionId,
         name: sub.displayName
-      }))
+      })),
+      troubleshootingInfo: {
+        step1: 'Check if subscriptionId parameter is being passed correctly from signup form',
+        step2: 'Verify API subscription data structure matches validation requirements',
+        step3: 'Ensure reference subscriptions are loaded successfully'
+      }
     });
     
     return (
@@ -136,6 +174,8 @@ const SignUpPaymentContainer = () => {
             Subscription details are missing or invalid. Please return to the signup page and try again.
             <br />
             <small>Subscription ID: {subscriptionId || 'Not provided'}</small>
+            <br />
+            <small>Debug: API data={!!apiSubscriptionData}, Reference data={!!selectedSubscription}</small>
           </AlertDescription>
         </Alert>
       </div>

@@ -84,7 +84,11 @@ export const useSignUpSubmission = () => {
   ) => {
     console.log('🚀 Starting signup submission');
     console.log('📝 Form data:', { email: data.emailAddress, businessName: data.businessName });
-    console.log('📋 Selected subscription:', selectedSubscription?.subscriptionId);
+    console.log('📋 Selected subscription details:', {
+      subscriptionId: selectedSubscription?.subscriptionId,
+      displayName: selectedSubscription?.displayName,
+      hasValidSubscription: !!selectedSubscription
+    });
     
     setLoading(true);
     resetError();
@@ -146,15 +150,25 @@ export const useSignUpSubmission = () => {
           
           console.log('🎉 Account creation successful:', {
             producerId,
-            subscriptionsCount: producerSubscriptions.length
+            subscriptionsCount: producerSubscriptions.length,
+            subscriptions: producerSubscriptions
           });
 
           toast.success("Account created successfully! Please complete your payment to activate your subscription.");
           
-          // Navigate to payment page
+          // Navigate to payment page with improved parameter handling
           const paymentParams = new URLSearchParams();
           paymentParams.set('producerId', producerId);
-          paymentParams.set('subscription', selectedSubscription?.subscriptionId || '');
+          
+          // Ensure subscription ID is properly set
+          const subscriptionIdToPass = selectedSubscription?.subscriptionId || data.subscriptionId || '';
+          console.log('🔗 Setting subscription parameter:', {
+            fromSelectedSubscription: selectedSubscription?.subscriptionId,
+            fromFormData: data.subscriptionId,
+            finalSubscriptionId: subscriptionIdToPass
+          });
+          
+          paymentParams.set('subscription', subscriptionIdToPass);
           paymentParams.set('email', data.emailAddress);
           paymentParams.set('firstName', data.firstName);
           paymentParams.set('lastName', data.lastName);
@@ -164,12 +178,22 @@ export const useSignUpSubmission = () => {
           paymentParams.set('state', data.state);
           paymentParams.set('postalCode', data.postalCode);
           
+          // Add API subscription data if available
           if (producerSubscriptions.length > 0) {
+            console.log('📋 Adding API subscription data to URL parameters:', producerSubscriptions[0]);
             paymentParams.set('subscriptionData', JSON.stringify(producerSubscriptions[0]));
           }
           
           const paymentUrl = `/subscriber/signup/payment?${paymentParams.toString()}`;
-          console.log('🎯 Navigating to:', paymentUrl);
+          console.log('🎯 Navigating to payment page:', {
+            url: paymentUrl,
+            parametersSet: {
+              producerId,
+              subscription: subscriptionIdToPass,
+              hasApiSubscriptionData: producerSubscriptions.length > 0
+            }
+          });
+          
           navigate(paymentUrl);
           return;
           
