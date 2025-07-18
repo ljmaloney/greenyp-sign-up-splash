@@ -68,7 +68,7 @@ export const processSquareSubscriptionPayment = async (
     if (verificationResult && verificationResult.token) {
       console.log('🎯 Payment verified successfully for subscription, submitting to backend...');
       
-      // Corrected payload structure for /account/applyInitialPayment endpoint with backend field names
+      // Corrected payload structure for /account/applyInitialPayment endpoint - using payorAddress1 as backend expects
       const subscriptionPaymentData = {
         producerId: producerId,
         sourceId: result.token,
@@ -77,7 +77,7 @@ export const processSquareSubscriptionPayment = async (
         lastName: billingContact.lastName,
         emailAddress: billingContact.email,
         phoneNumber: squareFormattedPhone,
-        addressLine1: billingAddress.address,
+        payorAddress1: billingAddress.address,
         locality: billingAddress.city || 'Oakland',
         administrativeDistrictLevel1: billingAddress.state || 'CA',
         postalCode: billingAddress.zipCode,
