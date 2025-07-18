@@ -61,31 +61,137 @@ export const validateSubscriptionData = (subscription: any): boolean => {
     return false;
   }
   
-  // Check for required fields with multiple possible field names
-  const hasSubscriptionId = !!(subscription.subscriptionId);
-  const hasDisplayName = !!(subscription.displayName || subscription.subscriptionDisplayName);
-  
-  // Check for price fields - API uses monthlyAutopayAmount, some contexts may use monthlyPrice
-  const hasPrice = !!(
-    subscription.monthlyAutopayAmount !== undefined || 
-    subscription.monthlyPrice !== undefined ||
-    subscription.price !== undefined
-  );
-
-  const hasRequiredFields = hasSubscriptionId && hasDisplayName && hasPrice;
-
-  console.log('🔍 Subscription validation details:', {
-    hasSubscriptionId,
-    hasDisplayName,
-    hasPrice,
-    hasRequiredFields,
-    subscriptionId: subscription.subscriptionId,
-    displayName: subscription.displayName || subscription.subscriptionDisplayName,
-    monthlyAutopayAmount: subscription.monthlyAutopayAmount,
-    monthlyPrice: subscription.monthlyPrice,
-    price: subscription.price,
+  console.log('🔍 Raw subscription data for validation:', {
+    type: typeof subscription,
+    keys: Object.keys(subscription),
     fullData: subscription
   });
 
+  // Check for required fields with multiple possible field names and flexible validation
+  const subscriptionIdVariants = [
+    subscription.subscriptionId,
+    subscription.id,
+    subscription.subscription_id
+  ].filter(Boolean);
+  
+  const displayNameVariants = [
+    subscription.displayName,
+    subscription.subscriptionDisplayName,
+    subscription.name,
+    subscription.title
+  ].filter(Boolean);
+  
+  // Check for price fields - be more flexible with number types and handle string numbers
+  const priceVariants = [
+    subscription.monthlyAutopayAmount,
+    subscription.monthlyPrice,
+    subscription.price,
+    subscription.amount,
+    subscription.cost
+  ].filter(val => val !== undefined && val !== null && val !== '');
+
+  const hasSubscriptionId = subscriptionIdVariants.length > 0;
+  const hasDisplayName = displayNameVariants.length > 0;
+  const hasPrice = priceVariants.length > 0;
+
+  // Additional validation for price values - ensure they're valid numbers
+  let hasValidPrice = false;
+  if (hasPrice) {
+    hasValidPrice = priceVariants.some(price => {
+      const numPrice = typeof price === 'string' ? parseFloat(price) : price;
+      return !isNaN(numPrice) && numPrice >= 0;
+    });
+  }
+
+  const hasRequiredFields = hasSubscriptionId && hasDisplayName && hasValidPrice;
+
+  console.log('🔍 Enhanced subscription validation details:', {
+    hasSubscriptionId,
+    hasDisplayName,
+    hasPrice,
+    hasValidPrice,
+    hasRequiredFields,
+    subscriptionIdVariants,
+    displayNameVariants,
+    priceVariants,
+    validationResult: hasRequiredFields
+  });
+
+  // If basic validation fails, try to provide more specific error information
+  if (!hasRequiredFields) {
+    const missingFields = [];
+    if (!hasSubscriptionId) missingFields.push('subscriptionId');
+    if (!hasDisplayName) missingFields.push('displayName');
+    if (!hasValidPrice) missingFields.push('valid price');
+    
+    console.warn('⚠️ Subscription validation failed - missing fields:', {
+      missingFields,
+      availableFields: Object.keys(subscription),
+      suggestion: 'Check if the API response structure matches expected format'
+    });
+  }
+
   return hasRequiredFields;
+};
+
+// New helper function to transform API subscription data to expected format
+export const normalizeSubscriptionData = (apiData: any): any => {
+  if (!apiData) {
+    console.log('❌ No API data to normalize');
+    return null;
+  }
+
+  console.log('🔄 Normalizing API subscription data:', apiData);
+
+  // Create a normalized object with fallbacks for different field names
+  const normalized = {
+    subscriptionId: apiData.subscriptionId || apiData.id || apiData.subscription_id,
+    displayName: apiData.displayName || apiData.subscriptionDisplayName || apiData.name || apiData.title,
+    monthlyAutopayAmount: apiData.monthlyAutopayAmount || apiData.monthlyPrice || apiData.price || apiData.amount || apiData.cost,
+    // Preserve all original fields for compatibility
+    ...apiData
+  };
+
+  console.log('✅ Normalized subscription data:', {
+    original: apiData,
+    normalized: normalized,
+    isValid: validateSubscriptionData(normalized)
+  });
+
+  return normalized;
+};
+
+// Enhanced validation with automatic normalization
+export const validateAndNormalizeSubscriptionData = (subscription: any): { isValid: boolean; normalizedData: any } => {
+  console.log('🔍 Starting validation and normalization process');
+  
+  if (!subscription) {
+    return { isValid: false, normalizedData: null };
+  }
+
+  // First try direct validation
+  const directValid = validateSubscriptionData(subscription);
+  if (directValid) {
+    console.log('✅ Direct validation passed');
+    return { isValid: true, normalizedData: subscription };
+  }
+
+  // If direct validation fails, try normalization
+  console.log('🔄 Direct validation failed, attempting normalization');
+  const normalizedData = normalizeSubscriptionData(subscription);
+  
+  if (!normalizedData) {
+    console.log('❌ Normalization failed');
+    return { isValid: false, normalizedData: null };
+  }
+
+  const normalizedValid = validateSubscriptionData(normalizedData);
+  
+  console.log('📊 Final validation result:', {
+    directValid,
+    normalizedValid,
+    finalResult: normalizedValid
+  });
+
+  return { isValid: normalizedValid, normalizedData: normalizedValid ? normalizedData : null };
 };
