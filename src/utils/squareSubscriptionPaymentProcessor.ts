@@ -105,16 +105,19 @@ export const processSquareSubscriptionPayment = async (
       // Prepare payload with EXACT field names the backend expects
       const subscriptionPaymentData = {
         producerId: producerId,
-        sourceId: result.token,
+        actionType: 'APPLY_INITIAL',
+        cycleType: 'MONTHLY',
+        paymentToken: result.token,
         verificationToken: verificationResult.token,
         firstName: billingContact.firstName.trim(),
         lastName: billingContact.lastName.trim(),
         emailAddress: billingContact.email.trim(),
         phoneNumber: squareFormattedPhone,
-        payorAddress1: billingAddress.address.trim(), // Backend expects payorAddress1
+        payorAddress1: billingAddress.address.trim(),
+        payorAddress2: '',// Backend expects payorAddress1
         payorCity: billingAddress.city.trim(), // Backend expects payorCity (NOT locality)
-        administrativeDistrictLevel1: billingAddress.state?.trim() || 'CA',
-        postalCode: billingAddress.zipCode?.trim() || '',
+        payorState: billingAddress.state?.trim() || 'CA',
+        payorPostalCode: billingAddress.zipCode?.trim() || '',
         country: 'US',
         emailValidationToken: emailValidationToken.trim()
       };
