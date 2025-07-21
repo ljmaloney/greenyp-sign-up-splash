@@ -2,6 +2,7 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useHeaderText } from "@/hooks/useHeaderText";
 import { Leaf } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -9,6 +10,7 @@ const PublicHeader = () => {
   const isMobile = useIsMobile();
   const location = useLocation();
   const isClassifiedsPage = location.pathname.startsWith('/classifieds');
+  const headerText = useHeaderText();
   
   // Determine the appropriate home link based on current page
   const homeLink = isClassifiedsPage ? '/classifieds' : '/';
@@ -18,7 +20,7 @@ const PublicHeader = () => {
       <div className="flex flex-col">
         <Link to={homeLink} className="text-2xl font-bold text-greenyp-700 flex items-center">
           <Leaf className="mr-2 h-8 w-8" />
-          <span>{isClassifiedsPage ? 'GreenYP - Classifieds' : 'GreenYP'}</span>
+          <span>{headerText}</span>
         </Link>
         <p className="text-xs text-gray-600 mt-1">
           {isClassifiedsPage 

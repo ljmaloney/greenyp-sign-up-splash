@@ -4,7 +4,7 @@ import { useSignUpSubmission } from './useSignUpSubmission';
 
 export const useSignUpForm = (selectedPlan: string) => {
   const form = useSignUpFormConfig(selectedPlan);
-  const { loading, error, isSystemError, handleSubmit } = useSignUpSubmission();
+  const { loading, error, isSystemError, isDuplicateEmail, handleSubmit, resetError } = useSignUpSubmission();
 
   const onSubmit = (data: any, selectedSubscription: any, categories: any[]) => {
     handleSubmit(data, selectedSubscription, categories);
@@ -15,6 +15,8 @@ export const useSignUpForm = (selectedPlan: string) => {
     loading,
     onSubmit,
     error,
-    isSystemError
+    isSystemError,
+    isDuplicateEmail,
+    resetError
   };
 };

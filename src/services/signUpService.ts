@@ -1,6 +1,6 @@
-
 import { getApiUrl } from '@/config/api';
 import { SignUpFormSchema } from '@/utils/signUpValidation';
+import { APIResponse } from '@/types/responseBody';
 
 export interface SignUpPayload {
   producerRequest: {
@@ -100,7 +100,7 @@ export const createSignUpPayload = (data: SignUpFormSchema): SignUpPayload => {
   };
 };
 
-export const submitSignUpData = async (payload: SignUpPayload): Promise<any> => {
+export const submitSignUpData = async (payload: SignUpPayload): Promise<{ response: Response; status: number }> => {
   console.log('Submitting sign-up data:', payload);
 
   const response = await fetch(getApiUrl('/account'), {
@@ -112,6 +112,7 @@ export const submitSignUpData = async (payload: SignUpPayload): Promise<any> => 
   });
 
   console.log('Response status:', response.status);
+  console.log('Response headers:', Object.fromEntries(response.headers.entries()));
   
   return { response, status: response.status };
 };

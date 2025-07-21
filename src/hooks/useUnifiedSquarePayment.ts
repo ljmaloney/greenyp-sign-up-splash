@@ -1,11 +1,10 @@
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApiClient } from '@/hooks/useApiClient';
 import { useToast } from '@/hooks/use-toast';
 import { validatePaymentFields } from '@/utils/paymentValidation';
 import { processSquarePayment } from '@/utils/squarePaymentProcessor';
-import { processSquareSignUpTokens } from '@/utils/squareSignUpTokenProcessor';
 
 interface BillingContactData {
   firstName: string;
@@ -43,25 +42,21 @@ export const useUnifiedSquarePayment = ({
   const apiClient = useApiClient();
   const { toast } = useToast();
 
-  const processPayment = async (card: any, payments: any) => {
+  const processPayment = useCallback(async (card: any, payments: any) => {
+    console.log('💳 Processing unified Square payment:', {
+      paymentType,
+      hasCard: !!card,
+      hasPayments: !!payments,
+      producerId,
+      classifiedId
+    });
+
     if (!card || !payments) {
       setError('Payment form not initialized');
       return;
     }
 
-    // For classified payments, we need classifiedId
-    if (paymentType === 'classified' && !classifiedId) {
-      setError('Missing classified ID');
-      return;
-    }
-
-    // For subscription payments, we need producerId
-    if (paymentType === 'subscription' && !producerId) {
-      setError('Missing producer ID');
-      return;
-    }
-
-    // Validate all required fields before proceeding
+    // Validate payment fields
     const validationError = validatePaymentFields(billingContact, billingAddress);
     if (validationError) {
       setError(validationError);
@@ -84,112 +79,74 @@ export const useUnifiedSquarePayment = ({
       return;
     }
 
+    // Validate required IDs based on payment type
+    if (paymentType === 'classified' && !classifiedId) {
+      setError('Classified ID is missing');
+      return;
+    }
+
+    if (paymentType === 'subscription' && !producerId) {
+      setError('Producer ID is missing');
+      return;
+    }
+
     setIsProcessing(true);
     setError(null);
 
     try {
-      if (paymentType === 'classified') {
-        // Process classified payment
-        const paymentResponse = await processSquarePayment(
+      let paymentResponse;
+
+      // Process payment using unified approach
+      paymentResponse = await processSquarePayment(
           card,
           payments,
           billingContact,
           billingAddress,
-          classifiedId!,
+          paymentType === 'classified' ? classifiedId : producerId,
           apiClient,
-          emailValidationToken
-        );
+          emailValidationToken,
+          {isSubscription: paymentType === 'subscription'}
+      );
+      
+      // Check if payment was completed successfully
+      if (paymentResponse.response?.paymentStatus === 'COMPLETED') {
+        console.log('✅ Payment completed successfully');
         
-        // Check if payment was completed successfully
-        if (paymentResponse.response?.paymentStatus === 'COMPLETED') {
-          console.log('Payment completed successfully, redirecting to confirmation page');
-          
-          toast({
-            title: "Payment Successful",
-            description: "Your payment has been processed successfully.",
-          });
-          
-          // Redirect to payment confirmation page
-          const confirmationUrl = `/classifieds/payment/confirmation/${classifiedId}?paymentSuccess=true`;
-          console.log('Redirecting to:', confirmationUrl);
-          navigate(confirmationUrl);
-        } else {
-          console.log('Payment not completed, status:', paymentResponse.response?.paymentStatus);
-          setError('Payment was not completed successfully');
-          toast({
-            title: "Payment Issue",
-            description: "There was an issue completing your payment. Please try again.",
-            variant: "destructive",
-          });
-        }
-      } else {
-        // Process subscription sign-up payment
-        const { paymentToken, verificationToken } = await processSquareSignUpTokens(
-          card,
-          payments,
-          billingContact,
-          billingAddress
-        );
-
-        // Submit the initial payment to the signup endpoint
-        const paymentData = {
-          producerId: producerId,
-          paymentMethod: "SQUARE",
-          payorName: `${billingContact.firstName} ${billingContact.lastName}`,
-          payorAddress1: billingAddress.address,
-          payorAddress2: "",
-          payorCity: billingAddress.city,
-          payorState: billingAddress.state,
-          payorPostalCode: billingAddress.zipCode,
-          actionType: "APPLY_ONCE",
-          cycleType: "MONTHLY",
-          paymentToken: paymentToken,
-          verificationToken: verificationToken,
-          emailValidationToken: emailValidationToken
-        };
-
-        console.log('Submitting signup payment data:', paymentData);
+        toast({
+          title: "Payment Successful",
+          description: "Your payment has been processed successfully.",
+        });
         
-        const paymentResponse = await apiClient.post('/account/applyInitialPayment', paymentData, { requireAuth: false });
-        console.log('Payment submission response:', paymentResponse);
-        
-        // Check if payment was completed successfully
-        if (paymentResponse.response?.paymentStatus === 'COMPLETED' || paymentResponse.status === 200) {
-          console.log('Payment completed successfully, redirecting to confirmation');
+        // Handle navigation based on payment type
+        if (paymentType === 'classified') {
+          const responseData = paymentResponse.response ?? {};
+          const orderRef = responseData.orderRef ?? '';
+          const paymentRef = responseData.paymentRef ?? '';
+          const receiptNumber = responseData.receiptNumber ?? '';
           
-          toast({
-            title: "Payment Successful",
-            description: "Your subscription has been activated successfully!",
-          });
-          
-          // Extract payment reference information from response
-          const responseData = paymentResponse.response || {};
-          const orderRef = responseData.orderRef || '';
-          const paymentRef = responseData.paymentRef || '';
-          const receiptNumber = responseData.receiptNumber || '';
-          
-          // Build confirmation URL with payment reference data
           const confirmationParams = new URLSearchParams();
           confirmationParams.set('paymentSuccess', 'true');
           if (orderRef) confirmationParams.set('orderRef', orderRef);
           if (paymentRef) confirmationParams.set('paymentRef', paymentRef);
           if (receiptNumber) confirmationParams.set('receiptNumber', receiptNumber);
           
-          // Redirect to confirmation page with payment reference data
-          navigate(`/subscriber/signup/confirmation?${confirmationParams.toString()}`);
+          const confirmationUrl = `/classifieds/payment/confirmation/${classifiedId}?${confirmationParams.toString()}`;
+          navigate(confirmationUrl);
         } else {
-          console.log('Payment not completed, status:', paymentResponse.response?.paymentStatus);
-          setError('Payment was not completed successfully');
-          toast({
-            title: "Payment Issue",
-            description: "There was an issue completing your payment. Please try again.",
-            variant: "destructive",
-          });
+          // Navigate to subscription confirmation
+          navigate('/subscribers/payment/confirmation');
         }
+      } else {
+        console.log('❌ Payment not completed, status:', paymentResponse.response?.paymentStatus);
+        setError('Payment was not completed successfully');
+        toast({
+          title: "Payment Issue",
+          description: "There was an issue completing your payment. Please try again.",
+          variant: "destructive",
+        });
       }
-      
     } catch (err) {
-      console.error('Payment processing error:', err);
+      console.error('❌ Payment processing error:', err);
       setError('Payment processing failed');
       toast({
         title: "Payment Failed",
@@ -199,7 +156,17 @@ export const useUnifiedSquarePayment = ({
     } finally {
       setIsProcessing(false);
     }
-  };
+  }, [
+    billingContact,
+    billingAddress,
+    emailValidationToken,
+    paymentType,
+    producerId,
+    classifiedId,
+    apiClient,
+    toast,
+    navigate
+  ]);
 
   return {
     isProcessing,

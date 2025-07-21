@@ -1,6 +1,5 @@
 
-import { useState, useEffect } from 'react';
-import { useToast } from '@/hooks/use-toast';
+import { useState, useEffect, useCallback } from 'react';
 
 interface BillingContactData {
   firstName: string;
@@ -32,16 +31,16 @@ interface UsePaymentInformationProps {
   onBillingInfoChange?: (contact: BillingContactData, address: BillingAddressData, emailValidationToken: string) => void;
   emailValidationToken?: string;
   onEmailValidationTokenChange?: (token: string) => void;
+  isValidated?: boolean;
 }
 
-export const usePaymentInformation = ({ 
-  customer, 
+export const usePaymentInformation = ({
+  customer,
   onBillingInfoChange,
-  emailValidationToken: externalEmailValidationToken,
-  onEmailValidationTokenChange
-}: UsePaymentInformationProps = {}) => {
-  const { toast } = useToast();
-  
+  emailValidationToken = '',
+  onEmailValidationTokenChange,
+  isValidated = false
+}: UsePaymentInformationProps) => {
   const [billingContact, setBillingContact] = useState<BillingContactData>({
     firstName: '',
     lastName: '',
@@ -56,71 +55,80 @@ export const usePaymentInformation = ({
     zipCode: ''
   });
 
-  const [emailValidationToken, setEmailValidationToken] = useState<string>(externalEmailValidationToken || '');
-
-  // Sync external email validation token
+  // Initialize from customer data
   useEffect(() => {
-    if (externalEmailValidationToken !== undefined) {
-      setEmailValidationToken(externalEmailValidationToken);
+    if (customer) {
+      console.log('📋 usePaymentInformation: Initializing from customer data:', customer);
+      
+      setBillingContact({
+        firstName: customer.firstName || '',
+        lastName: customer.lastName || '',
+        email: customer.emailAddress || '',
+        phone: customer.phoneNumber || ''
+      });
+
+      setBillingAddress({
+        address: customer.address || '',
+        city: customer.city || '',
+        state: customer.state || '',
+        zipCode: customer.postalCode || ''
+      });
     }
-  }, [externalEmailValidationToken]);
+  }, [customer]);
 
-  // Notify parent component of billing info changes
+  // Notify parent of changes
   useEffect(() => {
-    onBillingInfoChange?.(billingContact, billingAddress, emailValidationToken);
+    if (onBillingInfoChange) {
+      console.log('📋 usePaymentInformation: Notifying parent of billing info change:', {
+        contact: billingContact,
+        address: billingAddress,
+        emailValidationToken
+      });
+      onBillingInfoChange(billingContact, billingAddress, emailValidationToken);
+    }
   }, [billingContact, billingAddress, emailValidationToken, onBillingInfoChange]);
 
-  const handleCopyFromCustomer = () => {
-    if (!customer) return;
-    
-    const newContact: BillingContactData = {
-      firstName: customer.firstName || '',
-      lastName: customer.lastName || '',
-      email: customer.emailAddress || '',
-      phone: customer.phoneNumber || ''
-    };
-    
-    const newAddress: BillingAddressData = {
-      address: customer.address || '',
-      city: customer.city || '',
-      state: customer.state || '',
-      zipCode: customer.postalCode || ''
-    };
-    
-    setBillingContact(newContact);
-    setBillingAddress(newAddress);
-    
-    // Clear email validation token when copying customer data
-    const newToken = '';
-    setEmailValidationToken(newToken);
-    onEmailValidationTokenChange?.(newToken);
-    
-    toast({
-      title: "Information Copied",
-      description: "Payment information has been copied from customer information. Email validation token has been cleared.",
-    });
-  };
+  const handleCopyFromCustomer = useCallback(() => {
+    if (customer) {
+      console.log('📋 usePaymentInformation: Copying from customer data');
+      
+      setBillingContact({
+        firstName: customer.firstName || '',
+        lastName: customer.lastName || '',
+        email: customer.emailAddress || '',
+        phone: customer.phoneNumber || ''
+      });
 
-  const handleContactChange = (field: string, value: string) => {
-    setBillingContact(prev => ({ ...prev, [field]: value }));
-  };
+      setBillingAddress({
+        address: customer.address || '',
+        city: customer.city || '',
+        state: customer.state || '',
+        zipCode: customer.postalCode || ''
+      });
+    }
+  }, [customer]);
 
-  const handleAddressChange = (field: string, value: string) => {
-    setBillingAddress(prev => ({ ...prev, [field]: value }));
-  };
+  const handleContactChange = useCallback((field: string, value: string) => {
+    console.log('📋 usePaymentInformation: Contact field changed:', { field, value });
+    setBillingContact(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  }, []);
 
-  const handleEmailValidationTokenChange = (value: string) => {
-    setEmailValidationToken(value);
-    onEmailValidationTokenChange?.(value);
-  };
+  const handleAddressChange = useCallback((field: string, value: string) => {
+    console.log('📋 usePaymentInformation: Address field changed:', { field, value });
+    setBillingAddress(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  }, []);
 
   return {
     billingContact,
     billingAddress,
-    emailValidationToken,
     handleCopyFromCustomer,
     handleContactChange,
-    handleAddressChange,
-    handleEmailValidationTokenChange
+    handleAddressChange
   };
 };

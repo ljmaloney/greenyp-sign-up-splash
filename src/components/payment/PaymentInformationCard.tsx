@@ -30,6 +30,7 @@ interface PaymentInformationCardProps {
   onBillingInfoChange?: (contact: any, address: any, emailValidationToken: string) => void;
   emailValidationToken?: string;
   onEmailValidationTokenChange?: (token: string) => void;
+  isValidated?: boolean;
 }
 
 const PaymentInformationCard = ({ 
@@ -37,7 +38,8 @@ const PaymentInformationCard = ({
   customer, 
   onBillingInfoChange,
   emailValidationToken,
-  onEmailValidationTokenChange
+  onEmailValidationTokenChange,
+  isValidated = false
 }: PaymentInformationCardProps) => {
   const {
     billingContact,
@@ -49,14 +51,18 @@ const PaymentInformationCard = ({
     customer, 
     onBillingInfoChange,
     emailValidationToken,
-    onEmailValidationTokenChange
+    onEmailValidationTokenChange,
+    isValidated
   });
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>
-          <PaymentInformationHeader onCopyFromCustomer={handleCopyFromCustomer} />
+          <PaymentInformationHeader 
+            onCopyFromCustomer={handleCopyFromCustomer}
+            isValidated={isValidated}
+          />
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">

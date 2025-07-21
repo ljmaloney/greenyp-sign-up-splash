@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSubscriptions } from '../hooks/useSubscriptions';
@@ -21,8 +20,8 @@ const PricingSection = () => {
     // Scroll to top before navigation
     window.scrollTo({ top: 0, behavior: 'smooth' });
     
-    // Navigate to the subscriber signup page with the selected plan
-    navigate(`/subscriber/signup?plan=${subscriptionId}&billing=${billingPeriod}`);
+    // Navigate to the subscriber signup page with the selected plan (using plural form)
+    navigate(`/subscribers/signup?plan=${subscriptionId}&billing=${billingPeriod}`);
   };
 
   const getPriceDisplay = (subscription: any) => getDisplayPrice(subscription, billingPeriod);

@@ -10,7 +10,7 @@ interface NewPaymentContainerProps {
   classifiedId: string;
 }
 
-const NewPaymentContainer = ({ classifiedId }: NewPaymentContainerProps) => {
+const ClassifiedPaymentContainer = ({ classifiedId }: NewPaymentContainerProps) => {
   const apiClient = useApiClient();
 
   const { data: classifiedData, isLoading } = useQuery({
@@ -39,4 +39,4 @@ const NewPaymentContainer = ({ classifiedId }: NewPaymentContainerProps) => {
   );
 };
 
-export default NewPaymentContainer;
+export default ClassifiedPaymentContainer;

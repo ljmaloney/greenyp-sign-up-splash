@@ -1,4 +1,3 @@
-
 import { normalizePhoneForSquare } from '@/utils/phoneUtils';
 
 interface BillingContactData {
@@ -15,36 +14,80 @@ interface BillingAddressData {
   zipCode: string;
 }
 
+interface PaymentOptions {
+  isSubscription?: boolean;
+}
+
 export const processSquarePayment = async (
   card: any,
   payments: any,
   billingContact: BillingContactData,
   billingAddress: BillingAddressData,
-  classifiedId: string,
+  referenceId: string,
   apiClient: any,
-  emailValidationToken: string
+  emailValidationToken: string,
+  options: PaymentOptions = {}
 ) => {
-  console.log('Starting tokenization process...');
+  const { isSubscription = false } = options;
+  console.log(`💳 Starting ${isSubscription ? 'subscription' : ''} payment tokenization process...`);
+  
+  // Debug billing data before processing
+  console.log('🔍 Billing data received:', {
+    billingContact,
+    billingAddress,
+    referenceId: referenceId,
+    emailValidationToken
+  });
+  
+  // Validate required billing data (enhanced validation for subscriptions)
+  if (isSubscription) {
+    if (!billingAddress.address?.trim()) {
+      console.error('❌ Missing required billing address');
+      throw new Error('Billing address is required');
+    }
+    
+    if (!billingAddress.city?.trim()) {
+      console.error('❌ Missing required billing city');
+      throw new Error('Billing city is required');
+    }
+    
+    if (!billingContact.firstName?.trim()) {
+      console.error('❌ Missing required first name');
+      throw new Error('First name is required');
+    }
+    
+    if (!billingContact.lastName?.trim()) {
+      console.error('❌ Missing required last name');
+      throw new Error('Last name is required');
+    }
+    
+    if (!billingContact.email?.trim()) {
+      console.error('❌ Missing required email');
+      throw new Error('Email is required');
+    }
+  }
   
   // Tokenize the card
   const result = await card.tokenize();
-  console.log('Tokenization result:', result);
+  console.log('🔍 Tokenization result:', result);
 
   if (result.status === 'OK') {
-    console.log('Card tokenized successfully, token:', result.token);
+    console.log('✅ Card tokenized successfully, token:', result.token);
     
-    // Normalize phone number to Square's required format (+1XXXXXXXXXX)
+    // Normalize phone number to Square's required format
     const squareFormattedPhone = normalizePhoneForSquare(billingContact.phone);
-    console.log('Original phone:', billingContact.phone);
-    console.log('Square formatted phone:', squareFormattedPhone);
+    console.log('📞 Phone formatting:', {
+      original: billingContact.phone,
+      formatted: squareFormattedPhone
+    });
     
-    // Prepare verification details using billing information with Square-formatted phone
+    // Prepare verification details
     const verificationDetails = {
-      amount: '1.00', // test amount or expected charge
+      amount: '1.00',
       billingContact: {
         givenName: billingContact.firstName || 'John',
         familyName: billingContact.lastName || 'Doe',
-        email: billingContact.email || 'john.doe@example.com',
+        email: billingContact.email || 'user@example.com',
         phone: squareFormattedPhone || '+13214563987',
         addressLines: [billingAddress.address || '123 Main Street'],
         city: billingAddress.city || 'Oakland',
@@ -52,48 +95,76 @@ export const processSquarePayment = async (
         countryCode: 'US',
       },
       currencyCode: 'USD',
-      intent: 'CHARGE',
+      intent: isSubscription ? 'STORE' : 'CHARGE',
       customerInitiated: true,
       sellerKeyedIn: false,
     };
 
-    console.log('Starting buyer verification with details:', verificationDetails);
+    console.log('🔐 Starting buyer verification with details:', verificationDetails);
     
     // Verify the buyer
     const verificationResult = await payments.verifyBuyer(result.token, verificationDetails);
-    console.log('Verification result:', verificationResult);
+    console.log('✅ Verification result:', verificationResult);
 
-    if (verificationResult && verificationResult.token) {
-      console.log('Payment verified successfully, submitting to backend...');
+    if (verificationResult?.token) {
+      console.log('🎯 Payment verified successfully, submitting to backend...');
       
-      // Submit payment to backend with Square-formatted phone number and email validation token
+      // Prepare base payment data
       const paymentData = {
-        classifiedId: classifiedId,
+        referenceId: referenceId,
         paymentToken: result.token,
         verificationToken: verificationResult.token,
-        firstName: billingContact.firstName,
-        lastName: billingContact.lastName,
-        address: billingAddress.address,
-        city: billingAddress.city || 'Oakland',
-        state: billingAddress.state || 'CA',
-        postalCode: billingAddress.zipCode,
-        phoneNumber: squareFormattedPhone, // Use Square-formatted phone number
-        emailAddress: billingContact.email,
-        emailValidationToken: emailValidationToken // Add email validation token to payload
+        firstName: billingContact.firstName.trim(),
+        lastName: billingContact.lastName.trim(),
+        addressLine1: billingAddress.address.trim(),
+        addressLine2: '',
+        city: billingAddress.city.trim(),
+        state: billingAddress.state?.trim() || 'CA',
+        postalCode: billingAddress.zipCode?.trim() || '',
+        phoneNumber: squareFormattedPhone,
+        emailAddress: billingContact.email.trim(),
+        emailValidationToken: emailValidationToken.trim(),
       };
 
-      console.log('Submitting payment data with email validation token:', paymentData);
+      // Add subscription-specific data if needed
+      if (isSubscription) {
+        Object.assign(paymentData, {
+          producerPayment: {
+            actionType: 'APPLY_INITIAL',
+            cycleType: 'MONTHLY'
+          }
+        });
+
+        console.log("👀 Sending to backend", {
+          sourceIdUsedInVerify: result.token,
+          verificationToken: verificationResult.token
+        });
+        // Additional validation for subscription payments
+        if (!paymentData.addressLine1) {
+          console.error('❌ Critical error: address is still empty after processing');
+          throw new Error('Billing address cannot be empty');
+        }
+        
+        if (!paymentData.city) {
+          console.error('❌ Critical error: city is still empty after processing');
+          throw new Error('Billing city cannot be empty');
+        }
+      }
+
+      console.log('📤 Final payment payload:', paymentData);
       
-      const paymentResponse = await apiClient.post('/classified/payment', paymentData, { requireAuth: false });
-      console.log('Payment submission response:', paymentResponse);
+      // Submit to appropriate backend endpoint
+      const endpoint = isSubscription ? '/account/applyInitialPayment' : '/classified/payment';
+      const paymentResponse = await apiClient.post(endpoint, paymentData, { requireAuth: false });
+      console.log('📊 Payment submission response:', paymentResponse);
       
       return paymentResponse;
     } else {
-      console.error('Verification failed:', verificationResult.errors);
+      console.error('❌ Verification failed:', verificationResult.errors);
       throw new Error('Payment verification failed');
     }
   } else {
-    console.error('Tokenization failed:', result.errors);
+    console.error('❌ Tokenization failed:', result.errors);
     throw new Error('Failed to process payment card');
   }
 };

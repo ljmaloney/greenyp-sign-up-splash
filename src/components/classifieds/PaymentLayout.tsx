@@ -5,7 +5,6 @@ import PaymentInformationCard from '../payment/PaymentInformationCard';
 import EmailValidationCard from '../payment/EmailValidationCard';
 import UnifiedSquarePaymentCard from './UnifiedSquarePaymentCard';
 import { useParams } from 'react-router-dom';
-import { useState } from 'react';
 import { useSquarePayment } from '@/hooks/useSquarePayment';
 
 interface ClassifiedData {

@@ -7,6 +7,7 @@ import { useSquarePayment } from '@/hooks/useSquarePayment';
 import { validatePaymentFields } from '@/utils/paymentValidation';
 import { processSquarePayment } from '@/utils/squarePaymentProcessor';
 import PaymentMethodCard from '../payment/PaymentMethodCard';
+import SquarePaymentWrapper from '../payment/SquarePaymentWrapper';
 
 interface BillingContactData {
   firstName: string;
@@ -41,7 +42,8 @@ const SquarePaymentCard = ({ billingContact, billingAddress, emailValidationToke
     payments,
     card,
     error,
-    setError
+    setError,
+    cleanup
   } = useSquarePayment();
 
   const handlePayment = async () => {
@@ -96,8 +98,21 @@ const SquarePaymentCard = ({ billingContact, billingAddress, emailValidationToke
           description: "Your payment has been processed successfully.",
         });
         
-        // Redirect to payment confirmation page
-        const confirmationUrl = `/classifieds/payment/confirmation/${classifiedId}?paymentSuccess=true`;
+        // Extract payment reference information from response
+        const responseData = paymentResponse.response || {};
+        const orderRef = responseData.orderRef || '';
+        const paymentRef = responseData.paymentRef || '';
+        const receiptNumber = responseData.receiptNumber || '';
+        
+        // Build confirmation URL with payment reference data
+        const confirmationParams = new URLSearchParams();
+        confirmationParams.set('paymentSuccess', 'true');
+        if (orderRef) confirmationParams.set('orderRef', orderRef);
+        if (paymentRef) confirmationParams.set('paymentRef', paymentRef);
+        if (receiptNumber) confirmationParams.set('receiptNumber', receiptNumber);
+        
+        // Redirect to payment confirmation page with payment reference data
+        const confirmationUrl = `/classifieds/payment/confirmation/${classifiedId}?${confirmationParams.toString()}`;
         console.log('Redirecting to:', confirmationUrl);
         navigate(confirmationUrl);
       } else {
@@ -124,14 +139,22 @@ const SquarePaymentCard = ({ billingContact, billingAddress, emailValidationToke
     }
   };
 
+  const handleRetry = () => {
+    // Clear error and trigger cleanup/reinit
+    setError(null);
+    cleanup();
+  };
+
   return (
-    <PaymentMethodCard
-      cardContainerRef={cardContainerRef}
-      error={error}
-      isProcessing={isProcessing}
-      onPayment={handlePayment}
-      isCardReady={!!card}
-    />
+    <SquarePaymentWrapper onRetry={handleRetry}>
+      <PaymentMethodCard
+        cardContainerRef={cardContainerRef}
+        error={error}
+        isProcessing={isProcessing}
+        onPayment={handlePayment}
+        isCardReady={!!card}
+      />
+    </SquarePaymentWrapper>
   );
 };
 
