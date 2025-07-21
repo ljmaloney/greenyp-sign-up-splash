@@ -95,7 +95,7 @@ export const processSquarePayment = async (
         countryCode: 'US',
       },
       currencyCode: 'USD',
-      intent: 'CHARGE',
+      intent: isSubscription ? 'STORE' : 'CHARGE',
       customerInitiated: true,
       sellerKeyedIn: false,
     };
@@ -135,6 +135,10 @@ export const processSquarePayment = async (
           }
         });
 
+        console.log("👀 Sending to backend", {
+          sourceIdUsedInVerify: result.token,
+          verificationToken: verificationResult.token
+        });
         // Additional validation for subscription payments
         if (!paymentData.addressLine1) {
           console.error('❌ Critical error: address is still empty after processing');
