@@ -114,8 +114,8 @@ export const processSquareSubscriptionPayment = async (
         emailAddress: billingContact.email.trim(),
         phoneNumber: squareFormattedPhone,
         payorAddress1: billingAddress.address.trim(),
-        payorAddress2: '',// Backend expects payorAddress1
-        payorCity: billingAddress.city.trim(), // Backend expects payorCity (NOT locality)
+        payorAddress2: '',
+        payorCity: billingAddress.city.trim(),
         payorState: billingAddress.state?.trim() || 'CA',
         payorPostalCode: billingAddress.zipCode?.trim() || '',
         country: 'US',
