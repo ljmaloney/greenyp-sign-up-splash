@@ -23,7 +23,7 @@ export const processSquarePayment = async (
   payments: any,
   billingContact: BillingContactData,
   billingAddress: BillingAddressData,
-  classifiedId: string,
+  referenceId: string,
   apiClient: any,
   emailValidationToken: string,
   options: PaymentOptions = {}
@@ -35,7 +35,7 @@ export const processSquarePayment = async (
   console.log('🔍 Billing data received:', {
     billingContact,
     billingAddress,
-    referenceId: classifiedId,
+    referenceId: referenceId,
     emailValidationToken
   });
   
@@ -111,7 +111,7 @@ export const processSquarePayment = async (
       
       // Prepare base payment data
       const paymentData = {
-        referenceId: classifiedId,
+        referenceId: referenceId,
         paymentToken: result.token,
         verificationToken: verificationResult.token,
         firstName: billingContact.firstName.trim(),
