@@ -5,7 +5,6 @@ import { useApiClient } from '@/hooks/useApiClient';
 import { useToast } from '@/hooks/use-toast';
 import { validatePaymentFields } from '@/utils/paymentValidation';
 import { processSquarePayment } from '@/utils/squarePaymentProcessor';
-import { processSquareSubscriptionPayment } from '@/utils/squareSubscriptionPaymentProcessor';
 
 interface BillingContactData {
   firstName: string;
@@ -97,29 +96,17 @@ export const useUnifiedSquarePayment = ({
     try {
       let paymentResponse;
 
-      if (paymentType === 'classified') {
-        // Process classified payment
-        paymentResponse = await processSquarePayment(
+      // Process payment using unified approach
+      paymentResponse = await processSquarePayment(
           card,
           payments,
           billingContact,
           billingAddress,
-          classifiedId!,
+          paymentType === 'classified' ? classifiedId : producerId,
           apiClient,
-          emailValidationToken
-        );
-      } else {
-        // Process subscription payment
-        paymentResponse = await processSquareSubscriptionPayment(
-          card,
-          payments,
-          billingContact,
-          billingAddress,
-          producerId!,
-          apiClient,
-          emailValidationToken
-        );
-      }
+          emailValidationToken,
+          {isSubscription: paymentType === 'subscription'}
+      );
       
       // Check if payment was completed successfully
       if (paymentResponse.response?.paymentStatus === 'COMPLETED') {
@@ -132,10 +119,10 @@ export const useUnifiedSquarePayment = ({
         
         // Handle navigation based on payment type
         if (paymentType === 'classified') {
-          const responseData = paymentResponse.response || {};
-          const orderRef = responseData.orderRef || '';
-          const paymentRef = responseData.paymentRef || '';
-          const receiptNumber = responseData.receiptNumber || '';
+          const responseData = paymentResponse.response ?? {};
+          const orderRef = responseData.orderRef ?? '';
+          const paymentRef = responseData.paymentRef ?? '';
+          const receiptNumber = responseData.receiptNumber ?? '';
           
           const confirmationParams = new URLSearchParams();
           confirmationParams.set('paymentSuccess', 'true');
