@@ -76,7 +76,7 @@ export const processSquareSubscriptionPayment = async (
     
     // Prepare verification details for subscription payment
     const verificationDetails = {
-      amount: '1.00', // Minimal verification amount
+      amount: '1.00',
       billingContact: {
         givenName: billingContact.firstName || 'John',
         familyName: billingContact.lastName || 'Doe',
@@ -102,7 +102,7 @@ export const processSquareSubscriptionPayment = async (
     if (verificationResult && verificationResult.token) {
       console.log('🎯 Payment verified successfully for subscription, submitting to backend...');
       
-      // Prepare payload with EXACT field names the backend expects
+      // Prepare payload using the same field names as the working regular payment processor
       const subscriptionPaymentData = {
         producerId: producerId,
         actionType: 'APPLY_INITIAL',
@@ -111,27 +111,25 @@ export const processSquareSubscriptionPayment = async (
         verificationToken: verificationResult.token,
         firstName: billingContact.firstName.trim(),
         lastName: billingContact.lastName.trim(),
-        emailAddress: billingContact.email.trim(),
+        address: billingAddress.address.trim(),
+        city: billingAddress.city.trim(),
+        state: billingAddress.state?.trim() || 'CA',
+        postalCode: billingAddress.zipCode?.trim() || '',
         phoneNumber: squareFormattedPhone,
-        payorAddress1: billingAddress.address.trim(),
-        payorAddress2: '',
-        payorCity: billingAddress.city.trim(),
-        payorState: billingAddress.state?.trim() || 'CA',
-        payorPostalCode: billingAddress.zipCode?.trim() || '',
-        country: 'US',
+        emailAddress: billingContact.email.trim(),
         emailValidationToken: emailValidationToken.trim()
       };
 
-      console.log('📤 Final subscription payment payload with correct field names:', subscriptionPaymentData);
+      console.log('📤 Final subscription payment payload:', subscriptionPaymentData);
       
       // Additional validation before sending
-      if (!subscriptionPaymentData.payorAddress1) {
-        console.error('❌ Critical error: payorAddress1 is still empty after processing');
+      if (!subscriptionPaymentData.address) {
+        console.error('❌ Critical error: address is still empty after processing');
         throw new Error('Billing address cannot be empty');
       }
       
-      if (!subscriptionPaymentData.payorCity) {
-        console.error('❌ Critical error: payorCity is still empty after processing');
+      if (!subscriptionPaymentData.city) {
+        console.error('❌ Critical error: city is still empty after processing');
         throw new Error('Billing city cannot be empty');
       }
       
