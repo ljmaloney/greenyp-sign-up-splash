@@ -3,7 +3,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import PublicHeader from '@/components/PublicHeader';
 import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
-import NewPaymentContainer from '@/components/classifieds/NewPaymentContainer';
+import ClassifiedPaymentContainer from '@/components/classifieds/ClassifiedPaymentContainer.tsx';
 
 const Payment = () => {
   const { classifiedId } = useParams<{ classifiedId: string }>();
@@ -17,7 +17,7 @@ const Payment = () => {
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Complete Your Purchase</h1>
             <p className="text-gray-600">Review your ad details and complete payment</p>
           </div>
-          <NewPaymentContainer classifiedId={classifiedId || ''} />
+          <ClassifiedPaymentContainer classifiedId={classifiedId || ''} />
         </div>
       </main>
       <ClassifiedsFooter />
