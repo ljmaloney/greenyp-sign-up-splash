@@ -146,23 +146,31 @@ const PaymentLayout = ({ classified, customer, isSubscription = false, producerI
           validationError={validationError}
           onValidate={handleEmailValidation}
         />
-        <PaymentInformationCard 
-          classified={classified}
-          customer={customer}
-          onBillingInfoChange={handleBillingInfoUpdate}
-        />
-        <UnifiedSquarePaymentCard
-          billingContact={billingInfo.contact}
-          billingAddress={billingInfo.address}
-          emailValidationToken={billingInfo.emailValidationToken}
-          cardContainerRef={cardContainerRef}
-          payments={payments}
-          card={card}
-          squareError={squareError}
-          setSquareError={setSquareError}
-          paymentType={isSubscription ? 'subscription' : 'classified'}
-          producerId={producerId || undefined}
-        />
+        
+        {/* Payment Information Card - Only enabled after email validation */}
+        <div className={!isValidated ? 'opacity-50 pointer-events-none' : ''}>
+          <PaymentInformationCard 
+            classified={classified}
+            customer={customer}
+            onBillingInfoChange={handleBillingInfoUpdate}
+          />
+        </div>
+        
+        {/* Payment Method Card - Only enabled after email validation */}
+        <div className={!isValidated ? 'opacity-50 pointer-events-none' : ''}>
+          <UnifiedSquarePaymentCard
+            billingContact={billingInfo.contact}
+            billingAddress={billingInfo.address}
+            emailValidationToken={billingInfo.emailValidationToken}
+            cardContainerRef={cardContainerRef}
+            payments={payments}
+            card={card}
+            squareError={squareError}
+            setSquareError={setSquareError}
+            paymentType={isSubscription ? 'subscription' : 'classified'}
+            producerId={producerId || undefined}
+          />
+        </div>
         
         {/* Debug information in development */}
         {import.meta.env.DEV && (
