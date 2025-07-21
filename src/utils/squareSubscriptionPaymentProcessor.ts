@@ -99,14 +99,12 @@ export const processSquareSubscriptionPayment = async (
     const verificationResult = await payments.verifyBuyer(result.token, verificationDetails);
     console.log('✅ Subscription verification result:', verificationResult);
 
-    if (verificationResult && verificationResult.token) {
+    if (verificationResult?.token) {
       console.log('🎯 Payment verified successfully for subscription, submitting to backend...');
       
       // Prepare payload using the same field names as the working regular payment processor
       const subscriptionPaymentData = {
-        producerId: producerId,
-        actionType: 'APPLY_INITIAL',
-        cycleType: 'MONTHLY',
+        referenceId: producerId,
         paymentToken: result.token,
         verificationToken: verificationResult.token,
         firstName: billingContact.firstName.trim(),
@@ -117,7 +115,10 @@ export const processSquareSubscriptionPayment = async (
         postalCode: billingAddress.zipCode?.trim() || '',
         phoneNumber: squareFormattedPhone,
         emailAddress: billingContact.email.trim(),
-        emailValidationToken: emailValidationToken.trim()
+        emailValidationToken: emailValidationToken.trim(),
+        producerPayment: {
+          actionType: 'APPLY_INITIAL',
+          cycleType: 'MONTHLY'}
       };
 
       console.log('📤 Final subscription payment payload:', subscriptionPaymentData);

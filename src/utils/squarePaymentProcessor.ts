@@ -63,12 +63,12 @@ export const processSquarePayment = async (
     const verificationResult = await payments.verifyBuyer(result.token, verificationDetails);
     console.log('Verification result:', verificationResult);
 
-    if (verificationResult && verificationResult.token) {
+    if (verificationResult?.token) {
       console.log('Payment verified successfully, submitting to backend...');
       
       // Submit payment to backend with Square-formatted phone number and email validation token
       const paymentData = {
-        classifiedId: classifiedId,
+        referenceId: classifiedId,
         paymentToken: result.token,
         verificationToken: verificationResult.token,
         firstName: billingContact.firstName,
