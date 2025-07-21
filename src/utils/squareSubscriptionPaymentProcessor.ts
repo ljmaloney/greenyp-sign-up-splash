@@ -109,7 +109,8 @@ export const processSquareSubscriptionPayment = async (
         verificationToken: verificationResult.token,
         firstName: billingContact.firstName.trim(),
         lastName: billingContact.lastName.trim(),
-        address: billingAddress.address.trim(),
+        addressLine1: billingAddress.address.trim(),
+        addressLine2: '',
         city: billingAddress.city.trim(),
         state: billingAddress.state?.trim() || 'CA',
         postalCode: billingAddress.zipCode?.trim() || '',
@@ -124,7 +125,7 @@ export const processSquareSubscriptionPayment = async (
       console.log('📤 Final subscription payment payload:', subscriptionPaymentData);
       
       // Additional validation before sending
-      if (!subscriptionPaymentData.address) {
+      if (!subscriptionPaymentData.addressLine1) {
         console.error('❌ Critical error: address is still empty after processing');
         throw new Error('Billing address cannot be empty');
       }
