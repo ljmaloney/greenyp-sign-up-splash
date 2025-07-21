@@ -1,3 +1,4 @@
+
 import React from 'react';
 import NewOrderSummaryCard from './NewOrderSummaryCard';
 import NewAdPreviewCard from './NewAdPreviewCard';
@@ -5,7 +6,8 @@ import PaymentInformationCard from '../payment/PaymentInformationCard';
 import EmailValidationCard from '../payment/EmailValidationCard';
 import UnifiedSquarePaymentCard from './UnifiedSquarePaymentCard';
 import { useParams } from 'react-router-dom';
-import { useSquarePayment } from '@/hooks/useSquarePayment';
+import { useStableSquarePayment } from '@/hooks/useStableSquarePayment';
+import { useEmailValidation } from '@/hooks/useEmailValidation';
 
 interface ClassifiedData {
   classifiedId: string;
@@ -42,14 +44,25 @@ interface PaymentLayoutProps {
 const PaymentLayout = ({ classified, customer, isSubscription = false, producerId }: PaymentLayoutProps) => {
   const { classifiedId } = useParams<{ classifiedId: string }>();
 
-  // Initialize Square payment once at the layout level
+  console.log('💳 PaymentLayout - Initializing with stable Square payment hook', {
+    classifiedId,
+    isSubscription,
+    producerId,
+    customerEmail: customer?.emailAddress
+  });
+
+  // Use stable Square payment hook instead of the problematic useSquarePayment
   const {
     cardContainerRef,
     payments,
     card,
     error: squareError,
-    setError: setSquareError
-  } = useSquarePayment();
+    isInitialized,
+    isInitializing,
+    retryCount,
+    setError: setSquareError,
+    retryInitialization
+  } = useStableSquarePayment();
 
   const [billingInfo, setBillingInfo] = React.useState({
     contact: {
@@ -67,13 +80,51 @@ const PaymentLayout = ({ classified, customer, isSubscription = false, producerI
     emailValidationToken: ''
   });
 
+  // Enhanced email validation hook
+  const {
+    isValidating,
+    isValidated,
+    validationError,
+    validateEmail,
+    resetValidation
+  } = useEmailValidation({
+    emailAddress: customer?.emailAddress || '',
+    context: 'classifieds',
+    classifiedId: classifiedId
+  });
+
   const handleBillingInfoUpdate = React.useCallback((contact: any, address: any, emailValidationToken: string) => {
+    console.log('📝 PaymentLayout - Billing info updated', { contact, address, hasToken: !!emailValidationToken });
     setBillingInfo({ contact, address, emailValidationToken });
   }, []);
 
   const handleEmailValidationTokenChange = (value: string) => {
+    console.log('🔑 PaymentLayout - Email validation token changed', { hasValue: !!value });
     setBillingInfo(prev => ({ ...prev, emailValidationToken: value }));
+    if (!value.trim()) {
+      resetValidation();
+    }
   };
+
+  const handleEmailValidation = async () => {
+    console.log('✉️ PaymentLayout - Validating email', { 
+      token: billingInfo.emailValidationToken,
+      email: customer?.emailAddress 
+    });
+    await validateEmail(billingInfo.emailValidationToken);
+  };
+
+  // Log Square payment state changes
+  React.useEffect(() => {
+    console.log('🔄 PaymentLayout - Square payment state changed', {
+      isInitialized,
+      isInitializing,
+      hasCard: !!card,
+      hasPayments: !!payments,
+      squareError,
+      retryCount
+    });
+  }, [isInitialized, isInitializing, card, payments, squareError, retryCount]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -90,6 +141,10 @@ const PaymentLayout = ({ classified, customer, isSubscription = false, producerI
           onChange={handleEmailValidationTokenChange}
           emailAddress={customer?.emailAddress}
           helperText="A verified email address is required before placing your classified ad"
+          isValidating={isValidating}
+          isValidated={isValidated}
+          validationError={validationError}
+          onValidate={handleEmailValidation}
         />
         <PaymentInformationCard 
           classified={classified}
@@ -108,6 +163,29 @@ const PaymentLayout = ({ classified, customer, isSubscription = false, producerI
           paymentType={isSubscription ? 'subscription' : 'classified'}
           producerId={producerId || undefined}
         />
+        
+        {/* Debug information in development */}
+        {import.meta.env.DEV && (
+          <div className="bg-gray-100 p-4 rounded text-xs">
+            <div><strong>Debug Info:</strong></div>
+            <div>Square Initialized: {isInitialized ? '✅' : '❌'}</div>
+            <div>Square Initializing: {isInitializing ? '⏳' : '✅'}</div>
+            <div>Card Ready: {card ? '✅' : '❌'}</div>
+            <div>Payments Ready: {payments ? '✅' : '❌'}</div>
+            <div>Email Validated: {isValidated ? '✅' : '❌'}</div>
+            <div>Retry Count: {retryCount}</div>
+            {squareError && <div className="text-red-600">Square Error: {squareError}</div>}
+            {validationError && <div className="text-red-600">Validation Error: {validationError}</div>}
+            {retryCount > 0 && (
+              <button 
+                onClick={retryInitialization}
+                className="mt-2 px-2 py-1 bg-blue-500 text-white rounded text-xs"
+              >
+                Retry Square Init
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

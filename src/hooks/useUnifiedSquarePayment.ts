@@ -43,50 +43,71 @@ export const useUnifiedSquarePayment = ({
   const { toast } = useToast();
 
   const processPayment = useCallback(async (card: any, payments: any) => {
-    console.log('💳 Processing unified Square payment:', {
+    console.log('💳 useUnifiedSquarePayment - Processing payment with enhanced validation', {
       paymentType,
       hasCard: !!card,
       hasPayments: !!payments,
       producerId,
-      classifiedId
+      classifiedId,
+      hasEmailToken: !!emailValidationToken,
+      billingContact: {
+        hasFirstName: !!billingContact.firstName,
+        hasLastName: !!billingContact.lastName,
+        hasEmail: !!billingContact.email,
+        hasPhone: !!billingContact.phone
+      },
+      billingAddress: {
+        hasAddress: !!billingAddress.address,
+        hasCity: !!billingAddress.city,
+        hasState: !!billingAddress.state,
+        hasZipCode: !!billingAddress.zipCode
+      }
     });
 
     if (!card || !payments) {
-      setError('Payment form not initialized');
+      setError('Payment form not initialized properly. Please refresh and try again.');
+      console.error('❌ Payment form not initialized', { hasCard: !!card, hasPayments: !!payments });
       return;
     }
 
-    // Validate payment fields
+    // Enhanced validation with detailed error messages
     const validationError = validatePaymentFields(billingContact, billingAddress);
     if (validationError) {
-      setError(validationError);
+      setError(`Incomplete information: ${validationError}`);
       toast({
         title: "Required Information Missing",
         description: validationError,
         variant: "destructive",
       });
+      console.error('❌ Validation failed', { validationError, billingContact, billingAddress });
       return;
     }
 
-    // Validate email validation token
+    // Validate email validation token with specific error
     if (!emailValidationToken || emailValidationToken.trim() === '') {
-      setError('Email validation token is required');
+      const errorMsg = 'Email validation token is required before processing payment';
+      setError(errorMsg);
       toast({
-        title: "Required Information Missing",
-        description: "Email validation token is required",
+        title: "Email Validation Required",
+        description: "Please validate your email address first",
         variant: "destructive",
       });
+      console.error('❌ Email validation token missing');
       return;
     }
 
-    // Validate required IDs based on payment type
+    // Validate required IDs based on payment type with specific errors
     if (paymentType === 'classified' && !classifiedId) {
-      setError('Classified ID is missing');
+      const errorMsg = 'Classified ID is missing - cannot process payment';
+      setError(errorMsg);
+      console.error('❌ Classified ID missing for classified payment');
       return;
     }
 
     if (paymentType === 'subscription' && !producerId) {
-      setError('Producer ID is missing');
+      const errorMsg = 'Producer ID is missing - cannot process subscription payment';
+      setError(errorMsg);
+      console.error('❌ Producer ID missing for subscription payment');
       return;
     }
 
@@ -94,35 +115,46 @@ export const useUnifiedSquarePayment = ({
     setError(null);
 
     try {
-      let paymentResponse;
+      console.log('🚀 useUnifiedSquarePayment - Starting payment processing...');
 
-      // Process payment using unified approach
-      paymentResponse = await processSquarePayment(
-          card,
-          payments,
-          billingContact,
-          billingAddress,
-          paymentType === 'classified' ? classifiedId : producerId,
-          apiClient,
-          emailValidationToken,
-          {isSubscription: paymentType === 'subscription'}
+      const paymentResponse = await processSquarePayment(
+        card,
+        payments,
+        billingContact,
+        billingAddress,
+        paymentType === 'classified' ? classifiedId : producerId,
+        apiClient,
+        emailValidationToken,
+        { isSubscription: paymentType === 'subscription' }
       );
+      
+      console.log('📋 useUnifiedSquarePayment - Payment response received', {
+        status: paymentResponse.response?.paymentStatus,
+        hasResponse: !!paymentResponse.response,
+        responseKeys: paymentResponse.response ? Object.keys(paymentResponse.response) : []
+      });
       
       // Check if payment was completed successfully
       if (paymentResponse.response?.paymentStatus === 'COMPLETED') {
-        console.log('✅ Payment completed successfully');
+        console.log('✅ useUnifiedSquarePayment - Payment completed successfully');
         
         toast({
           title: "Payment Successful",
           description: "Your payment has been processed successfully.",
         });
         
-        // Handle navigation based on payment type
+        // Handle navigation based on payment type with enhanced logging
         if (paymentType === 'classified') {
           const responseData = paymentResponse.response ?? {};
           const orderRef = responseData.orderRef ?? '';
           const paymentRef = responseData.paymentRef ?? '';
           const receiptNumber = responseData.receiptNumber ?? '';
+          
+          console.log('🧾 useUnifiedSquarePayment - Classified payment references', {
+            orderRef,
+            paymentRef,
+            receiptNumber
+          });
           
           const confirmationParams = new URLSearchParams();
           confirmationParams.set('paymentSuccess', 'true');
@@ -131,30 +163,54 @@ export const useUnifiedSquarePayment = ({
           if (receiptNumber) confirmationParams.set('receiptNumber', receiptNumber);
           
           const confirmationUrl = `/classifieds/payment/confirmation/${classifiedId}?${confirmationParams.toString()}`;
+          console.log('🔗 useUnifiedSquarePayment - Navigating to:', confirmationUrl);
           navigate(confirmationUrl);
         } else {
           // Navigate to subscription confirmation
+          console.log('🔗 useUnifiedSquarePayment - Navigating to subscription confirmation');
           navigate('/subscribers/payment/confirmation');
         }
       } else {
-        console.log('❌ Payment not completed, status:', paymentResponse.response?.paymentStatus);
-        setError('Payment was not completed successfully');
+        const status = paymentResponse.response?.paymentStatus || 'UNKNOWN';
+        console.error('❌ useUnifiedSquarePayment - Payment not completed', { 
+          status,
+          response: paymentResponse.response 
+        });
+        setError(`Payment was not completed. Status: ${status}`);
         toast({
           title: "Payment Issue",
-          description: "There was an issue completing your payment. Please try again.",
+          description: `Payment status: ${status}. Please try again.`,
           variant: "destructive",
         });
       }
     } catch (err) {
-      console.error('❌ Payment processing error:', err);
-      setError('Payment processing failed');
+      console.error('❌ useUnifiedSquarePayment - Payment processing error:', err);
+      
+      // Enhanced error handling with specific messages
+      let errorMessage = 'Payment processing failed';
+      if (err instanceof Error) {
+        if (err.message.includes('network') || err.message.includes('fetch')) {
+          errorMessage = 'Network error occurred. Please check your connection and try again.';
+        } else if (err.message.includes('400')) {
+          errorMessage = 'Invalid payment information. Please check your details and try again.';
+        } else if (err.message.includes('401') || err.message.includes('403')) {
+          errorMessage = 'Authentication error. Please refresh the page and try again.';
+        } else if (err.message.includes('500')) {
+          errorMessage = 'Server error occurred. Please try again in a few moments.';
+        } else {
+          errorMessage = `Payment error: ${err.message}`;
+        }
+      }
+      
+      setError(errorMessage);
       toast({
         title: "Payment Failed",
-        description: "There was an error processing your payment. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
       setIsProcessing(false);
+      console.log('🏁 useUnifiedSquarePayment - Payment processing completed');
     }
   }, [
     billingContact,
