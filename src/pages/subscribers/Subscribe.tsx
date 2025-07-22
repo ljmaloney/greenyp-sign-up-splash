@@ -1,6 +1,6 @@
 
 import React from 'react';
-import Header from '@/components/Header';
+import SubscribersHeader from '@/components/SubscribersHeader';
 import Footer from '@/components/Footer';
 import SubscribeHeroSection from '@/components/subscription/HeroSection';
 import PricingSectionSubscribe from '@/components/subscription/PricingSection';
@@ -11,7 +11,7 @@ import SubscribeCTASection from '@/components/subscription/CTASection';
 const Subscribe = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <SubscribersHeader />
       <main className="flex-grow">
         <SubscribeHeroSection />
         <PricingSectionSubscribe />

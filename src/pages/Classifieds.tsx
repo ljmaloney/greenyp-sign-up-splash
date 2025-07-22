@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import PublicHeader from '@/components/PublicHeader';
+import ClassifiedsHeader from '@/components/ClassifiedsHeader';
 import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
 import ClassifiedsFiltersLive from '@/components/classifieds/ClassifiedsFiltersLive';
 import ClassifiedsList from '@/components/classifieds/ClassifiedsList';
@@ -14,7 +14,7 @@ const Classifieds = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <PublicHeader />
+      <ClassifiedsHeader />
       <main className="flex-grow bg-gray-50 py-8">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
