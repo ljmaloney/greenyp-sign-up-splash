@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import PublicHeader from '@/components/PublicHeader';
 import SearchForm from '@/components/SearchForm';
 import CategorySection from '@/components/CategorySection';
@@ -8,8 +8,18 @@ import Footer from '@/components/Footer';
 import DevApiConfig from '@/components/DevApiConfig';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import { API_CONFIG, isUsingLocalApi } from '@/config/api';
 
 const PublicIndex = () => {
+  // Log API configuration on page load
+  useEffect(() => {
+    console.log('🌐 Current API Configuration:', {
+      baseUrl: API_CONFIG.BASE_URL,
+      imageBaseUrl: API_CONFIG.IMAGE_BASE_URL,
+      isLocalApi: isUsingLocalApi()
+    });
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col">
       <PublicHeader />
@@ -37,10 +47,7 @@ const PublicIndex = () => {
         
         <SearchForm />
         <CategorySection />
-
         <FeaturesSection />
-        
-
       </main>
       
       <Footer />

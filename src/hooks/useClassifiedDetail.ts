@@ -2,6 +2,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useApiClient } from '@/hooks/useApiClient';
 import { Classified } from '@/types/classifieds';
+import { API_CONFIG } from '@/config/api';
 
 interface ClassifiedDetailApiResponse {
   response: {
@@ -83,6 +84,7 @@ export const useClassifiedDetail = (id: string) => {
     queryKey: ['classifiedDetail', id],
     queryFn: async (): Promise<Classified | null> => {
       console.log('🔍 Fetching classified detail for ID:', id);
+      console.log('🌐 Current API host:', API_CONFIG.BASE_URL);
       
       if (!id || id === ':id') {
         console.error('❌ Invalid or missing classified ID:', id);
@@ -90,8 +92,13 @@ export const useClassifiedDetail = (id: string) => {
       }
       
       try {
+        // Log request URL for debugging
+        const endpoint = `/classified/${id}`;
+        const fullUrl = `${API_CONFIG.BASE_URL}${endpoint}`;
+        console.log('🔗 Making API request to:', fullUrl);
+        
         const response: ClassifiedDetailApiResponse = await apiClient.get(
-          `/classified/${id}`,
+          endpoint,
           { requireAuth: false }
         );
         
@@ -113,6 +120,14 @@ export const useClassifiedDetail = (id: string) => {
         return transformedClassified;
       } catch (error) {
         console.error('❌ Failed to fetch classified detail:', error);
+        // Log more details about the error for debugging
+        console.error('Error details:', {
+          id,
+          apiHost: API_CONFIG.BASE_URL,
+          endpoint: `/classified/${id}`,
+          fullUrl: `${API_CONFIG.BASE_URL}/classified/${id}`,
+          error
+        });
         throw error;
       }
     },
