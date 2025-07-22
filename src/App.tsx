@@ -189,7 +189,7 @@ function App() {
               <Route path="/classifieds/payment/confirmation/:classifiedId" element={<PaymentConfirmation />} />
               <Route path="/classifieds/search" element={<SearchResultsClassifieds />} />
               <Route path="/classifieds/categories" element={<CategoryDescriptions />} />
-              <Route path="/classifieds/:id" element={<ClassifiedDetail />} />
+              <Route path="/classifieds/detail/:id" element={<ClassifiedDetail />} />
             </Routes>
           </Router>
           <Toaster />
