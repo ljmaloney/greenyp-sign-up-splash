@@ -29,26 +29,12 @@ export const useClassifiedsNavigation = () => {
       };
     }
     
-    // For search results page
-    if (location.pathname === '/classifieds/search') {
-      return {
-        backUrl: '/classifieds',
-        backLabel: 'Back to Classifieds'
-      };
-    }
-    
     return null;
   };
 
   const shouldShowBackButton = () => {
-    // Don't show on main classifieds page
-    if (location.pathname === '/classifieds') {
-      return false;
-    }
-    
-    // Show on detail pages and search pages
-    return location.pathname.startsWith('/classifieds/detail/') || 
-           location.pathname === '/classifieds/search';
+    // Only show on detail pages
+    return location.pathname.startsWith('/classifieds/detail/');
   };
 
   return {
