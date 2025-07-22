@@ -27,6 +27,11 @@ const InvoiceHistoryTable = ({ invoices, isLoading, error }: InvoiceHistoryTable
     }
   };
 
+  // Check if the error is a 404 error related to invoice fetching
+  const is404Error = (error: Error) => {
+    return error.message.includes('404') && error.message.includes('not found');
+  };
+
   if (isLoading) {
     return (
       <Card>
@@ -50,7 +55,12 @@ const InvoiceHistoryTable = ({ invoices, isLoading, error }: InvoiceHistoryTable
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center py-8">
-            <div className="text-sm text-red-600">Error loading billing history: {error.message}</div>
+            <div className="text-sm text-red-600">
+              {is404Error(error) 
+                ? "No Invoices found for the selected date range" 
+                : `Error loading billing history: ${error.message}`
+              }
+            </div>
           </div>
         </CardContent>
       </Card>
