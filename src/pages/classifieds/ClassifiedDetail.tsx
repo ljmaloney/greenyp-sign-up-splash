@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import PublicHeader from '@/components/PublicHeader';
+import ClassifiedsHeader from '@/components/ClassifiedsHeader';
 import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
 import ContactSellerDialog from '@/components/classifieds/ContactSellerDialog';
 import PaymentSuccessBanner from '@/components/classifieds/PaymentSuccessBanner';
@@ -143,7 +143,7 @@ const ClassifiedDetail = () => {
   return (
     <>
       <div className="min-h-screen flex flex-col">
-        <PublicHeader />
+        <ClassifiedsHeader />
         <main className="flex-grow bg-gray-50 py-8">
           <div className="container mx-auto px-4 max-w-4xl">
             {showSuccessBanner && (
