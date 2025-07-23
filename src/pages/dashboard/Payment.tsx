@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -5,12 +6,16 @@ import { Button } from "@/components/ui/button";
 import { CreditCard, Edit } from 'lucide-react';
 import { useAccountData } from '@/hooks/useAccountData';
 import { useInvoiceHistory } from '@/hooks/useInvoiceHistory';
+import { usePaymentMethod } from '@/hooks/usePaymentMethod';
 import InvoiceDateRangeSelector from '@/components/dashboard/InvoiceDateRangeSelector';
 import InvoiceHistoryTable from '@/components/dashboard/InvoiceHistoryTable';
 
 const Payment = () => {
   const { data: accountData } = useAccountData();
   const producerId = accountData?.producer?.producerId;
+
+  // Fetch payment method data
+  const { data: paymentMethod, isLoading: paymentLoading, error: paymentError } = usePaymentMethod(producerId || '');
 
   // Date range state
   const [startDate, setStartDate] = useState<Date | undefined>();
@@ -52,12 +57,25 @@ const Payment = () => {
     }
   };
 
-  // Mock payment info
-  const paymentInfo = {
-    cardType: 'Visa',
-    lastFour: '4242',
-    expiryDate: '12/25',
-    billingAddress: '123 Garden Street, San Francisco, CA 94102'
+  // Format card expiry date
+  const formatExpiryDate = (month: number, year: number) => {
+    if (!month || !year) return 'N/A';
+    const monthStr = month.toString().padStart(2, '0');
+    const yearStr = year.toString().slice(-2);
+    return `${monthStr}/${yearStr}`;
+  };
+
+  // Format billing address
+  const formatBillingAddress = () => {
+    if (!paymentMethod) return 'No address on file';
+    
+    const parts = [
+      paymentMethod.payorAddress1,
+      paymentMethod.payorAddress2,
+      `${paymentMethod.payorCity}, ${paymentMethod.payorState} ${paymentMethod.payorPostalCode}`
+    ].filter(Boolean);
+    
+    return parts.join(', ') || 'No address on file';
   };
 
   return (
@@ -80,14 +98,32 @@ const Payment = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div>
-                <p className="text-sm text-gray-600">Card Type</p>
-                <p className="font-medium">{paymentInfo.cardType} ending in {paymentInfo.lastFour}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Expires</p>
-                <p className="font-medium">{paymentInfo.expiryDate}</p>
-              </div>
+              {paymentLoading ? (
+                <p className="text-gray-600">Loading payment method...</p>
+              ) : paymentError ? (
+                <p className="text-red-600">Error loading payment method</p>
+              ) : paymentMethod ? (
+                <>
+                  <div>
+                    <p className="text-sm text-gray-600">Card Type</p>
+                    <p className="font-medium">
+                      {paymentMethod.cardDetails.cardBrand} ending in {paymentMethod.cardDetails.last4}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Expires</p>
+                    <p className="font-medium">
+                      {formatExpiryDate(paymentMethod.cardDetails.expMonth, paymentMethod.cardDetails.expYear)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Cardholder Name</p>
+                    <p className="font-medium">{paymentMethod.cardDetails.cardholderName || 'N/A'}</p>
+                  </div>
+                </>
+              ) : (
+                <p className="text-gray-600">No payment method on file</p>
+              )}
             </CardContent>
           </Card>
           
@@ -96,7 +132,23 @@ const Payment = () => {
               <CardTitle>Billing Address</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-900">{paymentInfo.billingAddress}</p>
+              {paymentLoading ? (
+                <p className="text-gray-600">Loading billing address...</p>
+              ) : paymentError ? (
+                <p className="text-red-600">Error loading billing address</p>
+              ) : paymentMethod ? (
+                <>
+                  <p className="text-gray-900">{formatBillingAddress()}</p>
+                  {paymentMethod.phoneNumber && (
+                    <p className="text-gray-600 mt-2">Phone: {paymentMethod.phoneNumber}</p>
+                  )}
+                  {paymentMethod.emailAddress && (
+                    <p className="text-gray-600">Email: {paymentMethod.emailAddress}</p>
+                  )}
+                </>
+              ) : (
+                <p className="text-gray-600">No billing address on file</p>
+              )}
               <Button variant="outline" size="sm" className="mt-4">
                 <Edit className="w-4 h-4 mr-2" />
                 Update Address
