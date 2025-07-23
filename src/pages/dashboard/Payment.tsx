@@ -78,6 +78,9 @@ const Payment = () => {
     return parts.join(', ') || 'No address on file';
   };
 
+  // Check if error is a 404 (no payment method found)
+  const isPaymentMethodNotFound = paymentError?.message?.includes('404');
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -101,7 +104,12 @@ const Payment = () => {
               {paymentLoading ? (
                 <p className="text-gray-600">Loading payment method...</p>
               ) : paymentError ? (
-                <p className="text-red-600">Error loading payment method</p>
+                <p className="text-gray-600">
+                  {isPaymentMethodNotFound 
+                    ? "No payment method on file. Add a payment method to get started." 
+                    : "Error loading payment method"
+                  }
+                </p>
               ) : paymentMethod ? (
                 <>
                   <div>
@@ -135,7 +143,12 @@ const Payment = () => {
               {paymentLoading ? (
                 <p className="text-gray-600">Loading billing address...</p>
               ) : paymentError ? (
-                <p className="text-red-600">Error loading billing address</p>
+                <p className="text-gray-600">
+                  {isPaymentMethodNotFound 
+                    ? "No billing address on file. Add a payment method to set up billing address." 
+                    : "Error loading billing address"
+                  }
+                </p>
               ) : paymentMethod ? (
                 <>
                   <p className="text-gray-900">{formatBillingAddress()}</p>
