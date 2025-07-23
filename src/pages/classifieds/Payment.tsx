@@ -257,7 +257,7 @@ const Payment = () => {
                 onValidate={handleEmailValidation}
               />
 
-              {/* Payment Information - Only enabled after email validation, no payment button */}
+              {/* Payment Information - Only enabled after email validation, NO payment button */}
               <div className={!isValidated ? 'opacity-50 pointer-events-none' : ''}>
                 <PaymentInformationCard
                   classified={classifiedData.classified}
@@ -269,7 +269,7 @@ const Payment = () => {
                 />
               </div>
 
-              {/* Payment Method - Only enabled after email validation */}
+              {/* Payment Method - Only enabled after email validation, THIS IS THE ONLY PAYMENT BUTTON */}
               <div className={!isValidated ? 'opacity-50 pointer-events-none' : ''}>
                 <ReactSquareCard
                   billingContact={billingContact}

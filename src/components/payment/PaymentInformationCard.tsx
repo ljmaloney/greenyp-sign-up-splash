@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -281,18 +280,6 @@ const PaymentInformationCard = ({
             disabled
           />
         </div>
-
-        {/* Optional Payment Button - only shown if explicitly requested */}
-        {showPaymentButton && (
-          <div className="pt-4 border-t">
-            <Button
-              className="w-full"
-              disabled={!isEmailValidated}
-            >
-              Process Payment
-            </Button>
-          </div>
-        )}
       </CardContent>
     </Card>
   );
