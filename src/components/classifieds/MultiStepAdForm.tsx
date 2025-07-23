@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { useMultiStepAdForm } from '@/hooks/useMultiStepAdForm';
+import { useAdFormSubmission } from '@/hooks/useAdFormSubmission';
 import AdBasicDetailsStep from './AdBasicDetailsStep';
 import AdImageUploadStep from './AdImageUploadStep';
 
@@ -13,16 +14,10 @@ const MultiStepAdForm = () => {
     selectedPackage
   } = useMultiStepAdForm();
 
-  const handleBasicFormSubmit = () => {
-    console.log('Basic form submitted, moving to images step');
-    setCurrentStep('images');
-  };
-
-  const handleImageUploadComplete = () => {
-    console.log('Image upload complete, ad creation finished');
-    // For now, just log completion - payment functionality removed
-    alert('Ad created successfully! Payment functionality has been removed.');
-  };
+  const {
+    handleBasicFormSubmit,
+    handleImageUploadComplete
+  } = useAdFormSubmission(formData, selectedPackage, setCurrentStep);
 
   if (currentStep === 'basic') {
     return (
