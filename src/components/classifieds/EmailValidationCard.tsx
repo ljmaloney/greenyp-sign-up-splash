@@ -1,11 +1,11 @@
 
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Mail, Check, Clock } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
+import { Mail, CheckCircle, AlertCircle } from 'lucide-react';
+import { validateEmailToken } from '@/services/emailValidationService';
 
 interface EmailValidationCardProps {
   classifiedId: string;
@@ -18,48 +18,36 @@ const EmailValidationCard = ({
   emailAddress, 
   onValidationSuccess 
 }: EmailValidationCardProps) => {
-  const [validationCode, setValidationCode] = useState('');
-  const [isCodeSent, setIsCodeSent] = useState(false);
+  const [token, setToken] = useState('');
   const [isValidating, setIsValidating] = useState(false);
   const [isValidated, setIsValidated] = useState(false);
-  const { toast } = useToast();
+  const [error, setError] = useState('');
 
-  const handleSendCode = async () => {
-    try {
-      // Simulate sending validation code
-      setIsCodeSent(true);
-      toast({
-        title: "Validation Code Sent",
-        description: `A validation code has been sent to ${emailAddress}`,
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to send validation code. Please try again.",
-        variant: "destructive",
-      });
+  const handleValidate = async () => {
+    if (!token.trim()) {
+      setError('Please enter a validation token');
+      return;
     }
-  };
 
-  const handleValidateCode = async () => {
-    if (!validationCode.trim()) return;
-    
     setIsValidating(true);
+    setError('');
+
     try {
-      // Simulate code validation - for demo purposes, accept any 6-digit code
-      if (validationCode.length === 6) {
-        const mockToken = 'validated_' + classifiedId;
-        setIsValidated(true);
-        onValidationSuccess(mockToken);
-      } else {
-        throw new Error('Invalid code');
-      }
-    } catch (error) {
-      toast({
-        title: "Invalid Code",
-        description: "The validation code is incorrect. Please try again.",
-        variant: "destructive",
+      const result = await validateEmailToken({
+        token: token.trim(),
+        emailAddress,
+        context: 'classifieds',
+        classifiedId
       });
+
+      if (result.success) {
+        setIsValidated(true);
+        onValidationSuccess(token.trim());
+      } else {
+        setError(result.error || 'Validation failed');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Validation failed');
     } finally {
       setIsValidating(false);
     }
@@ -70,13 +58,13 @@ const EmailValidationCard = ({
       <Card className="border-green-200 bg-green-50">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-green-700">
-            <Check className="h-5 w-5" />
+            <CheckCircle className="h-5 w-5" />
             Email Validated
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-green-700">
-            Email address has been successfully validated. You can now proceed with billing information.
+          <p className="text-green-600 text-sm">
+            Email validation successful for {emailAddress}
           </p>
         </CardContent>
       </Card>
@@ -88,52 +76,40 @@ const EmailValidationCard = ({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Mail className="h-5 w-5" />
-          Email Validation
+          Email Validation Required
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="bg-blue-50 p-3 rounded-lg">
-          <p className="text-sm text-blue-800">
-            We need to validate your email address: <strong>{emailAddress}</strong>
-          </p>
+        <p className="text-sm text-gray-600">
+          Please enter the validation token sent to <strong>{emailAddress}</strong> to verify your email address.
+        </p>
+        
+        <div className="space-y-2">
+          <Label htmlFor="validation-token">Validation Token</Label>
+          <Input
+            id="validation-token"
+            type="text"
+            value={token}
+            onChange={(e) => setToken(e.target.value)}
+            placeholder="Enter 6-digit token"
+            disabled={isValidating}
+          />
         </div>
 
-        {!isCodeSent ? (
-          <Button onClick={handleSendCode} className="w-full">
-            Send Validation Code
-          </Button>
-        ) : (
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <Clock className="h-4 w-4" />
-              <span>Code sent to {emailAddress}</span>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="validationCode">Enter 6-digit validation code</Label>
-              <Input
-                id="validationCode"
-                value={validationCode}
-                onChange={(e) => setValidationCode(e.target.value)}
-                placeholder="123456"
-                maxLength={6}
-              />
-            </div>
-            
-            <div className="flex gap-2">
-              <Button 
-                onClick={handleValidateCode} 
-                disabled={validationCode.length !== 6 || isValidating}
-                className="flex-1"
-              >
-                {isValidating ? 'Validating...' : 'Validate Code'}
-              </Button>
-              <Button variant="outline" onClick={handleSendCode}>
-                Resend
-              </Button>
-            </div>
+        {error && (
+          <div className="flex items-center gap-2 text-red-600 text-sm">
+            <AlertCircle className="h-4 w-4" />
+            <span>{error}</span>
           </div>
         )}
+
+        <Button 
+          onClick={handleValidate}
+          disabled={isValidating || !token.trim()}
+          className="w-full"
+        >
+          {isValidating ? 'Validating...' : 'Validate Email'}
+        </Button>
       </CardContent>
     </Card>
   );

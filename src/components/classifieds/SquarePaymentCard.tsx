@@ -2,7 +2,10 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CreditCard, Shield } from 'lucide-react';
+import { CreditCard, Loader2 } from 'lucide-react';
+import { useSquarePayment } from '@/hooks/useSquarePayment';
+import { useSquareForm } from '@/hooks/useSquareForm';
+import { useApiClient } from '@/hooks/useApiClient';
 
 interface SquarePaymentCardProps {
   classifiedId: string;
@@ -23,71 +26,174 @@ const SquarePaymentCard = ({
   onPaymentError,
   onCancel
 }: SquarePaymentCardProps) => {
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const apiClient = useApiClient();
+  
+  const { isLoading, error, isReady, retryInitialization } = useSquarePayment();
 
-  const handlePayment = async () => {
-    if (!isEnabled) return;
+  const handlePaymentSuccess = async (tokenData: any) => {
+    setIsProcessingPayment(true);
     
-    setIsProcessing(true);
     try {
-      // Simulate payment processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      console.log('💳 Processing classified payment...', {
+        classifiedId,
+        emailValidationToken,
+        billingInfo,
+        tokenData
+      });
+
+      const payload = {
+        referenceId: classifiedId,
+        paymentToken: tokenData.token,
+        verificationToken: tokenData.verificationToken,
+        emailValidationToken,
+        billingFirstName: billingInfo.firstName,
+        billingLastName: billingInfo.lastName,
+        billingAddress: billingInfo.address,
+        billingAddress2: billingInfo.address2,
+        billingCity: billingInfo.city,
+        billingState: billingInfo.state,
+        billingZipCode: billingInfo.zipCode,
+        billingPhone: billingInfo.phone,
+        billingEmail: billingInfo.email,
+        producerPayment: null
+      };
+
+      const response = await apiClient.post('/classified/payment', payload, { requireAuth: false });
       
-      // For demo purposes, simulate successful payment
-      onPaymentSuccess({ paymentId: 'demo_payment_' + Date.now() });
+      console.log('✅ Payment successful:', response);
+      onPaymentSuccess(response);
     } catch (error) {
-      onPaymentError('Payment processing failed. Please try again.');
+      console.error('❌ Payment failed:', error);
+      onPaymentError(error instanceof Error ? error.message : 'Payment processing failed');
     } finally {
-      setIsProcessing(false);
+      setIsProcessingPayment(false);
     }
   };
 
+  const { cardTokenizeResponseReceived, isProcessing } = useSquareForm({
+    billingContact: {
+      firstName: billingInfo.firstName,
+      lastName: billingInfo.lastName,
+      email: billingInfo.email,
+      phone: billingInfo.phone
+    },
+    billingAddress: {
+      address: billingInfo.address,
+      city: billingInfo.city,
+      state: billingInfo.state,
+      zipCode: billingInfo.zipCode
+    },
+    onPaymentSuccess: handlePaymentSuccess,
+    onPaymentError
+  });
+
+  if (!isEnabled) {
+    return (
+      <Card className="opacity-50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <CreditCard className="h-5 w-5" />
+            Payment Information
+          </CardTitle>
+          <p className="text-sm text-gray-500">
+            Complete email validation and billing information to enable payment
+          </p>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-8 text-gray-400">
+            Payment form will be available after completing the previous steps
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <CreditCard className="h-5 w-5" />
+            Payment Information
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+            <p>Initializing payment system...</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <CreditCard className="h-5 w-5" />
+            Payment Information
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-8">
+            <p className="text-red-600 mb-4">{error}</p>
+            <Button onClick={retryInitialization} variant="outline">
+              Retry Initialization
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
-    <Card className={!isEnabled ? 'opacity-50' : ''}>
+    <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <CreditCard className="h-5 w-5" />
           Payment Information
         </CardTitle>
-        {!isEnabled && (
-          <p className="text-sm text-gray-500">
-            Complete email validation and billing information to enable payment
-          </p>
-        )}
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-            <Shield className="h-4 w-4" />
-            <span>Secure Payment Processing</span>
-          </div>
-          <p className="text-sm text-gray-600">
-            Payment information is processed securely through Square. 
-            Your card details are encrypted and never stored on our servers.
-          </p>
+      <CardContent className="space-y-6">
+        <div id="card-container" className="min-h-[200px] border rounded p-4">
+          {isReady ? (
+            <div className="text-center text-gray-500">
+              Square payment form will appear here
+            </div>
+          ) : (
+            <div className="text-center text-gray-400">
+              Loading payment form...
+            </div>
+          )}
         </div>
 
-        <div className="space-y-3">
-          <div className="bg-yellow-50 p-3 rounded-lg text-sm">
-            <p className="text-yellow-800">
-              <strong>Demo Mode:</strong> This is a demonstration payment form. 
-              No actual payment will be processed.
-            </p>
-          </div>
+        <div className="flex gap-4">
+          <Button
+            variant="outline"
+            onClick={onCancel}
+            disabled={isProcessing || isProcessingPayment}
+            className="flex-1"
+          >
+            Cancel
+          </Button>
           
-          <div className="flex gap-3">
-            <Button
-              onClick={handlePayment}
-              disabled={!isEnabled || isProcessing}
-              className="flex-1"
-            >
-              {isProcessing ? 'Processing Payment...' : 'Complete Payment'}
-            </Button>
-            
-            <Button variant="outline" onClick={onCancel}>
-              Cancel
-            </Button>
-          </div>
+          <Button
+            onClick={() => cardTokenizeResponseReceived({ token: 'mock_token' })}
+            disabled={isProcessing || isProcessingPayment || !isReady}
+            className="flex-1"
+          >
+            {isProcessing || isProcessingPayment ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                Processing...
+              </>
+            ) : (
+              'Process Payment'
+            )}
+          </Button>
         </div>
       </CardContent>
     </Card>
