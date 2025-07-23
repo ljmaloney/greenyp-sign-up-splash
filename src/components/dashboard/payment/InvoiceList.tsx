@@ -6,32 +6,57 @@ import InvoiceHistoryTable from '@/components/dashboard/payment/InvoiceHistoryTa
 
 interface InvoiceListProps {
   producerId: string;
+  initialStartDate?: Date;
+  initialEndDate?: Date;
+  autoSearch?: boolean;
+  defaultDateRangeMonths?: number;
 }
 
-const InvoiceList = ({ producerId }: InvoiceListProps) => {
+const InvoiceList = ({ 
+  producerId,
+  initialStartDate,
+  initialEndDate,
+  autoSearch = true,
+  defaultDateRangeMonths = 12
+}: InvoiceListProps) => {
   // Date range state
-  const [startDate, setStartDate] = useState<Date | undefined>();
-  const [endDate, setEndDate] = useState<Date | undefined>();
+  const [startDate, setStartDate] = useState<Date | undefined>(initialStartDate);
+  const [endDate, setEndDate] = useState<Date | undefined>(initialEndDate);
   const [searchDates, setSearchDates] = useState<{
     startDate: string;
     endDate: string;
   } | null>(null);
 
-  // Initialize with last 12 months on component mount
+  // Initialize dates and search behavior
   useEffect(() => {
-    const end = new Date();
-    const start = new Date();
-    start.setMonth(start.getMonth() - 12);
-    
-    setStartDate(start);
-    setEndDate(end);
-    
-    // Auto-trigger initial search
-    setSearchDates({
-      startDate: start.toISOString().split('T')[0],
-      endDate: end.toISOString().split('T')[0]
-    });
-  }, []);
+    // Only set default dates if they weren't provided as props
+    if (!initialStartDate || !initialEndDate) {
+      const end = new Date();
+      const start = new Date();
+      start.setMonth(start.getMonth() - defaultDateRangeMonths);
+      
+      if (!initialStartDate) {
+        setStartDate(start);
+      }
+      if (!initialEndDate) {
+        setEndDate(end);
+      }
+      
+      // Auto-trigger search only if autoSearch is enabled
+      if (autoSearch) {
+        setSearchDates({
+          startDate: (initialStartDate || start).toISOString().split('T')[0],
+          endDate: (initialEndDate || end).toISOString().split('T')[0]
+        });
+      }
+    } else if (autoSearch) {
+      // If both dates are provided and autoSearch is enabled, trigger search immediately
+      setSearchDates({
+        startDate: initialStartDate.toISOString().split('T')[0],
+        endDate: initialEndDate.toISOString().split('T')[0]
+      });
+    }
+  }, [initialStartDate, initialEndDate, autoSearch, defaultDateRangeMonths]);
 
   // Fetch invoice history
   const { data: invoices = [], isLoading, error } = useInvoiceHistory({

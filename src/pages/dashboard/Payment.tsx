@@ -59,8 +59,14 @@ const Payment = () => {
           />
         </div>
 
-        {/* Invoice List Section */}
-        {producerId && <InvoiceList producerId={producerId} />}
+        {/* Invoice List Section - using default behavior (12 months, auto-search) */}
+        {producerId && (
+          <InvoiceList 
+            producerId={producerId}
+            autoSearch={true}
+            defaultDateRangeMonths={12}
+          />
+        )}
 
         {/* Update Payment Method Dialog */}
         <UpdatePaymentMethodDialog
