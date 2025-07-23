@@ -153,6 +153,8 @@ const PaymentLayout = ({ classified, customer, isSubscription = false, producerI
             classified={classified}
             customer={customer}
             onBillingInfoChange={handleBillingInfoUpdate}
+            emailValidationToken={billingInfo.emailValidationToken}
+            isEmailValidated={isValidated}
           />
         </div>
         
