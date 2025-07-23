@@ -23,7 +23,7 @@ export interface PaymentMethod {
   payorPostalCode?: string;
   phoneNumber?: string;
   emailAddress?: string;
-  // Add missing card details structure
+  // Fixed card details structure to match actual usage
   cardDetails?: {
     cardBrand?: string;
     last4?: string;

@@ -12,11 +12,32 @@ interface SavedPaymentMethodProps {
 
 const SavedPaymentMethod = ({ paymentMethod, isLoading, error }: SavedPaymentMethodProps) => {
   // Format card expiry date
-  const formatExpiryDate = (month: number, year: number) => {
+  const formatExpiryDate = (month?: number, year?: number) => {
     if (!month || !year) return 'N/A';
     const monthStr = month.toString().padStart(2, '0');
     const yearStr = year.toString().slice(-2);
     return `${monthStr}/${yearStr}`;
+  };
+
+  // Get card details with fallback logic
+  const getCardBrand = () => {
+    return paymentMethod?.cardDetails?.cardBrand || paymentMethod?.cardBrand || 'Card';
+  };
+
+  const getLastFour = () => {
+    return paymentMethod?.cardDetails?.last4 || paymentMethod?.lastFourDigits || paymentMethod?.last4 || '****';
+  };
+
+  const getExpiryMonth = () => {
+    return paymentMethod?.cardDetails?.expMonth || paymentMethod?.expiryMonth;
+  };
+
+  const getExpiryYear = () => {
+    return paymentMethod?.cardDetails?.expYear || paymentMethod?.expiryYear;
+  };
+
+  const getCardholderName = () => {
+    return paymentMethod?.cardDetails?.cardholderName || 'N/A';
   };
 
   // Check if error is a 404 (no payment method found)
@@ -45,18 +66,18 @@ const SavedPaymentMethod = ({ paymentMethod, isLoading, error }: SavedPaymentMet
             <div>
               <p className="text-sm text-gray-600">Card Type</p>
               <p className="font-medium">
-                {paymentMethod.cardDetails.cardBrand} ending in {paymentMethod.cardDetails.last4}
+                {getCardBrand()} ending in {getLastFour()}
               </p>
             </div>
             <div>
               <p className="text-sm text-gray-600">Expires</p>
               <p className="font-medium">
-                {formatExpiryDate(paymentMethod.cardDetails.expMonth, paymentMethod.cardDetails.expYear)}
+                {formatExpiryDate(getExpiryMonth(), getExpiryYear())}
               </p>
             </div>
             <div>
               <p className="text-sm text-gray-600">Cardholder Name</p>
-              <p className="font-medium">{paymentMethod.cardDetails.cardholderName || 'N/A'}</p>
+              <p className="font-medium">{getCardholderName()}</p>
             </div>
           </>
         ) : (
