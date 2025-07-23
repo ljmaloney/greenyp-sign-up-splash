@@ -168,6 +168,18 @@ const PaymentInformationCard = ({
           />
         </div>
         
+        <div className="space-y-2">
+          <Label htmlFor="address2">Address Line 2</Label>
+          <Input
+            id="address2"
+            type="text"
+            value={billingAddress.address2 || ''}
+            onChange={(e) => handleAddressChange('address2', e.target.value)}
+            disabled={!isEmailValidated}
+            placeholder="Suite, unit, building, floor, etc."
+          />
+        </div>
+        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="city">City *</Label>

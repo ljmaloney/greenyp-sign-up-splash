@@ -36,6 +36,7 @@ export const usePaymentInformation = ({
 
   const [billingAddress, setBillingAddress] = useState({
     address: '',
+    address2: '',
     city: '',
     state: '',
     zipCode: ''
@@ -53,6 +54,7 @@ export const usePaymentInformation = ({
 
     const newAddress = {
       address: customer.address,
+      address2: '',
       city: customer.city,
       state: customer.state,
       zipCode: customer.postalCode
