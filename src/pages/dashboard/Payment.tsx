@@ -27,6 +27,8 @@ const Payment = () => {
     squareError,
     isInitialized,
     isInitializing,
+    initializationPhase,
+    retryCount,
     cardContainerRef,
     openDialog,
     closeDialog,
@@ -84,6 +86,8 @@ const Payment = () => {
           squareError={squareError}
           isSquareReady={isInitialized}
           isSquareInitializing={isInitializing}
+          initializationPhase={initializationPhase}
+          retryCount={retryCount}
           onSquareRetry={retrySquareInitialization}
         />
       </div>

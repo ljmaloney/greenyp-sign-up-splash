@@ -56,7 +56,8 @@ export const useUpdatePaymentMethod = () => {
     isInitializing,
     retryInitialization,
     setError,
-    reset: resetSquare
+    reset: resetSquare,
+    initializationPhase
   } = useDialogSquarePayment(isDialogOpen);
 
   const openDialog = () => {
@@ -266,6 +267,8 @@ export const useUpdatePaymentMethod = () => {
     squareError,
     isInitialized,
     isInitializing,
+    initializationPhase,
+    retryCount: 0, // This will be managed internally by the new hook
     cardContainerRef,
     openDialog,
     closeDialog,

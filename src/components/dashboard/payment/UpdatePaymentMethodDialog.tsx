@@ -37,6 +37,8 @@ interface UpdatePaymentMethodDialogProps {
   squareError: string | null;
   isSquareReady: boolean;
   isSquareInitializing?: boolean;
+  initializationPhase?: string;
+  retryCount?: number;
   onSquareRetry?: () => void;
 }
 
@@ -53,6 +55,8 @@ const UpdatePaymentMethodDialog = ({
   squareError,
   isSquareReady,
   isSquareInitializing = false,
+  initializationPhase = 'idle',
+  retryCount = 0,
   onSquareRetry
 }: UpdatePaymentMethodDialogProps) => {
   // Improved button state logic
@@ -60,9 +64,17 @@ const UpdatePaymentMethodDialog = ({
   const canSubmit = isSquareReady && !isProcessing && !isSquareLoading;
 
   const handleClose = () => {
-    if (!isProcessing) {
+    if (!isProcessing && !isSquareInitializing) {
       onClose();
     }
+  };
+
+  const getStatusMessage = () => {
+    if (isProcessing) return "Processing payment update...";
+    if (squareError) return "Please resolve payment form issues to continue";
+    if (isSquareLoading) return "Preparing secure payment form...";
+    if (isSquareReady) return "Ready to process payment update";
+    return "Loading...";
   };
 
   return (
@@ -93,35 +105,23 @@ const UpdatePaymentMethodDialog = ({
               error={squareError}
               isInitialized={isSquareReady}
               isInitializing={isSquareInitializing}
+              initializationPhase={initializationPhase}
+              retryCount={retryCount}
               onRetry={onSquareRetry}
             />
-            
-            {/* Additional status information */}
-            {isSquareLoading && (
-              <div className="mt-2 text-xs text-gray-500">
-                ⏳ Setting up secure payment form...
-              </div>
-            )}
-            {isSquareReady && (
-              <div className="mt-2 text-xs text-green-600">
-                ✅ Payment form ready for input
-              </div>
-            )}
           </div>
         </div>
 
         <DialogFooter className="flex items-center justify-between">
-          <div className="text-xs text-gray-500">
-            {isSquareLoading && "Preparing payment form..."}
-            {squareError && "Please resolve payment form issues to continue"}
-            {isSquareReady && "Ready to process payment"}
+          <div className="text-xs text-gray-500 max-w-xs">
+            {getStatusMessage()}
           </div>
           
           <div className="flex space-x-2">
             <Button
               variant="outline"
               onClick={handleClose}
-              disabled={isProcessing}
+              disabled={isProcessing || isSquareInitializing}
             >
               Cancel
             </Button>
