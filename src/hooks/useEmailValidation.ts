@@ -1,5 +1,6 @@
 
 import { useState, useCallback } from 'react';
+import { validateEmailToken } from '@/services/emailValidationService';
 
 interface UseEmailValidationProps {
   emailAddress: string;
@@ -18,26 +19,45 @@ export const useEmailValidation = ({ emailAddress, context, classifiedId }: UseE
       return;
     }
 
+    if (!emailAddress) {
+      setValidationError('Email address is required');
+      return;
+    }
+
+    if (context === 'classifieds' && !classifiedId) {
+      setValidationError('Classified ID is required for validation');
+      return;
+    }
+
     setIsValidating(true);
     setValidationError('');
 
     try {
-      console.log('✉️ Validating email...', { emailAddress, context, classifiedId, token });
+      console.log('✉️ Calling email validation API...', { 
+        emailAddress, 
+        context, 
+        classifiedId, 
+        token: token.substring(0, 10) + '...' 
+      });
       
-      // Simulate email validation
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Accept any non-empty token for demo purposes
-      if (token.trim().length > 0) {
+      const result = await validateEmailToken({
+        token,
+        emailAddress,
+        context: context as 'classifieds' | 'subscribers',
+        classifiedId,
+      });
+
+      if (result.success) {
         setIsValidated(true);
         console.log('✅ Email validation successful');
       } else {
-        throw new Error('Invalid validation token. Please enter a valid token.');
+        setValidationError(result.error || 'Email validation failed');
+        console.error('❌ Email validation failed:', result.error);
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Email validation failed';
       setValidationError(errorMessage);
-      console.error('❌ Email validation failed:', errorMessage);
+      console.error('❌ Email validation error:', errorMessage);
     } finally {
       setIsValidating(false);
     }

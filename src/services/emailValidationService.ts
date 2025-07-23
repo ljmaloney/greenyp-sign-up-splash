@@ -1,5 +1,5 @@
 
-import { useApiClient } from '@/hooks/useApiClient';
+import { apiClient } from '@/utils/apiClient';
 
 interface EmailValidationRequest {
   token: string;
@@ -21,49 +21,32 @@ export const validateEmailToken = async ({
   classifiedId,
   producerId
 }: EmailValidationRequest): Promise<EmailValidationResponse> => {
-  // We can't use useApiClient hook here since this is not a component
-  // Instead, we'll create the API client directly
-  const { apiClient } = await import('@/utils/apiClient');
-  
   try {
-    // Use unified endpoint for all email validation
     const endpoint = '/email/validate';
     
-    // Map context-specific IDs to externRef
-    let externRef: string;
-    if (context === 'classifieds') {
-      if (!classifiedId) {
-        return { success: false, error: 'Missing classified ID for validation' };
-      }
-      externRef = classifiedId;
-    } else {
-      if (!producerId) {
-        return { success: false, error: 'Missing producer ID for validation' };
-      }
-      externRef = producerId;
-    }
-
-    // Create unified payload structure
+    // Create payload exactly as specified by the user
     const payload = {
+      externRef: context === 'classifieds' ? classifiedId : producerId,
       emailAddress: emailAddress,
-      token: token,
-      externRef: externRef,
+      token: token
     };
 
-    console.log('🔍 Email validation request:', {
+    if (!payload.externRef) {
+      const missingField = context === 'classifieds' ? 'classifiedId' : 'producerId';
+      return { success: false, error: `Missing ${missingField} for validation` };
+    }
+
+    console.log('🔍 Email validation API call:', {
       endpoint,
-      context,
-      emailAddress,
-      hasToken: !!token,
-      externRef,
-      payload
+      payload,
+      context
     });
 
     const response = await apiClient.post(endpoint, payload, { requireAuth: false });
     
-    console.log('✅ Email validation response:', response);
+    console.log('✅ Email validation API response:', response);
     
-    // Check for successful response
+    // Check for successful response (2xx status)
     if (response && (response.status === 200 || response.success)) {
       return { success: true };
     }
@@ -80,10 +63,6 @@ export const validateEmailToken = async ({
       const errorMessage = error.message;
       
       // Enhanced error handling for specific status codes
-      if (errorMessage.includes('412')) {
-        console.error('🚨 Payload validation error - API expects different field structure');
-        return { success: false, error: 'Invalid email validation request format. Please contact support if this persists.' };
-      }
       if (errorMessage.includes('400')) {
         return { success: false, error: 'Invalid email validation token' };
       }
