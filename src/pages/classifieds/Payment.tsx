@@ -75,8 +75,9 @@ const Payment = () => {
     phone: classifiedData.customer?.phoneNumber || '',
     images: [],
     createdAt: classifiedData.classified.createDate,
+    expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days from now
     contactObfuscated: false,
-    pricingTier: 1
+    pricingTier: classifiedData.classified.adTypeId || '1'
   } : null;
 
   const handleEmailValidationTokenChange = (value: string) => {
