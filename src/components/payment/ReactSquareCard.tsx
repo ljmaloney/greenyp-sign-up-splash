@@ -48,6 +48,7 @@ const ReactSquareCard = ({
       
       const result = {
         token: token.token,
+        verificationToken: token.verificationToken, // This is the Square verification token
         details: {
           card: {
             brand: token.details?.card?.brand || 'UNKNOWN',

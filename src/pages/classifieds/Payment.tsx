@@ -140,11 +140,12 @@ const Payment = () => {
     }
 
     try {
-      // Prepare the payment payload with correct field names as per API specification
+      // Prepare the payment payload with correct token mapping
       const paymentPayload = {
         referenceId: classifiedId,
         paymentToken: tokenData.token,
-        verificationToken: emailValidationToken,
+        verificationToken: tokenData.verificationToken, // Use Square's verification token
+        emailValidationToken: emailValidationToken, // Keep email validation token separate
         billingContact: billingContact,
         billingAddress: billingAddress,
         cardDetails: tokenData.details,
