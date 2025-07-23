@@ -2,6 +2,8 @@
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { STATE_ABBREVIATIONS } from '@/constants/usStates';
 
 interface BillingAddressData {
   address: string;
@@ -42,12 +44,18 @@ const BillingAddressForm = ({ billingAddress, onChange }: BillingAddressFormProp
           </div>
           <div>
             <Label htmlFor="state">State *</Label>
-            <Input
-              id="state"
-              placeholder="CA"
-              value={billingAddress.state}
-              onChange={(e) => onChange('state', e.target.value)}
-            />
+            <Select value={billingAddress.state} onValueChange={(value) => onChange('state', value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select state" />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.entries(STATE_ABBREVIATIONS).map(([abbr, fullName]) => (
+                  <SelectItem key={abbr} value={abbr}>
+                    {fullName}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
