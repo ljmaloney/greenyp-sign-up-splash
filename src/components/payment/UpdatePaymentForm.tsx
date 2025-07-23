@@ -70,20 +70,6 @@ const UpdatePaymentForm = ({
   const [isValidating, setIsValidating] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
 
-  const handleContactChange = (field: string, value: string) => {
-    setBillingContact(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
-  const handleAddressChange = (field: string, value: string) => {
-    setBillingAddress(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
   const handleValidateEmail = () => {
     setIsValidating(true);
     setValidationError(null);
@@ -98,6 +84,12 @@ const UpdatePaymentForm = ({
         setIsValidating(false);
       }
     }, 1000);
+  };
+
+  const handleBillingInfoChange = (contact: any, address: any, token: string) => {
+    setBillingContact(contact);
+    setBillingAddress(address);
+    setEmailValidationToken(token);
   };
 
   const handleSubmit = async () => {
@@ -148,12 +140,7 @@ const UpdatePaymentForm = ({
       
       <div className="space-y-4">
         <PaymentInformationCard
-          billingContact={billingContact}
-          billingAddress={billingAddress}
-          onBillingInfoChange={(contact, address) => {
-            setBillingContact(contact);
-            setBillingAddress(address);
-          }}
+          onBillingInfoChange={handleBillingInfoChange}
           emailValidationToken={emailValidationToken}
           onEmailValidationTokenChange={setEmailValidationToken}
           isValidated={isValidated}
