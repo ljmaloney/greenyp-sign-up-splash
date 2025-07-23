@@ -151,14 +151,21 @@ const Payment = () => {
     }
 
     try {
-      // Prepare the payment payload with extensive logging
+      // Prepare the payment payload with correct field mapping for the API
       const paymentPayload = {
         referenceId: classifiedId,
         paymentToken: tokenData.token,
         verificationToken: tokenData.verificationToken,
         emailValidationToken: emailValidationToken,
-        billingContact: billingContact,
-        billingAddress: billingAddress,
+        // Map billing fields to the expected API field names
+        firstName: billingContact.firstName,
+        lastName: billingContact.lastName,
+        emailAddress: billingContact.email,
+        phoneNumber: billingContact.phone,
+        addressLine1: billingAddress.address,
+        city: billingAddress.city,
+        state: billingAddress.state,
+        postalCode: billingAddress.zipCode,
         cardDetails: tokenData.details,
         amount: classifiedData?.classified?.price || 0,
         currency: 'USD'
@@ -172,6 +179,15 @@ const Payment = () => {
         verificationTokenLength: paymentPayload.verificationToken?.length,
         hasEmailValidationToken: !!paymentPayload.emailValidationToken,
         emailValidationTokenLength: paymentPayload.emailValidationToken?.length,
+        // Log the specific fields that were failing
+        firstName: paymentPayload.firstName,
+        lastName: paymentPayload.lastName,
+        emailAddress: paymentPayload.emailAddress,
+        phoneNumber: paymentPayload.phoneNumber,
+        addressLine1: paymentPayload.addressLine1,
+        city: paymentPayload.city,
+        state: paymentPayload.state,
+        postalCode: paymentPayload.postalCode,
         amount: paymentPayload.amount,
         currency: paymentPayload.currency
       });
