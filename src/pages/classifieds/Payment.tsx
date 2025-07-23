@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -141,9 +140,9 @@ const Payment = () => {
     }
 
     try {
-      // Prepare the payment payload
+      // Prepare the payment payload with classifiedId as referenceId
       const paymentPayload = {
-        classifiedId: classifiedId,
+        referenceId: classifiedId,
         squareToken: tokenData.token,
         emailValidationToken: emailValidationToken,
         billingContact: billingContact,
