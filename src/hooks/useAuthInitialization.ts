@@ -4,6 +4,11 @@ import { oidcService } from '@/services/oidcService';
 import { User } from '@/types/auth';
 
 export const useAuthInitialization = () => {
+  // Add defensive checks to ensure React is properly initialized
+  if (typeof useState !== 'function') {
+    throw new Error('React hooks not available - React may not be properly initialized');
+  }
+
   const [user, setUser] = useState<User | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);

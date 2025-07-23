@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, ErrorBoundary } from 'react';
 import { AuthContextType, AuthProviderProps } from '@/types/auth';
 import { useAuthInitialization } from '@/hooks/useAuthInitialization';
 import { useAuthActions } from '@/hooks/useAuthActions';
@@ -14,36 +14,85 @@ export const useAuth = () => {
   return context;
 };
 
+class AuthErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    console.error('Auth Error Boundary caught an error:', error);
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('Auth Error Boundary Details:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+          <div className="text-center">
+            <h2 className="text-xl font-semibold mb-2">Authentication Error</h2>
+            <p className="text-gray-600">Please refresh the page</p>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const {
-    user,
-    setUser,
-    accessToken,
-    setAccessToken,
-    isLoading,
-    setIsLoading
-  } = useAuthInitialization();
+  // Add a try-catch wrapper around the hook calls
+  try {
+    const {
+      user,
+      setUser,
+      accessToken,
+      setAccessToken,
+      isLoading,
+      setIsLoading
+    } = useAuthInitialization();
 
-  const { login, logout, hasRole } = useAuthActions(
-    setIsLoading,
-    setUser,
-    setAccessToken,
-    user
-  );
+    const { login, logout, hasRole } = useAuthActions(
+      setIsLoading,
+      setUser,
+      setAccessToken,
+      user
+    );
 
-  const value: AuthContextType = {
-    user,
-    isLoading,
-    isAuthenticated: !!user,
-    accessToken,
-    login,
-    logout,
-    hasRole
-  };
+    const value: AuthContextType = {
+      user,
+      isLoading,
+      isAuthenticated: !!user,
+      accessToken,
+      login,
+      logout,
+      hasRole
+    };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+    return (
+      <AuthErrorBoundary>
+        <AuthContext.Provider value={value}>
+          {children}
+        </AuthContext.Provider>
+      </AuthErrorBoundary>
+    );
+  } catch (error) {
+    console.error('AuthProvider initialization error:', error);
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold mb-2">Authentication Error</h2>
+          <p className="text-gray-600">Please refresh the page</p>
+        </div>
+      </div>
+    );
+  }
 };
