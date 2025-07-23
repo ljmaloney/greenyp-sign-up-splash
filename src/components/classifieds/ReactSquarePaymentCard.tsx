@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useApiClient } from '@/hooks/useApiClient';
 import { useToast } from '@/hooks/use-toast';
 import { validatePaymentFields } from '@/utils/paymentValidation';
-import { processReactSquarePayment } from '@/utils/reactSquarePaymentProcessor';
+import { processReactSquarePayment, ProcessPaymentResult } from '@/utils/reactSquarePaymentProcessor';
 import ReactSquareCard from '@/components/payment/ReactSquareCard';
 
 interface BillingContactData {
@@ -25,7 +25,7 @@ interface ReactSquarePaymentCardProps {
   billingContact: BillingContactData;
   billingAddress: BillingAddressData;
   emailValidationToken: string;
-  onPaymentProcessed?: (result: any) => void;
+  onPaymentProcessed?: (result: ProcessPaymentResult) => void;
 }
 
 const ReactSquarePaymentCard = ({ 
@@ -91,7 +91,7 @@ const ReactSquarePaymentCard = ({
         });
         
         // Extract payment reference information from response
-        const responseData = paymentResponse.response || {};
+        const responseData = paymentResponse.response;
         const orderRef = responseData.orderRef || '';
         const paymentRef = responseData.paymentRef || '';
         const receiptNumber = responseData.receiptNumber || '';

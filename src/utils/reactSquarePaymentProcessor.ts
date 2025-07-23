@@ -1,11 +1,23 @@
 
+export interface PaymentResponse {
+  paymentStatus: string;
+  orderRef?: string;
+  paymentRef?: string;
+  receiptNumber?: string;
+}
+
+export interface ProcessPaymentResult {
+  response?: PaymentResponse;
+  error?: string;
+}
+
 export const processReactSquarePayment = async (
   tokenData: any,
   referenceId: string,
   apiClient: any,
   emailValidationToken: string,
   options?: { isSubscription?: boolean }
-) => {
+): Promise<ProcessPaymentResult> => {
   console.log('💳 Processing React Square payment...', {
     referenceId,
     hasToken: !!tokenData.token,
