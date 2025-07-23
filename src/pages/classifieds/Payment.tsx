@@ -140,10 +140,10 @@ const Payment = () => {
     }
 
     try {
-      // Prepare the payment payload with classifiedId as referenceId
+      // Prepare the payment payload with correct field names
       const paymentPayload = {
         referenceId: classifiedId,
-        squareToken: tokenData.token,
+        paymentToken: tokenData.token,
         emailValidationToken: emailValidationToken,
         billingContact: billingContact,
         billingAddress: billingAddress,
@@ -257,7 +257,7 @@ const Payment = () => {
                 onValidate={handleEmailValidation}
               />
 
-              {/* Payment Information - Only enabled after email validation */}
+              {/* Payment Information - Only enabled after email validation, no payment button */}
               <div className={!isValidated ? 'opacity-50 pointer-events-none' : ''}>
                 <PaymentInformationCard
                   classified={classifiedData.classified}
@@ -265,6 +265,7 @@ const Payment = () => {
                   onBillingInfoChange={handleBillingInfoChange}
                   emailValidationToken={emailValidationToken}
                   isEmailValidated={isValidated}
+                  showPaymentButton={false}
                 />
               </div>
 
@@ -276,7 +277,7 @@ const Payment = () => {
                   onPaymentSuccess={handlePaymentSuccess}
                   onPaymentError={handlePaymentError}
                   disabled={!isValidated || !emailValidationToken.trim()}
-                  buttonText="Process Payment"
+                  buttonText="Pay"
                 />
               </div>
             </div>
