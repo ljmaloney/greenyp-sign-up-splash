@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { PaymentForm, CreditCard } from 'react-square-web-payments-sdk';
 import { Button } from '@/components/ui/button';
@@ -78,8 +77,6 @@ const ReactSquareCard = ({
             <CreditCard
               style={{
                 input: {
-                  fontSize: '16px',
-                  fontFamily: 'inherit',
                   color: '#374151',
                 },
                 '.input-container': {
@@ -95,7 +92,6 @@ const ReactSquareCard = ({
                 },
                 '.message-text': {
                   color: '#EF4444',
-                  fontSize: '14px',
                 },
               }}
             />

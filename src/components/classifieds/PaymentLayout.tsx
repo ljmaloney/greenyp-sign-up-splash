@@ -137,7 +137,7 @@ const PaymentLayout = ({ classified, customer, isSubscription = false, producerI
       {/* Right Column */}
       <div className="space-y-6">
         <EmailValidationCard
-          emailValidationToken={billingInfo.emailValidationToken}
+          validationToken={billingInfo.emailValidationToken}
           onChange={handleEmailValidationTokenChange}
           emailAddress={customer?.emailAddress}
           helperText="A verified email address is required before placing your classified ad"

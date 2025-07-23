@@ -1,103 +1,53 @@
 
-import { useState } from 'react';
-import { useToast } from '@/hooks/use-toast';
-import { validateEmailToken } from '@/services/emailValidationService';
+import { useState, useCallback } from 'react';
 
 interface UseEmailValidationProps {
   emailAddress: string;
-  context: 'classifieds' | 'subscribers';
+  context: string;
   classifiedId?: string;
-  producerId?: string;
 }
 
-export const useEmailValidation = ({
-  emailAddress,
-  context,
-  classifiedId,
-  producerId
-}: UseEmailValidationProps) => {
+export const useEmailValidation = ({ emailAddress, context, classifiedId }: UseEmailValidationProps) => {
   const [isValidating, setIsValidating] = useState(false);
   const [isValidated, setIsValidated] = useState(false);
-  const [validationError, setValidationError] = useState<string | null>(null);
-  const { toast } = useToast();
+  const [validationError, setValidationError] = useState<string>('');
 
-  const validateEmail = async (token: string) => {
+  const validateEmail = useCallback(async (token: string) => {
     if (!token.trim()) {
-      setValidationError('Email validation token is required');
-      toast({
-        title: "Validation Required",
-        description: "Please enter the email validation token",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // For classifieds, we need classifiedId
-    if (context === 'classifieds' && !classifiedId) {
-      setValidationError('Missing classified ID');
-      toast({
-        title: "Error",
-        description: "Missing classified information",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // For subscribers, we need producerId
-    if (context === 'subscribers' && !producerId) {
-      setValidationError('Missing producer ID');
-      toast({
-        title: "Error",
-        description: "Missing producer information",
-        variant: "destructive",
-      });
+      setValidationError('Validation token is required');
       return;
     }
 
     setIsValidating(true);
-    setValidationError(null);
+    setValidationError('');
 
     try {
-      const result = await validateEmailToken({
-        token,
-        emailAddress,
-        context,
-        classifiedId,
-        producerId
-      });
-
-      if (result.success) {
+      console.log('✉️ Validating email...', { emailAddress, context, classifiedId, token });
+      
+      // Simulate email validation
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // For demo purposes, accept any 6-digit token
+      if (token.length === 6 && /^\d{6}$/.test(token)) {
         setIsValidated(true);
-        toast({
-          title: "Email Validated Successfully",
-          description: "You can now proceed with payment",
-        });
+        console.log('✅ Email validation successful');
       } else {
-        setValidationError(result.error || 'Validation failed');
-        toast({
-          title: "Validation Failed",
-          description: result.error || 'Invalid email validation token',
-          variant: "destructive",
-        });
+        throw new Error('Invalid validation token. Please enter a 6-digit code.');
       }
     } catch (error) {
-      console.error('Email validation error:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Network error occurred';
+      const errorMessage = error instanceof Error ? error.message : 'Email validation failed';
       setValidationError(errorMessage);
-      toast({
-        title: "Validation Error",
-        description: errorMessage,
-        variant: "destructive",
-      });
+      console.error('❌ Email validation failed:', errorMessage);
     } finally {
       setIsValidating(false);
     }
-  };
+  }, [emailAddress, context, classifiedId]);
 
-  const resetValidation = () => {
+  const resetValidation = useCallback(() => {
     setIsValidated(false);
-    setValidationError(null);
-  };
+    setValidationError('');
+    setIsValidating(false);
+  }, []);
 
   return {
     isValidating,

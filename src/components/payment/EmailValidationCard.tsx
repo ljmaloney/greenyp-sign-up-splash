@@ -1,59 +1,35 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import { Mail, CheckCircle, AlertCircle } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
 
 interface EmailValidationCardProps {
-  email: string;
-  onEmailValidated: (token: string) => void;
-  isValidated: boolean;
   validationToken: string;
+  onChange: (value: string) => void;
+  emailAddress?: string;
+  helperText?: string;
+  isValidating?: boolean;
+  isValidated?: boolean;
+  validationError?: string;
+  onValidate?: () => void | Promise<void>;
 }
 
-const EmailValidationCard = ({ 
-  email, 
-  onEmailValidated, 
-  isValidated, 
-  validationToken 
+const EmailValidationCard = ({
+  validationToken,
+  onChange,
+  emailAddress,
+  helperText,
+  isValidating = false,
+  isValidated = false,
+  validationError = '',
+  onValidate
 }: EmailValidationCardProps) => {
-  const [isValidating, setIsValidating] = useState(false);
-  const { toast } = useToast();
-
-  const handleValidateEmail = async () => {
-    if (!email || email.trim() === '') {
-      toast({
-        title: "Email Required",
-        description: "Please enter an email address to validate.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsValidating(true);
-
-    try {
-      // Simulate email validation API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Generate a mock validation token
-      const token = `VAL_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      onEmailValidated(token);
-      
-      toast({
-        title: "Email Validated",
-        description: "Your email has been successfully validated.",
-      });
-    } catch (error) {
-      toast({
-        title: "Validation Failed",
-        description: "Failed to validate email. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsValidating(false);
+  const handleValidate = () => {
+    if (onValidate) {
+      onValidate();
     }
   };
 
@@ -62,43 +38,59 @@ const EmailValidationCard = ({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Mail className="h-5 w-5" />
-          Email Validation
+          Email Verification
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div>
-          <label className="text-sm font-medium">Email Address</label>
-          <Input 
-            type="email" 
-            value={email} 
-            readOnly 
-            className="mt-1 bg-gray-50"
-          />
+        {emailAddress && (
+          <div className="text-sm text-gray-600">
+            Verifying: <span className="font-medium">{emailAddress}</span>
+          </div>
+        )}
+        
+        {helperText && (
+          <p className="text-sm text-gray-600">{helperText}</p>
+        )}
+
+        <div className="space-y-2">
+          <Label htmlFor="validation-token">Verification Code</Label>
+          <div className="flex gap-2">
+            <Input
+              id="validation-token"
+              type="text"
+              placeholder="Enter 6-digit code"
+              value={validationToken}
+              onChange={(e) => onChange(e.target.value)}
+              maxLength={6}
+              disabled={isValidating || isValidated}
+              className={isValidated ? 'bg-green-50 border-green-200' : ''}
+            />
+            {onValidate && (
+              <Button
+                onClick={handleValidate}
+                disabled={!validationToken.trim() || isValidating || isValidated}
+                variant={isValidated ? 'outline' : 'default'}
+                size="sm"
+              >
+                {isValidating ? 'Verifying...' : isValidated ? 'Verified' : 'Verify'}
+              </Button>
+            )}
+          </div>
         </div>
 
-        {isValidated ? (
+        {isValidated && (
           <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
             <CheckCircle className="h-4 w-4 text-green-600" />
-            <div className="text-green-700 text-sm">
-              Email validated successfully
-            </div>
-          </div>
-        ) : (
-          <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-            <AlertCircle className="h-4 w-4 text-amber-600" />
-            <div className="text-amber-700 text-sm">
-              Email validation required before payment
-            </div>
+            <span className="text-green-700 text-sm">Email verified successfully</span>
           </div>
         )}
 
-        <Button
-          onClick={handleValidateEmail}
-          disabled={isValidating || isValidated || !email}
-          className="w-full"
-        >
-          {isValidating ? 'Validating...' : isValidated ? 'Email Validated' : 'Validate Email'}
-        </Button>
+        {validationError && (
+          <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <AlertCircle className="h-4 w-4 text-red-600 mt-0.5 flex-shrink-0" />
+            <div className="text-red-700 text-sm">{validationError}</div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
