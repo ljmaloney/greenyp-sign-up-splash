@@ -1,7 +1,9 @@
+
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useApiClient } from '@/hooks/useApiClient';
+import { useClassifiedCategories } from '@/hooks/useClassifiedCategories';
 import { useToast } from '@/hooks/use-toast';
 import { useEmailValidation } from '@/hooks/useEmailValidation';
 import ClassifiedsHeader from '@/components/ClassifiedsHeader';
@@ -49,6 +51,9 @@ const Payment = () => {
     classifiedId: classifiedId
   });
 
+  // Fetch classified categories
+  const { data: categoriesData } = useClassifiedCategories();
+
   // Fetch classified data
   const { data: classifiedData, isLoading, error } = useQuery({
     queryKey: ['classified-payment', classifiedId],
@@ -65,7 +70,13 @@ const Payment = () => {
     id: classifiedData.classified.classifiedId,
     title: classifiedData.classified.title,
     description: classifiedData.classified.description,
-    category: 'Classified',
+    category: (() => {
+      // Find the actual category name from the categories API
+      const categoryMatch = categoriesData?.response?.find(
+        cat => cat.categoryId === classifiedData.classified.categoryId
+      );
+      return categoryMatch?.name || 'General';
+    })(),
     price: classifiedData.classified.price,
     perUnitType: classifiedData.classified.perUnitType,
     city: classifiedData.classified.city,
