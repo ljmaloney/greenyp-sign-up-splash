@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { validateSquareConfig, preloadSquareSDK } from '@/utils/squareConfigValidator';
 import { detectSquareContainer } from '@/utils/squareContainerDetector';
@@ -121,28 +120,24 @@ export const useDialogSquarePayment = (isDialogOpen: boolean): DialogSquarePayme
         cardInstanceRef.current = null;
       }
 
-      // Create new card instance with enhanced styling
+      // Create new card instance with CORRECT Square SDK styling properties
       const cardInstance = await paymentsInstance.card({
         style: {
           '.input-container': {
-            borderColor: '#E2E8F0',
-            borderRadius: '6px',
-            fontSize: '16px',
-            fontFamily: 'system-ui, -apple-system, sans-serif'
+            'border-color': '#E2E8F0',
+            'border-radius': '6px'
           },
           '.input-container.is-focus': {
-            borderColor: '#3B82F6',
-            boxShadow: '0 0 0 1px #3B82F6'
+            'border-color': '#3B82F6'
           },
           '.input-container.is-error': {
-            borderColor: '#EF4444'
+            'border-color': '#EF4444'
           },
           '.message-text': {
-            fontSize: '14px',
-            color: '#6B7280'
+            'color': '#6B7280'
           },
           '.message-text.is-error': {
-            color: '#EF4444'
+            'color': '#EF4444'
           }
         }
       });
