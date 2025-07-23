@@ -8,6 +8,7 @@ export const useStableSquarePayment = () => {
   const [error, setError] = useState<string | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const [isInitializing, setIsInitializing] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
   
   // Refs to track Square instances for cleanup
   const paymentsInstanceRef = useRef<any>(null);
@@ -122,6 +123,7 @@ export const useStableSquarePayment = () => {
   }, [isInitialized, isInitializing, cleanupSquareInstances]);
 
   const retryInitialization = useCallback(() => {
+    setRetryCount(prev => prev + 1);
     cleanupSquareInstances();
     initializeSquare();
   }, [cleanupSquareInstances, initializeSquare]);
@@ -142,6 +144,7 @@ export const useStableSquarePayment = () => {
     setError,
     isInitialized,
     isInitializing,
+    retryCount,
     retryInitialization
   };
 };

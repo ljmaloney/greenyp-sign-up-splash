@@ -8,6 +8,7 @@ import { usePaymentUpdate } from '@/hooks/usePaymentUpdate';
 import { validatePaymentFields } from '@/utils/paymentValidation';
 import PaymentInformationCard from '@/components/payment/PaymentInformationCard';
 import EmailValidationCard from '@/components/payment/EmailValidationCard';
+import { BillingContactData, BillingAddressData } from '@/types/billing';
 
 interface UpdatePaymentFormProps {
   producerId: string | undefined;
@@ -50,14 +51,15 @@ const UpdatePaymentForm = ({
   });
 
   // Billing info states
-  const [billingContact, setBillingContact] = useState({
+  const [billingContact, setBillingContact] = useState<BillingContactData>({
     firstName: '',
     lastName: '',
     email: '',
     phone: ''
   });
   
-  const [billingAddress, setBillingAddress] = useState({
+  const [billingAddress, setBillingAddress] = useState<BillingAddressData>({
+    companyName: '',
     address: '',
     city: '',
     state: '',

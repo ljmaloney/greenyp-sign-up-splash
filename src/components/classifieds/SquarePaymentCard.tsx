@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApiClient } from '@/hooks/useApiClient';
@@ -8,20 +7,7 @@ import { validatePaymentFields } from '@/utils/paymentValidation';
 import { processSquarePayment } from '@/utils/squarePaymentProcessor';
 import PaymentMethodCard from '../payment/PaymentMethodCard';
 import SquarePaymentWrapper from '../payment/SquarePaymentWrapper';
-
-interface BillingContactData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-}
-
-interface BillingAddressData {
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
-}
+import { BillingContactData, BillingAddressData } from '@/types/billing';
 
 interface SquarePaymentCardProps {
   billingContact: BillingContactData;
@@ -52,8 +38,14 @@ const SquarePaymentCard = ({ billingContact, billingAddress, emailValidationToke
       return;
     }
 
+    // Create billing address with companyName defaulting to empty string
+    const billingAddressWithCompany = {
+      ...billingAddress,
+      companyName: billingAddress.companyName || ''
+    };
+
     // Validate all required fields before proceeding
-    const validationError = validatePaymentFields(billingContact, billingAddress);
+    const validationError = validatePaymentFields(billingContact, billingAddressWithCompany);
     if (validationError) {
       setError(validationError);
       toast({
@@ -83,7 +75,7 @@ const SquarePaymentCard = ({ billingContact, billingAddress, emailValidationToke
         card,
         payments,
         billingContact,
-        billingAddress,
+        billingAddressWithCompany,
         classifiedId,
         apiClient,
         emailValidationToken

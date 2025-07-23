@@ -1,25 +1,10 @@
-
 import { useState, useCallback } from 'react';
 import { useApiClient } from '@/hooks/useApiClient';
 import { createPaymentService } from '@/services/paymentService';
 import { useToast } from '@/hooks/use-toast';
 import { useQueryClient } from '@tanstack/react-query';
 import { normalizePhoneForSquare } from '@/utils/phoneUtils';
-
-interface BillingContactData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-}
-
-interface BillingAddressData {
-  companyName: string;
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
-}
+import { BillingContactData, BillingAddressData } from '@/types/billing';
 
 interface UseDashboardPaymentUpdateProps {
   producerId: string | undefined;

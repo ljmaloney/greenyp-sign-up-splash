@@ -7,21 +7,7 @@ import { useStableSquarePayment } from '@/hooks/useStableSquarePayment';
 import { useDashboardPaymentUpdate } from '@/hooks/useDashboardPaymentUpdate';
 import { validatePaymentFields } from '@/utils/paymentValidation';
 import PaymentInformationCard from './PaymentInformationCard';
-
-interface BillingContactData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-}
-
-interface BillingAddressData {
-  companyName: string;
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
-}
+import { BillingContactData, BillingAddressData } from '@/types/billing';
 
 interface DashboardUpdatePaymentFormProps {
   producerId: string | undefined;
