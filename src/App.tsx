@@ -18,9 +18,18 @@ import AuthCallback from '@/pages/auth/AuthCallback';
 import Unauthorized from '@/pages/auth/Unauthorized';
 
 // Dashboard Pages (Protected)
-import Dashboard from '@/pages/dashboard/Dashboard';
+import DashboardIndex from '@/pages/dashboard/Index';
 import Profile from '@/pages/dashboard/Profile';
 import Settings from '@/pages/dashboard/Settings';
+import Products from '@/pages/dashboard/Products';
+import Services from '@/pages/dashboard/Services';
+import Contacts from '@/pages/dashboard/Contacts';
+import Locations from '@/pages/dashboard/Locations';
+import AuthorizedUsers from '@/pages/dashboard/AuthorizedUsers';
+import PhotoGallery from '@/pages/dashboard/PhotoGallery';
+import Analytics from '@/pages/dashboard/Analytics';
+import Subscription from '@/pages/dashboard/Subscription';
+import Upgrade from '@/pages/dashboard/Upgrade';
 
 // Admin Pages (Protected)
 import AdminDashboard from '@/pages/admin/AdminDashboard';
@@ -72,7 +81,7 @@ function App() {
                 path="/dashboard" 
                 element={
                   <ProtectedRoute requiredRole="Dashboard-Access">
-                    <Dashboard />
+                    <DashboardIndex />
                   </ProtectedRoute>
                 } 
               />
@@ -89,6 +98,78 @@ function App() {
                 element={
                   <ProtectedRoute requiredRole="Dashboard-Access">
                     <Settings />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/dashboard/products" 
+                element={
+                  <ProtectedRoute requiredRole="Dashboard-Access">
+                    <Products />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/dashboard/services" 
+                element={
+                  <ProtectedRoute requiredRole="Dashboard-Access">
+                    <Services />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/dashboard/contacts" 
+                element={
+                  <ProtectedRoute requiredRole="Dashboard-Access">
+                    <Contacts />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/dashboard/locations" 
+                element={
+                  <ProtectedRoute requiredRole="Dashboard-Access">
+                    <Locations />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/dashboard/users" 
+                element={
+                  <ProtectedRoute requiredRole="Dashboard-Access">
+                    <AuthorizedUsers />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/dashboard/gallery" 
+                element={
+                  <ProtectedRoute requiredRole="Dashboard-Access">
+                    <PhotoGallery />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/dashboard/analytics" 
+                element={
+                  <ProtectedRoute requiredRole="Dashboard-Access">
+                    <Analytics />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/dashboard/subscription" 
+                element={
+                  <ProtectedRoute requiredRole="Dashboard-Access">
+                    <Subscription />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/dashboard/upgrade" 
+                element={
+                  <ProtectedRoute requiredRole="Dashboard-Access">
+                    <Upgrade />
                   </ProtectedRoute>
                 } 
               />
