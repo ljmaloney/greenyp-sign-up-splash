@@ -12,6 +12,7 @@ interface DashboardPaymentInformationCardProps {
     phone: string;
   };
   billingAddress: {
+    companyName: string;
     address: string;
     city: string;
     state: string;

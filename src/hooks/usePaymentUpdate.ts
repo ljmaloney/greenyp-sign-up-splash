@@ -91,18 +91,19 @@ export const usePaymentUpdate = ({ producerId, onSuccess, onError }: UsePaymentU
           const billingInfo = {
             firstName: billingContact.firstName.trim(),
             lastName: billingContact.lastName.trim(),
-            addressLine1: billingAddress.address.trim(),
-            addressLine2: '',
-            city: billingAddress.city.trim(),
-            state: billingAddress.state.trim(),
-            postalCode: billingAddress.zipCode.trim(),
+            companyName: '',
+            payorAddress1: billingAddress.address.trim(),
+            payorAddress2: '',
+            payorCity: billingAddress.city.trim(),
+            payorState: billingAddress.state.trim(),
+            payorPostalCode: billingAddress.zipCode.trim(),
             phoneNumber: squareFormattedPhone,
             emailAddress: billingContact.email.trim(),
             emailValidationToken: emailValidationToken.trim()
           };
 
-          // Call API to update payment method
-          await paymentService.updatePaymentMethod(
+          // Call API to replace payment method
+          await paymentService.replacePaymentMethod(
             producerId,
             result.token,
             verificationResult.token,
