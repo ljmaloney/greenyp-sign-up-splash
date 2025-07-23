@@ -1,11 +1,11 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.tsx';
+import { Button } from '@/components/ui/button.tsx';
 import { Edit } from 'lucide-react';
-import { Contact } from '@/services/accountService';
-import ContactInfo from './ContactInfo';
-import ContactMetadata from './ContactMetadata';
+import { Contact } from '@/services/accountService.ts';
+import ContactInfo from './ContactInfo.tsx';
+import ContactMetadata from './ContactMetadata.tsx';
 
 interface DashboardContactCardProps {
   contact: Contact;

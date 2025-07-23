@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@/components/ui/badge.tsx';
 import { Phone, Mail } from 'lucide-react';
-import { Contact } from '@/services/accountService';
+import { Contact } from '@/services/accountService.ts';
 
 interface ContactInfoProps {
   contact: Contact;

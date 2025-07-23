@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card.tsx';
 import { Users } from 'lucide-react';
 
 const ContactsEmptyState = () => {

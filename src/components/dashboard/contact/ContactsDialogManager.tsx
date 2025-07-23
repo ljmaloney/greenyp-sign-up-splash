@@ -1,13 +1,13 @@
 
 import React from 'react';
-import { useToast } from '@/hooks/use-toast';
-import { getApiUrl } from '@/config/api';
-import AddContactDialog from './AddContactDialog';
-import EditContactDialog from './EditContactDialog';
-import DeleteContactDialog from './DeleteContactDialog';
-import type { Contact as ServiceContact } from '@/services/contactService';
-import type { Contact as ComponentContact } from '@/types/contact';
-import type { Location } from '@/services/locationService';
+import { useToast } from '@/hooks/use-toast.ts';
+import { getApiUrl } from '@/config/api.ts';
+import AddContactDialog from './AddContactDialog.tsx';
+import EditContactDialog from './EditContactDialog.tsx';
+import DeleteContactDialog from '../DeleteContactDialog.tsx';
+import type { Contact as ServiceContact } from '@/services/contactService.ts';
+import type { Contact as ComponentContact } from '@/types/contact.ts';
+import type { Location } from '@/services/locationService.ts';
 
 interface ContactsDialogManagerProps {
   isAddDialogOpen: boolean;

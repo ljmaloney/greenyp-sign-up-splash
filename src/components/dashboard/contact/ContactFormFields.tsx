@@ -1,9 +1,9 @@
 
 import React from 'react';
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ContactFormData, Location } from "@/types/contact";
-import { normalizePhoneNumber } from "@/utils/phoneUtils";
+import { Input } from "@/components/ui/input.tsx";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx";
+import { ContactFormData, Location } from "@/types/contact.ts";
+import { normalizePhoneNumber } from "@/utils/phoneUtils.ts";
 
 interface ContactFormFieldsProps {
   formData: ContactFormData;

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
-import ContactsList from '@/components/dashboard/ContactsList';
+import ContactsList from '@/components/dashboard/contact/ContactsList.tsx';
 
 const Contacts = () => {
   return (

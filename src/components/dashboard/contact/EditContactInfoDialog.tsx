@@ -1,10 +1,10 @@
 
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
-import { updateContactInformation } from '@/services/businessProfileService';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog.tsx";
+import { Button } from "@/components/ui/button.tsx";
+import { Input } from "@/components/ui/input.tsx";
+import { useToast } from "@/hooks/use-toast.ts";
+import { updateContactInformation } from '@/services/businessProfileService.ts';
 
 interface ContactInfoData {
   email: string;

@@ -1,11 +1,11 @@
 
 import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Contact } from '@/services/accountService';
-import { useDashboardContactForm } from '@/hooks/useDashboardContactForm';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog.tsx";
+import { Button } from "@/components/ui/button.tsx";
+import { Input } from "@/components/ui/input.tsx";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx";
+import { Contact } from '@/services/accountService.ts';
+import { useDashboardContactForm } from '@/hooks/useDashboardContactForm.ts';
 
 interface EditDashboardContactDialogProps {
   isOpen: boolean;

@@ -1,12 +1,12 @@
 
 import React from 'react';
-import ContactCard from './ContactCard';
-import ContactsLoadingState from './ContactsLoadingState';
-import ContactsErrorState from './ContactsErrorState';
-import ContactsNoProducerState from './ContactsNoProducerState';
-import ContactsEmptyState from './ContactsEmptyState';
-import type { Contact as ServiceContact } from '@/services/contactService';
-import type { Location } from '@/services/locationService';
+import ContactCard from './ContactCard.tsx';
+import ContactsLoadingState from './ContactsLoadingState.tsx';
+import ContactsErrorState from './ContactsErrorState.tsx';
+import ContactsNoProducerState from './ContactsNoProducerState.tsx';
+import ContactsEmptyState from './ContactsEmptyState.tsx';
+import type { Contact as ServiceContact } from '@/services/contactService.ts';
+import type { Location } from '@/services/locationService.ts';
 
 interface ContactsListContentProps {
   producerId: string | null;

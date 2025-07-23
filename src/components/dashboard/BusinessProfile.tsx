@@ -10,8 +10,8 @@ import { Contact } from '@/services/accountService';
 import BusinessProfileCard from './BusinessProfileCard';
 import PrimaryLocationCard from './PrimaryLocationCard';
 import ActiveSubscriptionsCard from './ActiveSubscriptionsCard';
-import DashboardContactCard from './DashboardContactCard';
-import EditDashboardContactDialog from './EditDashboardContactDialog';
+import DashboardContactCard from './contact/DashboardContactCard.tsx';
+import EditDashboardContactDialog from './contact/EditDashboardContactDialog.tsx';
 
 const BusinessProfile = () => {
   const { user } = useAuth();

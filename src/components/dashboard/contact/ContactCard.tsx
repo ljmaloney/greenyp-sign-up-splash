@@ -1,10 +1,10 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.tsx';
+import { Badge } from '@/components/ui/badge.tsx';
+import { Button } from '@/components/ui/button.tsx';
 import { Users, Phone, Mail, Edit, Trash2 } from 'lucide-react';
-import type { Contact as ServiceContact } from '@/services/contactService';
+import type { Contact as ServiceContact } from '@/services/contactService.ts';
 
 interface ContactCardProps {
   contact: ServiceContact;

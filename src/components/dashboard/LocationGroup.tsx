@@ -5,7 +5,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { MapPin, ChevronDown, ChevronUp, Plus } from 'lucide-react';
 import { Location } from "@/types/contact";
 import { Contact } from "@/services/contactService";
-import ContactCard from './ContactCard';
+import ContactCard from './contact/ContactCard.tsx';
 
 interface LocationGroupProps {
   locationId: string;

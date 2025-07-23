@@ -1,34 +1,34 @@
 
 import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { ContactFormData, Contact, Location } from "@/types/contact";
-import { useEditContactForm } from "@/hooks/useEditContactForm";
-import ContactFormFields from "./ContactFormFields";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog.tsx";
+import { Button } from "@/components/ui/button.tsx";
+import { ContactFormData, Location, Contact } from "@/types/contact.ts";
+import { useContactForm } from "@/hooks/useContactForm.ts";
+import ContactFormFields from "./ContactFormFields.tsx";
 
-interface EditContactDialogProps {
+interface AddContactDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  contact: Contact;
   locations: Location[];
-  onContactUpdated: (contact: ContactFormData) => void;
+  onContactAdded: (contact: ContactFormData) => void;
+  preSelectedLocationId?: string;
   existingContacts?: Contact[];
   isDashboardEdit?: boolean;
 }
 
-const EditContactDialog = ({ 
+const AddContactDialog = ({ 
   isOpen, 
   onClose, 
-  contact, 
   locations, 
-  onContactUpdated,
+  onContactAdded, 
+  preSelectedLocationId,
   existingContacts,
   isDashboardEdit = false
-}: EditContactDialogProps) => {
-  const { formData, handleChange, handleSubmit } = useEditContactForm(
-    contact, 
-    onContactUpdated, 
-    onClose,
+}: AddContactDialogProps) => {
+  const { formData, handleChange, handleSubmit } = useContactForm(
+    onContactAdded, 
+    onClose, 
+    preSelectedLocationId,
     existingContacts
   );
 
@@ -36,7 +36,7 @@ const EditContactDialog = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Edit Contact</DialogTitle>
+          <DialogTitle>Add Contact</DialogTitle>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -52,7 +52,7 @@ const EditContactDialog = ({
               Cancel
             </Button>
             <Button type="submit" className="bg-greenyp-600 hover:bg-greenyp-700">
-              Update Contact
+              Add Contact
             </Button>
           </div>
         </form>
@@ -61,4 +61,4 @@ const EditContactDialog = ({
   );
 };
 
-export default EditContactDialog;
+export default AddContactDialog;

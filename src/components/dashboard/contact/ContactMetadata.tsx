@@ -1,8 +1,8 @@
 
 import React from 'react';
-import ContactTypeDisplay from './ContactTypeDisplay';
-import ContactDisplayTypeDisplay from './ContactDisplayTypeDisplay';
-import { Contact } from '@/services/accountService';
+import ContactTypeDisplay from './ContactTypeDisplay.tsx';
+import ContactDisplayTypeDisplay from './ContactDisplayTypeDisplay.tsx';
+import { Contact } from '@/services/accountService.ts';
 
 interface ContactMetadataProps {
   contact: Contact;

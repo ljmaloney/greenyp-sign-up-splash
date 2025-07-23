@@ -1,12 +1,12 @@
 
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useContacts } from '@/hooks/useContacts';
-import { useLocations } from '@/hooks/useLocations';
-import ContactsHeader from './ContactsHeader';
-import ContactsListContent from './ContactsListContent';
-import ContactsDialogManager from './ContactsDialogManager';
-import type { Contact as ServiceContact } from '@/services/contactService';
+import { useContacts } from '@/hooks/useContacts.ts';
+import { useLocations } from '@/hooks/useLocations.ts';
+import ContactsHeader from './ContactsHeader.tsx';
+import ContactsListContent from './ContactsListContent.tsx';
+import ContactsDialogManager from './ContactsDialogManager.tsx';
+import type { Contact as ServiceContact } from '@/services/contactService.ts';
 
 const ContactsListContainer = () => {
   const [searchParams] = useSearchParams();
