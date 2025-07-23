@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -9,7 +8,7 @@ import { usePaymentDetails } from '@/hooks/usePaymentDetails';
 import { useInvoiceHistory } from '@/hooks/useInvoiceHistory';
 import InvoiceDateRangeSelector from '@/components/dashboard/InvoiceDateRangeSelector';
 import InvoiceHistoryTable from '@/components/dashboard/InvoiceHistoryTable';
-import UpdatePaymentDialog from '@/components/payment/UpdatePaymentDialog';
+import UpdatePaymentDialog from '@/components/dashboard/payment/UpdatePaymentDialog';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const Payment = () => {
