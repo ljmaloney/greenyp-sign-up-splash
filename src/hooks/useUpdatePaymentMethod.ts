@@ -2,9 +2,11 @@
 import { useState } from 'react';
 import { useAccountData } from './useAccountData';
 import { useApiClient } from './useApiClient';
+import { usePaymentMethod } from './usePaymentMethod';
 import { useStableSquarePayment } from './useStableSquarePayment';
 import { processSquarePayment } from '@/utils/squarePaymentProcessor';
 import { useToast } from '@/hooks/use-toast';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface BillingContactData {
   firstName: string;
@@ -38,7 +40,13 @@ export const useUpdatePaymentMethod = () => {
 
   const { data: accountData } = useAccountData();
   const apiClient = useApiClient();
+  const queryClient = useQueryClient();
   const { toast } = useToast();
+  
+  // Get current payment method to determine if we need to create or update
+  const producerId = accountData?.producer?.producerId;
+  const { data: existingPaymentMethod, error: paymentMethodError } = usePaymentMethod(producerId || '');
+  
   const {
     cardContainerRef,
     payments,
@@ -201,23 +209,34 @@ export const useUpdatePaymentMethod = () => {
         emailValidationToken: 'AAA1234'
       };
 
-      console.log('📤 Submitting to replace endpoint:', replacePaymentData);
+      // Determine if we need to create a new payment method or update existing one
+      const isCreatingNew = !existingPaymentMethod || (paymentMethodError?.message?.includes('404'));
+      const endpoint = isCreatingNew ? '/payment/replace?createNew=true' : '/payment/replace';
+      
+      console.log('📤 Submitting to endpoint:', {
+        endpoint,
+        isCreatingNew,
+        hasExistingPaymentMethod: !!existingPaymentMethod,
+        paymentMethodError: paymentMethodError?.message
+      });
 
-      // Submit to the replace payment endpoint
-      const replaceResponse = await apiClient.post('/payment/replace', replacePaymentData, { requireAuth: true });
+      // Submit to the appropriate replace payment endpoint
+      const replaceResponse = await apiClient.post(endpoint, replacePaymentData, { requireAuth: true });
       
       console.log('✅ Payment method updated successfully:', replaceResponse);
 
       toast({
         title: "Success",
-        description: "Payment method updated successfully",
+        description: `Payment method ${isCreatingNew ? 'created' : 'updated'} successfully`,
         variant: "default"
       });
 
       closeDialog();
 
-      // Optionally refresh the payment method data
-      // This would require access to the query client or a refetch function
+      // Invalidate and refetch payment method data
+      await queryClient.invalidateQueries({
+        queryKey: ['payment-method', accountData.producer.producerId]
+      });
 
     } catch (error) {
       console.error('❌ Payment update failed:', error);
