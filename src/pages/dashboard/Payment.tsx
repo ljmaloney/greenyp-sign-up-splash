@@ -26,12 +26,14 @@ const Payment = () => {
     billingAddress,
     squareError,
     isInitialized,
+    isInitializing,
     cardContainerRef,
     openDialog,
     closeDialog,
     handleBillingContactChange,
     handleBillingAddressChange,
-    handleUpdatePayment
+    handleUpdatePayment,
+    retrySquareInitialization
   } = useUpdatePaymentMethod();
 
   return (
@@ -81,6 +83,8 @@ const Payment = () => {
           cardContainerRef={cardContainerRef}
           squareError={squareError}
           isSquareReady={isInitialized}
+          isSquareInitializing={isInitializing}
+          onSquareRetry={retrySquareInitialization}
         />
       </div>
     </DashboardLayout>

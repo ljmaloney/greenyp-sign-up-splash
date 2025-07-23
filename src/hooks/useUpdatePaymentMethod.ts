@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useAccountData } from './useAccountData';
 import { useApiClient } from './useApiClient';
@@ -53,6 +52,8 @@ export const useUpdatePaymentMethod = () => {
     card,
     error: squareError,
     isInitialized,
+    isInitializing,
+    retryInitialization,
     setError
   } = useStableSquarePayment();
 
@@ -258,11 +259,13 @@ export const useUpdatePaymentMethod = () => {
     billingAddress,
     squareError,
     isInitialized,
+    isInitializing,
     cardContainerRef,
     openDialog,
     closeDialog,
     handleBillingContactChange,
     handleBillingAddressChange,
-    handleUpdatePayment
+    handleUpdatePayment,
+    retrySquareInitialization: retryInitialization
   };
 };

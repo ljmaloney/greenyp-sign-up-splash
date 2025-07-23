@@ -5,6 +5,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -34,6 +35,8 @@ interface UpdatePaymentMethodDialogProps {
   cardContainerRef: React.RefObject<HTMLDivElement>;
   squareError: string | null;
   isSquareReady: boolean;
+  isSquareInitializing?: boolean;
+  onSquareRetry?: () => void;
 }
 
 const UpdatePaymentMethodDialog = ({
@@ -47,13 +50,18 @@ const UpdatePaymentMethodDialog = ({
   onUpdatePayment,
   cardContainerRef,
   squareError,
-  isSquareReady
+  isSquareReady,
+  isSquareInitializing = false,
+  onSquareRetry
 }: UpdatePaymentMethodDialogProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Update Payment Method</DialogTitle>
+          <DialogDescription>
+            Update your billing information and payment method details.
+          </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-6">
@@ -72,6 +80,9 @@ const UpdatePaymentMethodDialog = ({
             <SquareCardInput
               cardContainerRef={cardContainerRef}
               error={squareError}
+              isInitialized={isSquareReady}
+              isInitializing={isSquareInitializing}
+              onRetry={onSquareRetry}
             />
           </div>
         </div>
