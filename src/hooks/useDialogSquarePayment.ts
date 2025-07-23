@@ -1,7 +1,6 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { validateSquareConfig, preloadSquareSDK } from '@/utils/squareConfigValidator';
-import { detectSquareContainer } from '@/utils/squareContainerDetector';
+import { validateSquareConfig } from '@/utils/squareConfigValidator';
 
 interface DialogSquarePaymentHookResult {
   cardContainerRef: React.RefObject<HTMLDivElement>;
@@ -35,7 +34,7 @@ export const useDialogSquarePayment = (isDialogOpen: boolean): DialogSquarePayme
   const cardInstanceRef = useRef<any>(null);
   const initializationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isMountedRef = useRef(true);
-  const currentInitializationId = useRef(0);
+  const hasInitializedRef = useRef(false);
 
   const cleanup = useCallback(() => {
     console.log('🧹 Dialog Square cleanup');
@@ -73,44 +72,46 @@ export const useDialogSquarePayment = (isDialogOpen: boolean): DialogSquarePayme
     cleanup();
     setError(null);
     setRetryCount(0);
-    currentInitializationId.current++;
+    hasInitializedRef.current = false;
     setInitializationPhase('idle');
   }, [cleanup]);
 
-  const waitForDialogStability = useCallback(async (delay: number = 1500) => {
-    console.log(`⏳ Waiting ${delay}ms for dialog stability...`);
-    return new Promise(resolve => setTimeout(resolve, delay));
+  const waitForContainer = useCallback(async (): Promise<HTMLElement> => {
+    return new Promise((resolve, reject) => {
+      const maxWait = 10000;
+      const startTime = Date.now();
+      
+      const check = () => {
+        const container = document.getElementById('card-container');
+        
+        if (container && container.isConnected && container.offsetParent !== null) {
+          console.log('✅ Container ready for dialog');
+          resolve(container);
+          return;
+        }
+        
+        if (Date.now() - startTime > maxWait) {
+          reject(new Error('Card container timeout in dialog'));
+          return;
+        }
+        
+        setTimeout(check, 200);
+      };
+      
+      check();
+    });
   }, []);
 
-  const attachCard = useCallback(async (paymentsInstance: any, initId: number) => {
-    if (!isMountedRef.current || currentInitializationId.current !== initId) {
-      console.log('🚫 Attachment cancelled - component unmounted or superseded');
-      return;
-    }
+  const attachCard = useCallback(async (paymentsInstance: any) => {
+    if (!isMountedRef.current) return;
 
     try {
-      console.log('🎯 Starting card attachment process...');
+      console.log('🎯 Starting card attachment in dialog...');
       setInitializationPhase('detecting-container');
       
-      // Enhanced container detection for dialogs
-      const containerResult = await detectSquareContainer({
-        containerId: 'card-container',
-        maxWaitTime: 15000,
-        checkInterval: 200,
-        requireVisible: true,
-        requireStable: true
-      });
-
-      if (!containerResult.success) {
-        throw new Error(containerResult.error || 'Container detection failed');
-      }
-
-      console.log('✅ Container detected and stable');
-
-      if (currentInitializationId.current !== initId) {
-        console.log('🚫 Attachment cancelled during container detection');
-        return;
-      }
+      await waitForContainer();
+      
+      if (!isMountedRef.current) return;
 
       setInitializationPhase('creating-card');
       
@@ -126,33 +127,22 @@ export const useDialogSquarePayment = (isDialogOpen: boolean): DialogSquarePayme
         cardInstanceRef.current = null;
       }
 
-      // Create card instance with minimal, proven styling
-      console.log('🎨 Creating card with minimal styling...');
+      // Create card instance with corrected camelCase properties
+      console.log('🎨 Creating card with camelCase styling...');
       const cardInstance = await paymentsInstance.card({
         style: {
-          // Use only essential styles that are known to work
           '.input-container': {
-            'border-radius': '8px'
+            borderRadius: '8px'
           }
         }
       });
       
-      if (currentInitializationId.current !== initId) {
-        console.log('🚫 Attachment cancelled during card creation');
-        if (typeof cardInstance.destroy === 'function') {
-          cardInstance.destroy();
-        }
-        return;
-      }
-
       setInitializationPhase('attaching-card');
       
       cardInstanceRef.current = cardInstance;
       await cardInstance.attach('#card-container');
       
-      if (paymentsInstanceRef.current === paymentsInstance && 
-          isMountedRef.current && 
-          currentInitializationId.current === initId) {
+      if (paymentsInstanceRef.current === paymentsInstance && isMountedRef.current) {
         setCard(cardInstance);
         setIsInitialized(true);
         setIsInitializing(false);
@@ -164,7 +154,7 @@ export const useDialogSquarePayment = (isDialogOpen: boolean): DialogSquarePayme
       console.error('❌ Card attachment failed in dialog:', err);
       throw err;
     }
-  }, []);
+  }, [waitForContainer]);
 
   const initializeSquare = useCallback(async () => {
     if (!isDialogOpen) {
@@ -172,45 +162,40 @@ export const useDialogSquarePayment = (isDialogOpen: boolean): DialogSquarePayme
       return;
     }
 
-    if (isInitializing || isInitialized) {
+    if (hasInitializedRef.current || isInitializing || isInitialized) {
       console.log('🔄 Square already initializing/initialized, skipping');
       return;
     }
 
-    const currentRetry = retryCount + 1;
-    if (currentRetry > 3) {
+    if (retryCount >= 3) {
       console.error('❌ Max retries reached for dialog Square');
       setError('Failed to initialize payment form after multiple attempts. Please close and reopen the dialog.');
       setInitializationPhase('failed');
       return;
     }
 
-    const initId = ++currentInitializationId.current;
-    console.log(`🚀 Initializing Dialog Square (attempt ${currentRetry}/3)`);
+    console.log(`🚀 Initializing Dialog Square (attempt ${retryCount + 1}/3)`);
     
     setIsInitializing(true);
     setError(null);
-    setRetryCount(currentRetry);
+    setRetryCount(prev => prev + 1);
     setInitializationPhase('validating-config');
+    hasInitializedRef.current = true;
 
     try {
-      // Step 1: Wait for dialog to be fully rendered and stable
-      await waitForDialogStability(currentRetry === 1 ? 1500 : 2000);
-
-      // Step 2: Validate configuration
-      setInitializationPhase('validating-config');
+      // Step 1: Validate configuration
       const configValidation = validateSquareConfig();
       if (!configValidation.isValid) {
         throw new Error(configValidation.error || 'Invalid Square configuration');
       }
 
-      if (currentInitializationId.current !== initId) return;
+      if (!isMountedRef.current) return;
 
-      // Step 3: Load Square SDK
+      // Step 2: Load Square SDK
       setInitializationPhase('loading-sdk');
       const { payments: paymentsFunction } = await import('@square/web-sdk');
       
-      if (currentInitializationId.current !== initId) return;
+      if (!isMountedRef.current) return;
 
       setInitializationPhase('creating-payments');
       
@@ -221,41 +206,56 @@ export const useDialogSquarePayment = (isDialogOpen: boolean): DialogSquarePayme
       
       paymentsInstanceRef.current = paymentsInstance;
       
-      if (isMountedRef.current && currentInitializationId.current === initId) {
+      if (isMountedRef.current) {
         setPayments(paymentsInstance);
         console.log('✅ Dialog payments instance created');
         
-        // Step 4: Attach card with additional delay for stability
-        await attachCard(paymentsInstance, initId);
+        // Step 3: Attach card with delay for dialog stability
+        initializationTimeoutRef.current = setTimeout(async () => {
+          try {
+            if (paymentsInstanceRef.current === paymentsInstance && isMountedRef.current) {
+              await attachCard(paymentsInstance);
+            }
+          } catch (err) {
+            console.error('❌ Attachment failed:', err);
+            if (isMountedRef.current) {
+              setError(`Card attachment failed: ${err.message}`);
+              setIsInitializing(false);
+              setInitializationPhase('error');
+              hasInitializedRef.current = false;
+            }
+          }
+        }, 800);
       }
       
     } catch (err) {
       console.error('❌ Dialog Square initialization failed:', err);
-      if (isMountedRef.current && currentInitializationId.current === initId) {
+      if (isMountedRef.current) {
         const errorMessage = err.message || 'Unknown initialization error';
         setError(errorMessage);
         setIsInitializing(false);
         setInitializationPhase('error');
+        hasInitializedRef.current = false;
         
         // Auto-retry for certain types of errors
-        if (currentRetry < 3 && (
+        if (retryCount < 3 && (
           errorMessage.includes('container') || 
-          errorMessage.includes('InvalidStylesError') ||
           errorMessage.includes('timeout')
         )) {
           console.log(`🔄 Auto-retrying in 2 seconds...`);
           setTimeout(() => {
-            if (isMountedRef.current && isDialogOpen && currentInitializationId.current === initId) {
+            if (isMountedRef.current && isDialogOpen) {
               initializeSquare();
             }
           }, 2000);
         }
       }
     }
-  }, [isDialogOpen, isInitializing, isInitialized, attachCard, waitForDialogStability, retryCount]);
+  }, [isDialogOpen, isInitializing, isInitialized, attachCard, retryCount]);
 
   const retryInitialization = useCallback(() => {
     console.log('🔄 Manual retry requested for Dialog Square initialization');
+    hasInitializedRef.current = false;
     cleanup();
     setError(null);
     setRetryCount(0);
@@ -273,10 +273,10 @@ export const useDialogSquarePayment = (isDialogOpen: boolean): DialogSquarePayme
     if (isDialogOpen) {
       console.log('🎬 Dialog opened, starting Square initialization');
       const initDelay = setTimeout(() => {
-        if (isMountedRef.current && isDialogOpen) {
+        if (isMountedRef.current && isDialogOpen && !hasInitializedRef.current) {
           initializeSquare();
         }
-      }, 800); // Increased delay for dialog rendering
+      }, 1000); // Increased delay for dialog rendering
 
       return () => {
         clearTimeout(initDelay);
@@ -292,6 +292,7 @@ export const useDialogSquarePayment = (isDialogOpen: boolean): DialogSquarePayme
     return () => {
       console.log('🧹 Dialog Square component unmounting');
       isMountedRef.current = false;
+      hasInitializedRef.current = false;
       cleanup();
     };
   }, [cleanup]);
