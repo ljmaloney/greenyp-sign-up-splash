@@ -40,6 +40,9 @@ const ClassifiedAdThumbnail = ({ classified }: ClassifiedAdThumbnailProps) => {
             
             <div className="flex items-center gap-2">
               <Badge variant="secondary">{classified.category}</Badge>
+              {classified.subcategory && (
+                <Badge variant="outline">{classified.subcategory}</Badge>
+              )}
             </div>
             
             <p className="text-sm text-gray-700 line-clamp-3">
