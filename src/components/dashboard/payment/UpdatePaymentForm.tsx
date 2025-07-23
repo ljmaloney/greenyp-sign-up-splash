@@ -6,7 +6,7 @@ import { AlertCircle, Loader2 } from 'lucide-react';
 import { useStableSquarePayment } from '@/hooks/useStableSquarePayment';
 import { useDashboardPaymentUpdate } from '@/hooks/useDashboardPaymentUpdate';
 import { validatePaymentFields } from '@/utils/paymentValidation';
-import DashboardPaymentInformationCard from './DashboardPaymentInformationCard';
+import PaymentInformationCard from './PaymentInformationCard.tsx';
 
 interface DashboardUpdatePaymentFormProps {
   producerId: string | undefined;
@@ -16,7 +16,7 @@ interface DashboardUpdatePaymentFormProps {
   setIsSubmitting: (isSubmitting: boolean) => void;
 }
 
-const DashboardUpdatePaymentForm = ({ 
+const UpdatePaymentForm = ({
   producerId, 
   onSuccess, 
   onError, 
@@ -118,7 +118,7 @@ const DashboardUpdatePaymentForm = ({
       )}
       
       <div className="space-y-4">
-        <DashboardPaymentInformationCard
+        <PaymentInformationCard
           billingContact={billingContact}
           billingAddress={billingAddress}
           onBillingInfoChange={(contact, address) => {
@@ -164,4 +164,4 @@ const DashboardUpdatePaymentForm = ({
   );
 };
 
-export default DashboardUpdatePaymentForm;
+export default UpdatePaymentForm;

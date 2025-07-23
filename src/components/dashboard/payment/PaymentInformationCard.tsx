@@ -20,7 +20,7 @@ interface DashboardPaymentInformationCardProps {
   onBillingInfoChange: (contact: any, address: any) => void;
 }
 
-const DashboardPaymentInformationCard = ({ 
+const PaymentInformationCard = ({
   billingContact,
   billingAddress,
   onBillingInfoChange
@@ -54,4 +54,4 @@ const DashboardPaymentInformationCard = ({
   );
 };
 
-export default DashboardPaymentInformationCard;
+export default PaymentInformationCard;

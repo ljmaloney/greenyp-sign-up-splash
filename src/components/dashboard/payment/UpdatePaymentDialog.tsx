@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import DashboardUpdatePaymentForm from './DashboardUpdatePaymentForm';
+import UpdatePaymentForm from './UpdatePaymentForm.tsx';
 import { useAccountData } from '@/hooks/useAccountData';
 import { useToast } from '@/hooks/use-toast';
 
@@ -38,7 +38,7 @@ const UpdatePaymentDialog = ({ open, onClose }: UpdatePaymentDialogProps) => {
           <DialogTitle>Update Payment Method</DialogTitle>
         </DialogHeader>
         
-        <DashboardUpdatePaymentForm 
+        <UpdatePaymentForm
           producerId={producerId}
           onSuccess={handleSuccess}
           onError={handleError}
