@@ -17,7 +17,7 @@ const MultiStepAdForm = () => {
   const {
     handleBasicFormSubmit,
     handleImageUploadComplete
-  } = useAdFormSubmission(formData, selectedPackage, setCurrentStep);
+  } = useAdFormSubmission(formData, selectedPackage, (step: string) => setCurrentStep(step as any));
 
   if (currentStep === 'basic') {
     return (

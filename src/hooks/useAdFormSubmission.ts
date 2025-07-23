@@ -2,11 +2,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
-import { AdFormData } from '@/types/classifieds';
+import { ExtendedClassifiedFormData } from '@/types/extendedClassifiedForm';
 import { AdPackage } from '@/types/adPackages';
 
 export const useAdFormSubmission = (
-  formData: AdFormData,
+  formData: ExtendedClassifiedFormData,
   selectedPackage: AdPackage | null,
   setCurrentStep: (step: string) => void
 ) => {
