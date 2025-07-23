@@ -6,6 +6,7 @@ import Index from '@/pages/Index';
 import Classifieds from '@/pages/classifieds/Classifieds';
 import ClassifiedDetail from '@/pages/classifieds/ClassifiedDetail';
 import CreateAd from '@/pages/classifieds/CreateAd';
+import Payment from '@/pages/classifieds/Payment';
 import { Toaster } from '@/components/ui/toaster';
 
 // Create a client
@@ -29,6 +30,7 @@ function App() {
               <Route path="/classifieds" element={<Classifieds />} />
               <Route path="/classified/:id" element={<ClassifiedDetail />} />
               <Route path="/classifieds/create" element={<CreateAd />} />
+              <Route path="/classified/payment/:classifiedId" element={<Payment />} />
             </Routes>
             <Toaster />
           </div>
