@@ -1,8 +1,7 @@
 
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { CreditCard, Edit } from 'lucide-react';
+import { CreditCard } from 'lucide-react';
 import { PaymentMethod } from '@/types/payment';
 
 interface SavedPaymentMethodProps {
@@ -26,15 +25,9 @@ const SavedPaymentMethod = ({ paymentMethod, isLoading, error }: SavedPaymentMet
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center">
-            <CreditCard className="w-5 h-5 mr-2 text-greenyp-600" />
-            Payment Method
-          </div>
-          <Button variant="outline" size="sm">
-            <Edit className="w-4 h-4 mr-2" />
-            Update
-          </Button>
+        <CardTitle className="flex items-center">
+          <CreditCard className="w-5 h-5 mr-2 text-greenyp-600" />
+          Payment Method
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
