@@ -1,18 +1,6 @@
+
 import { normalizePhoneForSquare } from '@/utils/phoneUtils';
-
-interface BillingContactData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-}
-
-interface BillingAddressData {
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
-}
+import { BillingContactData, BillingAddressData } from '@/types/billing';
 
 interface PaymentOptions {
   isSubscription?: boolean;
