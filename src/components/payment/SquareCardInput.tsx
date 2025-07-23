@@ -30,8 +30,6 @@ const SquareCardInput = ({
     switch (phase) {
       case 'validating-config':
         return { text: 'Validating configuration...', icon: <Loader2 className="w-4 h-4 animate-spin" /> };
-      case 'preloading-sdk':
-        return { text: 'Optimizing payment form...', icon: <Loader2 className="w-4 h-4 animate-spin" /> };
       case 'loading-sdk':
         return { text: 'Loading secure payment system...', icon: <Loader2 className="w-4 h-4 animate-spin" /> };
       case 'creating-payments':
@@ -45,6 +43,7 @@ const SquareCardInput = ({
       case 'ready':
         return { text: 'Payment form ready', icon: <CheckCircle2 className="w-4 h-4 text-green-600" /> };
       case 'error':
+      case 'failed':
         return { text: 'Initialization failed', icon: <AlertCircle className="w-4 h-4 text-red-600" /> };
       default:
         return { text: 'Starting payment form...', icon: <RefreshCw className="w-4 h-4 animate-spin" /> };
@@ -52,6 +51,17 @@ const SquareCardInput = ({
   };
 
   const phaseInfo = getPhaseMessage(initializationPhase);
+
+  const isStyleError = error?.includes('InvalidStylesError') || error?.includes('style');
+  const isContainerError = error?.includes('container') || error?.includes('Container');
+  const isTimeoutError = error?.includes('timeout') || error?.includes('Timeout');
+
+  const getErrorSuggestion = () => {
+    if (isStyleError) return 'Styling conflict detected. Retrying with simplified styling...';
+    if (isContainerError) return 'Container detection issue. The dialog may need more time to render.';
+    if (isTimeoutError) return 'Connection timeout. Please check your internet connection.';
+    return 'An unexpected error occurred.';
+  };
 
   return (
     <div className="space-y-4">
@@ -72,12 +82,12 @@ const SquareCardInput = ({
                 <div className="text-sm font-medium text-gray-700">{phaseInfo.text}</div>
                 {retryCount > 0 && (
                   <div className="text-xs text-gray-500 mt-1">
-                    Attempt {retryCount} • This may take a moment
+                    Attempt {retryCount} • Enhanced stability mode
                   </div>
                 )}
                 {initializationPhase === 'detecting-container' && (
                   <div className="text-xs text-gray-500 mt-1">
-                    Ensuring dialog is fully loaded...
+                    Ensuring dialog is fully stable...
                   </div>
                 )}
               </div>
@@ -96,21 +106,28 @@ const SquareCardInput = ({
         )}
       </div>
       
-      {/* Error state */}
+      {/* Enhanced error state with specific suggestions */}
       {showErrorState && (
         <div className="text-red-600 text-sm bg-red-50 border border-red-200 p-4 rounded-lg">
           <div className="flex items-start space-x-2">
             <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
             <div className="flex-1">
               <div className="font-medium">Payment Form Error</div>
-              <div className="mt-1">{error}</div>
+              <div className="mt-1">{getErrorSuggestion()}</div>
               {retryCount > 0 && (
                 <div className="text-xs text-red-500 mt-2">
                   Failed after {retryCount} attempt{retryCount > 1 ? 's' : ''}
+                  {retryCount >= 3 ? ' • Consider closing and reopening the dialog' : ''}
                 </div>
               )}
+              {process.env.NODE_ENV === 'development' && (
+                <details className="mt-2">
+                  <summary className="text-xs cursor-pointer">Technical Details</summary>
+                  <div className="text-xs mt-1 font-mono">{error}</div>
+                </details>
+              )}
             </div>
-            {onRetry && (
+            {onRetry && retryCount < 3 && (
               <Button
                 variant="outline"
                 size="sm"
@@ -140,7 +157,7 @@ const SquareCardInput = ({
         <div className="text-xs text-amber-600 bg-amber-50 border border-amber-200 p-3 rounded-lg">
           <div className="flex items-center space-x-2">
             <Clock className="w-4 h-4" />
-            <span>Taking longer than usual. Using enhanced retry strategy...</span>
+            <span>Using enhanced initialization mode for better stability...</span>
           </div>
         </div>
       )}
