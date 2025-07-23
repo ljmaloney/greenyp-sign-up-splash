@@ -1,171 +1,122 @@
 
-import React from 'react';
-import { useSignUpPaymentParams } from '@/hooks/useSignUpPaymentParams';
-import { useSubscriptionDataProcessor } from '@/hooks/useSubscriptionDataProcessor';
-import SubscriptionPaymentLayout from './SubscriptionPaymentLayout';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle, Loader2, RefreshCw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
+import BillingContactForm from '@/components/payment/BillingContactForm';
+import BillingAddressForm from '@/components/payment/BillingAddressForm';
+import EmailValidationCard from '@/components/payment/EmailValidationCard';
+import ReactSquareSubscriptionCard from './ReactSquareSubscriptionCard';
+import SubscriptionSummaryCard from './SubscriptionSummaryCard';
 
 const SignUpPaymentContainer = () => {
-  const {
-    params,
-    hasRequiredData,
-    validationErrors,
-    isValidating
-  } = useSignUpPaymentParams();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  
+  // Extract data from URL params
+  const producerId = searchParams.get('producerId');
+  const businessName = searchParams.get('businessName');
+  const subscriptionPlan = searchParams.get('plan');
+  const subscriptionPrice = searchParams.get('planPrice');
 
-  const {
-    selectedSubscription,
-    apiSubscriptionData,
-    hasValidSubscriptionData,
-    dataSource,
-    processingError
-  } = useSubscriptionDataProcessor({
-    subscriptionId: params.subscriptionId,
-    subscriptionDataParam: params.subscriptionDataParam
+  const [billingContact, setBillingContact] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: ''
+  });
+  
+  const [billingAddress, setBillingAddress] = useState({
+    address: '',
+    city: '',
+    state: '',
+    zipCode: ''
   });
 
-  console.log('🔍 SignUpPaymentContainer - Enhanced state logging:', {
-    urlValidation: {
-      hasRequiredData,
-      validationErrors,
-      isValidating
-    },
-    subscriptionProcessing: {
-      hasValidSubscriptionData,
-      dataSource,
-      processingError,
-      hasApiData: !!apiSubscriptionData,
-      hasReferenceData: !!selectedSubscription
-    },
-    params: {
-      producerId: params.producerId,
-      email: params.email,
-      subscriptionId: params.subscriptionId,
-      hasSubscriptionData: !!params.subscriptionDataParam
+  const [emailValidationToken, setEmailValidationToken] = useState('');
+  const [isEmailValidated, setIsEmailValidated] = useState(false);
+
+  // Redirect if missing required data
+  useEffect(() => {
+    if (!producerId || !businessName) {
+      toast({
+        title: "Missing Information",
+        description: "Please complete the signup process first.",
+        variant: "destructive",
+      });
+      navigate('/subscribers/signup');
     }
-  });
+  }, [producerId, businessName, navigate, toast]);
 
-  // Show loading state while validating URL parameters
-  if (isValidating) {
-    console.log('⏳ Showing enhanced URL validation loading state');
-    return (
-      <div className="flex justify-center items-center p-8">
-        <div className="flex items-center space-x-2 text-gray-600">
-          <Loader2 className="h-5 w-5 animate-spin" />
-          <span>Validating payment information...</span>
-        </div>
-      </div>
-    );
-  }
-
-  // Show URL validation errors (these will auto-redirect)
-  if (!hasRequiredData) {
-    console.log('❌ URL validation failed, showing enhanced error while redirecting');
-    return (
-      <div className="flex justify-center items-center p-8">
-        <Alert variant="destructive" className="max-w-md">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            <div className="space-y-3">
-              <div>Required payment information is missing. Redirecting to signup page...</div>
-              <div className="text-sm">
-                <strong>Missing:</strong> {validationErrors.join(', ')}
-              </div>
-              <Button 
-                onClick={() => window.location.href = '/subscribers/signup'}
-                variant="outline"
-                size="sm"
-                className="w-full"
-              >
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Go to Signup Now
-              </Button>
-            </div>
-          </AlertDescription>
-        </Alert>
-      </div>
-    );
-  }
-
-  // Show subscription processing error with retry option
-  if (processingError) {
-    console.error('❌ Subscription processing error:', processingError);
-    return (
-      <div className="flex justify-center items-center p-8">
-        <Alert variant="destructive" className="max-w-md">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            <div className="space-y-3">
-              <div>{processingError}</div>
-              <div className="text-sm">
-                This might be a temporary issue. You can try refreshing the page or return to signup.
-              </div>
-              <div className="flex space-x-2">
-                <Button 
-                  onClick={() => window.location.reload()}
-                  variant="outline"
-                  size="sm"
-                  className="flex-1"
-                >
-                  <RefreshCw className="h-4 w-4 mr-2" />
-                  Retry
-                </Button>
-                <Button 
-                  onClick={() => window.location.href = '/subscribers/signup'}
-                  variant="default"
-                  size="sm"
-                  className="flex-1"
-                >
-                  Back to Signup
-                </Button>
-              </div>
-            </div>
-          </AlertDescription>
-        </Alert>
-      </div>
-    );
-  }
-
-  // Show loading for subscription data (only if we're still processing and have no data)
-  if (!hasValidSubscriptionData && dataSource === 'None') {
-    console.log('⏳ Showing subscription data loading state');
-    return (
-      <div className="flex justify-center items-center p-8">
-        <div className="flex items-center space-x-2 text-gray-600">
-          <Loader2 className="h-5 w-5 animate-spin" />
-          <span>Loading subscription details...</span>
-        </div>
-      </div>
-    );
-  }
-
-  const customerData = {
-    firstName: params.firstName || '',
-    lastName: params.lastName || '',
-    address: params.address || '',
-    city: params.city || '',
-    state: params.state || '',
-    postalCode: params.postalCode || '',
-    phoneNumber: params.phone || '',
-    emailAddress: params.email || ''
+  const handleBillingContactChange = (field: string, value: string) => {
+    setBillingContact(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
-  console.log('✅ SignUpPaymentContainer - Rendering enhanced payment layout:', {
-    dataSource,
-    hasApiData: !!apiSubscriptionData,
-    hasReferenceData: !!selectedSubscription,
-    customerDataComplete: !!(customerData.firstName && customerData.lastName && customerData.emailAddress)
-  });
+  const handleBillingAddressChange = (field: string, value: string) => {
+    setBillingAddress(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleEmailValidated = (token: string) => {
+    setEmailValidationToken(token);
+    setIsEmailValidated(true);
+    toast({
+      title: "Email Validated",
+      description: "Your email has been successfully validated.",
+    });
+  };
+
+  if (!producerId || !businessName) {
+    return (
+      <div className="text-center py-12">
+        <h2 className="text-xl font-semibold text-red-600 mb-4">Missing Information</h2>
+        <p className="text-gray-600">Please complete the signup process first.</p>
+      </div>
+    );
+  }
 
   return (
-    <SubscriptionPaymentLayout 
-      selectedSubscription={selectedSubscription}
-      customerData={customerData}
-      producerId={params.producerId}
-      apiSubscriptionData={apiSubscriptionData}
-    />
+    <div className="grid gap-8 md:grid-cols-2">
+      <div className="space-y-6">
+        <BillingContactForm
+          billingContact={billingContact}
+          onChange={handleBillingContactChange}
+        />
+        
+        <BillingAddressForm
+          billingAddress={billingAddress}
+          onChange={handleBillingAddressChange}
+        />
+        
+        <EmailValidationCard
+          email={billingContact.email}
+          onEmailValidated={handleEmailValidated}
+          isValidated={isEmailValidated}
+          validationToken={emailValidationToken}
+        />
+      </div>
+
+      <div className="space-y-6">
+        <SubscriptionSummaryCard
+          businessName={businessName}
+          subscriptionPlan={subscriptionPlan || 'Basic Listing'}
+          subscriptionPrice={subscriptionPrice || '$5'}
+          producerId={producerId}
+        />
+        
+        <ReactSquareSubscriptionCard
+          billingContact={billingContact}
+          billingAddress={billingAddress}
+          emailValidationToken={emailValidationToken}
+          producerId={producerId}
+        />
+      </div>
+    </div>
   );
 };
 

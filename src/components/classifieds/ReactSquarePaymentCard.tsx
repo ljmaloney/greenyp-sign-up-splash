@@ -3,11 +3,9 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApiClient } from '@/hooks/useApiClient';
 import { useToast } from '@/hooks/use-toast';
-import { useSquarePayment } from '@/hooks/useSquarePayment';
 import { validatePaymentFields } from '@/utils/paymentValidation';
-import { processSquarePayment } from '@/utils/squarePaymentProcessor';
-import PaymentMethodCard from '../payment/PaymentMethodCard';
-import SquarePaymentWrapper from '../payment/SquarePaymentWrapper';
+import { processReactSquarePayment } from '@/utils/reactSquarePaymentProcessor';
+import ReactSquareCard from '@/components/payment/ReactSquareCard';
 
 interface BillingContactData {
   firstName: string;
@@ -23,32 +21,29 @@ interface BillingAddressData {
   zipCode: string;
 }
 
-interface SquarePaymentCardProps {
+interface ReactSquarePaymentCardProps {
   billingContact: BillingContactData;
   billingAddress: BillingAddressData;
   emailValidationToken: string;
   onPaymentProcessed?: (result: any) => void;
 }
 
-const SquarePaymentCard = ({ billingContact, billingAddress, emailValidationToken, onPaymentProcessed }: SquarePaymentCardProps) => {
+const ReactSquarePaymentCard = ({ 
+  billingContact, 
+  billingAddress, 
+  emailValidationToken, 
+  onPaymentProcessed 
+}: ReactSquarePaymentCardProps) => {
   const { classifiedId } = useParams<{ classifiedId: string }>();
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const apiClient = useApiClient();
   const { toast } = useToast();
 
-  const {
-    cardContainerRef,
-    payments,
-    card,
-    error,
-    setError,
-    cleanup
-  } = useSquarePayment();
-
-  const handlePayment = async () => {
-    if (!card || !payments || !classifiedId) {
-      setError('Payment form not initialized or missing classified ID');
+  const handlePaymentSuccess = async (tokenData: any) => {
+    if (!classifiedId) {
+      setError('Missing classified ID');
       return;
     }
 
@@ -79,11 +74,8 @@ const SquarePaymentCard = ({ billingContact, billingAddress, emailValidationToke
     setError(null);
 
     try {
-      const paymentResponse = await processSquarePayment(
-        card,
-        payments,
-        billingContact,
-        billingAddress,
+      const paymentResponse = await processReactSquarePayment(
+        tokenData,
         classifiedId,
         apiClient,
         emailValidationToken
@@ -128,10 +120,11 @@ const SquarePaymentCard = ({ billingContact, billingAddress, emailValidationToke
       onPaymentProcessed?.(paymentResponse);
     } catch (err) {
       console.error('Payment processing error:', err);
-      setError('Payment processing failed');
+      const errorMessage = err instanceof Error ? err.message : 'Payment processing failed';
+      setError(errorMessage);
       toast({
         title: "Payment Failed",
-        description: "There was an error processing your payment. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -139,23 +132,26 @@ const SquarePaymentCard = ({ billingContact, billingAddress, emailValidationToke
     }
   };
 
-  const handleRetry = () => {
-    // Clear error and trigger cleanup/reinit
-    setError(null);
-    cleanup();
+  const handlePaymentError = (errorMessage: string) => {
+    setError(errorMessage);
+    toast({
+      title: "Payment Error",
+      description: errorMessage,
+      variant: "destructive",
+    });
   };
 
   return (
-    <SquarePaymentWrapper onRetry={handleRetry}>
-      <PaymentMethodCard
-        cardContainerRef={cardContainerRef}
-        error={error}
-        isProcessing={isProcessing}
-        onPayment={handlePayment}
-        isCardReady={!!card}
-      />
-    </SquarePaymentWrapper>
+    <ReactSquareCard
+      billingContact={billingContact}
+      billingAddress={billingAddress}
+      onPaymentSuccess={handlePaymentSuccess}
+      onPaymentError={handlePaymentError}
+      isProcessing={isProcessing}
+      disabled={!emailValidationToken}
+      error={error}
+    />
   );
 };
 
-export default SquarePaymentCard;
+export default ReactSquarePaymentCard;
