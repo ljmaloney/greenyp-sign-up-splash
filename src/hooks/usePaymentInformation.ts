@@ -1,5 +1,5 @@
-
 import { useState, useCallback } from 'react';
+import { normalizePhoneForSquare } from '@/utils/phoneUtils';
 
 interface CustomerData {
   firstName: string;
@@ -49,7 +49,7 @@ export const usePaymentInformation = ({
       firstName: customer.firstName,
       lastName: customer.lastName,
       email: customer.emailAddress,
-      phone: customer.phoneNumber
+      phone: normalizePhoneForSquare(customer.phoneNumber)
     };
 
     const newAddress = {

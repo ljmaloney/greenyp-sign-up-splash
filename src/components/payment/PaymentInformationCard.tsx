@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Copy } from 'lucide-react';
 import { usePaymentInformation } from '@/hooks/usePaymentInformation';
+import { normalizePhoneForSquare } from '@/utils/phoneUtils';
 
 interface ClassifiedData {
   classifiedId: string;
@@ -112,6 +112,11 @@ const PaymentInformationCard = ({
     isValidated: isEmailValidated
   });
 
+  const handlePhoneChange = (value: string) => {
+    const normalizedPhone = normalizePhoneForSquare(value);
+    handleContactChange('phone', normalizedPhone);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -180,18 +185,19 @@ const PaymentInformationCard = ({
           />
         </div>
         
+        <div className="space-y-2">
+          <Label htmlFor="city">City *</Label>
+          <Input
+            id="city"
+            type="text"
+            value={billingAddress.city}
+            onChange={(e) => handleAddressChange('city', e.target.value)}
+            disabled={!isEmailValidated}
+            required
+          />
+        </div>
+        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="city">City *</Label>
-            <Input
-              id="city"
-              type="text"
-              value={billingAddress.city}
-              onChange={(e) => handleAddressChange('city', e.target.value)}
-              disabled={!isEmailValidated}
-              required
-            />
-          </div>
           <div className="space-y-2">
             <Label htmlFor="state">State *</Label>
             <Select 
@@ -211,19 +217,18 @@ const PaymentInformationCard = ({
               </SelectContent>
             </Select>
           </div>
-        </div>
-        
-        <div className="space-y-2">
-          <Label htmlFor="zipCode">Zip Code *</Label>
-          <Input
-            id="zipCode"
-            type="text"
-            value={billingAddress.zipCode}
-            onChange={(e) => handleAddressChange('zipCode', e.target.value)}
-            disabled={!isEmailValidated}
-            maxLength={10}
-            required
-          />
+          <div className="space-y-2">
+            <Label htmlFor="zipCode">Zip Code *</Label>
+            <Input
+              id="zipCode"
+              type="text"
+              value={billingAddress.zipCode}
+              onChange={(e) => handleAddressChange('zipCode', e.target.value)}
+              disabled={!isEmailValidated}
+              maxLength={10}
+              required
+            />
+          </div>
         </div>
         
         <div className="space-y-2">
@@ -232,7 +237,7 @@ const PaymentInformationCard = ({
             id="phone"
             type="tel"
             value={billingContact.phone}
-            onChange={(e) => handleContactChange('phone', e.target.value)}
+            onChange={(e) => handlePhoneChange(e.target.value)}
             disabled={!isEmailValidated}
             required
           />
