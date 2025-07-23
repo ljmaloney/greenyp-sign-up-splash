@@ -14,6 +14,7 @@ interface BillingContactData {
 }
 
 interface BillingAddressData {
+  companyName: string;
   address: string;
   city: string;
   state: string;
@@ -47,7 +48,7 @@ export const useDashboardPaymentUpdate = ({ producerId, onSuccess, onError }: Us
       return;
     }
 
-    console.log('💳 Starting dashboard payment method update process');
+    console.log('💳 Starting dashboard payment method replacement process');
     setIsProcessing(true);
     setError(null);
 
@@ -86,22 +87,23 @@ export const useDashboardPaymentUpdate = ({ producerId, onSuccess, onError }: Us
         console.log('✅ Verification result:', verificationResult);
 
         if (verificationResult?.token) {
-          // Prepare billing info for API (without email validation token)
+          // Prepare billing info for API using new field names
           const billingInfo = {
             firstName: billingContact.firstName.trim(),
             lastName: billingContact.lastName.trim(),
-            addressLine1: billingAddress.address.trim(),
-            addressLine2: '',
-            city: billingAddress.city.trim(),
-            state: billingAddress.state.trim(),
-            postalCode: billingAddress.zipCode.trim(),
+            companyName: billingAddress.companyName.trim(),
+            payorAddress1: billingAddress.address.trim(),
+            payorAddress2: '',
+            payorCity: billingAddress.city.trim(),
+            payorState: billingAddress.state.trim(),
+            payorPostalCode: billingAddress.zipCode.trim(),
             phoneNumber: squareFormattedPhone,
             emailAddress: billingContact.email.trim(),
             emailValidationToken: '' // Empty for dashboard updates
           };
 
-          // Call API to update payment method
-          await paymentService.updatePaymentMethod(
+          // Call API to replace payment method
+          await paymentService.replacePaymentMethod(
             producerId,
             result.token,
             verificationResult.token,

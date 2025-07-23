@@ -2,8 +2,10 @@
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import StateSelect from '@/components/ui/state-select';
 
 interface BillingAddressData {
+  companyName: string;
   address: string;
   city: string;
   state: string;
@@ -20,6 +22,16 @@ const BillingAddressForm = ({ billingAddress, onChange }: BillingAddressFormProp
     <div>
       <h3 className="text-lg font-semibold mb-4">Billing Address</h3>
       <div className="space-y-4">
+        <div>
+          <Label htmlFor="companyName">Company Name</Label>
+          <Input
+            id="companyName"
+            placeholder="Your Company LLC"
+            value={billingAddress.companyName}
+            onChange={(e) => onChange('companyName', e.target.value)}
+          />
+        </div>
+
         <div>
           <Label htmlFor="address">Address *</Label>
           <Input
@@ -42,11 +54,10 @@ const BillingAddressForm = ({ billingAddress, onChange }: BillingAddressFormProp
           </div>
           <div>
             <Label htmlFor="state">State *</Label>
-            <Input
-              id="state"
-              placeholder="CA"
+            <StateSelect
               value={billingAddress.state}
-              onChange={(e) => onChange('state', e.target.value)}
+              onValueChange={(value) => onChange('state', value)}
+              placeholder="Select state"
             />
           </div>
         </div>

@@ -32,43 +32,54 @@ export const createPaymentService = (apiClient: any) => {
     },
     
     /**
-     * Update payment method for a producer
+     * Replace payment method for a producer using the new endpoint
      */
-    updatePaymentMethod: async (
-      producerId: string, 
+    replacePaymentMethod: async (
+      referenceId: string,
       paymentToken: string,
       verificationToken: string,
       billingInfo: {
         firstName: string;
         lastName: string;
-        addressLine1: string;
-        addressLine2?: string;
-        city: string;
-        state: string;
-        postalCode: string;
+        companyName: string;
+        payorAddress1: string;
+        payorAddress2?: string;
+        payorCity: string;
+        payorState: string;
+        payorPostalCode: string;
         phoneNumber: string;
         emailAddress: string;
         emailValidationToken: string;
       }
     ): Promise<{success: boolean}> => {
-      console.log('Updating payment method for producer:', producerId);
+      console.log('Replacing payment method for reference ID:', referenceId);
       
       try {
         const payload = {
-          producerId,
+          referenceId,
           paymentToken,
           verificationToken,
-          ...billingInfo
+          emailValidationToken: billingInfo.emailValidationToken,
+          firstName: billingInfo.firstName,
+          lastName: billingInfo.lastName,
+          companyName: billingInfo.companyName,
+          payorAddress1: billingInfo.payorAddress1,
+          payorAddress2: billingInfo.payorAddress2 || '',
+          payorCity: billingInfo.payorCity,
+          payorState: billingInfo.payorState,
+          payorPostalCode: billingInfo.payorPostalCode,
+          phoneNumber: billingInfo.phoneNumber,
+          emailAddress: billingInfo.emailAddress
         };
         
-        console.log('Update payment method payload:', payload);
+        console.log('Replace payment method payload:', payload);
         
-        const response = await apiClient.post('/account/update-payment-method', payload);
-        console.log('Update payment method response:', response);
+        const response = await apiClient.post('/payment/replace', payload);
+        console.log('Replace payment method response:', response);
         
         return { success: true };
       } catch (error: any) {
-        console.error('Error updating payment method:', error);
+        console.error('Error replacing payment method:', error);
         throw error;
       }
     }

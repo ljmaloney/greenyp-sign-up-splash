@@ -7,6 +7,7 @@ interface BillingContactData {
 }
 
 interface BillingAddressData {
+  companyName: string;
   address: string;
   city: string;
   state: string;

@@ -48,7 +48,7 @@ const UpdatePaymentForm = ({
     }
   });
 
-  // Billing info states
+  // Billing info states with company name
   const [billingContact, setBillingContact] = useState({
     firstName: '',
     lastName: '',
@@ -57,6 +57,7 @@ const UpdatePaymentForm = ({
   });
   
   const [billingAddress, setBillingAddress] = useState({
+    companyName: '',
     address: '',
     city: '',
     state: '',
