@@ -1,6 +1,19 @@
 
 import { normalizePhoneForSquare } from '@/utils/phoneUtils';
-import { BillingContactData, BillingAddressData } from '@/types/billing';
+
+interface BillingContactData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+}
+
+interface BillingAddressData {
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+}
 
 export const processSquareSubscriptionPayment = async (
   card: any,
@@ -106,8 +119,7 @@ export const processSquareSubscriptionPayment = async (
         emailValidationToken: emailValidationToken.trim(),
         producerPayment: {
           actionType: 'APPLY_INITIAL',
-          cycleType: 'MONTHLY'
-        }
+          cycleType: 'MONTHLY'}
       };
 
       console.log('📤 Final subscription payment payload:', subscriptionPaymentData);

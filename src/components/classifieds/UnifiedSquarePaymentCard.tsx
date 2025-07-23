@@ -5,7 +5,20 @@ import { Button } from '@/components/ui/button';
 import { useUnifiedSquarePayment } from '@/hooks/useUnifiedSquarePayment';
 import SquareErrorBoundary from '@/components/payment/SquareErrorBoundary';
 import { AlertTriangle, CreditCard, RefreshCw } from 'lucide-react';
-import { BillingContactData, BillingAddressData } from '@/types/billing';
+
+interface BillingContactData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+}
+
+interface BillingAddressData {
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+}
 
 interface UnifiedSquarePaymentCardProps {
   billingContact: BillingContactData;

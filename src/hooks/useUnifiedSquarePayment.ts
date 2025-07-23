@@ -1,10 +1,24 @@
+
 import { useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApiClient } from '@/hooks/useApiClient';
 import { useToast } from '@/hooks/use-toast';
 import { validatePaymentFields } from '@/utils/paymentValidation';
 import { processSquarePayment } from '@/utils/squarePaymentProcessor';
-import { BillingContactData, BillingAddressData } from '@/types/billing';
+
+interface BillingContactData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+}
+
+interface BillingAddressData {
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+}
 
 interface UseUnifiedSquarePaymentProps {
   billingContact: BillingContactData;
@@ -43,7 +57,6 @@ export const useUnifiedSquarePayment = ({
         hasPhone: !!billingContact.phone
       },
       billingAddress: {
-        hasCompanyName: !!billingAddress.companyName,
         hasAddress: !!billingAddress.address,
         hasCity: !!billingAddress.city,
         hasState: !!billingAddress.state,
