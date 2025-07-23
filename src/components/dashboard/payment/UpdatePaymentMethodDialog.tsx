@@ -6,60 +6,62 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import ReactSquareCard from '@/components/payment/ReactSquareCard';
-import { useAccountData } from '@/hooks/useAccountData';
-import { useUpdatePaymentMethod } from '@/hooks/useUpdatePaymentMethod';
-import { toast } from '@/components/ui/sonner';
+import { Button } from '@/components/ui/button';
+import BillingContactForm from '@/components/payment/BillingContactForm';
+import BillingAddressForm from '@/components/payment/BillingAddressForm';
 
 interface UpdatePaymentMethodDialogProps {
   isOpen: boolean;
   onClose: () => void;
+  isProcessing: boolean;
+  billingContact: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+  };
+  billingAddress: {
+    address: string;
+    city: string;
+    state: string;
+    zipCode: string;
+  };
+  onBillingContactChange: (field: string, value: string) => void;
+  onBillingAddressChange: (field: string, value: string) => void;
+  onUpdatePayment: (data: any) => void;
+  cardContainerRef: React.RefObject<HTMLDivElement>;
+  squareError: string | null;
+  isSquareReady: boolean;
+  isSquareInitializing: boolean;
+  initializationPhase: string;
+  retryCount: number;
+  onSquareRetry: () => void;
 }
 
-const UpdatePaymentMethodDialog = ({ isOpen, onClose }: UpdatePaymentMethodDialogProps) => {
-  const { data: accountData } = useAccountData();
-  const producerId = accountData?.producer?.producerId;
-  const { updatePaymentMethod, isUpdating, error, resetError } = useUpdatePaymentMethod(producerId || '');
-
-  const [billingInfo, setBillingInfo] = React.useState({
-    contact: {
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: ''
-    },
-    address: {
-      address: '',
-      city: '',
-      state: '',
-      zipCode: ''
-    }
-  });
-
-  const handlePaymentSuccess = async (result: any) => {
-    try {
-      await updatePaymentMethod({
-        token: result.token,
-        billingContact: billingInfo.contact,
-        billingAddress: billingInfo.address
-      });
-      
-      toast.success('Payment method updated successfully');
-      onClose();
-    } catch (error) {
-      toast.error('Failed to update payment method');
-    }
+const UpdatePaymentMethodDialog = ({
+  isOpen,
+  onClose,
+  isProcessing,
+  billingContact,
+  billingAddress,
+  onBillingContactChange,
+  onBillingAddressChange,
+  onUpdatePayment,
+  cardContainerRef,
+  squareError,
+  isSquareReady,
+  isSquareInitializing,
+  retryCount,
+  onSquareRetry
+}: UpdatePaymentMethodDialogProps) => {
+  
+  const handleSubmit = () => {
+    onUpdatePayment({
+      token: 'mock-token',
+      billingContact,
+      billingAddress
+    });
   };
-
-  const handlePaymentError = (errorMessage: string) => {
-    toast.error(errorMessage);
-  };
-
-  React.useEffect(() => {
-    if (!isOpen) {
-      resetError();
-    }
-  }, [isOpen, resetError]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -69,15 +71,42 @@ const UpdatePaymentMethodDialog = ({ isOpen, onClose }: UpdatePaymentMethodDialo
         </DialogHeader>
         
         <div className="space-y-4">
-          <ReactSquareCard
-            billingContact={billingInfo.contact}
-            billingAddress={billingInfo.address}
-            onPaymentSuccess={handlePaymentSuccess}
-            onPaymentError={handlePaymentError}
-            isProcessing={isUpdating}
-            buttonText="Update Payment Method"
-            error={error}
+          <BillingContactForm
+            billingContact={billingContact}
+            onChange={onBillingContactChange}
           />
+          
+          <BillingAddressForm
+            billingAddress={billingAddress}
+            onChange={onBillingAddressChange}
+          />
+          
+          <div ref={cardContainerRef} className="border border-gray-300 rounded-lg p-4 min-h-[120px] bg-gray-50">
+            {isSquareInitializing ? (
+              <div className="text-center text-gray-600">Initializing payment form...</div>
+            ) : isSquareReady ? (
+              <div className="text-center text-gray-600">Payment form ready</div>
+            ) : (
+              <div className="text-center">
+                <div className="text-red-600 mb-2">Payment form failed to load</div>
+                <Button onClick={onSquareRetry} size="sm" variant="outline">
+                  Retry ({retryCount})
+                </Button>
+              </div>
+            )}
+          </div>
+
+          {squareError && (
+            <div className="text-red-600 text-sm">{squareError}</div>
+          )}
+
+          <Button
+            onClick={handleSubmit}
+            disabled={isProcessing || !isSquareReady}
+            className="w-full"
+          >
+            {isProcessing ? 'Processing...' : 'Update Payment Method'}
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

@@ -1,15 +1,20 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { DollarSign, Calendar, MapPin } from 'lucide-react';
+import { FileText, MapPin, DollarSign } from 'lucide-react';
 
 interface ClassifiedData {
   classifiedId: string;
   title: string;
-  description?: string;
-  price?: string;
-  location?: string;
-  category?: string;
+  description: string;
+  address: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  price: number;
+  perUnitType: string;
+  createDate: string;
+  adTypeId: string;
 }
 
 interface ClassifiedSummaryCardProps {
@@ -21,36 +26,36 @@ const ClassifiedSummaryCard = ({ classified }: ClassifiedSummaryCardProps) => {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <DollarSign className="h-5 w-5" />
+          <FileText className="h-5 w-5" />
           Order Summary
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <h3 className="font-semibold text-lg">{classified.title}</h3>
-          {classified.description && (
-            <p className="text-gray-600 text-sm mt-1">{classified.description}</p>
-          )}
+          <p className="text-sm text-gray-600">Title</p>
+          <p className="font-medium">{classified.title}</p>
         </div>
-
-        {classified.category && (
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">Category:</span>
-            <span className="text-sm font-medium">{classified.category}</span>
+        
+        <div>
+          <p className="text-sm text-gray-600">Description</p>
+          <p className="text-sm">{classified.description}</p>
+        </div>
+        
+        <div className="flex items-start gap-2">
+          <MapPin className="h-4 w-4 text-gray-500 mt-0.5" />
+          <div>
+            <p className="text-sm text-gray-600">Location</p>
+            <p className="text-sm">
+              {classified.address}, {classified.city}, {classified.state} {classified.postalCode}
+            </p>
           </div>
-        )}
-
-        {classified.location && (
-          <div className="flex items-center gap-2">
-            <MapPin className="h-4 w-4 text-gray-500" />
-            <span className="text-sm">{classified.location}</span>
-          </div>
-        )}
-
-        <div className="border-t pt-4">
-          <div className="flex justify-between items-center">
-            <span className="font-semibold">Total:</span>
-            <span className="font-bold text-lg">{classified.price || '$1.00'}</span>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <DollarSign className="h-4 w-4 text-green-600" />
+          <div>
+            <p className="text-sm text-gray-600">Price</p>
+            <p className="font-semibold text-lg">${classified.price} {classified.perUnitType}</p>
           </div>
         </div>
       </CardContent>

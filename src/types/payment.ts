@@ -15,6 +15,22 @@ export interface PaymentMethod {
     administrativeDistrictLevel1?: string;
     postalCode?: string;
   };
+  // Add missing properties for billing address
+  payorAddress1?: string;
+  payorAddress2?: string;
+  payorCity?: string;
+  payorState?: string;
+  payorPostalCode?: string;
+  phoneNumber?: string;
+  emailAddress?: string;
+  // Add missing card details structure
+  cardDetails?: {
+    cardBrand?: string;
+    last4?: string;
+    expMonth?: number;
+    expYear?: number;
+    cardholderName?: string;
+  };
   createdAt?: string;
   updatedAt?: string;
   isActive?: boolean;

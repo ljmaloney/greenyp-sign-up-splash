@@ -94,10 +94,12 @@ const SignUpPaymentContainer = () => {
         />
         
         <EmailValidationCard
-          email={billingContact.email}
-          onEmailValidated={handleEmailValidated}
-          isValidated={isEmailValidated}
           validationToken={emailValidationToken}
+          onChange={setEmailValidationToken}
+          emailAddress={billingContact.email}
+          helperText="Please validate your email address to continue"
+          isValidated={isEmailValidated}
+          onValidate={() => handleEmailValidated(emailValidationToken)}
         />
       </div>
 

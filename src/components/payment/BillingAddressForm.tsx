@@ -1,9 +1,9 @@
 
 import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { STATE_ABBREVIATIONS } from '@/constants/usStates';
+import { MapPin } from 'lucide-react';
 
 interface BillingAddressData {
   address: string;
@@ -19,57 +19,56 @@ interface BillingAddressFormProps {
 
 const BillingAddressForm = ({ billingAddress, onChange }: BillingAddressFormProps) => {
   return (
-    <div>
-      <h3 className="text-lg font-semibold mb-4">Billing Address</h3>
-      <div className="space-y-4">
-        <div>
-          <Label htmlFor="address">Address *</Label>
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <MapPin className="h-5 w-5" />
+          Billing Address
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="address">Address</Label>
           <Input
             id="address"
-            placeholder="123 Main St"
             value={billingAddress.address}
             onChange={(e) => onChange('address', e.target.value)}
+            placeholder="123 Main Street"
           />
         </div>
-
+        
         <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="city">City *</Label>
+          <div className="space-y-2">
+            <Label htmlFor="city">City</Label>
             <Input
               id="city"
-              placeholder="San Francisco"
               value={billingAddress.city}
               onChange={(e) => onChange('city', e.target.value)}
+              placeholder="City"
             />
           </div>
-          <div>
-            <Label htmlFor="state">State *</Label>
-            <Select value={billingAddress.state} onValueChange={(value) => onChange('state', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select state" />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(STATE_ABBREVIATIONS).map(([abbr, fullName]) => (
-                  <SelectItem key={abbr} value={abbr}>
-                    {fullName}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="space-y-2">
+            <Label htmlFor="state">State</Label>
+            <Input
+              id="state"
+              value={billingAddress.state}
+              onChange={(e) => onChange('state', e.target.value)}
+              placeholder="CA"
+            />
           </div>
         </div>
-
-        <div>
-          <Label htmlFor="zipCode">ZIP Code *</Label>
+        
+        <div className="space-y-2">
+          <Label htmlFor="zipCode">ZIP Code</Label>
           <Input
             id="zipCode"
-            placeholder="94102"
             value={billingAddress.zipCode}
             onChange={(e) => onChange('zipCode', e.target.value)}
+            placeholder="12345"
           />
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 

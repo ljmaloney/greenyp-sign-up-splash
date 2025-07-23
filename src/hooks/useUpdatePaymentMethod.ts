@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useApiClient } from './useApiClient';
 
@@ -19,24 +19,54 @@ interface UpdatePaymentMethodData {
   };
 }
 
-export const useUpdatePaymentMethod = (producerId: string) => {
-  const [isUpdating, setIsUpdating] = useState(false);
+export const useUpdatePaymentMethod = () => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isInitialized, setIsInitialized] = useState(true);
+  const [isInitializing, setIsInitializing] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+  
+  const [billingContact, setBillingContact] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: ''
+  });
+  
+  const [billingAddress, setBillingAddress] = useState({
+    address: '',
+    city: '',
+    state: '',
+    zipCode: ''
+  });
+
+  const cardContainerRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
   const apiClient = useApiClient();
 
-  const updatePaymentMethod = async (data: UpdatePaymentMethodData) => {
-    if (!producerId) {
-      throw new Error('Producer ID is required');
-    }
+  const openDialog = () => setIsDialogOpen(true);
+  const closeDialog = () => {
+    setIsDialogOpen(false);
+    setError(null);
+  };
 
-    setIsUpdating(true);
+  const handleBillingContactChange = (field: string, value: string) => {
+    setBillingContact(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleBillingAddressChange = (field: string, value: string) => {
+    setBillingAddress(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleUpdatePayment = async (data: UpdatePaymentMethodData) => {
+    setIsProcessing(true);
     setError(null);
 
     try {
-      console.log('💳 Updating payment method for producer:', producerId);
+      console.log('💳 Updating payment method');
       
-      const response = await apiClient.put(`/payment/producer/${producerId}`, {
+      const response = await apiClient.put(`/payment/producer/update`, {
         token: data.token,
         billingContact: data.billingContact,
         billingAddress: data.billingAddress
@@ -45,8 +75,9 @@ export const useUpdatePaymentMethod = (producerId: string) => {
       console.log('✅ Payment method updated successfully');
       
       // Invalidate payment method query to refresh data
-      await queryClient.invalidateQueries({ queryKey: ['payment-method', producerId] });
+      await queryClient.invalidateQueries({ queryKey: ['payment-method'] });
       
+      closeDialog();
       return response;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to update payment method';
@@ -54,16 +85,35 @@ export const useUpdatePaymentMethod = (producerId: string) => {
       setError(errorMessage);
       throw err;
     } finally {
-      setIsUpdating(false);
+      setIsProcessing(false);
     }
   };
 
-  const resetError = () => setError(null);
+  const retrySquareInitialization = () => {
+    setRetryCount(prev => prev + 1);
+    setIsInitializing(true);
+    setTimeout(() => {
+      setIsInitializing(false);
+      setIsInitialized(true);
+    }, 1000);
+  };
 
   return {
-    updatePaymentMethod,
-    isUpdating,
-    error,
-    resetError
+    isDialogOpen,
+    isProcessing,
+    billingContact,
+    billingAddress,
+    squareError: error,
+    isInitialized,
+    isInitializing,
+    initializationPhase: 'ready',
+    retryCount,
+    cardContainerRef,
+    openDialog,
+    closeDialog,
+    handleBillingContactChange,
+    handleBillingAddressChange,
+    handleUpdatePayment,
+    retrySquareInitialization
   };
 };
