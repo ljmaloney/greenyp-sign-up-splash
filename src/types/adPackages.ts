@@ -1,10 +1,4 @@
 
-export interface AdPackageFeatures {
-  features: string[];
-  maxImages: number;
-  protectContact: boolean;
-}
-
 export interface AdPackage {
   adTypeId: string;
   createDate: string;
@@ -13,10 +7,14 @@ export interface AdPackage {
   adTypeName: string;
   monthlyPrice: number;
   threeMonthPrice: number;
-  features: AdPackageFeatures;
+  features: {
+    features: string[];
+    maxImages: number;
+    protectContact: boolean;
+  };
 }
 
 export interface AdPackagesResponse {
   response: AdPackage[];
-  errorMessageApi: any | null;
+  errorMessageApi: string | null;
 }
