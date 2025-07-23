@@ -19,6 +19,8 @@ import Classifieds from '@/pages/Classifieds';
 import Samples from '@/pages/classifieds/Samples.tsx';
 import CreateAd from '@/pages/classifieds/CreateAd';
 import UploadImages from '@/pages/classifieds/UploadImages';
+import Payment from '@/pages/classifieds/Payment';
+import PaymentConfirmation from '@/pages/classifieds/PaymentConfirmation';
 import SearchResultsClassifieds from '@/pages/classifieds/SearchResults';
 import ClassifiedDetail from '@/pages/classifieds/ClassifiedDetail';
 import CategoryDescriptions from '@/pages/classifieds/CategoryDescriptions';
@@ -30,6 +32,8 @@ import SubscribersSubscribe from '@/pages/subscribers/Subscribe';
 import SubscriptionFeatures from '@/pages/subscribers/SubscriptionFeatures';
 import SubscriberCategories from '@/pages/subscribers/SubscriberCategories';
 import SubscriberCategoryPage from '@/pages/subscribers/CategoryPage';
+import SignUpConfirmation from '@/pages/subscribers/SignUpConfirmation';
+import SignUpPayment from '@/pages/subscribers/SignUpPayment';
 
 // Import dashboard pages
 import DashboardIndex from '@/pages/dashboard/Index';
@@ -41,6 +45,7 @@ import DashboardAuthorizedUsers from '@/pages/dashboard/AuthorizedUsers';
 import DashboardPhotoGallery from '@/pages/dashboard/PhotoGallery';
 import DashboardAnalytics from '@/pages/dashboard/Analytics';
 import DashboardSubscription from '@/pages/dashboard/Subscription';
+import DashboardPayment from '@/pages/dashboard/Payment';
 
 // Import admin pages
 import AdminIndex from '@/pages/admin/Index';
@@ -121,6 +126,11 @@ function App() {
                   <DashboardSubscription />
                 </ProtectedRoute>
               } />
+              <Route path="/dashboard/payment" element={
+                <ProtectedRoute requiredRole="Dashboard-Access">
+                  <DashboardPayment />
+                </ProtectedRoute>
+              } />
 
               {/* Admin Routes - Protected */}
               <Route path="/admin" element={
@@ -162,6 +172,8 @@ function App() {
               {/* Subscriber Routes - Updated to use consistent plural routing */}
               <Route path="/subscribers" element={<SubscribersIndex />} />
               <Route path="/subscribers/signup" element={<SubscribersSignUp />} />
+              <Route path="/subscribers/signup/confirmation" element={<SignUpConfirmation />} />
+              <Route path="/subscribers/signup/payment" element={<SignUpPayment />} />
               <Route path="/subscribers/subscribe" element={<SubscribersSubscribe />} />
               <Route path="/subscribers/subscription-features" element={<SubscriptionFeatures />} />
               <Route path="/subscribers/contact" element={<Contact />} />
@@ -173,6 +185,8 @@ function App() {
               <Route path="/classifieds/samples" element={<Samples />} />
               <Route path="/classifieds/create" element={<CreateAd />} />
               <Route path="/classifieds/uploadimages/:classifiedId" element={<UploadImages />} />
+              <Route path="/classifieds/payment/:classifiedId" element={<Payment />} />
+              <Route path="/classifieds/payment/confirmation/:classifiedId" element={<PaymentConfirmation />} />
               <Route path="/classifieds/search" element={<SearchResultsClassifieds />} />
               <Route path="/classifieds/categories" element={<CategoryDescriptions />} />
               <Route path="/classifieds/detail/:id" element={<ClassifiedDetail />} />

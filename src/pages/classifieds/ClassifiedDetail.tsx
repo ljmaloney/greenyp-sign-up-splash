@@ -4,6 +4,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import ClassifiedsHeader from '@/components/ClassifiedsHeader';
 import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
 import ContactSellerDialog from '@/components/classifieds/ContactSellerDialog';
+import PaymentSuccessBanner from '@/components/classifieds/PaymentSuccessBanner';
 import ClassifiedDetailHeader from '@/components/classifieds/ClassifiedDetailHeader';
 import ClassifiedImageGallery from '@/components/classifieds/ClassifiedImageGallery';
 import ClassifiedDescription from '@/components/classifieds/ClassifiedDescription';
@@ -21,6 +22,7 @@ const ClassifiedDetail = () => {
   const { data: classified, isLoading, error } = useClassifiedDetail(id!);
   const { data: classifiedImages = [], isLoading: imagesLoading } = useClassifiedImages(id!, !!classified);
   const [showContactDialog, setShowContactDialog] = useState(false);
+  const [showSuccessBanner, setShowSuccessBanner] = useState(false);
   const { data: adPackagesData } = useAdPackages();
   const { data: categoriesData } = useClassifiedCategories();
 
@@ -44,6 +46,35 @@ const ClassifiedDetail = () => {
       }
     } catch (error) {
       console.warn('⚠️ Safari parameter handling issue:', error);
+    }
+  }, [searchParams, setSearchParams]);
+
+  // Safari-safe payment success parameter handling
+  useEffect(() => {
+    try {
+      const paymentSuccess = searchParams.get('paymentSuccess');
+      console.log('🎯 ClassifiedDetail - Checking for paymentSuccess parameter:', {
+        paymentSuccess,
+        allSearchParams: Object.fromEntries(searchParams.entries()),
+        currentUrl: window.location.href
+      });
+      
+      if (paymentSuccess === 'true') {
+        console.log('✅ Payment success detected, showing banner');
+        setShowSuccessBanner(true);
+        // Safari-safe parameter removal
+        const newSearchParams = new URLSearchParams();
+        for (const [key, value] of searchParams.entries()) {
+          if (key !== 'paymentSuccess') {
+            newSearchParams.set(key, value);
+          }
+        }
+        setSearchParams(newSearchParams, { replace: true });
+      } else {
+        console.log('❌ No payment success parameter found');
+      }
+    } catch (error) {
+      console.warn('⚠️ Safari payment parameter handling issue:', error);
     }
   }, [searchParams, setSearchParams]);
 
@@ -91,6 +122,11 @@ const ClassifiedDetail = () => {
     }
   };
 
+  const handleDismissSuccessBanner = () => {
+    console.log('🚫 Dismissing success banner');
+    setShowSuccessBanner(false);
+  };
+
   if (isLoading) {
     return <ClassifiedDetailLoading />;
   }
@@ -110,6 +146,10 @@ const ClassifiedDetail = () => {
         <ClassifiedsHeader />
         <main className="flex-grow bg-gray-50 py-8">
           <div className="container mx-auto px-4 max-w-4xl">
+            {showSuccessBanner && (
+              <PaymentSuccessBanner onDismiss={handleDismissSuccessBanner} />
+            )}
+
             <div className="bg-white rounded-lg shadow-lg overflow-hidden">
               <ClassifiedDetailHeader 
                 classified={classified}
