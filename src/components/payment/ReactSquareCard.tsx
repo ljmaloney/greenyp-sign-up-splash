@@ -88,7 +88,6 @@ const ReactSquareCard = ({
             applicationId={squareConfig.applicationId}
             locationId={squareConfig.locationId}
             cardTokenizeResponseReceived={handleCardTokenization}
-            cardTokenizeResponseError={handleCardTokenizationError}
             createPaymentRequest={() => ({
               countryCode: 'US',
               currencyCode: 'USD',
@@ -113,6 +112,17 @@ const ReactSquareCard = ({
                     '.message-text': {
                       color: '#dc2626',
                     },
+                  }}
+                  callbacks={{
+                    cardNonceResponseReceived: handleCardTokenization,
+                    unsupportedBrowserDetected: () => {
+                      handleCardTokenizationError([{ message: 'Browser not supported for payment processing' }]);
+                    },
+                    inputEventReceived: (inputEvent) => {
+                      if (inputEvent.errors && inputEvent.errors.length > 0) {
+                        handleCardTokenizationError(inputEvent.errors);
+                      }
+                    }
                   }}
                 />
               </div>

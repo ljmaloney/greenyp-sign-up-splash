@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, ErrorBoundary } from 'react';
+import React, { createContext, useContext } from 'react';
 import { AuthContextType, AuthProviderProps } from '@/types/auth';
 import { useAuthInitialization } from '@/hooks/useAuthInitialization';
 import { useAuthActions } from '@/hooks/useAuthActions';
