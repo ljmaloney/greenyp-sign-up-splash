@@ -1,11 +1,11 @@
 
 import React from 'react';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { useToast } from "@/hooks/use-toast";
-import { getApiUrl } from "@/config/api";
-import { FULL_NAME_TO_ABBREVIATION } from "@/constants/usStates";
-import { Location } from "@/services/locationService";
-import { LocationFormData } from "@/types/location";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog.tsx";
+import { useToast } from "@/hooks/use-toast.ts";
+import { getApiUrl } from "@/config/api.ts";
+import { FULL_NAME_TO_ABBREVIATION } from "@/constants/usStates.ts";
+import { Location } from "@/services/locationService.ts";
+import { LocationFormData } from "@/types/location.ts";
 
 interface DisableLocationDialogProps {
   isOpen: boolean;

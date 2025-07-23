@@ -1,10 +1,10 @@
 
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/button.tsx';
 import { Clock, Plus, ChevronDown, ChevronUp } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Location } from '@/services/locationService';
-import LocationHoursSection from './LocationHoursSection';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog.tsx';
+import { Location } from '@/services/locationService.ts';
+import LocationHoursSection from './LocationHoursSection.tsx';
 
 interface LocationCardHoursProps {
   location: Location;

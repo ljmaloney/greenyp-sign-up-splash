@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { TimePicker } from "@/components/ui/time-picker";
+import { Button } from "@/components/ui/button.tsx";
+import { TimePicker } from "@/components/ui/time-picker.tsx";
 import { Edit, Trash2 } from 'lucide-react';
 
 interface LocationHour {

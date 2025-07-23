@@ -1,11 +1,11 @@
 
 import React from 'react';
-import { Button } from "@/components/ui/button";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Button } from "@/components/ui/button.tsx";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible.tsx";
 import { MapPin, ChevronDown, ChevronUp, Plus } from 'lucide-react';
-import { Location } from "@/types/contact";
-import { Contact } from "@/services/contactService";
-import ContactCard from './contact/ContactCard.tsx';
+import { Location } from "@/types/contact.ts";
+import { Contact } from "@/services/contactService.ts";
+import ContactCard from '../contact/ContactCard.tsx';
 
 interface LocationGroupProps {
   locationId: string;

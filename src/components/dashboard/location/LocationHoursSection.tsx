@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
-import { useLocationHours } from '@/hooks/useLocationHours';
-import LocationHourRow from './LocationHourRow';
-import AddLocationHourForm from './AddLocationHourForm';
+import { useLocationHours } from '@/hooks/useLocationHours.ts';
+import LocationHourRow from './LocationHourRow.tsx';
+import AddLocationHourForm from './AddLocationHourForm.tsx';
 import { Clock } from 'lucide-react';
 
 interface LocationHoursSectionProps {

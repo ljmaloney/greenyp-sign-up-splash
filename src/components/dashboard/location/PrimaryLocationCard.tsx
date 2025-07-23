@@ -1,11 +1,11 @@
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.tsx';
+import { Badge } from '@/components/ui/badge.tsx';
+import { Button } from '@/components/ui/button.tsx';
 import { MapPin, Eye, Building2, Edit } from 'lucide-react';
-import { PrimaryLocation, Producer } from '@/services/accountService';
-import EditPrimaryLocationDialog from './EditPrimaryLocationDialog';
+import { PrimaryLocation, Producer } from '@/services/accountService.ts';
+import EditPrimaryLocationDialog from './EditPrimaryLocationDialog.tsx';
 
 interface PrimaryLocationCardProps {
   primaryLocation: PrimaryLocation;

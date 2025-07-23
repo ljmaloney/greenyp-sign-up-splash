@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { TimePicker } from "@/components/ui/time-picker";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button.tsx";
+import { TimePicker } from "@/components/ui/time-picker.tsx";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx";
 import { Plus } from 'lucide-react';
 
 interface LocationHour {

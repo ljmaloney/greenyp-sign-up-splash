@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { Location } from '@/services/locationService';
-import AddLocationDialog from './AddLocationDialog';
-import EditLocationDialog from './EditLocationDialog';
+import { Location } from '@/services/locationService.ts';
+import AddLocationDialog from './AddLocationDialog.tsx';
+import EditLocationDialog from './EditLocationDialog.tsx';
 
 interface LocationsDialogManagerProps {
   isAddDialogOpen: boolean;

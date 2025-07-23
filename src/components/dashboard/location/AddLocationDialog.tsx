@@ -1,13 +1,13 @@
 
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { getApiUrl } from "@/config/api";
-import { useLocationForm } from "@/hooks/useLocationForm";
-import LocationFormFields from "./LocationFormFields";
-import { LocationFormData } from "@/types/location";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog.tsx";
+import { Button } from "@/components/ui/button.tsx";
+import { useToast } from "@/hooks/use-toast.ts";
+import { getApiUrl } from "@/config/api.ts";
+import { useLocationForm } from "@/hooks/useLocationForm.ts";
+import LocationFormFields from "./LocationFormFields.tsx";
+import { LocationFormData } from "@/types/location.ts";
 
 interface AddLocationDialogProps {
   isOpen: boolean;

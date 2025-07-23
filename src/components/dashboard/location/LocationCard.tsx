@@ -1,14 +1,14 @@
 
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Card, CardContent } from '@/components/ui/card';
-import { Location } from '@/services/locationService';
-import { Contact } from '@/services/contactService';
-import LocationCardHeader from './LocationCardHeader';
-import LocationCardBasicInfo from './LocationCardBasicInfo';
-import LocationCardDetails from './LocationCardDetails';
-import LocationCardHours from './LocationCardHours';
-import LocationContactsList from './LocationContactsList';
+import { Card, CardContent } from '@/components/ui/card.tsx';
+import { Location } from '@/services/locationService.ts';
+import { Contact } from '@/services/contactService.ts';
+import LocationCardHeader from './LocationCardHeader.tsx';
+import LocationCardBasicInfo from './LocationCardBasicInfo.tsx';
+import LocationCardDetails from './LocationCardDetails.tsx';
+import LocationCardHours from './LocationCardHours.tsx';
+import LocationContactsList from './LocationContactsList.tsx';
 
 interface LocationCardProps {
   location: Location;

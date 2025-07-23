@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog.tsx";
 
 const EditPrimaryLocationDialogHeader = () => {
   return (

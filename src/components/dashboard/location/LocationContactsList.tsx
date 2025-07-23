@@ -1,9 +1,9 @@
 
 import React, { useState } from 'react';
 import { Users, ChevronDown, ChevronUp, Edit, Trash2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useLocationContacts } from '@/hooks/useLocationContacts';
-import { Contact } from '@/services/contactService';
+import { Button } from '@/components/ui/button.tsx';
+import { useLocationContacts } from '@/hooks/useLocationContacts.ts';
+import { Contact } from '@/services/contactService.ts';
 
 interface LocationContactsListProps {
   producerId: string;

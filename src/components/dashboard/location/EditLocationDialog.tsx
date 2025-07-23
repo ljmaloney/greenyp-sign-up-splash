@@ -1,13 +1,13 @@
 
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useLocationForm } from "@/hooks/useLocationForm";
-import { Location } from "@/services/locationService";
-import { LocationFormData } from "@/types/location";
-import { STATE_ABBREVIATIONS } from "@/constants/usStates";
-import EditLocationForm from "./EditLocationForm";
-import EditLocationActions from "./EditLocationActions";
-import DisableLocationDialog from "./DisableLocationDialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog.tsx";
+import { useLocationForm } from "@/hooks/useLocationForm.ts";
+import { Location } from "@/services/locationService.ts";
+import { LocationFormData } from "@/types/location.ts";
+import { STATE_ABBREVIATIONS } from "@/constants/usStates.ts";
+import EditLocationForm from "./EditLocationForm.tsx";
+import EditLocationActions from "./EditLocationActions.tsx";
+import DisableLocationDialog from "./DisableLocationDialog.tsx";
 
 interface EditLocationDialogProps {
   isOpen: boolean;

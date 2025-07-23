@@ -1,9 +1,9 @@
 
 import React from 'react';
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { LocationFormData } from "@/types/location";
-import { US_STATES_AND_TERRITORIES } from "@/constants/usStates";
+import { Input } from "@/components/ui/input.tsx";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx";
+import { LocationFormData } from "@/types/location.ts";
+import { US_STATES_AND_TERRITORIES } from "@/constants/usStates.ts";
 
 interface LocationFormFieldsProps {
   formData: LocationFormData;

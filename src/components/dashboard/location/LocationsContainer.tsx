@@ -1,10 +1,10 @@
 
 import React from 'react';
-import { useLocationCache } from '@/hooks/useLocationCache';
-import LocationsLoadingState from './LocationsLoadingState';
-import LocationsErrorState from './LocationsErrorState';
-import LocationsHeader from './LocationsHeader';
-import LocationsContent from './LocationsContent';
+import { useLocationCache } from '@/hooks/useLocationCache.ts';
+import LocationsLoadingState from './LocationsLoadingState.tsx';
+import LocationsErrorState from './LocationsErrorState.tsx';
+import LocationsHeader from './LocationsHeader.tsx';
+import LocationsContent from './LocationsContent.tsx';
 
 interface LocationsContainerProps {
   onAddLocation: () => void;

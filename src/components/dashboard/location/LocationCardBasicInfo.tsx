@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { MapPin, Globe } from 'lucide-react';
-import { Location } from '@/services/locationService';
+import { Location } from '@/services/locationService.ts';
 
 interface LocationCardBasicInfoProps {
   location: Location;

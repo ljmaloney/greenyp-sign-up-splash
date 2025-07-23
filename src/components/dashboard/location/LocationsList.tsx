@@ -1,9 +1,9 @@
 
 import React, { useState } from 'react';
-import { Location } from '@/services/locationService';
-import { useLocationCache } from '@/hooks/useLocationCache';
-import LocationsContainer from './LocationsContainer';
-import LocationsDialogManager from './LocationsDialogManager';
+import { Location } from '@/services/locationService.ts';
+import { useLocationCache } from '@/hooks/useLocationCache.ts';
+import LocationsContainer from './LocationsContainer.tsx';
+import LocationsDialogManager from './LocationsDialogManager.tsx';
 
 const LocationsList = () => {
   const { updateLocationCache } = useLocationCache();

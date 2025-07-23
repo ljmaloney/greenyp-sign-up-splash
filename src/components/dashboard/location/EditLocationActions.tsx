@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { Button } from "@/components/ui/button";
-import { Location } from "@/services/locationService";
+import { Button } from "@/components/ui/button.tsx";
+import { Location } from "@/services/locationService.ts";
 
 interface EditLocationActionsProps {
   location: Location;

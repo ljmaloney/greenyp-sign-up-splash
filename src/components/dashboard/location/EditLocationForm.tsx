@@ -1,11 +1,11 @@
 
 import React from 'react';
-import { useToast } from "@/hooks/use-toast";
-import { getApiUrl } from "@/config/api";
-import { FULL_NAME_TO_ABBREVIATION } from "@/constants/usStates";
-import LocationFormFields from "./LocationFormFields";
-import { Location } from "@/services/locationService";
-import { LocationFormData } from "@/types/location";
+import { useToast } from "@/hooks/use-toast.ts";
+import { getApiUrl } from "@/config/api.ts";
+import { FULL_NAME_TO_ABBREVIATION } from "@/constants/usStates.ts";
+import LocationFormFields from "./LocationFormFields.tsx";
+import { Location } from "@/services/locationService.ts";
+import { LocationFormData } from "@/types/location.ts";
 
 interface EditLocationFormProps {
   formData: LocationFormData;

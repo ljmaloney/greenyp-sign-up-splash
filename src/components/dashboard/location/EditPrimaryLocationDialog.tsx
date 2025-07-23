@@ -1,11 +1,11 @@
 
 import React from 'react';
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { PrimaryLocation, Producer } from '@/services/accountService';
-import { usePrimaryLocationForm } from '@/hooks/usePrimaryLocationForm';
-import PrimaryLocationFormFields from './PrimaryLocationFormFields';
-import EditPrimaryLocationDialogHeader from './EditPrimaryLocationDialogHeader';
-import EditPrimaryLocationDialogFooter from './EditPrimaryLocationDialogFooter';
+import { Dialog, DialogContent } from "@/components/ui/dialog.tsx";
+import { PrimaryLocation, Producer } from '@/services/accountService.ts';
+import { usePrimaryLocationForm } from '@/hooks/usePrimaryLocationForm.ts';
+import PrimaryLocationFormFields from './PrimaryLocationFormFields.tsx';
+import EditPrimaryLocationDialogHeader from './EditPrimaryLocationDialogHeader.tsx';
+import EditPrimaryLocationDialogFooter from './EditPrimaryLocationDialogFooter.tsx';
 
 interface EditPrimaryLocationDialogProps {
   isOpen: boolean;

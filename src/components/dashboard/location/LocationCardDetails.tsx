@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Location } from '@/services/locationService';
+import { Location } from '@/services/locationService.ts';
 
 interface LocationCardDetailsProps {
   location: Location;

@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { Location } from '@/services/locationService';
-import LocationsEmptyState from './LocationsEmptyState';
-import LocationCard from './LocationCard';
+import { Location } from '@/services/locationService.ts';
+import LocationsEmptyState from './LocationsEmptyState.tsx';
+import LocationCard from './LocationCard.tsx';
 
 interface LocationsContentProps {
   locations: Location[] | undefined;
