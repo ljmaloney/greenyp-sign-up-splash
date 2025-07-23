@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { SquarePaymentsForm, CreditCard } from 'react-square-web-payments-sdk';
+import { PaymentForm, CreditCard } from 'react-square-web-payments-sdk';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CreditCard as CreditCardIcon, AlertCircle } from 'lucide-react';
@@ -61,7 +61,7 @@ const ReactSquareCard = ({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <SquarePaymentsForm
+        <PaymentForm
           applicationId={squareConfig.applicationId}
           locationId={squareConfig.locationId}
           cardTokenizeResponseReceived={cardTokenizeResponseReceived}
@@ -81,20 +81,14 @@ const ReactSquareCard = ({
                   fontSize: '16px',
                   fontFamily: 'inherit',
                   color: '#374151',
-                  '::placeholder': {
-                    color: '#9CA3AF',
-                  },
                 },
                 '.input-container': {
                   borderColor: '#E5E7EB',
                   borderRadius: '6px',
                   borderWidth: '1px',
-                  backgroundColor: '#FFFFFF',
-                  padding: '12px',
                 },
                 '.input-container.is-focus': {
                   borderColor: '#3B82F6',
-                  boxShadow: '0 0 0 1px #3B82F6',
                 },
                 '.input-container.is-error': {
                   borderColor: '#EF4444',
@@ -102,7 +96,6 @@ const ReactSquareCard = ({
                 '.message-text': {
                   color: '#EF4444',
                   fontSize: '14px',
-                  marginTop: '4px',
                 },
               }}
             />
@@ -122,7 +115,7 @@ const ReactSquareCard = ({
               {processing ? 'Processing...' : buttonText}
             </Button>
           </div>
-        </SquarePaymentsForm>
+        </PaymentForm>
       </CardContent>
     </Card>
   );

@@ -1,6 +1,5 @@
 
 import { useState, useCallback } from 'react';
-import { CardTokenizeResponseReceived } from 'react-square-web-payments-sdk';
 import { normalizePhoneForSquare } from '@/utils/phoneUtils';
 
 interface BillingContactData {
@@ -24,6 +23,13 @@ interface UseSquareFormProps {
   onPaymentError: (error: string) => void;
 }
 
+// Define the token response type based on react-square-web-payments-sdk
+interface TokenResponse {
+  token?: string;
+  details?: any;
+  errors?: any[];
+}
+
 export const useSquareForm = ({
   billingContact,
   billingAddress,
@@ -33,7 +39,7 @@ export const useSquareForm = ({
   const [isProcessing, setIsProcessing] = useState(false);
 
   const cardTokenizeResponseReceived = useCallback(async (
-    token: CardTokenizeResponseReceived
+    token: TokenResponse
   ) => {
     if (!token.token) {
       onPaymentError('Failed to generate payment token');

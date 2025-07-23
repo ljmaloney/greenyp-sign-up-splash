@@ -103,10 +103,10 @@ const SignUpPaymentContainer = () => {
 
       <div className="space-y-6">
         <SubscriptionSummaryCard
-          businessName={businessName}
+          businessName={businessName || ''}
           subscriptionPlan={subscriptionPlan || 'Basic Listing'}
           subscriptionPrice={subscriptionPrice || '$5'}
-          producerId={producerId}
+          producerId={producerId || ''}
         />
         
         <ReactSquareSubscriptionCard

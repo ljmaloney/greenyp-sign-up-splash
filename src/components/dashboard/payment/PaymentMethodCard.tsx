@@ -31,6 +31,7 @@ const PaymentMethodCard = () => {
   }
 
   const hasPaymentMethod = paymentMethod && !error;
+  const lastFourDigits = paymentMethod?.lastFourDigits || paymentMethod?.last4 || '****';
 
   return (
     <>
@@ -48,7 +49,7 @@ const PaymentMethodCard = () => {
                 <div>
                   <div className="font-medium text-green-800">Payment Method Active</div>
                   <div className="text-sm text-green-600">
-                    Card ending in {paymentMethod.lastFourDigits || '****'}
+                    Card ending in {lastFourDigits}
                   </div>
                 </div>
                 <CreditCard className="h-5 w-5 text-green-600" />

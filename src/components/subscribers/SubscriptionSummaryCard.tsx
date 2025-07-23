@@ -1,153 +1,55 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Check } from 'lucide-react';
-import { SubscriptionWithFormatting } from '@/types/subscription';
+import { DollarSign, User, Building } from 'lucide-react';
 
 interface SubscriptionSummaryCardProps {
-  selectedSubscription?: SubscriptionWithFormatting;
-  apiSubscriptionData?: any;
+  businessName: string;
+  subscriptionPlan: string;
+  subscriptionPrice: string;
+  producerId: string;
 }
 
-const SubscriptionSummaryCard = ({ selectedSubscription, apiSubscriptionData }: SubscriptionSummaryCardProps) => {
-  console.log('📋 SubscriptionSummaryCard - Input props analysis:', { 
-    hasSelectedSubscription: !!selectedSubscription,
-    hasApiSubscriptionData: !!apiSubscriptionData,
-    selectedSubscriptionId: selectedSubscription?.subscriptionId,
-    apiSubscriptionId: apiSubscriptionData?.subscriptionId,
-    apiSubscriptionStructure: apiSubscriptionData ? Object.keys(apiSubscriptionData) : [],
-    fullApiData: apiSubscriptionData
-  });
-
-  // Prefer API subscription data if available, otherwise fall back to reference data
-  const hasApiData = !!apiSubscriptionData;
-  const hasReferenceData = !!selectedSubscription;
-  
-  if (!hasApiData && !hasReferenceData) {
-    console.warn('⚠️ SubscriptionSummaryCard - No subscription data provided');
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Subscription Summary</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-gray-600">Loading subscription details...</p>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  // Extract subscription details based on data source
-  let subscriptionName = 'Selected Plan';
-  let monthlyPrice = 0;
-  let features = [];
-  let dataSource = 'unknown';
-
-  if (hasApiData) {
-    // Use API data if available (this is the producer's actual subscription)
-    dataSource = 'API';
-    subscriptionName = apiSubscriptionData.subscriptionDisplayName || 
-                      apiSubscriptionData.displayName || 
-                      'Selected Plan';
-    
-    // Handle different possible price field names from API - with detailed logging
-    console.log('🔍 Raw API subscription data for price extraction:', {
-      monthlyAutopayAmount: apiSubscriptionData.monthlyAutopayAmount,
-      monthlyPrice: apiSubscriptionData.monthlyPrice,
-      price: apiSubscriptionData.price,
-      allFields: Object.keys(apiSubscriptionData),
-      rawData: apiSubscriptionData
-    });
-    
-    // Try to extract price from various possible field names - prioritize monthlyAutopayAmount
-    monthlyPrice = apiSubscriptionData.monthlyAutopayAmount ?? 
-                   apiSubscriptionData.monthlyPrice ?? 
-                   apiSubscriptionData.price ?? 
-                   0;
-    
-    console.log('📊 API subscription price extraction result:', {
-      extractedPrice: monthlyPrice,
-      priceType: typeof monthlyPrice,
-      priceSource: apiSubscriptionData.monthlyAutopayAmount !== undefined ? 'monthlyAutopayAmount' :
-                   apiSubscriptionData.monthlyPrice !== undefined ? 'monthlyPrice' :
-                   apiSubscriptionData.price !== undefined ? 'price' : 'none'
-    });
-    
-    if (apiSubscriptionData.features) {
-      features = apiSubscriptionData.features
-        .filter((f: any) => f.display)
-        .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-        .map((f: any) => ({
-          id: f.feature,
-          name: f.featureName || f.feature,
-          description: f.feature
-        }));
-    }
-  } else if (hasReferenceData) {
-    // Fall back to reference data (this is from the cached subscription list)
-    dataSource = 'Reference';
-    subscriptionName = selectedSubscription.displayName;
-    monthlyPrice = selectedSubscription.monthlyAutopayAmount;
-    features = selectedSubscription.formattedFeatures || [];
-  }
-  
-  // Ensure price is a valid number and format it
-  const numericPrice = typeof monthlyPrice === 'number' && !isNaN(monthlyPrice) ? monthlyPrice : 0;
-  
-  // Handle price formatting - assume API returns price in dollars, not cents
-  let formattedPrice;
-  if (numericPrice === 0) {
-    formattedPrice = '$0.00';
-  } else {
-    // For API data, assume price is already in dollars
-    formattedPrice = `$${numericPrice.toFixed(2)}`;
-  }
-
-  console.log('📋 SubscriptionSummaryCard - Final display data:', {
-    dataSource,
-    subscriptionName,
-    rawPrice: monthlyPrice,
-    numericPrice,
-    formattedPrice,
-    featuresCount: features.length,
-    features: features.map(f => f.name)
-  });
-
+const SubscriptionSummaryCard = ({ 
+  businessName, 
+  subscriptionPlan, 
+  subscriptionPrice, 
+  producerId 
+}: SubscriptionSummaryCardProps) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Subscription Summary</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          <DollarSign className="h-5 w-5" />
+          Subscription Summary
+        </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
-        <div>
-          <h3 className="text-2xl font-bold text-green-800">{subscriptionName}</h3>
-          <p className="text-3xl font-bold text-gray-900 mt-2">
-            {formattedPrice}
-            <span className="text-lg font-normal text-gray-600">/month</span>
-          </p>
-          <p className="text-xs text-gray-500 mt-1">
-            Data source: {dataSource} | Raw price: {monthlyPrice}
-          </p>
+      <CardContent className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Building className="h-4 w-4 text-gray-500" />
+          <div>
+            <span className="text-sm text-gray-500">Business:</span>
+            <p className="font-medium">{businessName}</p>
+          </div>
         </div>
 
-        {features.length > 0 && (
+        <div className="flex items-center gap-2">
+          <User className="h-4 w-4 text-gray-500" />
           <div>
-            <h4 className="font-semibold text-gray-900 mb-3">Included Features:</h4>
-            <ul className="space-y-2">
-              {features.map((feature) => (
-                <li key={feature.id} className="flex items-start">
-                  <Check className="h-5 w-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                  <span className="text-gray-700">{feature.name}</span>
-                </li>
-              ))}
-            </ul>
+            <span className="text-sm text-gray-500">Plan:</span>
+            <p className="font-medium">{subscriptionPlan}</p>
           </div>
-        )}
+        </div>
 
-        <div className="pt-4 border-t border-gray-200">
-          <p className="text-sm text-gray-600">
-            Your subscription will be activated immediately after payment is processed.
-          </p>
+        <div className="text-sm text-gray-600">
+          <span>Producer ID: {producerId}</span>
+        </div>
+
+        <div className="border-t pt-4">
+          <div className="flex justify-between items-center">
+            <span className="font-semibold">Monthly Total:</span>
+            <span className="font-bold text-lg">{subscriptionPrice}</span>
+          </div>
         </div>
       </CardContent>
     </Card>
