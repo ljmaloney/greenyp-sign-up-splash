@@ -58,10 +58,9 @@ const EmailValidationCard = ({
             <Input
               id="validation-token"
               type="text"
-              placeholder="Enter 6-digit code"
+              placeholder="Enter validation code"
               value={validationToken}
               onChange={(e) => onChange(e.target.value)}
-              maxLength={6}
               disabled={isValidating || isValidated}
               className={isValidated ? 'bg-green-50 border-green-200' : ''}
             />

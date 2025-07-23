@@ -27,12 +27,12 @@ export const useEmailValidation = ({ emailAddress, context, classifiedId }: UseE
       // Simulate email validation
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // For demo purposes, accept any 6-digit token
-      if (token.length === 6 && /^\d{6}$/.test(token)) {
+      // Accept any non-empty token for demo purposes
+      if (token.trim().length > 0) {
         setIsValidated(true);
         console.log('✅ Email validation successful');
       } else {
-        throw new Error('Invalid validation token. Please enter a 6-digit code.');
+        throw new Error('Invalid validation token. Please enter a valid token.');
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Email validation failed';
