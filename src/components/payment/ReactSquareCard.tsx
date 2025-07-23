@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { CreditCard, PaymentForm } from 'react-square-web-payments-sdk';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CreditCard as CreditCardIcon, AlertCircle } from 'lucide-react';
 import { getSquareConfig } from '@/utils/squareConfig';
@@ -38,7 +37,7 @@ const ReactSquareCard = ({
   onPaymentError,
   isProcessing = false,
   disabled = false,
-  buttonText = 'Process Payment',
+  buttonText = 'Pay',
   error
 }: ReactSquareCardProps) => {
   const squareConfig = getSquareConfig();
@@ -123,13 +122,13 @@ const ReactSquareCard = ({
                 </div>
               )}
 
-              <Button
+              <button
                 type="submit"
-                className="w-full"
                 disabled={disabled || isProcessing}
+                className="w-full bg-greenyp-600 hover:bg-greenyp-700 text-white font-medium py-3 px-4 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isProcessing ? 'Processing...' : buttonText}
-              </Button>
+              </button>
             </div>
           </PaymentForm>
         </div>
