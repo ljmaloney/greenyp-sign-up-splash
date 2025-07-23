@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -8,11 +7,12 @@ import { useEmailValidation } from '@/hooks/useEmailValidation';
 import ClassifiedsHeader from '@/components/ClassifiedsHeader';
 import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
 import NewOrderSummaryCard from '@/components/classifieds/NewOrderSummaryCard';
-import NewAdPreviewCard from '@/components/classifieds/NewAdPreviewCard';
+import ClassifiedCard from '@/components/classifieds/ClassifiedCard';
 import EmailValidationCard from '@/components/payment/EmailValidationCard';
 import PaymentInformationCard from '@/components/payment/PaymentInformationCard';
 import ReactSquareCard from '@/components/payment/ReactSquareCard';
 import { validatePaymentFields } from '@/utils/paymentValidation';
+import { Classified } from '@/types/classifieds';
 
 const Payment = () => {
   const { classifiedId } = useParams<{ classifiedId: string }>();
@@ -59,6 +59,25 @@ const Payment = () => {
     },
     enabled: !!classifiedId && classifiedId !== ':classifiedId'
   });
+
+  // Transform classified data for ClassifiedCard
+  const transformedClassified: Classified | null = classifiedData?.classified ? {
+    id: classifiedData.classified.classifiedId,
+    title: classifiedData.classified.title,
+    description: classifiedData.classified.description,
+    category: 'Classified',
+    price: classifiedData.classified.price,
+    perUnitType: classifiedData.classified.perUnitType,
+    city: classifiedData.classified.city,
+    state: classifiedData.classified.state,
+    zipCode: classifiedData.classified.postalCode,
+    email: classifiedData.customer?.emailAddress || '',
+    phone: classifiedData.customer?.phoneNumber || '',
+    images: [],
+    createdAt: classifiedData.classified.createDate,
+    contactObfuscated: false,
+    pricingTier: 1
+  } : null;
 
   const handleEmailValidationTokenChange = (value: string) => {
     console.log('🔑 Email validation token changed:', { hasValue: !!value });
@@ -206,7 +225,12 @@ const Payment = () => {
             {/* Left Column */}
             <div className="space-y-6">
               <NewOrderSummaryCard classified={classifiedData.classified} />
-              <NewAdPreviewCard classified={classifiedData.classified} />
+              {transformedClassified && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">Your Ad Preview</h3>
+                  <ClassifiedCard classified={transformedClassified} />
+                </div>
+              )}
             </div>
 
             {/* Right Column */}
