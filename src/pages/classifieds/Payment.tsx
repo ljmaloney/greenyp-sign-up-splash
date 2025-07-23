@@ -139,13 +139,24 @@ const Payment = () => {
       return;
     }
 
+    // Validate that we have a verification token
+    if (!tokenData.verificationToken) {
+      console.error('❌ No verification token in tokenData:', tokenData);
+      toast({
+        title: "Payment Token Error",
+        description: "Missing verification token from Square. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
-      // Prepare the payment payload with correct token mapping
+      // Prepare the payment payload with extensive logging
       const paymentPayload = {
         referenceId: classifiedId,
         paymentToken: tokenData.token,
-        verificationToken: tokenData.verificationToken, // Use Square's verification token
-        emailValidationToken: emailValidationToken, // Keep email validation token separate
+        verificationToken: tokenData.verificationToken,
+        emailValidationToken: emailValidationToken,
         billingContact: billingContact,
         billingAddress: billingAddress,
         cardDetails: tokenData.details,
@@ -153,7 +164,19 @@ const Payment = () => {
         currency: 'USD'
       };
 
-      console.log('💳 Submitting payment:', paymentPayload);
+      console.log('💳 Payment payload being sent:', {
+        referenceId: paymentPayload.referenceId,
+        hasPaymentToken: !!paymentPayload.paymentToken,
+        paymentTokenLength: paymentPayload.paymentToken?.length,
+        hasVerificationToken: !!paymentPayload.verificationToken,
+        verificationTokenLength: paymentPayload.verificationToken?.length,
+        hasEmailValidationToken: !!paymentPayload.emailValidationToken,
+        emailValidationTokenLength: paymentPayload.emailValidationToken?.length,
+        amount: paymentPayload.amount,
+        currency: paymentPayload.currency
+      });
+
+      console.log('💳 Full payment payload:', paymentPayload);
 
       // Submit payment
       const paymentResponse = await apiClient.post('/classified/payment', paymentPayload, { requireAuth: false });

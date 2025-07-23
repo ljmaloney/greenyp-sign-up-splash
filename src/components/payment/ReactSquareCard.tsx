@@ -45,10 +45,33 @@ const ReactSquareCard = ({
   const handleCardTokenization = async (token: any) => {
     try {
       console.log('💳 Card tokenization successful:', token);
+      console.log('💳 Full token object:', JSON.stringify(token, null, 2));
+      
+      // Extract verification token with multiple fallback options
+      let verificationToken = null;
+      
+      // Try different possible locations for the verification token
+      if (token.verificationToken) {
+        verificationToken = token.verificationToken;
+        console.log('💳 Using token.verificationToken:', verificationToken);
+      } else if (token.verification_token) {
+        verificationToken = token.verification_token;
+        console.log('💳 Using token.verification_token:', verificationToken);
+      } else if (token.details?.verificationToken) {
+        verificationToken = token.details.verificationToken;
+        console.log('💳 Using token.details.verificationToken:', verificationToken);
+      } else if (token.token) {
+        // If no separate verification token, use the main token as fallback
+        verificationToken = token.token;
+        console.log('💳 Using token.token as verificationToken fallback:', verificationToken);
+      } else {
+        console.error('💳 No verification token found in any expected location');
+        throw new Error('No verification token available from Square');
+      }
       
       const result = {
         token: token.token,
-        verificationToken: token.verificationToken, // This is the Square verification token
+        verificationToken: verificationToken,
         details: {
           card: {
             brand: token.details?.card?.brand || 'UNKNOWN',
@@ -60,6 +83,8 @@ const ReactSquareCard = ({
         billingContact,
         billingAddress
       };
+      
+      console.log('💳 Final result object:', result);
       
       onPaymentSuccess(result);
     } catch (err) {
