@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import PublicHeader from '@/components/PublicHeader';
+import ClassifiedsHeader from '@/components/ClassifiedsHeader';
 import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
 import ClassifiedPaymentContainer from '@/components/classifieds/ClassifiedPaymentContainer.tsx';
 
@@ -10,7 +10,7 @@ const Payment = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <PublicHeader />
+      <ClassifiedsHeader />
       <main className="flex-grow bg-gray-50 py-8">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="mb-8">

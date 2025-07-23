@@ -1,13 +1,13 @@
 
 import React from 'react';
-import PublicHeader from '@/components/PublicHeader';
+import ClassifiedsHeader from '@/components/ClassifiedsHeader';
 import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
 import CreateAdContainer from '@/components/classifieds/CreateAdContainer';
 
 const CreateAd = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <PublicHeader />
+      <ClassifiedsHeader />
       <main className="flex-grow bg-gray-50 py-8">
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="mb-8">

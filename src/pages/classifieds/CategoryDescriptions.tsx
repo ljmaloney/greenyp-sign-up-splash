@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import PublicHeader from '@/components/PublicHeader';
+import ClassifiedsHeader from '@/components/ClassifiedsHeader';
 import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -25,7 +25,7 @@ const CategoryDescriptions = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col">
-        <PublicHeader />
+        <ClassifiedsHeader />
         <main className="flex-grow bg-gray-50 py-8">
           <div className="container mx-auto px-4 max-w-4xl">
             <div className="text-center py-8">Loading categories...</div>
@@ -39,7 +39,7 @@ const CategoryDescriptions = () => {
   if (error) {
     return (
       <div className="min-h-screen flex flex-col">
-        <PublicHeader />
+        <ClassifiedsHeader />
         <main className="flex-grow bg-gray-50 py-8">
           <div className="container mx-auto px-4 max-w-4xl">
             <div className="text-center py-8 text-red-600">
@@ -56,7 +56,7 @@ const CategoryDescriptions = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <PublicHeader />
+      <ClassifiedsHeader />
       <main className="flex-grow bg-gray-50 py-8">
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="mb-6">

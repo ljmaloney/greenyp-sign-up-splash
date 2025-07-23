@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useApiClient } from '@/hooks/useApiClient';
-import PublicHeader from '@/components/PublicHeader';
+import ClassifiedsHeader from '@/components/ClassifiedsHeader';
 import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
 import PaymentConfirmationContent from '@/components/classifieds/PaymentConfirmationContent';
 import PaymentLoadingState from '@/components/classifieds/PaymentLoadingState';
@@ -31,7 +31,7 @@ const PaymentConfirmation = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col">
-        <PublicHeader />
+        <ClassifiedsHeader />
         <main className="flex-grow bg-gray-50 py-8">
           <PaymentLoadingState />
         </main>
@@ -43,7 +43,7 @@ const PaymentConfirmation = () => {
   if (error || !classifiedData) {
     return (
       <div className="min-h-screen flex flex-col">
-        <PublicHeader />
+        <ClassifiedsHeader />
         <main className="flex-grow bg-gray-50 py-8">
           <PaymentErrorState />
         </main>
@@ -54,7 +54,7 @@ const PaymentConfirmation = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <PublicHeader />
+      <ClassifiedsHeader />
       <main className="flex-grow bg-gray-50 py-8">
         <PaymentConfirmationContent 
           classified={classifiedData.classified}
