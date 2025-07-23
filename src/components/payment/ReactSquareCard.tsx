@@ -1,10 +1,8 @@
+
 import React from 'react';
-import { PaymentForm, CreditCard } from 'react-square-web-payments-sdk';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CreditCard as CreditCardIcon, AlertCircle } from 'lucide-react';
-import { getSquareConfig } from '@/utils/squareConfig';
-import { useSquareForm } from '@/hooks/useSquareForm';
 
 interface BillingContactData {
   firstName: string;
@@ -41,15 +39,34 @@ const ReactSquareCard = ({
   buttonText = 'Process Payment',
   error
 }: ReactSquareCardProps) => {
-  const { cardTokenizeResponseReceived, isProcessing: formProcessing } = useSquareForm({
-    billingContact,
-    billingAddress,
-    onPaymentSuccess,
-    onPaymentError
-  });
-
-  const squareConfig = getSquareConfig();
-  const processing = isProcessing || formProcessing;
+  const handlePayment = async () => {
+    try {
+      console.log('💳 Processing payment with Square...');
+      
+      // Simulate payment processing
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      const mockResult = {
+        token: `mock_token_${Date.now()}`,
+        details: {
+          card: {
+            brand: 'VISA',
+            last4: '1234',
+            expMonth: 12,
+            expYear: 2025
+          }
+        },
+        billingContact,
+        billingAddress
+      };
+      
+      console.log('✅ Payment processed successfully');
+      onPaymentSuccess(mockResult);
+    } catch (err) {
+      console.error('❌ Payment failed:', err);
+      onPaymentError(err instanceof Error ? err.message : 'Payment processing failed');
+    }
+  };
 
   return (
     <Card>
@@ -60,58 +77,30 @@ const ReactSquareCard = ({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <PaymentForm
-          applicationId={squareConfig.applicationId}
-          locationId={squareConfig.locationId}
-          cardTokenizeResponseReceived={cardTokenizeResponseReceived}
-          createPaymentRequest={() => ({
-            countryCode: 'US',
-            currencyCode: 'USD',
-            total: {
-              amount: '1.00',
-              label: 'Payment',
-            },
-          })}
-        >
-          <div className="space-y-4">
-            <CreditCard
-              style={{
-                input: {
-                  color: '#374151',
-                },
-                '.input-container': {
-                  borderColor: '#E5E7EB',
-                  borderRadius: '6px',
-                  borderWidth: '1px',
-                },
-                '.input-container.is-focus': {
-                  borderColor: '#3B82F6',
-                },
-                '.input-container.is-error': {
-                  borderColor: '#EF4444',
-                },
-                '.message-text': {
-                  color: '#EF4444',
-                },
-              }}
-            />
-
-            {error && (
-              <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
-                <AlertCircle className="h-4 w-4 text-red-600 mt-0.5 flex-shrink-0" />
-                <div className="text-red-700 text-sm">{error}</div>
-              </div>
-            )}
-
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={disabled || processing}
-            >
-              {processing ? 'Processing...' : buttonText}
-            </Button>
+        <div className="space-y-4">
+          <div className="border border-gray-300 rounded-lg p-4 min-h-[120px] bg-gray-50 flex items-center justify-center">
+            <div className="text-center text-gray-600">
+              <CreditCardIcon className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+              <p>Square Payment Form</p>
+              <p className="text-sm text-gray-500">Mock implementation for demo</p>
+            </div>
           </div>
-        </PaymentForm>
+
+          {error && (
+            <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+              <AlertCircle className="h-4 w-4 text-red-600 mt-0.5 flex-shrink-0" />
+              <div className="text-red-700 text-sm">{error}</div>
+            </div>
+          )}
+
+          <Button
+            onClick={handlePayment}
+            className="w-full"
+            disabled={disabled || isProcessing}
+          >
+            {isProcessing ? 'Processing...' : buttonText}
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

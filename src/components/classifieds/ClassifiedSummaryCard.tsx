@@ -13,8 +13,6 @@ interface ClassifiedData {
   postalCode: string;
   price: number;
   perUnitType: string;
-  createDate: string;
-  adTypeId: string;
 }
 
 interface ClassifiedSummaryCardProps {
@@ -32,30 +30,24 @@ const ClassifiedSummaryCard = ({ classified }: ClassifiedSummaryCardProps) => {
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <p className="text-sm text-gray-600">Title</p>
-          <p className="font-medium">{classified.title}</p>
+          <h3 className="font-semibold text-lg">{classified.title}</h3>
+          <p className="text-gray-600 text-sm mt-1">{classified.description}</p>
         </div>
         
-        <div>
-          <p className="text-sm text-gray-600">Description</p>
-          <p className="text-sm">{classified.description}</p>
+        <div className="flex items-center gap-2 text-sm text-gray-600">
+          <MapPin className="h-4 w-4" />
+          <span>{classified.address}, {classified.city}, {classified.state} {classified.postalCode}</span>
         </div>
         
-        <div className="flex items-start gap-2">
-          <MapPin className="h-4 w-4 text-gray-500 mt-0.5" />
-          <div>
-            <p className="text-sm text-gray-600">Location</p>
-            <p className="text-sm">
-              {classified.address}, {classified.city}, {classified.state} {classified.postalCode}
-            </p>
-          </div>
+        <div className="flex items-center gap-2 text-lg font-semibold text-green-600">
+          <DollarSign className="h-5 w-5" />
+          <span>${classified.price} {classified.perUnitType}</span>
         </div>
         
-        <div className="flex items-center gap-2">
-          <DollarSign className="h-4 w-4 text-green-600" />
-          <div>
-            <p className="text-sm text-gray-600">Price</p>
-            <p className="font-semibold text-lg">${classified.price} {classified.perUnitType}</p>
+        <div className="border-t pt-4">
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-gray-600">Total Amount:</span>
+            <span className="font-semibold">${classified.price}</span>
           </div>
         </div>
       </CardContent>

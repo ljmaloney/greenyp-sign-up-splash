@@ -1,31 +1,29 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { useApiClient } from './useApiClient';
-import { createPaymentService } from '@/services/paymentService';
+import { PaymentMethod } from '@/types/payment';
 
 export const usePaymentMethod = (producerId: string) => {
   const apiClient = useApiClient();
-  const paymentService = createPaymentService(apiClient);
-  
+
   return useQuery({
     queryKey: ['payment-method', producerId],
-    queryFn: () => {
-      if (!producerId) {
-        throw new Error('Producer ID is required to fetch payment method');
+    queryFn: async (): Promise<PaymentMethod | null> => {
+      if (!producerId) return null;
+      
+      console.log('🔍 Fetching payment method for producer:', producerId);
+      
+      try {
+        const response = await apiClient.get(`/payment/producer/${producerId}`, { requireAuth: true });
+        return response.response;
+      } catch (error: any) {
+        if (error.status === 404) {
+          console.log('ℹ️ No payment method found for producer');
+          return null;
+        }
+        throw error;
       }
-      return paymentService.fetchPaymentMethod(producerId);
     },
-    enabled: !!producerId,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    refetchOnWindowFocus: false,
-    gcTime: 10 * 60 * 1000, // 10 minutes cache time
-    retry: (failureCount, error) => {
-      // Don't retry on 404 errors (no payment method found)
-      if (error.message.includes('404')) {
-        console.log('🔍 PAYMENT METHOD - No payment method found for producer');
-        return false;
-      }
-      return failureCount < 3;
-    },
+    enabled: !!producerId
   });
 };

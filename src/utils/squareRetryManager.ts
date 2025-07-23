@@ -2,10 +2,7 @@
 export class SquareRetryManager {
   private currentAttempt = 0;
   private maxAttempts = 3;
-
-  getCurrentAttempt() {
-    return this.currentAttempt;
-  }
+  private baseDelay = 1000;
 
   getNextStrategy() {
     if (this.currentAttempt >= this.maxAttempts) {
@@ -16,11 +13,15 @@ export class SquareRetryManager {
     return {
       attempt: this.currentAttempt,
       maxAttempts: this.maxAttempts,
-      delay: 1000 * this.currentAttempt
+      delay: this.baseDelay * Math.pow(2, this.currentAttempt - 1)
     };
   }
 
-  reset() {
+  getCurrentAttempt(): number {
+    return this.currentAttempt;
+  }
+
+  reset(): void {
     this.currentAttempt = 0;
   }
 }

@@ -28,7 +28,7 @@ const BillingContactForm = ({ billingContact, onChange }: BillingContactFormProp
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
+          <div>
             <Label htmlFor="firstName">First Name</Label>
             <Input
               id="firstName"
@@ -37,7 +37,7 @@ const BillingContactForm = ({ billingContact, onChange }: BillingContactFormProp
               placeholder="First name"
             />
           </div>
-          <div className="space-y-2">
+          <div>
             <Label htmlFor="lastName">Last Name</Label>
             <Input
               id="lastName"
@@ -48,18 +48,18 @@ const BillingContactForm = ({ billingContact, onChange }: BillingContactFormProp
           </div>
         </div>
         
-        <div className="space-y-2">
+        <div>
           <Label htmlFor="email">Email</Label>
           <Input
             id="email"
             type="email"
             value={billingContact.email}
             onChange={(e) => onChange('email', e.target.value)}
-            placeholder="your@email.com"
+            placeholder="email@example.com"
           />
         </div>
         
-        <div className="space-y-2">
+        <div>
           <Label htmlFor="phone">Phone</Label>
           <Input
             id="phone"

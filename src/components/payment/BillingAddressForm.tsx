@@ -27,7 +27,7 @@ const BillingAddressForm = ({ billingAddress, onChange }: BillingAddressFormProp
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="space-y-2">
+        <div>
           <Label htmlFor="address">Address</Label>
           <Input
             id="address"
@@ -38,7 +38,7 @@ const BillingAddressForm = ({ billingAddress, onChange }: BillingAddressFormProp
         </div>
         
         <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
+          <div>
             <Label htmlFor="city">City</Label>
             <Input
               id="city"
@@ -47,18 +47,18 @@ const BillingAddressForm = ({ billingAddress, onChange }: BillingAddressFormProp
               placeholder="City"
             />
           </div>
-          <div className="space-y-2">
+          <div>
             <Label htmlFor="state">State</Label>
             <Input
               id="state"
               value={billingAddress.state}
               onChange={(e) => onChange('state', e.target.value)}
-              placeholder="CA"
+              placeholder="State"
             />
           </div>
         </div>
         
-        <div className="space-y-2">
+        <div>
           <Label htmlFor="zipCode">ZIP Code</Label>
           <Input
             id="zipCode"
