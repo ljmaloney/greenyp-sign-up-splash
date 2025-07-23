@@ -1,20 +1,10 @@
 
 import { useQuery } from '@tanstack/react-query';
-import { useApiClient } from '@/hooks/useApiClient';
+import { useApiClient } from './useApiClient';
 
-export interface ClassifiedImage {
-  imageName: string;
-  description: string;
+interface ClassifiedImage {
   url: string;
-}
-
-export interface ClassifiedImagesResponse {
-  response: ClassifiedImage[];
-  error?: {
-    errorCode: string;
-    displayMessage: string;
-    errorDetails: string;
-  };
+  description?: string;
 }
 
 export const useClassifiedImages = (classifiedId: string, enabled: boolean = true) => {
@@ -23,29 +13,27 @@ export const useClassifiedImages = (classifiedId: string, enabled: boolean = tru
   return useQuery({
     queryKey: ['classified-images', classifiedId],
     queryFn: async (): Promise<ClassifiedImage[]> => {
-      console.log('🖼️ Fetching classified images for ID:', classifiedId);
+      console.log('🖼️ Fetching images for classified:', classifiedId);
       
-      if (!classifiedId || classifiedId === ':id') {
-        console.error('❌ Invalid or missing classified ID for images:', classifiedId);
+      try {
+        const response = await apiClient.get(`/classified/${classifiedId}/images`, { requireAuth: false });
+        console.log('📸 Images response:', response);
+        
+        if (response.response && Array.isArray(response.response)) {
+          return response.response.map((img: any) => ({
+            url: img.url || img.imageUrl,
+            description: img.description || img.altText
+          }));
+        }
+        
+        return [];
+      } catch (error) {
+        console.warn('⚠️ Failed to fetch images, returning empty array:', error);
         return [];
       }
-      
-      const response: ClassifiedImagesResponse = await apiClient.get(
-        `/classified/images/${classifiedId}/gallery`,
-        { requireAuth: false }
-      );
-      
-      console.log('🖼️ Classified images response:', response);
-      
-      if (response.error) {
-        console.error('❌ Error fetching classified images:', response.error);
-        throw new Error(response.error.displayMessage || 'Failed to fetch images');
-      }
-      
-      return response.response || [];
     },
-    enabled: enabled && !!classifiedId && classifiedId !== ':id',
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    retry: 2
+    enabled: enabled && !!classifiedId && classifiedId !== ':classifiedId',
+    staleTime: 5 * 60 * 1000,
+    retry: 1
   });
 };

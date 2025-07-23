@@ -15,58 +15,65 @@ interface BillingContactData {
 interface BillingContactFormProps {
   billingContact: BillingContactData;
   onChange: (field: string, value: string) => void;
+  disabled?: boolean;
 }
 
-const BillingContactForm = ({ billingContact, onChange }: BillingContactFormProps) => {
+const BillingContactForm = ({ billingContact, onChange, disabled = false }: BillingContactFormProps) => {
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <User className="h-5 w-5" />
-          Billing Contact
+          Billing Contact Information
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="firstName">First Name</Label>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="firstName">First Name *</Label>
             <Input
               id="firstName"
+              type="text"
               value={billingContact.firstName}
               onChange={(e) => onChange('firstName', e.target.value)}
-              placeholder="First name"
+              disabled={disabled}
+              required
             />
           </div>
-          <div>
-            <Label htmlFor="lastName">Last Name</Label>
+          <div className="space-y-2">
+            <Label htmlFor="lastName">Last Name *</Label>
             <Input
               id="lastName"
+              type="text"
               value={billingContact.lastName}
               onChange={(e) => onChange('lastName', e.target.value)}
-              placeholder="Last name"
+              disabled={disabled}
+              required
             />
           </div>
         </div>
         
-        <div>
-          <Label htmlFor="email">Email</Label>
+        <div className="space-y-2">
+          <Label htmlFor="email">Email Address *</Label>
           <Input
             id="email"
             type="email"
             value={billingContact.email}
             onChange={(e) => onChange('email', e.target.value)}
-            placeholder="email@example.com"
+            disabled={disabled}
+            required
           />
         </div>
         
-        <div>
-          <Label htmlFor="phone">Phone</Label>
+        <div className="space-y-2">
+          <Label htmlFor="phone">Phone Number *</Label>
           <Input
             id="phone"
             type="tel"
             value={billingContact.phone}
             onChange={(e) => onChange('phone', e.target.value)}
-            placeholder="(555) 123-4567"
+            disabled={disabled}
+            required
           />
         </div>
       </CardContent>
