@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { RefreshCw, CreditCard } from 'lucide-react';
+import { RefreshCw, CreditCard, AlertCircle, Clock } from 'lucide-react';
 
 interface SquareCardInputProps {
   cardContainerRef: React.RefObject<HTMLDivElement>;
@@ -18,6 +18,11 @@ const SquareCardInput = ({
   isInitializing = false,
   onRetry 
 }: SquareCardInputProps) => {
+  const showLoadingState = isInitializing || (!isInitialized && !error);
+  const showReadyState = isInitialized && !error && !isInitializing;
+  const showErrorState = !!error;
+  const showPendingState = !isInitialized && !isInitializing && !error;
+
   return (
     <div className="space-y-4">
       <div className="relative">
@@ -25,38 +30,63 @@ const SquareCardInput = ({
           id="card-container" 
           ref={cardContainerRef}
           className="p-4 border border-gray-300 rounded-lg min-h-[120px] bg-white"
+          style={{ minHeight: '120px' }}
         />
         
         {/* Loading overlay */}
-        {(isInitializing || (!isInitialized && !error)) && (
-          <div className="absolute inset-0 bg-gray-50 bg-opacity-75 flex items-center justify-center rounded-lg">
-            <div className="flex flex-col items-center space-y-2">
+        {showLoadingState && (
+          <div className="absolute inset-0 bg-gray-50 bg-opacity-90 flex items-center justify-center rounded-lg">
+            <div className="flex flex-col items-center space-y-3">
               <RefreshCw className="w-6 h-6 animate-spin text-blue-500" />
-              <span className="text-sm text-gray-600">Loading payment form...</span>
+              <div className="text-center">
+                <div className="text-sm font-medium text-gray-700">Loading payment form...</div>
+                <div className="text-xs text-gray-500 mt-1">This may take a few moments</div>
+              </div>
             </div>
           </div>
         )}
         
         {/* Success indicator */}
-        {isInitialized && !error && (
+        {showReadyState && (
           <div className="absolute top-2 right-2">
-            <CreditCard className="w-5 h-5 text-green-500" />
+            <div className="flex items-center space-x-1 text-green-600">
+              <CreditCard className="w-4 h-4" />
+              <span className="text-xs font-medium">Ready</span>
+            </div>
+          </div>
+        )}
+
+        {/* Pending state overlay */}
+        {showPendingState && (
+          <div className="absolute inset-0 bg-amber-50 bg-opacity-90 flex items-center justify-center rounded-lg">
+            <div className="flex flex-col items-center space-y-3">
+              <Clock className="w-6 h-6 text-amber-500" />
+              <div className="text-center">
+                <div className="text-sm font-medium text-amber-700">Payment form pending...</div>
+                <div className="text-xs text-amber-600 mt-1">Click retry if this persists</div>
+              </div>
+            </div>
           </div>
         )}
       </div>
       
-      {error && (
-        <div className="text-red-600 text-sm bg-red-50 p-3 rounded-lg">
-          <div className="flex items-center justify-between">
-            <span>{error}</span>
+      {/* Error state */}
+      {showErrorState && (
+        <div className="text-red-600 text-sm bg-red-50 border border-red-200 p-4 rounded-lg">
+          <div className="flex items-start space-x-2">
+            <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+            <div className="flex-1">
+              <div className="font-medium">Payment Form Error</div>
+              <div className="mt-1">{error}</div>
+            </div>
             {onRetry && (
               <Button
                 variant="outline"
                 size="sm"
                 onClick={onRetry}
-                className="ml-2"
+                className="ml-2 flex-shrink-0"
               >
-                <RefreshCw className="w-4 h-4 mr-1" />
+                <RefreshCw className="w-3 h-3 mr-1" />
                 Retry
               </Button>
             )}
@@ -64,10 +94,14 @@ const SquareCardInput = ({
         </div>
       )}
       
-      {!isInitialized && !isInitializing && !error && (
-        <div className="text-amber-600 text-sm bg-amber-50 p-3 rounded-lg">
+      {/* Pending state message */}
+      {showPendingState && (
+        <div className="text-amber-700 text-sm bg-amber-50 border border-amber-200 p-4 rounded-lg">
           <div className="flex items-center justify-between">
-            <span>Payment form is initializing...</span>
+            <div className="flex items-center space-x-2">
+              <Clock className="w-4 h-4" />
+              <span>Payment form is starting up...</span>
+            </div>
             {onRetry && (
               <Button
                 variant="outline"
@@ -75,11 +109,18 @@ const SquareCardInput = ({
                 onClick={onRetry}
                 className="ml-2"
               >
-                <RefreshCw className="w-4 h-4 mr-1" />
-                Retry
+                <RefreshCw className="w-3 h-3 mr-1" />
+                Try Now
               </Button>
             )}
           </div>
+        </div>
+      )}
+
+      {/* Help text when ready */}
+      {showReadyState && (
+        <div className="text-xs text-gray-500">
+          Enter your payment information in the fields above. All data is securely processed by Square.
         </div>
       )}
     </div>

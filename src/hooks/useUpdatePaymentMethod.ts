@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAccountData } from './useAccountData';
 import { useApiClient } from './useApiClient';
 import { usePaymentMethod } from './usePaymentMethod';
-import { useStableSquarePayment } from './useStableSquarePayment';
+import { useDialogSquarePayment } from './useDialogSquarePayment';
 import { processSquarePayment } from '@/utils/squarePaymentProcessor';
 import { useToast } from '@/hooks/use-toast';
 import { useQueryClient } from '@tanstack/react-query';
@@ -46,6 +46,7 @@ export const useUpdatePaymentMethod = () => {
   const producerId = accountData?.producer?.producerId;
   const { data: existingPaymentMethod, error: paymentMethodError } = usePaymentMethod(producerId || '');
   
+  // Use the new dialog-specific Square hook
   const {
     cardContainerRef,
     payments,
@@ -54,15 +55,19 @@ export const useUpdatePaymentMethod = () => {
     isInitialized,
     isInitializing,
     retryInitialization,
-    setError
-  } = useStableSquarePayment();
+    setError,
+    reset: resetSquare
+  } = useDialogSquarePayment(isDialogOpen);
 
   const openDialog = () => {
+    console.log('🚪 Opening payment method dialog');
     setIsDialogOpen(true);
   };
 
   const closeDialog = () => {
+    console.log('🚪 Closing payment method dialog');
     setIsDialogOpen(false);
+    
     // Reset form data when closing
     setBillingContact({
       firstName: '',
@@ -76,7 +81,8 @@ export const useUpdatePaymentMethod = () => {
       state: '',
       zipCode: ''
     });
-    setError(null);
+    
+    // Square state will be reset automatically by the hook
   };
 
   const handleBillingContactChange = (field: string, value: string) => {

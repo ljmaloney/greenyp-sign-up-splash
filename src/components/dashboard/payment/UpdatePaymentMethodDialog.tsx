@@ -54,8 +54,18 @@ const UpdatePaymentMethodDialog = ({
   isSquareInitializing = false,
   onSquareRetry
 }: UpdatePaymentMethodDialogProps) => {
+  // Improved button state logic
+  const isSquareLoading = isSquareInitializing || (!isSquareReady && !squareError);
+  const canSubmit = isSquareReady && !isProcessing && !isSquareLoading;
+
+  const handleClose = () => {
+    if (!isProcessing) {
+      onClose();
+    }
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Update Payment Method</DialogTitle>
@@ -84,23 +94,50 @@ const UpdatePaymentMethodDialog = ({
               isInitializing={isSquareInitializing}
               onRetry={onSquareRetry}
             />
+            
+            {/* Additional status information */}
+            {isSquareLoading && (
+              <div className="mt-2 text-xs text-gray-500">
+                ⏳ Setting up secure payment form...
+              </div>
+            )}
+            {isSquareReady && (
+              <div className="mt-2 text-xs text-green-600">
+                ✅ Payment form ready for input
+              </div>
+            )}
           </div>
         </div>
 
-        <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={onClose}
-            disabled={isProcessing}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={onUpdatePayment}
-            disabled={isProcessing || !isSquareReady}
-          >
-            {isProcessing ? 'Updating...' : 'Update Payment Method'}
-          </Button>
+        <DialogFooter className="flex items-center justify-between">
+          <div className="text-xs text-gray-500">
+            {isSquareLoading && "Preparing payment form..."}
+            {squareError && "Please resolve payment form issues to continue"}
+            {isSquareReady && "Ready to process payment"}
+          </div>
+          
+          <div className="flex space-x-2">
+            <Button
+              variant="outline"
+              onClick={handleClose}
+              disabled={isProcessing}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={onUpdatePayment}
+              disabled={!canSubmit}
+            >
+              {isProcessing ? (
+                <>
+                  <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                  Updating...
+                </>
+              ) : (
+                'Update Payment Method'
+              )}
+            </Button>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
