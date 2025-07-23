@@ -58,6 +58,7 @@ const UpdatePaymentForm = ({
   });
   
   const [billingAddress, setBillingAddress] = useState({
+    companyName: '',
     address: '',
     city: '',
     state: '',

@@ -5,6 +5,7 @@ import { usePaymentInformation } from '@/hooks/usePaymentInformation';
 import BillingContactForm from './BillingContactForm';
 import BillingAddressForm from './BillingAddressForm';
 import PaymentInformationHeader from './PaymentInformationHeader';
+import { BillingContactData, BillingAddressData } from '@/types/billing';
 
 interface ClassifiedData {
   address: string;
@@ -27,7 +28,7 @@ interface CustomerData {
 interface PaymentInformationCardProps {
   classified?: ClassifiedData;
   customer?: CustomerData;
-  onBillingInfoChange?: (contact: any, address: any, emailValidationToken: string) => void;
+  onBillingInfoChange?: (contact: BillingContactData, address: BillingAddressData, emailValidationToken: string) => void;
   emailValidationToken?: string;
   onEmailValidationTokenChange?: (token: string) => void;
   isValidated?: boolean;

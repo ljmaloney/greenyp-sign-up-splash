@@ -3,22 +3,12 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import BillingContactForm from '@/components/payment/BillingContactForm';
 import BillingAddressForm from '@/components/payment/BillingAddressForm';
+import { BillingContactData, BillingAddressData } from '@/types/billing';
 
 interface DashboardPaymentInformationCardProps {
-  billingContact: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-  };
-  billingAddress: {
-    companyName: string;
-    address: string;
-    city: string;
-    state: string;
-    zipCode: string;
-  };
-  onBillingInfoChange: (contact: any, address: any) => void;
+  billingContact: BillingContactData;
+  billingAddress: BillingAddressData;
+  onBillingInfoChange: (contact: BillingContactData, address: BillingAddressData) => void;
 }
 
 const PaymentInformationCard = ({
