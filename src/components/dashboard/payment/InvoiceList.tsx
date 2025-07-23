@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useInvoiceHistory } from '@/hooks/useInvoiceHistory';
-import InvoiceDateRangeSelector from '@/components/dashboard/InvoiceDateRangeSelector';
-import InvoiceHistoryTable from '@/components/dashboard/InvoiceHistoryTable';
+import InvoiceDateRangeSelector from '@/components/dashboard/payment/InvoiceDateRangeSelector.tsx';
+import InvoiceHistoryTable from '@/components/dashboard/payment/InvoiceHistoryTable.tsx';
 
 interface InvoiceListProps {
   producerId: string;

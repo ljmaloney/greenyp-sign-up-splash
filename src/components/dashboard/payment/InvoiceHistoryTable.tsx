@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Invoice } from '@/services/invoiceService';
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card.tsx";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table.tsx";
+import { Invoice } from '@/services/invoiceService.ts';
 import { format } from 'date-fns';
 
 interface InvoiceHistoryTableProps {

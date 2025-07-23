@@ -56,10 +56,6 @@ const SavedBillingAddress = ({ paymentMethod, isLoading, error }: SavedBillingAd
         ) : (
           <p className="text-gray-600">No billing address on file</p>
         )}
-        <Button variant="outline" size="sm" className="mt-4">
-          <Edit className="w-4 h-4 mr-2" />
-          Update Address
-        </Button>
       </CardContent>
     </Card>
   );
