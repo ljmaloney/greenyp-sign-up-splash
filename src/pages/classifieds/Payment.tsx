@@ -140,11 +140,11 @@ const Payment = () => {
     }
 
     try {
-      // Prepare the payment payload with correct field names
+      // Prepare the payment payload with correct field names as per API specification
       const paymentPayload = {
         referenceId: classifiedId,
         paymentToken: tokenData.token,
-        emailValidationToken: emailValidationToken,
+        verificationToken: emailValidationToken,
         billingContact: billingContact,
         billingAddress: billingAddress,
         cardDetails: tokenData.details,
