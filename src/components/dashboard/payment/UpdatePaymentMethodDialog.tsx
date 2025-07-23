@@ -10,7 +10,7 @@ import {
 import { Button } from '@/components/ui/button';
 import BillingContactForm from '@/components/payment/BillingContactForm';
 import BillingAddressForm from '@/components/payment/BillingAddressForm';
-import SquarePaymentForm from '@/components/classifieds/SquarePaymentForm';
+import SquareCardInput from '@/components/payment/SquareCardInput';
 
 interface UpdatePaymentMethodDialogProps {
   isOpen: boolean;
@@ -69,12 +69,9 @@ const UpdatePaymentMethodDialog = ({
           
           <div>
             <h3 className="text-lg font-semibold mb-4">Payment Information</h3>
-            <SquarePaymentForm
+            <SquareCardInput
               cardContainerRef={cardContainerRef}
               error={squareError}
-              isProcessing={isProcessing}
-              onPayment={onUpdatePayment}
-              isCardReady={isSquareReady}
             />
           </div>
         </div>

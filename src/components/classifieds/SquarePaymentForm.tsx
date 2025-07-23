@@ -8,6 +8,9 @@ interface SquarePaymentFormProps {
   isProcessing: boolean;
   onPayment: () => void;
   isCardReady: boolean;
+  showButton?: boolean;
+  buttonText?: string;
+  processingText?: string;
 }
 
 const SquarePaymentForm = ({ 
@@ -15,7 +18,10 @@ const SquarePaymentForm = ({
   error, 
   isProcessing, 
   onPayment, 
-  isCardReady 
+  isCardReady,
+  showButton = true,
+  buttonText = 'Process Payment',
+  processingText = 'Processing Payment...'
 }: SquarePaymentFormProps) => {
   return (
     <div className="space-y-4">
@@ -31,13 +37,15 @@ const SquarePaymentForm = ({
         </div>
       )}
       
-      <Button 
-        onClick={onPayment}
-        disabled={isProcessing || !isCardReady}
-        className="w-full"
-      >
-        {isProcessing ? 'Processing Payment...' : 'Process Payment'}
-      </Button>
+      {showButton && (
+        <Button 
+          onClick={onPayment}
+          disabled={isProcessing || !isCardReady}
+          className="w-full"
+        >
+          {isProcessing ? processingText : buttonText}
+        </Button>
+      )}
     </div>
   );
 };
