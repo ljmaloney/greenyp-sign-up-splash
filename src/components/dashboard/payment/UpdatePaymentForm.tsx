@@ -6,7 +6,22 @@ import { AlertCircle, Loader2 } from 'lucide-react';
 import { useStableSquarePayment } from '@/hooks/useStableSquarePayment';
 import { useDashboardPaymentUpdate } from '@/hooks/useDashboardPaymentUpdate';
 import { validatePaymentFields } from '@/utils/paymentValidation';
-import PaymentInformationCard from './PaymentInformationCard.tsx';
+import PaymentInformationCard from './PaymentInformationCard';
+
+interface BillingContactData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+}
+
+interface BillingAddressData {
+  companyName: string;
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+}
 
 interface DashboardUpdatePaymentFormProps {
   producerId: string | undefined;
@@ -49,14 +64,14 @@ const UpdatePaymentForm = ({
   });
 
   // Billing info states with company name
-  const [billingContact, setBillingContact] = useState({
+  const [billingContact, setBillingContact] = useState<BillingContactData>({
     firstName: '',
     lastName: '',
     email: '',
     phone: ''
   });
   
-  const [billingAddress, setBillingAddress] = useState({
+  const [billingAddress, setBillingAddress] = useState<BillingAddressData>({
     companyName: '',
     address: '',
     city: '',

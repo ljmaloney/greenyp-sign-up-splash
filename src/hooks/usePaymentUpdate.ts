@@ -5,7 +5,20 @@ import { createPaymentService } from '@/services/paymentService';
 import { useToast } from '@/hooks/use-toast';
 import { useQueryClient } from '@tanstack/react-query';
 import { normalizePhoneForSquare } from '@/utils/phoneUtils';
-import { BillingContactData, BillingAddressData } from '@/types/billing';
+
+interface BillingContactData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+}
+
+interface BillingAddressData {
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+}
 
 interface UsePaymentUpdateProps {
   producerId: string | undefined;
@@ -78,7 +91,7 @@ export const usePaymentUpdate = ({ producerId, onSuccess, onError }: UsePaymentU
           const billingInfo = {
             firstName: billingContact.firstName.trim(),
             lastName: billingContact.lastName.trim(),
-            companyName: billingAddress.companyName.trim(),
+            companyName: '',
             payorAddress1: billingAddress.address.trim(),
             payorAddress2: '',
             payorCity: billingAddress.city.trim(),

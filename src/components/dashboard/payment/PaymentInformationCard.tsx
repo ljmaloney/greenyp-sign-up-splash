@@ -3,7 +3,21 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import BillingContactForm from '@/components/payment/BillingContactForm';
 import BillingAddressForm from '@/components/payment/BillingAddressForm';
-import { BillingContactData, BillingAddressData } from '@/types/billing';
+
+interface BillingContactData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+}
+
+interface BillingAddressData {
+  companyName: string;
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+}
 
 interface DashboardPaymentInformationCardProps {
   billingContact: BillingContactData;
