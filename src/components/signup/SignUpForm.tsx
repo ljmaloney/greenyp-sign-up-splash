@@ -23,18 +23,18 @@ const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
 
   // Get current subscription selection from form state
   const currentSubscriptionId = form.watch('subscriptionId');
-  const selectedSubscription = currentSubscriptionId && subscriptions
-    ? subscriptions.find(sub => sub.subscriptionId === currentSubscriptionId)
+  const selectedSubscription = currentSubscriptionId 
+    ? subscriptions?.find(sub => sub.subscriptionId === currentSubscriptionId)
     : null;
 
-  console.log('📋 SignUpForm: Current subscription state:', {
+  console.log('📋 SignUpForm: Current form state:', {
+    selectedPlanFromUrl: selectedPlan || 'none provided',
     currentSubscriptionId: currentSubscriptionId || 'none selected',
-    hasSubscriptions: !!subscriptions,
-    totalSubscriptions: subscriptions?.length || 0,
     selectedSubscription: selectedSubscription ? {
       id: selectedSubscription.subscriptionId,
       name: selectedSubscription.displayName
-    } : null
+    } : null,
+    totalSubscriptions: subscriptions?.length
   });
 
   const handleSubmit = (data: any) => {
