@@ -7,6 +7,7 @@ interface ApiResponse<T = any> {
   success: boolean;
   message?: string;
   error?: string;
+  errorMessageApi?: string | null;
 }
 
 interface ApiClientOptions {
@@ -25,6 +26,11 @@ class ApiClient {
   // Method to set the access token getter (used by useApiClient hook)
   setAccessTokenGetter(getter: () => Promise<string | null>) {
     this.getAccessToken = getter;
+  }
+
+  // Method to get the base URL
+  getBaseUrl(): string {
+    return this.baseUrl;
   }
 
   private async makeRequest<T>(
@@ -121,7 +127,8 @@ class ApiClient {
       return {
         response: responseData,
         status: response.status,
-        success: true
+        success: true,
+        errorMessageApi: null
       };
 
     } catch (error) {
@@ -164,6 +171,11 @@ class ApiClient {
       method: 'DELETE',
       ...options
     });
+  }
+
+  // Legacy method for backward compatibility
+  async request<T>(endpoint: string, options: RequestInit & { requireAuth?: boolean } = {}): Promise<ApiResponse<T>> {
+    return this.makeRequest<T>(endpoint, options);
   }
 }
 
