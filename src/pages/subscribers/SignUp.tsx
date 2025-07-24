@@ -4,13 +4,10 @@ import { useSearchParams } from 'react-router-dom';
 import SignUpHeader from '@/components/SignUpHeader';
 import Footer from '@/components/Footer';
 import SignUpForm from '@/components/signup/SignUpForm';
-import SignUpFormErrorBoundary from '@/components/signup/SignUpFormErrorBoundary';
 
 const SignUp = () => {
   const [searchParams] = useSearchParams();
   const selectedPlan = searchParams.get('plan') || '';
-
-  console.log('📋 SignUp page: Selected plan from URL:', selectedPlan);
 
   useEffect(() => {
     // Scroll to top when component mounts
@@ -22,9 +19,7 @@ const SignUp = () => {
       <SignUpHeader />
       <main className="flex-grow bg-gray-50 py-12">
         <div className="container mx-auto px-4 max-w-4xl">
-          <SignUpFormErrorBoundary>
-            <SignUpForm selectedPlan={selectedPlan} />
-          </SignUpFormErrorBoundary>
+          <SignUpForm selectedPlan={selectedPlan} />
         </div>
       </main>
       <Footer />

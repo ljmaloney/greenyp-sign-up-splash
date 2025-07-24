@@ -7,9 +7,7 @@ export const useSignUpForm = (selectedPlan: string) => {
   const { loading, error, handleCreateAccount, resetError } = useCreateAccountSubmission();
 
   const onSubmit = (data: any) => {
-    console.log('📋 useSignUpForm: Form submission triggered with 4-step process');
-    console.log('📋 useSignUpForm: Selected plan:', selectedPlan);
-    console.log('📋 useSignUpForm: Form data subscription ID:', data.subscriptionId);
+    console.log('📋 Form submission triggered with 4-step process');
     handleCreateAccount(data);
   };
 
