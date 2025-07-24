@@ -1,70 +1,37 @@
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { fetchCategories } from '@/services/categoryService';
-import { CategoryWithIcon } from '@/types/category';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
+
+interface Category {
+  id: string;
+  name: string;
+  description?: string;
+}
 
 interface CategoriesContextType {
-  categories: CategoryWithIcon[];
-  isLoading: boolean;
-  error: Error | null;
-  refetch: () => void;
+  categories: Category[];
+  setCategories: (categories: Category[]) => void;
 }
 
 const CategoriesContext = createContext<CategoriesContextType | undefined>(undefined);
 
 export const useCategories = () => {
   const context = useContext(CategoriesContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error('useCategories must be used within a CategoriesProvider');
   }
   return context;
 };
 
 interface CategoriesProviderProps {
-  children: React.ReactNode;
-  prefetchOnMount?: boolean;
+  children: ReactNode;
 }
 
-export const CategoriesProvider = ({ children, prefetchOnMount = false }: CategoriesProviderProps) => {
-  const [categories, setCategories] = useState<CategoryWithIcon[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+export const CategoriesProvider = ({ children }: CategoriesProviderProps) => {
+  const [categories, setCategories] = useState<Category[]>([]);
 
-  useEffect(() => {
-    if (prefetchOnMount) {
-      console.log('🚀 CategoriesProvider: Prefetching categories on mount');
-      handleFetch();
-    }
-  }, [prefetchOnMount]);
-
-  const handleFetch = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      console.log('🔄 CategoriesProvider: Starting fetch');
-      
-      const result = await fetchCategories();
-      setCategories(result);
-      console.log('✅ CategoriesProvider: Fetch successful');
-    } catch (err) {
-      console.error('❌ CategoriesProvider: Fetch failed:', err);
-      setError(err instanceof Error ? err : new Error('Failed to fetch categories'));
-      setCategories([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const refetch = () => {
-    console.log('🔄 CategoriesProvider: Manual refetch requested');
-    handleFetch();
-  };
-
-  const value: CategoriesContextType = {
+  const value = {
     categories,
-    isLoading,
-    error,
-    refetch
+    setCategories,
   };
 
   return (
