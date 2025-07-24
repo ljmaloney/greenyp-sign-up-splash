@@ -81,7 +81,7 @@ const BusinessInformationCard = ({ control }: BusinessInformationCardProps) => {
                       } />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
+                  <SelectContent>
                     {displayCategories.map((category) => (
                       <SelectItem key={category.lineOfBusinessId} value={category.lineOfBusinessId}>
                         {category.lineOfBusinessName}
@@ -110,7 +110,7 @@ const BusinessInformationCard = ({ control }: BusinessInformationCardProps) => {
                       } />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
+                  <SelectContent>
                     {availableSubscriptions.map((subscription) => (
                       <SelectItem key={subscription.subscriptionId} value={subscription.subscriptionId}>
                         {subscription.displayName} - {subscription.formattedMonthlyPrice}

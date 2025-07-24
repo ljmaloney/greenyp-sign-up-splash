@@ -11,26 +11,23 @@ import AccountCredentialsCard from './AccountCredentialsCard';
 import SignUpFormHeader from './SignUpFormHeader';
 import SignUpFormSubmitSection from './SignUpFormSubmitSection';
 import SignUpErrorHandler from './SignUpErrorHandler';
+import { findSubscriptionMatch } from '@/utils/subscriptionMatching';
 
 interface SignUpFormProps {
-  selectedPlan?: string; // Keep for backward compatibility but don't use
+  selectedPlan?: string;
 }
 
 const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
   const { data: subscriptions } = useSubscriptions();
   const { data: categories } = useCategories();
-  const { form, loading, onSubmit, error, resetError } = useSignUpForm();
+  const { form, loading, onSubmit, error, resetError } = useSignUpForm(selectedPlan);
 
-  // Get current subscription selection from form state
-  const currentSubscriptionId = form.watch('subscriptionId');
-  const selectedSubscription = currentSubscriptionId 
-    ? subscriptions?.find(sub => sub.subscriptionId === currentSubscriptionId)
-    : null;
+  // Find the selected subscription using improved matching (only if selectedPlan is provided)
+  const selectedSubscription = selectedPlan ? findSubscriptionMatch(subscriptions, selectedPlan) : null;
 
-  console.log('📋 SignUpForm: Current form state:', {
-    selectedPlanFromUrl: selectedPlan || 'none provided',
-    currentSubscriptionId: currentSubscriptionId || 'none selected',
-    selectedSubscription: selectedSubscription ? {
+  console.log('📋 SignUpForm: Subscription matching result:', {
+    selectedPlan: selectedPlan || 'none provided',
+    foundSubscription: selectedSubscription ? {
       id: selectedSubscription.subscriptionId,
       name: selectedSubscription.displayName
     } : null,
@@ -41,6 +38,13 @@ const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
     console.log('📋 SignUpForm: Form submission triggered');
     console.log('📋 SignUpForm: Subscription ID from form:', data.subscriptionId);
     
+    // Validate subscription selection
+    if (!data.subscriptionId) {
+      console.error('📋 SignUpForm: No subscription selected');
+      // The form validation should catch this, but this is a fallback
+      return;
+    }
+    
     onSubmit(data);
   };
 
@@ -48,6 +52,13 @@ const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
     console.log('🔄 SignUpForm: Retrying form submission');
     resetError();
   };
+
+  // Debug error state
+  console.log('🐛 SignUpForm: Error state debug:', {
+    hasError: !!error,
+    errorMessage: error,
+    errorLength: error?.length
+  });
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-8">
