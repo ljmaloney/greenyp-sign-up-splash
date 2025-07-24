@@ -13,6 +13,7 @@ import EmailValidationCard from '@/components/payment/EmailValidationCard';
 import PaymentInformationCard from '@/components/payment/PaymentInformationCard';
 import ReactSquareCard from '@/components/payment/ReactSquareCard';
 import { validatePaymentFields } from '@/utils/paymentValidation';
+import { formatPhoneForSquareAPI } from '@/utils/phoneUtils';
 import { Classified } from '@/types/classifieds';
 
 const Payment = () => {
@@ -151,6 +152,23 @@ const Payment = () => {
     }
 
     try {
+      // Format phone number specifically for Square API
+      const formattedPhone = formatPhoneForSquareAPI(billingContact.phone);
+      
+      console.log('📞 Phone number formatting:', {
+        original: billingContact.phone,
+        formatted: formattedPhone
+      });
+
+      if (!formattedPhone) {
+        toast({
+          title: "Invalid Phone Number",
+          description: "Please enter a valid US phone number",
+          variant: "destructive",
+        });
+        return;
+      }
+
       // Prepare the payment payload with correct field mapping for the API
       const paymentPayload = {
         referenceId: classifiedId,
@@ -161,7 +179,7 @@ const Payment = () => {
         firstName: billingContact.firstName,
         lastName: billingContact.lastName,
         emailAddress: billingContact.email,
-        phoneNumber: billingContact.phone,
+        phoneNumber: formattedPhone, // Use the properly formatted phone number
         addressLine1: billingAddress.address,
         city: billingAddress.city,
         state: billingAddress.state,
