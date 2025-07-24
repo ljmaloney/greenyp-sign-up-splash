@@ -1,5 +1,5 @@
 
-import { apiClient } from '@/config/api';
+import { apiClient } from '@/utils/apiClient';
 import { APISubscription, SubscriptionWithFormatting } from '@/types/subscription';
 
 export const fetchSubscriptions = async (): Promise<SubscriptionWithFormatting[]> => {
