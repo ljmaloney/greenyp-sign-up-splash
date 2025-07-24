@@ -153,19 +153,40 @@ export const useSignUpSubmission = () => {
     resetError();
     
     try {
-      // Step 1: Pre-check email availability
-      console.log('🔍 Pre-checking email availability...');
-      const emailExists = await checkEmailExists(data.emailAddress);
+      // Step 1: Pre-validation checks
+      console.log('🔍 Pre-validation checks...');
       
-      if (emailExists) {
-        console.log('❌ Email already exists, stopping submission');
-        setIsDuplicateEmail(true);
-        setError('A user already exists for this email address');
+      // Check if we have essential form data
+      if (!data.emailAddress || !data.businessName) {
+        setError('Please fill in all required fields');
         setLoading(false);
         return;
       }
 
-      // Step 2: Create the account
+      // Enhanced subscription validation - proceed even if subscription is missing from form
+      if (!data.subscriptionId && !selectedSubscription?.subscriptionId) {
+        console.warn('⚠️ No subscription ID provided, but proceeding with submission');
+        // Don't return here - let the backend handle subscription assignment
+      }
+
+      // Step 2: Pre-check email availability (but don't fail if this check fails)
+      try {
+        console.log('🔍 Pre-checking email availability...');
+        const emailExists = await checkEmailExists(data.emailAddress);
+        
+        if (emailExists) {
+          console.log('❌ Email already exists, stopping submission');
+          setIsDuplicateEmail(true);
+          setError('A user already exists for this email address');
+          setLoading(false);
+          return;
+        }
+      } catch (emailCheckError) {
+        console.warn('⚠️ Email check failed, proceeding anyway:', emailCheckError);
+        // Continue with submission even if email check fails
+      }
+
+      // Step 3: Create the account
       const payload = createSignUpPayload(data);
       console.log('📤 Sending payload to API');
       
@@ -195,14 +216,22 @@ export const useSignUpSubmission = () => {
           const producerId = producerData.producerId;
           console.log('🆔 Producer ID extracted:', producerId);
 
-          // Step 3: Fetch complete account data
-          const accountData = await fetchAccountData(producerId);
-          
+          // Step 4: Fetch complete account data (but don't fail if this fails)
           let producerSubscriptions = [];
-          if (accountData?.response?.producer?.subscriptions) {
-            producerSubscriptions = accountData.response.producer.subscriptions;
-          } else if (producerData.subscriptions) {
-            producerSubscriptions = producerData.subscriptions;
+          try {
+            const accountData = await fetchAccountData(producerId);
+            
+            if (accountData?.response?.producer?.subscriptions) {
+              producerSubscriptions = accountData.response.producer.subscriptions;
+            } else if (producerData.subscriptions) {
+              producerSubscriptions = producerData.subscriptions;
+            }
+          } catch (accountError) {
+            console.warn('⚠️ Failed to fetch account data, proceeding without:', accountError);
+            // Use whatever subscription data we have from the initial response
+            if (producerData.subscriptions) {
+              producerSubscriptions = producerData.subscriptions;
+            }
           }
           
           console.log('🎉 Account creation successful:', {
@@ -213,11 +242,18 @@ export const useSignUpSubmission = () => {
 
           toast.success("Account created successfully! Please complete your payment to activate your subscription.");
           
-          // Step 4: Build and navigate to payment URL with enhanced parameter handling
+          // Step 5: Build and navigate to payment URL with enhanced parameter handling
           const paymentUrl = buildPaymentUrl(producerId, data, selectedSubscription, producerSubscriptions);
           
           console.log('🎯 Navigating to payment page:', paymentUrl);
-          navigate(paymentUrl);
+          
+          // Force navigation with error boundary
+          try {
+            navigate(paymentUrl);
+          } catch (navError) {
+            console.error('❌ Navigation failed, trying window.location:', navError);
+            window.location.href = paymentUrl;
+          }
           return;
           
         } catch (parseError) {
@@ -264,8 +300,18 @@ export const useSignUpSubmission = () => {
       setError('Unexpected error occurred. Please try again.');
 
     } catch (error) {
-      console.error('🌐 Network error occurred:', error);
-      setError("Network error. Please check your connection and try again.");
+      console.error('🌐 Network or system error occurred:', error);
+      
+      // Enhanced error handling for different error types
+      if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+        setError("Network connection failed. Please check your internet connection and try again.");
+      } else if (error.message?.includes('content_script')) {
+        // Ignore content script errors and proceed
+        console.warn('⚠️ Content script error detected, but continuing...');
+        setError("Page interference detected. Please disable browser extensions and try again.");
+      } else {
+        setError(`An error occurred: ${error.message || 'Unknown error'}`);
+      }
     } finally {
       setLoading(false);
       console.log('🏁 Signup submission completed');
