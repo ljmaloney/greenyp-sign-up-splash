@@ -1,88 +1,201 @@
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/contexts/AuthContext";
-import { CategoriesProvider } from "@/components/providers/CategoriesProvider";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AuthProvider } from '@/contexts/AuthContext';
+import { Toaster } from '@/components/ui/toaster';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import PublicIndex from './pages/PublicIndex';
+import Contact from './pages/subscribers/Contact';
+import SearchResults from './pages/SearchResults';
+import CategoryPage from './pages/CategoryPage';
+import Categories from './pages/Categories';
+import ProfilePage from './pages/ProfilePage';
+import Login from './pages/auth/Login';
+import AuthCallback from './pages/auth/AuthCallback';
+import SilentCallback from './pages/auth/SilentCallback';
+import Unauthorized from './pages/auth/Unauthorized';
+import Classifieds from '@/pages/Classifieds';
+import Samples from '@/pages/classifieds/Samples.tsx';
+import CreateAd from '@/pages/classifieds/CreateAd';
+import UploadImages from '@/pages/classifieds/UploadImages';
+import Payment from '@/pages/classifieds/Payment';
+import PaymentConfirmation from '@/pages/classifieds/PaymentConfirmation';
+import SearchResultsClassifieds from '@/pages/classifieds/SearchResults';
+import ClassifiedDetail from '@/pages/classifieds/ClassifiedDetail';
+import CategoryDescriptions from '@/pages/classifieds/CategoryDescriptions';
 
-// Import all pages
-import PublicIndex from "@/pages/PublicIndex";
-import Categories from "@/pages/Categories";
-import CategoryPage from "@/pages/CategoryPage";
-import SubscriberIndex from "@/pages/subscribers/Index";
-import SubscriberCategories from "@/pages/subscribers/SubscriberCategories";
-import SubscriberCategoryPage from "@/pages/subscribers/CategoryPage";
-import SignUp from "@/pages/subscribers/SignUp";
-import DashboardIndex from "@/pages/dashboard/Index";
-import DashboardClassifieds from "@/pages/dashboard/Classifieds";
-import ClassifiedsIndex from "@/pages/classifieds/Index";
-import ClassifiedDetail from "@/pages/classifieds/ClassifiedDetail";
-import ProtectedRoute from "@/components/ProtectedRoute";
+// Import subscriber pages
+import SubscribersIndex from '@/pages/subscribers/Index';
+import SubscribersSignUp from '@/pages/subscribers/SignUp';
+import SubscribersSubscribe from '@/pages/subscribers/Subscribe';
+import SubscriptionFeatures from '@/pages/subscribers/SubscriptionFeatures';
+import SubscriberCategories from '@/pages/subscribers/SubscriberCategories';
+import SubscriberCategoryPage from '@/pages/subscribers/CategoryPage';
+import SignUpConfirmation from '@/pages/subscribers/SignUpConfirmation';
+import SignUpPayment from '@/pages/subscribers/SignUpPayment';
 
-// Create a query client with optimized defaults for categories caching
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      // Global defaults for better caching
-      staleTime: 5 * 60 * 1000, // 5 minutes default stale time
-      gcTime: 10 * 60 * 1000, // 10 minutes cache time
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: true,
-      retry: 2,
-      retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
-    },
-  },
-});
+// Import dashboard pages
+import DashboardIndex from '@/pages/dashboard/Index';
+import DashboardContacts from '@/pages/dashboard/Contacts';
+import DashboardLocations from '@/pages/dashboard/Locations';
+import DashboardProducts from '@/pages/dashboard/Products';
+import DashboardServices from '@/pages/dashboard/Services';
+import DashboardAuthorizedUsers from '@/pages/dashboard/AuthorizedUsers';
+import DashboardPhotoGallery from '@/pages/dashboard/PhotoGallery';
+import DashboardAnalytics from '@/pages/dashboard/Analytics';
+import DashboardSubscription from '@/pages/dashboard/Subscription';
+import DashboardPayment from '@/pages/dashboard/Payment';
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <AuthProvider>
-        <CategoriesProvider prefetchOnMount={true}>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
+// Import admin pages
+import AdminIndex from '@/pages/admin/Index';
+import AdminUsers from '@/pages/admin/Users';
+import AdminSubscribers from '@/pages/admin/Subscribers';
+import AdminClassifieds from '@/pages/admin/Classifieds';
+import AdminInvoices from '@/pages/admin/Invoices';
+import AdminPermissions from '@/pages/admin/Permissions';
+import AdminSettings from '@/pages/admin/Settings';
+
+const queryClient = new QueryClient();
+
+function App() {
+  return (
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <Router>
             <Routes>
-              {/* Public routes */}
+              {/* Public Routes */}
               <Route path="/" element={<PublicIndex />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/search" element={<SearchResults />} />
               <Route path="/categories" element={<Categories />} />
-              <Route path="/categories/:categoryId" element={<CategoryPage />} />
-              <Route path="/classifieds" element={<ClassifiedsIndex />} />
-              <Route path="/classifieds/:classifiedId" element={<ClassifiedDetail />} />
-              
-              {/* Subscriber routes */}
-              <Route path="/subscribers" element={<SubscriberIndex />} />
+              <Route path="/categories/:lineOfBusinessId" element={<CategoryPage />} />
+              <Route path="/category/:lineOfBusinessId" element={<CategoryPage />} />
+              <Route path="/business/:businessId" element={<ProfilePage />} />
+              <Route path="/profile/:producerId/:producerLocationId" element={<ProfilePage />} />
+              <Route path="/login" element={<Login />} />
+
+              {/* Authentication Routes */}
+              <Route path="/auth/callback" element={<AuthCallback />} />
+              <Route path="/auth/silent-callback" element={<SilentCallback />} />
+              <Route path="/unauthorized" element={<Unauthorized />} />
+
+              {/* Dashboard Routes - Protected */}
+              <Route path="/dashboard" element={
+                <ProtectedRoute requiredRole="Dashboard-Access">
+                  <DashboardIndex />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/contacts" element={
+                <ProtectedRoute requiredRole="Dashboard-Access">
+                  <DashboardContacts />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/locations" element={
+                <ProtectedRoute requiredRole="Dashboard-Access">
+                  <DashboardLocations />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/products" element={
+                <ProtectedRoute requiredRole="Dashboard-Access">
+                  <DashboardProducts />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/services" element={
+                <ProtectedRoute requiredRole="Dashboard-Access">
+                  <DashboardServices />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/authorized-users" element={
+                <ProtectedRoute requiredRole="Dashboard-Access">
+                  <DashboardAuthorizedUsers />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/photo-gallery" element={
+                <ProtectedRoute requiredRole="Dashboard-Access">
+                  <DashboardPhotoGallery />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/analytics" element={
+                <ProtectedRoute requiredRole="Dashboard-Access">
+                  <DashboardAnalytics />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/subscription" element={
+                <ProtectedRoute requiredRole="Dashboard-Access">
+                  <DashboardSubscription />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/payment" element={
+                <ProtectedRoute requiredRole="Dashboard-Access">
+                  <DashboardPayment />
+                </ProtectedRoute>
+              } />
+
+              {/* Admin Routes - Protected */}
+              <Route path="/admin" element={
+                <ProtectedRoute requiredRole="GreenPages-Admin">
+                  <AdminIndex />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/users" element={
+                <ProtectedRoute requiredRole="GreenPages-Admin">
+                  <AdminUsers />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/subscribers" element={
+                <ProtectedRoute requiredRole="GreenPages-Admin">
+                  <AdminSubscribers />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/classifieds" element={
+                <ProtectedRoute requiredRole="GreenPages-Admin">
+                  <AdminClassifieds />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/invoices" element={
+                <ProtectedRoute requiredRole="GreenPages-Admin">
+                  <AdminInvoices />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/permissions" element={
+                <ProtectedRoute requiredRole="GreenPages-Admin">
+                  <AdminPermissions />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/settings" element={
+                <ProtectedRoute requiredRole="GreenPages-Admin">
+                  <AdminSettings />
+                </ProtectedRoute>
+              } />
+
+              {/* Subscriber Routes - Updated to use consistent plural routing */}
+              <Route path="/subscribers" element={<SubscribersIndex />} />
+              <Route path="/subscribers/signup" element={<SubscribersSignUp />} />
+              <Route path="/subscribers/signup/confirmation" element={<SignUpConfirmation />} />
+              <Route path="/subscribers/signup/payment" element={<SignUpPayment />} />
+              <Route path="/subscribers/subscribe" element={<SubscribersSubscribe />} />
+              <Route path="/subscribers/subscription-features" element={<SubscriptionFeatures />} />
+              <Route path="/subscribers/contact" element={<Contact />} />
               <Route path="/subscribers/categories" element={<SubscriberCategories />} />
-              <Route path="/subscribers/categories/:categoryId" element={<SubscriberCategoryPage />} />
-              <Route path="/subscribers/signup" element={<SignUp />} />
-              
-              {/* Protected dashboard routes */}
-              <Route 
-                path="/dashboard" 
-                element={
-                  <ProtectedRoute>
-                    <DashboardIndex />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/dashboard/classifieds" 
-                element={
-                  <ProtectedRoute>
-                    <DashboardClassifieds />
-                  </ProtectedRoute>
-                } 
-              />
+              <Route path="/subscribers/categories/:lineOfBusinessId" element={<SubscriberCategoryPage />} />
+
+              {/* Classifieds routes */}
+              <Route path="/classifieds" element={<Classifieds />} />
+              <Route path="/classifieds/samples" element={<Samples />} />
+              <Route path="/classifieds/create" element={<CreateAd />} />
+              <Route path="/classifieds/uploadimages/:classifiedId" element={<UploadImages />} />
+              <Route path="/classifieds/payment/:classifiedId" element={<Payment />} />
+              <Route path="/classifieds/payment/confirmation/:classifiedId" element={<PaymentConfirmation />} />
+              <Route path="/classifieds/search" element={<SearchResultsClassifieds />} />
+              <Route path="/classifieds/categories" element={<CategoryDescriptions />} />
+              <Route path="/classifieds/detail/:id" element={<ClassifiedDetail />} />
             </Routes>
-          </BrowserRouter>
-        </CategoriesProvider>
-      </AuthProvider>
-    </TooltipProvider>
-    <ReactQueryDevtools initialIsOpen={false} />
-  </QueryClientProvider>
-);
+          </Router>
+          <Toaster />
+        </AuthProvider>
+      </QueryClientProvider>
+  );
+}
 
 export default App;
