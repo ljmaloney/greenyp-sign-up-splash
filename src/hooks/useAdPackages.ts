@@ -80,7 +80,7 @@ export const useAdPackages = () => {
         
         // Transform the API response to match our expected structure
         return {
-          response: response.response || [],
+          response: Array.isArray(response.response) ? response.response : [],
           errorMessageApi: response.errorMessageApi
         };
       } catch (error) {

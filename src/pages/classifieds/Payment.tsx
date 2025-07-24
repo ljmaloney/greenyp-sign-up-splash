@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -61,7 +62,10 @@ const Payment = () => {
     queryFn: async (): Promise<ClassifiedPaymentData> => {
       console.log('Fetching classified data for payment:', classifiedId);
       const response = await apiClient.get(`/classified/${classifiedId}/customer`, { requireAuth: false });
-      return response.response as ClassifiedPaymentData;
+      
+      // Type assertion to properly handle the response
+      const apiResponse = response as { response: ClassifiedPaymentData };
+      return apiResponse.response;
     },
     enabled: !!classifiedId && classifiedId !== ':classifiedId'
   });
