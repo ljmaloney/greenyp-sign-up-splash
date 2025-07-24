@@ -12,7 +12,7 @@ const SignUpHeader = () => {
       <div className="flex items-center">
         <Link to="/subscribers" className="text-2xl font-bold text-greenyp-700 flex items-center">
           <Leaf className="mr-2 h-8 w-8" />
-          <span>GreenYP - Subscribers</span>
+          <span>GreenYP - Professional Sign Up</span>
         </Link>
       </div>
 
