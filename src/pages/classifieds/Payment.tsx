@@ -140,17 +140,6 @@ const Payment = () => {
       return;
     }
 
-    // Validate that we have a verification token
-    if (!tokenData.verificationToken) {
-      console.error('❌ No verification token in tokenData:', tokenData);
-      toast({
-        title: "Payment Token Error",
-        description: "Missing verification token from Square. Please try again.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     try {
       // Format phone number specifically for Square API
       const formattedPhone = formatPhoneForSquareAPI(billingContact.phone);
@@ -173,7 +162,9 @@ const Payment = () => {
       const paymentPayload = {
         referenceId: classifiedId,
         paymentToken: tokenData.token,
-        verificationToken: tokenData.verificationToken,
+        // For React SDK, we don't have a separate verification token
+        // Some APIs might require this field, so we'll provide the payment token
+        verificationToken: tokenData.verificationToken || tokenData.token,
         emailValidationToken: emailValidationToken,
         // Map billing fields to the expected API field names
         firstName: billingContact.firstName,

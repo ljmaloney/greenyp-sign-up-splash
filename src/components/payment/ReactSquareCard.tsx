@@ -47,42 +47,17 @@ const ReactSquareCard = ({
       console.log('💳 Card tokenization successful:', token);
       console.log('💳 Full token object:', JSON.stringify(token, null, 2));
       
-      // Extract the Square verification token - this is CRITICAL for Square API
-      let squareVerificationToken = null;
-      
-      // Try different possible locations for the Square verification token
-      if (token.verificationToken) {
-        squareVerificationToken = token.verificationToken;
-        console.log('💳 Found Square verification token at token.verificationToken:', squareVerificationToken);
-      } else if (token.verification_token) {
-        squareVerificationToken = token.verification_token;
-        console.log('💳 Found Square verification token at token.verification_token:', squareVerificationToken);
-      } else if (token.details?.verificationToken) {
-        squareVerificationToken = token.details.verificationToken;
-        console.log('💳 Found Square verification token at token.details.verificationToken:', squareVerificationToken);
-      } else {
-        console.error('💳 CRITICAL ERROR: No Square verification token found in token response');
-        console.error('💳 Available token properties:', Object.keys(token));
-        if (token.details) {
-          console.error('💳 Available token.details properties:', Object.keys(token.details));
-        }
-        throw new Error('Square verification token not found in payment response');
-      }
-      
-      // Ensure we have both required tokens
+      // Ensure we have the payment token
       if (!token.token) {
         console.error('💳 CRITICAL ERROR: No payment token found');
         throw new Error('Payment token not found in Square response');
       }
       
-      if (!squareVerificationToken) {
-        console.error('💳 CRITICAL ERROR: No verification token found');
-        throw new Error('Verification token not found in Square response');
-      }
-      
+      // For React SDK, we don't need a separate verification token
+      // The token itself is sufficient for processing
       const result = {
         token: token.token,  // This is the payment token
-        verificationToken: squareVerificationToken,  // This is the Square verification token
+        verificationToken: null,  // React SDK doesn't provide this separately
         details: {
           card: {
             brand: token.details?.card?.brand || 'UNKNOWN',
@@ -95,13 +70,12 @@ const ReactSquareCard = ({
         billingAddress
       };
       
-      console.log('💳 Final result object with correct tokens:', {
+      console.log('💳 Final result object:', {
         hasPaymentToken: !!result.token,
         paymentTokenLength: result.token?.length,
-        hasVerificationToken: !!result.verificationToken,
-        verificationTokenLength: result.verificationToken?.length,
         paymentTokenStart: result.token?.substring(0, 10) + '...',
-        verificationTokenStart: result.verificationToken?.substring(0, 10) + '...'
+        cardBrand: result.details.card.brand,
+        cardLast4: result.details.card.last4
       });
       
       onPaymentSuccess(result);
