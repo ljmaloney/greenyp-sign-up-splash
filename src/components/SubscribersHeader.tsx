@@ -13,7 +13,7 @@ const SubscribersHeader = () => {
       <div className="flex items-center">
         <Link to="/subscribers" className="text-2xl font-bold text-greenyp-700 flex items-center">
           <Leaf className="mr-2 h-8 w-8" />
-          <span>GreenYP - Subscribers</span>
+          <span>GreenYP - Professionals</span>
         </Link>
       </div>
 
@@ -26,7 +26,7 @@ const SubscribersHeader = () => {
           </nav>
         )}
         <Link to="/dashboard">
-          <Button variant="outline" className="border-greenyp-500 text-greenyp-700 hover:bg-greenyp-50">Log In</Button>
+          <Button variant="outline" className="border-greenyp-500 text-greenyp-700 hover:bg-greenyp-50">Pro Login</Button>
         </Link>
         <Link to="/subscribers/signup">
           <Button className="bg-greenyp-600 hover:bg-greenyp-700 text-white">Sign Up</Button>
