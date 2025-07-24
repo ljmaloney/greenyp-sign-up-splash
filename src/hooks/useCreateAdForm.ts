@@ -6,6 +6,7 @@ import { useAdPackages } from '@/hooks/useAdPackages';
 import { useClassifiedCategories } from '@/hooks/useClassifiedCategories';
 import { useApiClient } from '@/hooks/useApiClient';
 import { useToast } from '@/hooks/use-toast';
+import { ClassifiedCreationApiResponse } from '@/types/classifiedCreation';
 import { FULL_NAME_TO_ABBREVIATION } from '@/constants/usStates';
 
 interface FormData {
@@ -193,18 +194,21 @@ export const useCreateAdForm = () => {
       const response = await apiClient.post('/classified/create-ad', payload, { requireAuth: false });
       debugLog('✅ SUBMIT - Classified ad created:', response);
 
-      if (response?.response?.classifiedId) {
-        const classifiedId = response.response.classifiedId;
+      // Type assertion to properly handle the response
+      const apiResponse = response as ClassifiedCreationApiResponse;
+      
+      if (apiResponse?.response?.classifiedId) {
+        const classifiedId = apiResponse.response.classifiedId;
         
         if (selectedPackage && selectedPackage.features.maxImages > 0) {
           // Go to image upload page
           navigate(`/classifieds/uploadimages/${classifiedId}`, { 
-            state: { classifiedData: response.response, packageData: selectedPackage }
+            state: { classifiedData: apiResponse.response, packageData: selectedPackage }
           });
         } else {
           // Go directly to payment page
           navigate(`/classifieds/payment/${classifiedId}`, { 
-            state: { classifiedData: response.response, packageData: selectedPackage }
+            state: { classifiedData: apiResponse.response, packageData: selectedPackage }
           });
         }
       }
