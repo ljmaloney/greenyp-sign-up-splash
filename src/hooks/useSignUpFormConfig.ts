@@ -4,15 +4,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { signUpFormSchema, SignUpFormSchema } from '@/utils/signUpValidation';
 
-export const useSignUpFormConfig = (selectedPlan?: string) => {
-  console.log('📋 useSignUpFormConfig: Initializing with plan:', selectedPlan);
+export const useSignUpFormConfig = () => {
+  console.log('📋 useSignUpFormConfig: Initializing form without URL dependency');
   
   const form = useForm<SignUpFormSchema>({
     resolver: zodResolver(signUpFormSchema),
     defaultValues: {
       businessName: '',
       lineOfBusinessId: '',
-      subscriptionId: selectedPlan || '',
+      subscriptionId: '', // No longer pre-populated from URL
       websiteUrl: '',
       narrative: '',
       signupCode: '',
@@ -37,14 +37,6 @@ export const useSignUpFormConfig = (selectedPlan?: string) => {
     }
   });
 
-  // Update subscription ID when selectedPlan changes (but only if it's provided)
-  useEffect(() => {
-    if (selectedPlan && selectedPlan !== form.getValues('subscriptionId')) {
-      console.log('📋 useSignUpFormConfig: Updating subscription ID to:', selectedPlan);
-      form.setValue('subscriptionId', selectedPlan, { shouldValidate: true });
-    }
-  }, [selectedPlan, form]);
-
   // Watch for email address changes and update userName accordingly
   const emailAddress = form.watch('emailAddress');
   const userName = form.watch('userName');
@@ -55,7 +47,7 @@ export const useSignUpFormConfig = (selectedPlan?: string) => {
     }
   }, [emailAddress, userName, form]);
 
-  console.log('📋 useSignUpFormConfig: Current form subscription ID:', form.getValues('subscriptionId'));
+  console.log('📋 useSignUpFormConfig: Form initialized with subscription ID:', form.getValues('subscriptionId'));
 
   return form;
 };
