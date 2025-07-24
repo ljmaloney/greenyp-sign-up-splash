@@ -2,9 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
-import BillingContactForm from '@/components/payment/BillingContactForm';
-import BillingAddressForm from '@/components/payment/BillingAddressForm';
 import EmailValidationCard from '@/components/payment/EmailValidationCard';
+import PaymentInformationCard from '@/components/payment/PaymentInformationCard';
 import ReactSquareSubscriptionCard from './ReactSquareSubscriptionCard';
 import SubscriptionSummaryCard from './SubscriptionSummaryCard';
 import { getApiUrl } from '@/config/api';
@@ -31,6 +30,7 @@ const SignUpPaymentContainer = () => {
   
   const [billingAddress, setBillingAddress] = useState({
     address: '',
+    address2: '',
     city: '',
     state: '',
     zipCode: ''
@@ -81,18 +81,12 @@ const SignUpPaymentContainer = () => {
     fetchProducerData();
   }, [producerId, toast]);
 
-  const handleBillingContactChange = (field: string, value: string) => {
-    setBillingContact(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
-  const handleBillingAddressChange = (field: string, value: string) => {
-    setBillingAddress(prev => ({
-      ...prev,
-      [field]: value
-    }));
+  const handleBillingInfoChange = (contact: any, address: any, emailToken: string) => {
+    setBillingContact(contact);
+    setBillingAddress(address);
+    if (emailToken) {
+      setEmailValidationToken(emailToken);
+    }
   };
 
   const handleEmailValidated = (token: string) => {
@@ -133,27 +127,46 @@ const SignUpPaymentContainer = () => {
         />
       </div>
       <div className="space-y-6">
-        <BillingContactForm
-          billingContact={billingContact}
-          onChange={handleBillingContactChange}
-        />
-        
-        <BillingAddressForm
-          billingAddress={billingAddress}
-          onChange={handleBillingAddressChange}
-        />
-        
         <EmailValidationCard
-          validationToken={emailValidationToken}
-          onChange={setEmailValidationToken}
-          emailAddress={billingContact.email}
-          helperText="Please validate your email address to continue"
-          isValidated={isEmailValidated}
-          onValidate={() => handleEmailValidated(emailValidationToken)}
+            validationToken={emailValidationToken}
+            onChange={setEmailValidationToken}
+            emailAddress={billingContact.email}
+            helperText="Please validate your email address to continue"
+            isValidated={isEmailValidated}
+            onValidate={() => handleEmailValidated(emailValidationToken)}
         />
+        <PaymentInformationCard
+          classified={{}}
+          customer={{
+            firstName: billingContact.firstName,
+            lastName: billingContact.lastName,
+            emailAddress: billingContact.email,
+            phoneNumber: billingContact.phone,
+            address: billingAddress.address,
+            city: billingAddress.city,
+            state: billingAddress.state,
+            postalCode: billingAddress.zipCode
+          }}
+          onBillingInfoChange={handleBillingInfoChange}
+          emailValidationToken={emailValidationToken}
+          isEmailValidated={isEmailValidated}
+        />
+        
+
         <ReactSquareSubscriptionCard
-            billingContact={billingContact}
-            billingAddress={billingAddress}
+            billingContact={{
+              firstName: billingContact.firstName,
+              lastName: billingContact.lastName,
+              email: billingContact.email,
+              phone: billingContact.phone
+            }}
+            billingAddress={{
+              address: billingAddress.address,
+              // address2 is handled internally, not needed for the API payload
+              city: billingAddress.city,
+              state: billingAddress.state,
+              zipCode: billingAddress.zipCode
+            }}
             emailValidationToken={emailValidationToken}
             producerId={producerId}
         />
