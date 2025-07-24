@@ -24,6 +24,7 @@ import CreateAd from "@/pages/classifieds/CreateAd";
 
 // Auth pages
 import Login from "@/pages/auth/Login";
+import AuthCallback from "@/pages/auth/AuthCallback";
 import Unauthorized from "@/pages/auth/Unauthorized";
 import SilentCallback from "@/pages/auth/SilentCallback";
 
@@ -77,6 +78,7 @@ const App = () => (
               
               {/* Auth routes */}
               <Route path="/login" element={<Login />} />
+              <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/unauthorized" element={<Unauthorized />} />
               <Route path="/auth/silent-callback" element={<SilentCallback />} />
               
