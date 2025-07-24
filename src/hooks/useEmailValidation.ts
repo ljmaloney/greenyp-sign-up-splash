@@ -14,18 +14,32 @@ export const useEmailValidation = ({ emailAddress, context, classifiedId }: UseE
   const [validationError, setValidationError] = useState<string>('');
 
   const validateEmail = useCallback(async (token: string) => {
+    console.log('🔍 EMAIL VALIDATION HOOK - Starting validation with params:', {
+      hasToken: !!token,
+      tokenLength: token?.length,
+      tokenValue: token, // Log the actual token to see what we're sending
+      hasEmailAddress: !!emailAddress,
+      emailAddress: emailAddress,
+      context: context,
+      hasClassifiedId: !!classifiedId,
+      classifiedId: classifiedId
+    });
+
     if (!token.trim()) {
       setValidationError('Validation token is required');
+      console.log('❌ EMAIL VALIDATION HOOK - Token is empty');
       return;
     }
 
     if (!emailAddress) {
       setValidationError('Email address is required');
+      console.log('❌ EMAIL VALIDATION HOOK - Email address is missing');
       return;
     }
 
     if (context === 'classifieds' && !classifiedId) {
       setValidationError('Classified ID is required for validation');
+      console.log('❌ EMAIL VALIDATION HOOK - Classified ID is missing');
       return;
     }
 
@@ -33,11 +47,12 @@ export const useEmailValidation = ({ emailAddress, context, classifiedId }: UseE
     setValidationError('');
 
     try {
-      console.log('✉️ Calling email validation API...', { 
+      console.log('✉️ EMAIL VALIDATION HOOK - Calling email validation API with:', { 
         emailAddress, 
         context, 
         classifiedId, 
-        token: token.substring(0, 10) + '...' 
+        token: token.substring(0, 10) + '...',
+        fullToken: token // Show full token for debugging
       });
       
       const result = await validateEmailToken({
@@ -47,17 +62,19 @@ export const useEmailValidation = ({ emailAddress, context, classifiedId }: UseE
         classifiedId,
       });
 
+      console.log('📨 EMAIL VALIDATION HOOK - API result:', result);
+
       if (result.success) {
         setIsValidated(true);
-        console.log('✅ Email validation successful');
+        console.log('✅ EMAIL VALIDATION HOOK - Email validation successful');
       } else {
         setValidationError(result.error || 'Email validation failed');
-        console.error('❌ Email validation failed:', result.error);
+        console.error('❌ EMAIL VALIDATION HOOK - Email validation failed:', result.error);
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Email validation failed';
       setValidationError(errorMessage);
-      console.error('❌ Email validation error:', errorMessage);
+      console.error('❌ EMAIL VALIDATION HOOK - Email validation error:', errorMessage);
     } finally {
       setIsValidating(false);
     }

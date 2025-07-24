@@ -36,15 +36,33 @@ export const validateEmailToken = async ({
       return { success: false, error: `Missing ${missingField} for validation` };
     }
 
-    console.log('🔍 Email validation API call:', {
+    console.log('🔍 EMAIL VALIDATION - Detailed payload being sent:', {
       endpoint,
       payload,
-      context
+      context,
+      // Log each field separately for clarity
+      externRef: payload.externRef,
+      emailAddress: payload.emailAddress,
+      token: payload.token,
+      tokenLength: payload.token?.length,
+      emailLength: payload.emailAddress?.length,
+      externRefLength: payload.externRef?.length
     });
+
+    // Log the exact JSON that will be sent
+    const jsonPayload = JSON.stringify(payload);
+    console.log('🔍 EMAIL VALIDATION - Raw JSON payload:', jsonPayload);
+    console.log('🔍 EMAIL VALIDATION - Payload size:', jsonPayload.length, 'bytes');
 
     const response = await apiClient.post(endpoint, payload, { requireAuth: false });
     
-    console.log('✅ Email validation API response:', response);
+    console.log('✅ EMAIL VALIDATION - API response received:', {
+      response,
+      status: response?.status,
+      success: response?.success,
+      hasResponse: !!response,
+      responseKeys: response ? Object.keys(response) : []
+    });
     
     // Check for successful response (2xx status)
     if (response && (response.status === 200 || response.success)) {
@@ -53,14 +71,27 @@ export const validateEmailToken = async ({
     
     // Handle error responses
     const errorMessage = response?.message || response?.error || 'Email validation failed';
+    console.log('❌ EMAIL VALIDATION - Error response details:', {
+      errorMessage,
+      fullResponse: response
+    });
+    
     return { success: false, error: errorMessage };
     
   } catch (error) {
-    console.error('❌ Email validation API error:', error);
+    console.error('❌ EMAIL VALIDATION - API error caught:', error);
     
     // Extract error message from API response if available
     if (error instanceof Error) {
       const errorMessage = error.message;
+      
+      console.log('❌ EMAIL VALIDATION - Error message analysis:', {
+        errorMessage,
+        includes400: errorMessage.includes('400'),
+        includes404: errorMessage.includes('404'),
+        includes412: errorMessage.includes('412'),
+        includes500: errorMessage.includes('500')
+      });
       
       // Enhanced error handling for specific status codes
       if (errorMessage.includes('400')) {
@@ -68,6 +99,9 @@ export const validateEmailToken = async ({
       }
       if (errorMessage.includes('404')) {
         return { success: false, error: 'Email validation service not found' };
+      }
+      if (errorMessage.includes('412')) {
+        return { success: false, error: 'Email validation failed - token may be invalid or expired' };
       }
       if (errorMessage.includes('500')) {
         return { success: false, error: 'Server error during validation' };
