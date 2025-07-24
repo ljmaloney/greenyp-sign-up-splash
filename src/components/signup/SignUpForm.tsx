@@ -3,7 +3,7 @@ import React from 'react';
 import { Form } from "@/components/ui/form";
 import { useSubscriptions } from '@/hooks/useSubscriptions';
 import { useCategories } from '@/hooks/useCategories';
-import { useSignUpForm } from '@/hooks/useSignUpForm';
+import { useSignUpFormEnhanced } from '@/hooks/useSignUpFormEnhanced';
 import BusinessInformationCard from './BusinessInformationCard';
 import ContactInformationCard from './ContactInformationCard';
 import LocationInformationCard from './LocationInformationCard';
@@ -15,22 +15,30 @@ import SignUpErrorHandler from './SignUpErrorHandler';
 import { findSubscriptionMatch } from '@/utils/subscriptionMatching';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
 
 interface SignUpFormProps {
   selectedPlan: string;
 }
 
 const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
-  const navigate = useNavigate();
   const { data: subscriptions, error: subscriptionsError, isLoading: subscriptionsLoading } = useSubscriptions();
   const { data: categories, error: categoriesError } = useCategories();
-  const { form, loading, onSubmit, error, isSystemError, isDuplicateEmail, resetError } = useSignUpForm(selectedPlan);
+  const { 
+    form, 
+    loading, 
+    onSubmit, 
+    error, 
+    isSystemError, 
+    isDuplicateEmail, 
+    resetError,
+    safeNavigate,
+    extensionDetection
+  } = useSignUpFormEnhanced(selectedPlan);
 
   // Find the selected subscription using improved matching
   const selectedSubscription = findSubscriptionMatch(subscriptions, selectedPlan);
 
-  console.log('📋 SignUpForm: Plan validation and subscription matching:', {
+  console.log('📋 SignUpForm: Enhanced initialization with debugging:', {
     selectedPlan,
     foundSubscription: selectedSubscription ? {
       id: selectedSubscription.subscriptionId,
@@ -39,7 +47,8 @@ const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
     totalSubscriptions: subscriptions?.length,
     subscriptionsLoading,
     hasSubscriptionsError: !!subscriptionsError,
-    hasCategoriesError: !!categoriesError
+    hasCategoriesError: !!categoriesError,
+    extensionInterference: extensionDetection.hasInterference
   });
 
   // Handle missing plan scenario
@@ -55,14 +64,14 @@ const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
             </p>
             <div className="space-y-3">
               <Button 
-                onClick={() => navigate('/subscribers/pricing')}
+                onClick={() => safeNavigate('/subscribers/pricing')}
                 className="w-full bg-green-600 hover:bg-green-700"
               >
                 View Pricing Plans
               </Button>
               <Button 
                 variant="outline"
-                onClick={() => navigate('/')}
+                onClick={() => safeNavigate('/')}
                 className="w-full"
               >
                 Back to Home
@@ -87,7 +96,7 @@ const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
             </p>
             <div className="space-y-3">
               <Button 
-                onClick={() => navigate('/subscribers/pricing')}
+                onClick={() => safeNavigate('/subscribers/pricing')}
                 className="w-full bg-green-600 hover:bg-green-700"
               >
                 View Available Plans
@@ -98,9 +107,9 @@ const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
                   // Try with a default plan
                   const defaultPlan = subscriptions?.[0]?.subscriptionId;
                   if (defaultPlan) {
-                    navigate(`/subscribers/signup?plan=${defaultPlan}`);
+                    safeNavigate(`/subscribers/signup?plan=${defaultPlan}`);
                   } else {
-                    navigate('/subscribers/pricing');
+                    safeNavigate('/subscribers/pricing');
                   }
                 }}
                 className="w-full"
@@ -115,12 +124,13 @@ const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
   }
 
   const handleSubmit = (data: any) => {
-    console.log('📋 SignUpForm: Form submission triggered with enhanced validation');
+    console.log('📋 SignUpForm: Enhanced form submission with debugging');
     console.log('📝 Form data summary:', {
       businessName: data.businessName,
       email: data.emailAddress,
       selectedPlan,
-      selectedSubscriptionId: selectedSubscription?.subscriptionId
+      selectedSubscriptionId: selectedSubscription?.subscriptionId,
+      extensionInterference: extensionDetection.hasInterference
     });
     
     // Enhanced validation - proceed even if categories failed to load
@@ -131,7 +141,7 @@ const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
     // Use empty array as fallback for categories if they failed to load
     const categoriesToUse = categories || [];
     
-    console.log('📝 SignUpForm: Calling onSubmit with validated data');
+    console.log('📝 SignUpForm: Calling enhanced onSubmit with validated data');
     onSubmit(data, selectedSubscription, categoriesToUse);
   };
 
@@ -168,7 +178,29 @@ const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
     <div className="bg-white rounded-lg shadow-lg p-8">
       <SignUpFormHeader selectedSubscription={selectedSubscription} />
 
-      {/* Show warning for external API failures */}
+      {/* Show extension interference warning */}
+      {extensionDetection.hasInterference && (
+        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-amber-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-amber-800">
+                Browser Extension Detected
+              </h3>
+              <div className="mt-2 text-sm text-amber-700">
+                <p>Some browser extensions may interfere with form submission.</p>
+                <p className="mt-1">Recommendations: {extensionDetection.recommendations.join(', ')}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Show warning for external API failures but still allow form submission */}
       {hasExternalErrors && !error && (
         <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
           <div className="flex items-start">
