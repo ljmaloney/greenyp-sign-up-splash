@@ -1,10 +1,10 @@
 
-import { APISubscription, SubscriptionWithFormatting } from '@/types/subscription';
+import { APISubscription } from '@/types/subscription';
 
 export const findSubscriptionMatch = (
   subscriptions: APISubscription[] | undefined, 
   selectedPlan: string
-): SubscriptionWithFormatting | null => {
+): APISubscription | null => {
   console.log('🔍 Finding subscription match for plan:', selectedPlan);
   
   if (!subscriptions || !Array.isArray(subscriptions) || subscriptions.length === 0) {
@@ -26,7 +26,7 @@ export const findSubscriptionMatch = (
   
   if (match) {
     console.log('✅ Found exact ID match:', match.subscriptionId);
-    return formatSubscription(match);
+    return match;
   }
 
   // Try display name match
@@ -36,7 +36,7 @@ export const findSubscriptionMatch = (
   
   if (match) {
     console.log('✅ Found display name match:', match.displayName);
-    return formatSubscription(match);
+    return match;
   }
 
   // Try partial matches for common plan names
@@ -57,7 +57,7 @@ export const findSubscriptionMatch = (
       
       if (match) {
         console.log('✅ Found keyword match:', match.displayName, 'for keywords:', mapping.keywords);
-        return formatSubscription(match);
+        return match;
       }
     }
   }
@@ -73,7 +73,7 @@ export const findSubscriptionMatch = (
 
 export const getDefaultSubscription = (
   subscriptions: APISubscription[] | undefined
-): SubscriptionWithFormatting | null => {
+): APISubscription | null => {
   if (!subscriptions || !Array.isArray(subscriptions) || subscriptions.length === 0) {
     return null;
   }
@@ -87,7 +87,7 @@ export const getDefaultSubscription = (
   });
 
   console.log('📋 Default subscription selected:', sortedSubscriptions[0].displayName);
-  return formatSubscription(sortedSubscriptions[0]);
+  return sortedSubscriptions[0];
 };
 
 export const validateSubscriptionData = (subscription: APISubscription | null): boolean => {
@@ -106,59 +106,4 @@ export const validateSubscriptionData = (subscription: APISubscription | null): 
 
   console.log('✅ Subscription validation passed');
   return true;
-};
-
-export const validateAndNormalizeSubscriptionData = (rawData: any): { isValid: boolean; normalizedData: APISubscription | null } => {
-  console.log('🔍 Validating and normalizing subscription data:', rawData);
-  
-  if (!rawData || typeof rawData !== 'object') {
-    console.warn('❌ Invalid subscription data: not an object');
-    return { isValid: false, normalizedData: null };
-  }
-
-  // Check required fields
-  const requiredFields = ['subscriptionId', 'displayName'];
-  const hasRequiredFields = requiredFields.every(field => rawData[field]);
-  
-  if (!hasRequiredFields) {
-    console.warn('❌ Missing required fields in subscription data');
-    return { isValid: false, normalizedData: null };
-  }
-
-  // Normalize the data
-  const normalizedData: APISubscription = {
-    subscriptionId: rawData.subscriptionId,
-    version: rawData.version || 1,
-    createDate: rawData.createDate || new Date().toISOString(),
-    lastUpdateDate: rawData.lastUpdateDate || new Date().toISOString(),
-    displayName: rawData.displayName,
-    endDate: rawData.endDate || '',
-    lineOfBusinessId: rawData.lineOfBusinessId || null,
-    monthlyAutopayAmount: rawData.monthlyAutopayAmount || 0,
-    quarterlyAutopayAmount: rawData.quarterlyAutopayAmount || 0,
-    annualBillAmount: rawData.annualBillAmount || 0,
-    shortDescription: rawData.shortDescription || '',
-    htmlDescription: rawData.htmlDescription || '',
-    startDate: rawData.startDate || new Date().toISOString(),
-    subscriptionType: rawData.subscriptionType || 'LIVE_UNPAID',
-    comingSoon: rawData.comingSoon || false,
-    sortOrder: rawData.sortOrder || 0,
-    features: rawData.features || []
-  };
-
-  console.log('✅ Subscription data validated and normalized');
-  return { isValid: true, normalizedData };
-};
-
-const formatSubscription = (subscription: APISubscription): SubscriptionWithFormatting => {
-  return {
-    ...subscription,
-    formattedMonthlyPrice: `$${subscription.monthlyAutopayAmount || 0}`,
-    formattedYearlyPrice: subscription.annualBillAmount ? `$${subscription.annualBillAmount}` : undefined,
-    formattedFeatures: subscription.features?.map(feature => ({
-      id: feature.feature,
-      name: feature.featureName,
-      description: feature.featureName
-    })) || []
-  };
 };

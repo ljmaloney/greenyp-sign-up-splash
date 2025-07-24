@@ -8,16 +8,11 @@ export interface APICategory {
   shortDescription: string;
   description?: string;
   iconName: string;
-  iconFileName?: string | null;
-  createDate: string;
-  lastUpdateDate: string;
-  createType: string;
-  createByReference: string;
 }
 
 // For display purposes with icon component
 export interface CategoryWithIcon extends APICategory {
-  iconComponent: LucideIcon | null;
+  iconComponent: LucideIcon;
   slug: string; // Generated from lineOfBusinessId for URL routing
 }
 
