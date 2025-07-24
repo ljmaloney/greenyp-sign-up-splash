@@ -5,14 +5,14 @@ import { useEffect } from 'react';
 import { signUpFormSchema, SignUpFormSchema } from '@/utils/signUpValidation';
 
 export const useSignUpFormConfig = () => {
-  console.log('📋 useSignUpFormConfig: Initializing form without URL dependency');
+  console.log('📋 useSignUpFormConfig: Initializing form configuration');
   
   const form = useForm<SignUpFormSchema>({
     resolver: zodResolver(signUpFormSchema),
     defaultValues: {
       businessName: '',
       lineOfBusinessId: '',
-      subscriptionId: '', // No longer pre-populated from URL
+      subscriptionId: '', // Always start empty - user must select from dropdown
       websiteUrl: '',
       narrative: '',
       signupCode: '',
@@ -47,7 +47,8 @@ export const useSignUpFormConfig = () => {
     }
   }, [emailAddress, userName, form]);
 
-  console.log('📋 useSignUpFormConfig: Form initialized with subscription ID:', form.getValues('subscriptionId'));
+  const currentSubscriptionId = form.watch('subscriptionId');
+  console.log('📋 useSignUpFormConfig: Form initialized with subscription ID:', currentSubscriptionId || 'none selected');
 
   return form;
 };
