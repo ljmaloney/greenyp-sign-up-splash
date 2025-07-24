@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -13,10 +12,12 @@ import ClassifiedCard from '@/components/classifieds/ClassifiedCard';
 import EmailValidationCard from '@/components/payment/EmailValidationCard';
 import PaymentInformationCard from '@/components/payment/PaymentInformationCard';
 import ReactSquareCard from '@/components/payment/ReactSquareCard';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { validatePaymentFields } from '@/utils/paymentValidation';
 import { formatPhoneForSquareAPI } from '@/utils/phoneUtils';
 import { Classified } from '@/types/classifieds';
 import { ClassifiedPaymentData, PaymentProcessResponse } from '@/types/classifiedPayment';
+import { AlertCircle } from 'lucide-react';
 
 const Payment = () => {
   const { classifiedId } = useParams<{ classifiedId: string }>();
@@ -39,6 +40,8 @@ const Payment = () => {
   });
 
   const [emailValidationToken, setEmailValidationToken] = useState('');
+  const [paymentError, setPaymentError] = useState<string | null>(null);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   // Enhanced email validation hook
   const {
@@ -102,6 +105,10 @@ const Payment = () => {
     if (!value.trim()) {
       resetValidation();
     }
+    // Clear payment error when user makes changes
+    if (paymentError) {
+      setPaymentError(null);
+    }
   };
 
   const handleEmailValidation = async () => {
@@ -113,35 +120,33 @@ const Payment = () => {
     console.log('📝 Billing info updated:', { contact, address, hasToken: !!emailToken });
     setBillingContact(contact);
     setBillingAddress(address);
+    // Clear payment error when user makes changes
+    if (paymentError) {
+      setPaymentError(null);
+    }
   };
 
   const handlePaymentSuccess = async (tokenData: any) => {
     if (!classifiedId) {
-      toast({
-        title: "Error",
-        description: "Missing classified ID",
-        variant: "destructive",
-      });
+      setPaymentError("Missing classified ID");
       return;
     }
+
+    // Clear any previous errors
+    setPaymentError(null);
+    setIsProcessingPayment(true);
 
     // Validate all required fields
     const validationError = validatePaymentFields(billingContact, billingAddress);
     if (validationError) {
-      toast({
-        title: "Required Information Missing",
-        description: validationError,
-        variant: "destructive",
-      });
+      setPaymentError(validationError);
+      setIsProcessingPayment(false);
       return;
     }
 
     if (!emailValidationToken.trim()) {
-      toast({
-        title: "Email Validation Required",
-        description: "Please validate your email address first",
-        variant: "destructive",
-      });
+      setPaymentError("Please validate your email address first");
+      setIsProcessingPayment(false);
       return;
     }
 
@@ -155,11 +160,8 @@ const Payment = () => {
       });
 
       if (!formattedPhone) {
-        toast({
-          title: "Invalid Phone Number",
-          description: "Please enter a valid US phone number",
-          variant: "destructive",
-        });
+        setPaymentError("Please enter a valid US phone number");
+        setIsProcessingPayment(false);
         return;
       }
 
@@ -237,15 +239,8 @@ const Payment = () => {
         });
 
         const errorMessage = errorDetail || `Payment failed with status: ${paymentStatus}`;
-        
-        toast({
-          title: "Payment Failed",
-          description: errorMessage,
-          variant: "destructive",
-        });
-
-        // Navigate to error page instead of confirmation
-        navigate(`/classifieds/payment/error/${classifiedId}?error=${encodeURIComponent(errorMessage)}&errorCode=${errorStatusCode || 'PAYMENT_ERROR'}`);
+        setPaymentError(errorMessage);
+        setIsProcessingPayment(false);
         return;
       }
 
@@ -261,23 +256,14 @@ const Payment = () => {
     } catch (error) {
       console.error('❌ Payment failed:', error);
       const errorMessage = error instanceof Error ? error.message : 'Payment processing failed';
-      toast({
-        title: "Payment Failed",
-        description: errorMessage,
-        variant: "destructive",
-      });
-
-      // Navigate to error page on exception
-      navigate(`/classifieds/payment/error/${classifiedId}?error=${encodeURIComponent(errorMessage)}&errorCode=EXCEPTION`);
+      setPaymentError(errorMessage);
+      setIsProcessingPayment(false);
     }
   };
 
   const handlePaymentError = (errorMessage: string) => {
-    toast({
-      title: "Payment Error",
-      description: errorMessage,
-      variant: "destructive",
-    });
+    setPaymentError(errorMessage);
+    setIsProcessingPayment(false);
   };
 
   if (isLoading) {
@@ -326,6 +312,18 @@ const Payment = () => {
             <p className="text-gray-600">Review your ad details and complete payment</p>
           </div>
 
+          {/* Payment Error Alert */}
+          {paymentError && (
+            <div className="mb-6">
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  <strong>Payment Error:</strong> {paymentError}
+                </AlertDescription>
+              </Alert>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Left Column */}
             <div className="space-y-6">
@@ -370,8 +368,8 @@ const Payment = () => {
                   billingAddress={billingAddress}
                   onPaymentSuccess={handlePaymentSuccess}
                   onPaymentError={handlePaymentError}
-                  disabled={!isValidated || !emailValidationToken.trim()}
-                  buttonText="Pay"
+                  disabled={!isValidated || !emailValidationToken.trim() || isProcessingPayment}
+                  buttonText={isProcessingPayment ? "Processing..." : "Pay"}
                 />
               </div>
             </div>
