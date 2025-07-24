@@ -167,9 +167,10 @@ const Payment = () => {
       const paymentPayload = {
         referenceId: classifiedId,
         paymentToken: tokenData.token,
-        // For React SDK, we don't have a separate verification token
-        // Some APIs might require this field, so we'll provide the payment token
-        verificationToken: tokenData.verificationToken || tokenData.token,
+        // Only include verificationToken if we have a valid one that's different from paymentToken
+        ...(tokenData.verificationToken && tokenData.verificationToken !== tokenData.token 
+          ? { verificationToken: tokenData.verificationToken }
+          : {}),
         emailValidationToken: emailValidationToken,
         // Map billing fields to the expected API field names
         firstName: billingContact.firstName,
@@ -189,8 +190,9 @@ const Payment = () => {
         referenceId: paymentPayload.referenceId,
         hasPaymentToken: !!paymentPayload.paymentToken,
         paymentTokenLength: paymentPayload.paymentToken?.length,
-        hasVerificationToken: !!paymentPayload.verificationToken,
-        verificationTokenLength: paymentPayload.verificationToken?.length,
+        hasVerificationToken: !!(paymentPayload as any).verificationToken,
+        verificationTokenLength: (paymentPayload as any).verificationToken?.length,
+        verificationTokenStart: (paymentPayload as any).verificationToken?.substring(0, 10) + '...',
         hasEmailValidationToken: !!paymentPayload.emailValidationToken,
         emailValidationTokenLength: paymentPayload.emailValidationToken?.length,
         // Log the specific fields that were failing
