@@ -7,7 +7,7 @@ interface ApiResponse<T = any> {
   success: boolean;
   message?: string;
   error?: string;
-  errorMessageApi?: string | null;
+  errorMessageApi: any | null;
 }
 
 interface ApiClientOptions {
@@ -124,11 +124,12 @@ class ApiClient {
         dataKeys: responseData ? Object.keys(responseData) : []
       });
 
+      // Return the properly typed response
       return {
-        response: responseData,
+        response: responseData.response || responseData,
         status: response.status,
         success: true,
-        errorMessageApi: null
+        errorMessageApi: responseData.errorMessageApi || null
       };
 
     } catch (error) {

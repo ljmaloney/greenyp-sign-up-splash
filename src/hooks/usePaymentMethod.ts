@@ -15,7 +15,19 @@ export const usePaymentMethod = (producerId: string) => {
       
       try {
         const response = await apiClient.get(`/payment/producer/${producerId}`, { requireAuth: true });
-        return response.response;
+        
+        // If response is empty or null, return null
+        if (!response.response) {
+          return null;
+        }
+        
+        // Ensure we have the required producerId field
+        const paymentMethod = response.response as PaymentMethod;
+        if (!paymentMethod.producerId) {
+          paymentMethod.producerId = producerId;
+        }
+        
+        return paymentMethod;
       } catch (error: any) {
         if (error.status === 404) {
           console.log('ℹ️ No payment method found for producer');

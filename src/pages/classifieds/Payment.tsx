@@ -15,6 +15,7 @@ import ReactSquareCard from '@/components/payment/ReactSquareCard';
 import { validatePaymentFields } from '@/utils/paymentValidation';
 import { formatPhoneForSquareAPI } from '@/utils/phoneUtils';
 import { Classified } from '@/types/classifieds';
+import { ClassifiedPaymentData, PaymentProcessResponse } from '@/types/classifiedPayment';
 
 const Payment = () => {
   const { classifiedId } = useParams<{ classifiedId: string }>();
@@ -57,10 +58,10 @@ const Payment = () => {
   // Fetch classified data
   const { data: classifiedData, isLoading, error } = useQuery({
     queryKey: ['classified-payment', classifiedId],
-    queryFn: async () => {
+    queryFn: async (): Promise<ClassifiedPaymentData> => {
       console.log('Fetching classified data for payment:', classifiedId);
       const response = await apiClient.get(`/classified/${classifiedId}/customer`, { requireAuth: false });
-      return response.response;
+      return response.response as ClassifiedPaymentData;
     },
     enabled: !!classifiedId && classifiedId !== ':classifiedId'
   });
@@ -209,7 +210,7 @@ const Payment = () => {
       console.log('✅ Payment response received:', paymentResponse);
 
       // Check response body for error fields and payment status
-      const responseBody = paymentResponse.response;
+      const responseBody = paymentResponse.response as PaymentProcessResponse;
       const paymentStatus = responseBody?.paymentStatus;
       const errorStatusCode = responseBody?.errorStatusCode;
       const errorDetail = responseBody?.errorDetail;
