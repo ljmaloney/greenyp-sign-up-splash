@@ -5,7 +5,7 @@ import type { APISubscription, SubscriptionWithFormatting } from '@/types/subscr
 export const fetchSubscriptions = async (): Promise<SubscriptionWithFormatting[]> => {
   const response = await apiClient.get<APISubscription[]>('/subscriptions');
   
-  return response.data.map(subscription => ({
+  return response.response.map(subscription => ({
     ...subscription,
     formattedMonthlyPrice: subscription.monthlyAutopayAmount === 0 
       ? "Free" 
