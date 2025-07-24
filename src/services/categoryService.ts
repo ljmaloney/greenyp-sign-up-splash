@@ -9,8 +9,9 @@ const MOCK_CATEGORIES: CategoryWithIcon[] = [
     lineOfBusinessName: 'Automotive',
     shortDescription: 'Auto services and repairs',
     description: 'Automotive services including repairs, maintenance, and sales',
-    enableDistanceRadius: true,
     iconName: 'car',
+    iconComponent: null as any,
+    slug: 'automotive',
     iconFileName: null,
     createDate: new Date().toISOString(),
     lastUpdateDate: new Date().toISOString(),
@@ -22,8 +23,9 @@ const MOCK_CATEGORIES: CategoryWithIcon[] = [
     lineOfBusinessName: 'Restaurants & Food',
     shortDescription: 'Dining and food services',
     description: 'Restaurants, cafes, and food service businesses',
-    enableDistanceRadius: true,
     iconName: 'utensils',
+    iconComponent: null as any,
+    slug: 'restaurants',
     iconFileName: null,
     createDate: new Date().toISOString(),
     lastUpdateDate: new Date().toISOString(),
@@ -35,8 +37,9 @@ const MOCK_CATEGORIES: CategoryWithIcon[] = [
     lineOfBusinessName: 'Healthcare',
     shortDescription: 'Medical and health services',
     description: 'Healthcare providers and medical services',
-    enableDistanceRadius: true,
     iconName: 'heart',
+    iconComponent: null as any,
+    slug: 'healthcare',
     iconFileName: null,
     createDate: new Date().toISOString(),
     lastUpdateDate: new Date().toISOString(),
@@ -48,8 +51,9 @@ const MOCK_CATEGORIES: CategoryWithIcon[] = [
     lineOfBusinessName: 'Retail & Shopping',
     shortDescription: 'Retail stores and shopping',
     description: 'Retail businesses and shopping establishments',
-    enableDistanceRadius: true,
     iconName: 'shopping-bag',
+    iconComponent: null as any,
+    slug: 'retail',
     iconFileName: null,
     createDate: new Date().toISOString(),
     lastUpdateDate: new Date().toISOString(),
@@ -98,6 +102,8 @@ export const fetchCategories = async (): Promise<CategoryWithIcon[]> => {
     const categories = data.response.map((item: any) => ({
       ...item,
       iconName: item.iconName || 'building',
+      iconComponent: null as any,
+      slug: item.lineOfBusinessId.toLowerCase().replace(/\s+/g, '-'),
     }));
 
     console.log('✅ Categories processed successfully:', categories.length, 'items');
@@ -107,5 +113,27 @@ export const fetchCategories = async (): Promise<CategoryWithIcon[]> => {
     console.error('Error fetching categories:', error);
     console.log('🔄 Using fallback mock data due to fetch error');
     return MOCK_CATEGORIES;
+  }
+};
+
+export const fetchCategoryServices = async (lineOfBusinessId: string) => {
+  console.log('Fetching category services for:', lineOfBusinessId);
+  
+  try {
+    const url = getApiUrl(`/reference/lob/${lineOfBusinessId}/services`);
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      console.warn(`⚠️ Category services API returned ${response.status}`);
+      return [];
+    }
+    
+    const data = await response.json();
+    console.log('✅ Category services response:', data);
+    
+    return data.response || [];
+  } catch (error) {
+    console.error('Error fetching category services:', error);
+    return [];
   }
 };
