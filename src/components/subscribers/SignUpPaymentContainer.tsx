@@ -131,6 +131,7 @@ const SignUpPaymentContainer = () => {
             subscriptionPrice={subscriptionPrice || '$5'}
             producerId={producerId || ''}
         />
+      </div>
       <div className="space-y-6">
         <BillingContactForm
           billingContact={billingContact}
@@ -150,17 +151,14 @@ const SignUpPaymentContainer = () => {
           isValidated={isEmailValidated}
           onValidate={() => handleEmailValidated(emailValidationToken)}
         />
-      </div>
-
-
-        
         <ReactSquareSubscriptionCard
-          billingContact={billingContact}
-          billingAddress={billingAddress}
-          emailValidationToken={emailValidationToken}
-          producerId={producerId}
+            billingContact={billingContact}
+            billingAddress={billingAddress}
+            emailValidationToken={emailValidationToken}
+            producerId={producerId}
         />
       </div>
+
     </div>
   );
 };
