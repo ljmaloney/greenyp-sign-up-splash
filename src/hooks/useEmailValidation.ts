@@ -14,22 +14,17 @@ export const useEmailValidation = ({ emailAddress, context, classifiedId, produc
   const [isValidated, setIsValidated] = useState(false);
   const [validationError, setValidationError] = useState<string>('');
 
-  const validateEmail = useCallback(async (token: string) => {
-    console.log('🔍 EMAIL VALIDATION HOOK - Starting validation with params:', {
-      hasToken: !!token,
-      tokenLength: token?.length,
-      tokenValue: token, // Log the actual token to see what we're sending
-      tokenTrimmed: token?.trim(),
-      tokenTrimmedLength: token?.trim().length,
-      hasEmailAddress: !!emailAddress,
-      emailAddress: emailAddress,
-      emailAddressTrimmed: emailAddress?.trim(),
-      context: context,
-      hasClassifiedId: !!classifiedId,
-      classifiedId: classifiedId,
-      hasProducerId: !!producerId,
-      producerId: producerId
-    });
+  const validateEmail = useCallback(async (emailValidationToken: string) => {
+    console.log('🔍 EMAIL VALIDATION HOOK - validateEmail called with token:', emailValidationToken);
+    console.log('🔍 EMAIL VALIDATION HOOK - Token length:', emailValidationToken?.length);
+    console.log('🔍 EMAIL VALIDATION HOOK - Full token value:', emailValidationToken);
+
+    // EXPLICITLY copy emailValidationToken to token variable
+    const token = emailValidationToken;
+    
+    console.log('🔍 EMAIL VALIDATION HOOK - Token copied to payload token field:', token);
+    console.log('🔍 EMAIL VALIDATION HOOK - Token field length:', token?.length);
+    console.log('🔍 EMAIL VALIDATION HOOK - Token field value:', token);
 
     const trimmedToken = token?.trim();
     if (!trimmedToken) {
@@ -61,25 +56,16 @@ export const useEmailValidation = ({ emailAddress, context, classifiedId, produc
     setValidationError('');
 
     try {
-      console.log('✉️ EMAIL VALIDATION HOOK - Calling email validation API with:', { 
+      console.log('✉️ EMAIL VALIDATION HOOK - Calling validateEmailToken with:', { 
+        token: trimmedToken, // This is the token from emailValidationToken input
         emailAddress: trimmedEmail, 
         context, 
         classifiedId, 
-        producerId,
-        token: trimmedToken.substring(0, 10) + '...',
-        fullToken: trimmedToken, // Show full token for debugging
-        tokenCharacterAnalysis: {
-          length: trimmedToken.length,
-          startsWith: trimmedToken.substring(0, 5),
-          endsWith: trimmedToken.substring(trimmedToken.length - 5),
-          containsSpaces: trimmedToken.includes(' '),
-          containsNewlines: trimmedToken.includes('\n'),
-          containsTabs: trimmedToken.includes('\t')
-        }
+        producerId
       });
       
       const result = await validateEmailToken({
-        token: trimmedToken,
+        token: trimmedToken, // EXPLICITLY using the token from emailValidationToken input
         emailAddress: trimmedEmail,
         context: context as 'classifieds' | 'subscribers',
         classifiedId,

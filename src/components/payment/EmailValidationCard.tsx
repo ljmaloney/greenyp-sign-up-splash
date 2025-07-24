@@ -28,6 +28,10 @@ const EmailValidationCard = ({
   onValidate
 }: EmailValidationCardProps) => {
   const handleValidate = () => {
+    console.log('🔍 EmailValidationCard - Verify button pressed with token:', validationToken);
+    console.log('🔍 EmailValidationCard - Token length:', validationToken?.length);
+    console.log('🔍 EmailValidationCard - Token value being passed:', validationToken);
+    
     if (onValidate) {
       onValidate();
     }
@@ -53,14 +57,18 @@ const EmailValidationCard = ({
         )}
 
         <div className="space-y-2">
-          <Label htmlFor="validation-token">Verification Code</Label>
+          <Label htmlFor="emailValidationToken">Verification Code</Label>
           <div className="flex gap-2">
             <Input
-              id="validation-token"
+              id="emailValidationToken"
+              name="emailValidationToken"
               type="text"
               placeholder="Enter validation code"
               value={validationToken}
-              onChange={(e) => onChange(e.target.value)}
+              onChange={(e) => {
+                console.log('🔍 EmailValidationCard - Input changed to:', e.target.value);
+                onChange(e.target.value);
+              }}
               disabled={isValidating || isValidated}
               className={isValidated ? 'bg-green-50 border-green-200' : ''}
             />
