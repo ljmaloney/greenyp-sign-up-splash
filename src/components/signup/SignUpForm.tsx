@@ -14,7 +14,7 @@ import SignUpErrorHandler from './SignUpErrorHandler';
 import { findSubscriptionMatch } from '@/utils/subscriptionMatching';
 
 interface SignUpFormProps {
-  selectedPlan: string;
+  selectedPlan?: string;
 }
 
 const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
@@ -22,11 +22,11 @@ const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
   const { data: categories } = useCategories();
   const { form, loading, onSubmit, error, resetError } = useSignUpForm(selectedPlan);
 
-  // Find the selected subscription using improved matching
-  const selectedSubscription = findSubscriptionMatch(subscriptions, selectedPlan);
+  // Find the selected subscription using improved matching (only if selectedPlan is provided)
+  const selectedSubscription = selectedPlan ? findSubscriptionMatch(subscriptions, selectedPlan) : null;
 
   console.log('📋 SignUpForm: Subscription matching result:', {
-    selectedPlan,
+    selectedPlan: selectedPlan || 'none provided',
     foundSubscription: selectedSubscription ? {
       id: selectedSubscription.subscriptionId,
       name: selectedSubscription.displayName
@@ -35,7 +35,16 @@ const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
   });
 
   const handleSubmit = (data: any) => {
-    console.log('📋 SignUpForm: Form submission triggered with 4-step process');
+    console.log('📋 SignUpForm: Form submission triggered');
+    console.log('📋 SignUpForm: Subscription ID from form:', data.subscriptionId);
+    
+    // Validate subscription selection
+    if (!data.subscriptionId) {
+      console.error('📋 SignUpForm: No subscription selected');
+      // The form validation should catch this, but this is a fallback
+      return;
+    }
+    
     onSubmit(data);
   };
 

@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { signUpFormSchema, SignUpFormSchema } from '@/utils/signUpValidation';
 
-export const useSignUpFormConfig = (selectedPlan: string) => {
+export const useSignUpFormConfig = (selectedPlan?: string) => {
   console.log('📋 useSignUpFormConfig: Initializing with plan:', selectedPlan);
   
   const form = useForm<SignUpFormSchema>({
@@ -37,7 +37,7 @@ export const useSignUpFormConfig = (selectedPlan: string) => {
     }
   });
 
-  // Update subscription ID when selectedPlan changes
+  // Update subscription ID when selectedPlan changes (but only if it's provided)
   useEffect(() => {
     if (selectedPlan && selectedPlan !== form.getValues('subscriptionId')) {
       console.log('📋 useSignUpFormConfig: Updating subscription ID to:', selectedPlan);
