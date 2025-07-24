@@ -6,19 +6,28 @@ import CategorySection from '@/components/CategorySection';
 import FeaturesSection from '@/components/FeaturesSection';
 import Footer from '@/components/Footer';
 import DevApiConfig from '@/components/DevApiConfig';
-import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
+import { useCategoriesContext } from '@/components/providers/CategoriesProvider';
 import { API_CONFIG, isUsingLocalApi } from '@/config/api';
 
 const PublicIndex = () => {
-  // Log API configuration on page load
+  const { prefetchCategories, isCategoriesCached } = useCategoriesContext();
+
+  // Log API configuration and prefetch categories on page load
   useEffect(() => {
     console.log('🌐 Current API Configuration:', {
       baseUrl: API_CONFIG.BASE_URL,
       imageBaseUrl: API_CONFIG.IMAGE_BASE_URL,
       isLocalApi: isUsingLocalApi()
     });
-  }, []);
+
+    // Prefetch categories if not already cached
+    if (!isCategoriesCached()) {
+      console.log('🚀 PublicIndex: Prefetching categories for better performance');
+      prefetchCategories();
+    } else {
+      console.log('✅ PublicIndex: Categories already cached');
+    }
+  }, [prefetchCategories, isCategoriesCached]);
 
   return (
     <div className="min-h-screen flex flex-col">

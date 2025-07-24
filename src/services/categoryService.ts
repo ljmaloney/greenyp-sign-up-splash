@@ -4,33 +4,49 @@ import { APIResponse } from '../types/responseBody';
 import * as LucideIcons from 'lucide-react';
 import { API_CONFIG, getApiUrl } from '../config/api';
 
-// Fetch categories from the real API
+// Fetch categories from the real API with enhanced caching support
 export const fetchCategories = async (): Promise<CategoryWithIcon[]> => {
+  console.log('🔄 Fetching categories from API...');
+  
   try {
-    console.log('Fetching categories from API...');
     const url = getApiUrl(API_CONFIG.ENDPOINTS.CATEGORIES);
-    console.log('API URL:', url);
-    const response = await fetch(url);
+    console.log('📡 API URL:', url);
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'max-age=300', // 5 minutes browser cache
+      },
+    });
     
     if (!response.ok) {
+      console.error(`❌ API request failed: ${response.status} ${response.statusText}`);
       throw new Error(`API request failed with status ${response.status}`);
     }
     
     const data: APIResponse<APICategory[]> = await response.json();
-    console.log('API response:', data);
+    console.log('✅ Categories API response received:', {
+      hasResponse: !!data.response,
+      categoriesCount: Array.isArray(data.response) ? data.response.length : 0,
+      hasError: !!data.errorMessageApi
+    });
     
     // Access the response data from the generic container
     const categories = data.response;
     
     // Ensure data is an array before processing
     if (!Array.isArray(categories)) {
-      console.warn('API response data is not an array, falling back to mock data');
+      console.warn('⚠️ API response data is not an array, falling back to mock data');
       return getMockCategoriesData();
     }
     
-    return mapIconsToCategories(categories);
+    const mappedCategories = mapIconsToCategories(categories);
+    console.log('✅ Categories successfully mapped with icons:', mappedCategories.length);
+    return mappedCategories;
   } catch (error) {
-    console.error('Error fetching categories:', error);
+    console.error('❌ Error fetching categories:', error);
+    console.log('🔄 Falling back to mock data');
     // Fall back to mock data if the API fails
     return getMockCategoriesData();
   }

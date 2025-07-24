@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useCategories } from '@/hooks/useCategories';
+import { useCategoriesContext } from '@/components/providers/CategoriesProvider';
 import { useSubscriptions } from '@/hooks/useSubscriptions';
 import { SignUpFormSchema } from '@/utils/signUpValidation';
 
@@ -15,7 +15,7 @@ interface BusinessInformationCardProps {
 }
 
 const BusinessInformationCard = ({ control }: BusinessInformationCardProps) => {
-  const { data: categories } = useCategories();
+  const { categories, getCachedCategories, isCategoriesCached } = useCategoriesContext();
   const { data: subscriptions } = useSubscriptions();
   const businessNameInputRef = useRef<HTMLInputElement>(null);
 
@@ -25,6 +25,16 @@ const BusinessInformationCard = ({ control }: BusinessInformationCardProps) => {
       businessNameInputRef.current.focus();
     }
   }, []);
+
+  // Use cached data if available for immediate display
+  const displayCategories = categories || getCachedCategories() || [];
+  const hasCachedCategories = isCategoriesCached();
+
+  console.log('📋 BusinessInformationCard: Using categories', {
+    fromCache: hasCachedCategories,
+    count: displayCategories.length,
+    available: !!displayCategories.length
+  });
 
   return (
     <Card>
@@ -61,11 +71,15 @@ const BusinessInformationCard = ({ control }: BusinessInformationCardProps) => {
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select your business type" />
+                      <SelectValue placeholder={
+                        displayCategories.length > 0 
+                          ? "Select your business type" 
+                          : "Loading business types..."
+                      } />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {categories?.map((category) => (
+                    {displayCategories.map((category) => (
                       <SelectItem key={category.lineOfBusinessId} value={category.lineOfBusinessId}>
                         {category.lineOfBusinessName}
                       </SelectItem>
