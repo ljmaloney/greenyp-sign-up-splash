@@ -7,6 +7,7 @@ import BillingAddressForm from '@/components/payment/BillingAddressForm';
 import EmailValidationCard from '@/components/payment/EmailValidationCard';
 import ReactSquareSubscriptionCard from './ReactSquareSubscriptionCard';
 import SubscriptionSummaryCard from './SubscriptionSummaryCard';
+import { getApiUrl } from '@/config/api';
 
 const SignUpPaymentContainer = () => {
   const [searchParams] = useSearchParams();
@@ -15,9 +16,11 @@ const SignUpPaymentContainer = () => {
   
   // Extract data from URL params
   const producerId = searchParams.get('producerId');
-  const businessName = searchParams.get('businessName');
   const subscriptionPlan = searchParams.get('plan');
   const subscriptionPrice = searchParams.get('planPrice');
+  
+  const [businessName, setBusinessName] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
   const [billingContact, setBillingContact] = useState({
     firstName: '',
@@ -36,17 +39,47 @@ const SignUpPaymentContainer = () => {
   const [emailValidationToken, setEmailValidationToken] = useState('');
   const [isEmailValidated, setIsEmailValidated] = useState(false);
 
-  // Redirect if missing required data
+
+  // Fetch producer data using producerId
   useEffect(() => {
-    if (!producerId || !businessName) {
-      toast({
-        title: "Missing Information",
-        description: "Please complete the signup process first.",
-        variant: "destructive",
-      });
-      navigate('/subscribers/signup');
-    }
-  }, [producerId, businessName, navigate, toast]);
+    const fetchProducerData = async () => {
+      if (!producerId) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        console.log('📊 Fetching producer data for ID:', producerId);
+        const response = await fetch(getApiUrl(`/account/${producerId}`));
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch producer data: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('✅ Producer data retrieved:', data);
+        
+        // Extract business name from response
+        const businessNameFromApi = data?.response?.producer?.businessName || 'Business';
+        setBusinessName(businessNameFromApi);
+        
+        // You could extract other useful data here as well
+        // For example, subscription details, etc.
+        
+        setIsLoading(false);
+      } catch (error) {
+        console.error('❌ Error fetching producer data:', error);
+        toast({
+          title: "Data Retrieval Error",
+          description: "Unable to load your account information. Please try again.",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+      }
+    };
+    
+    fetchProducerData();
+  }, [producerId, toast]);
 
   const handleBillingContactChange = (field: string, value: string) => {
     setBillingContact(prev => ({
@@ -71,11 +104,20 @@ const SignUpPaymentContainer = () => {
     });
   };
 
-  if (!producerId || !businessName) {
+  if (!producerId) {
     return (
       <div className="text-center py-12">
-        <h2 className="text-xl font-semibold text-red-600 mb-4">Missing Information</h2>
+        <h2 className="text-xl font-semibold text-red-600 mb-4">Missing Producer ID</h2>
         <p className="text-gray-600">Please complete the signup process first.</p>
+      </div>
+    );
+  }
+  
+  if (isLoading) {
+    return (
+      <div className="text-center py-12">
+        <h2 className="text-xl font-semibold mb-4">Loading Account Information</h2>
+        <p className="text-gray-600">Please wait while we retrieve your account details...</p>
       </div>
     );
   }

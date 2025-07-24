@@ -84,7 +84,7 @@ export const useSignUpSubmission = () => {
     
     const paymentUrl = `/subscribers/signup/payment?${paymentParams.toString()}`;
     
-    console.log('🔍 SIMPLIFIED PAYMENT URL BUILT:', paymentUrl);
+    console.log('🔍 PAYMENT URL BUILT:', paymentUrl);
     console.log('🔍 PARAMS:', Array.from(paymentParams.entries()));
 
     return paymentUrl;
@@ -167,7 +167,8 @@ export const useSignUpSubmission = () => {
 
           toast.success("Account created successfully! Please complete your payment to activate your subscription.");
           
-          // Step 4: Build simplified payment URL with only producerId
+          // Step 4: Build payment URL with only producerId
+          // The payment page will fetch business name via API
           const paymentUrl = buildPaymentUrl(producerId);
           console.log('⚠️ ABOUT TO NAVIGATE - URL TYPE:', typeof paymentUrl, 'URL VALUE:', paymentUrl);
           
