@@ -13,34 +13,115 @@ import SignUpFormSubmitSection from './SignUpFormSubmitSection';
 import SystemErrorCard from './SystemErrorCard';
 import SignUpErrorHandler from './SignUpErrorHandler';
 import { findSubscriptionMatch } from '@/utils/subscriptionMatching';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 interface SignUpFormProps {
   selectedPlan: string;
 }
 
 const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
-  const { data: subscriptions, error: subscriptionsError } = useSubscriptions();
+  const navigate = useNavigate();
+  const { data: subscriptions, error: subscriptionsError, isLoading: subscriptionsLoading } = useSubscriptions();
   const { data: categories, error: categoriesError } = useCategories();
   const { form, loading, onSubmit, error, isSystemError, isDuplicateEmail, resetError } = useSignUpForm(selectedPlan);
 
   // Find the selected subscription using improved matching
   const selectedSubscription = findSubscriptionMatch(subscriptions, selectedPlan);
 
-  console.log('📋 SignUpForm: Enhanced error handling status:', {
+  console.log('📋 SignUpForm: Plan validation and subscription matching:', {
     selectedPlan,
     foundSubscription: selectedSubscription ? {
       id: selectedSubscription.subscriptionId,
       name: selectedSubscription.displayName
     } : null,
     totalSubscriptions: subscriptions?.length,
+    subscriptionsLoading,
     hasSubscriptionsError: !!subscriptionsError,
-    hasCategoriesError: !!categoriesError,
-    subscriptionsErrorMsg: subscriptionsError?.message,
-    categoriesErrorMsg: categoriesError?.message
+    hasCategoriesError: !!categoriesError
   });
 
+  // Handle missing plan scenario
+  if (!selectedPlan || selectedPlan.trim() === '') {
+    console.warn('⚠️ No plan selected, showing plan selection prompt');
+    return (
+      <div className="bg-white rounded-lg shadow-lg p-8">
+        <Card>
+          <CardContent className="pt-6 text-center space-y-4">
+            <h2 className="text-2xl font-bold text-gray-900">Select a Plan</h2>
+            <p className="text-gray-600">
+              Please select a subscription plan to continue with your signup.
+            </p>
+            <div className="space-y-3">
+              <Button 
+                onClick={() => navigate('/subscribers/pricing')}
+                className="w-full bg-green-600 hover:bg-green-700"
+              >
+                View Pricing Plans
+              </Button>
+              <Button 
+                variant="outline"
+                onClick={() => navigate('/')}
+                className="w-full"
+              >
+                Back to Home
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Handle case where plan is provided but subscription not found
+  if (!subscriptionsLoading && subscriptions && !selectedSubscription) {
+    console.warn('⚠️ Plan provided but subscription not found, showing fallback');
+    return (
+      <div className="bg-white rounded-lg shadow-lg p-8">
+        <Card>
+          <CardContent className="pt-6 text-center space-y-4">
+            <h2 className="text-2xl font-bold text-gray-900">Plan Not Found</h2>
+            <p className="text-gray-600">
+              The selected plan "{selectedPlan}" is not available. Please choose from our current plans.
+            </p>
+            <div className="space-y-3">
+              <Button 
+                onClick={() => navigate('/subscribers/pricing')}
+                className="w-full bg-green-600 hover:bg-green-700"
+              >
+                View Available Plans
+              </Button>
+              <Button 
+                variant="outline"
+                onClick={() => {
+                  // Try with a default plan
+                  const defaultPlan = subscriptions?.[0]?.subscriptionId;
+                  if (defaultPlan) {
+                    navigate(`/subscribers/signup?plan=${defaultPlan}`);
+                  } else {
+                    navigate('/subscribers/pricing');
+                  }
+                }}
+                className="w-full"
+              >
+                Use Default Plan
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   const handleSubmit = (data: any) => {
-    console.log('📋 SignUpForm: Form submission triggered with enhanced error handling');
+    console.log('📋 SignUpForm: Form submission triggered with enhanced validation');
+    console.log('📝 Form data summary:', {
+      businessName: data.businessName,
+      email: data.emailAddress,
+      selectedPlan,
+      selectedSubscriptionId: selectedSubscription?.subscriptionId
+    });
     
     // Enhanced validation - proceed even if categories failed to load
     if (categoriesError) {
@@ -50,7 +131,7 @@ const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
     // Use empty array as fallback for categories if they failed to load
     const categoriesToUse = categories || [];
     
-    console.log('📝 SignUpForm: Form data valid, calling onSubmit with fallback handling');
+    console.log('📝 SignUpForm: Calling onSubmit with validated data');
     onSubmit(data, selectedSubscription, categoriesToUse);
   };
 
@@ -69,19 +150,6 @@ const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
       emailField.select();
     }
   };
-
-  // Debug error state
-  console.log('🐛 SignUpForm: Error state debug:', {
-    hasError: !!error,
-    errorMessage: error,
-    isSystemError,
-    isDuplicateEmail,
-    errorLength: error?.length,
-    externalErrors: {
-      subscriptions: subscriptionsError?.message,
-      categories: categoriesError?.message
-    }
-  });
 
   // Show system error page for 500-series errors
   if (isSystemError && !error) {
