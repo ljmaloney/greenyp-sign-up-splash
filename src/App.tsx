@@ -31,6 +31,8 @@ import SilentCallback from "@/pages/auth/SilentCallback";
 import SubscriberIndex from "@/pages/subscribers/Index";
 import SubscriberCategories from "@/pages/subscribers/SubscriberCategories";
 import SubscriberCategoryPage from "@/pages/subscribers/CategoryPage";
+import SignUp from "@/pages/subscribers/SignUp";
+import SignUpPayment from "@/pages/subscribers/SignUpPayment";
 
 // Dashboard pages
 import DashboardIndex from "@/pages/dashboard/Index";
@@ -84,6 +86,8 @@ const App = () => (
               <Route path="/subscribers" element={<SubscriberIndex />} />
               <Route path="/subscribers/categories" element={<SubscriberCategories />} />
               <Route path="/subscribers/categories/:categoryId" element={<SubscriberCategoryPage />} />
+              <Route path="/subscribers/signup" element={<SignUp />} />
+              <Route path="/subscribers/signup/payment" element={<SignUpPayment />} />
               
               {/* Protected dashboard routes */}
               <Route 
