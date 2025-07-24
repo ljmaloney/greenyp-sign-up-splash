@@ -128,32 +128,34 @@ const SignUpPaymentContainer = () => {
       </div>
       <div className="space-y-6">
         <EmailValidationCard
-            validationToken={emailValidationToken}
-            onChange={setEmailValidationToken}
-            emailAddress={billingContact.email}
-            helperText="Please validate your email address to continue"
-            isValidated={isEmailValidated}
-            onValidate={() => handleEmailValidated(emailValidationToken)}
+          validationToken={emailValidationToken}
+          onChange={setEmailValidationToken}
+          emailAddress={billingContact.email}
+          helperText="Please validate your email address to continue"
+          isValidated={isEmailValidated}
+          onValidate={() => handleEmailValidated(emailValidationToken)}
         />
-        <PaymentInformationCard
-          classified={{}}
-          customer={{
-            firstName: billingContact.firstName,
-            lastName: billingContact.lastName,
-            emailAddress: billingContact.email,
-            phoneNumber: billingContact.phone,
-            address: billingAddress.address,
-            city: billingAddress.city,
-            state: billingAddress.state,
-            postalCode: billingAddress.zipCode
-          }}
-          onBillingInfoChange={handleBillingInfoChange}
-          emailValidationToken={emailValidationToken}
-          isEmailValidated={isEmailValidated}
-        />
+        <div className={!isEmailValidated ? "opacity-50 pointer-events-none" : ""}>  
+          <h3 className="text-lg font-medium mb-2">Billing Information</h3>
+          <p className="text-sm text-gray-500 mb-4">{!isEmailValidated ? "Please validate your email address to enable this section" : "Please enter your billing information below"}</p>
+          <PaymentInformationCard
+            classified={{}}
+            customer={{
+              firstName: billingContact.firstName,
+              lastName: billingContact.lastName,
+              emailAddress: billingContact.email,
+              phoneNumber: billingContact.phone
+            }}
+            onBillingInfoChange={handleBillingInfoChange}
+            emailValidationToken={emailValidationToken}
+            isEmailValidated={isEmailValidated}
+          />
+        </div>
         
-
-        <ReactSquareSubscriptionCard
+        <div className={!isEmailValidated ? "opacity-50 pointer-events-none" : ""}>  
+          <h3 className="text-lg font-medium mb-2">Payment Method</h3>
+          <p className="text-sm text-gray-500 mb-4">{!isEmailValidated ? "Please validate your email address to enable this section" : "Please enter your payment information below"}</p>
+          <ReactSquareSubscriptionCard
             billingContact={{
               firstName: billingContact.firstName,
               lastName: billingContact.lastName,
@@ -169,9 +171,9 @@ const SignUpPaymentContainer = () => {
             }}
             emailValidationToken={emailValidationToken}
             producerId={producerId}
-        />
+          />
+        </div>
       </div>
-
     </div>
   );
 };
