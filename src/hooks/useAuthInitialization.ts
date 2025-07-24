@@ -23,22 +23,6 @@ export const useAuthInitialization = () => {
   const initializeAuth = async () => {
     try {
       console.log('🔄 AUTH CONTEXT - Initializing authentication...');
-      console.log('📍 Current URL:', window.location.href);
-      console.log('📍 Current pathname:', window.location.pathname);
-      
-      // Check if we're on a public route that doesn't require auth
-      const publicRoutes = ['/', '/categories', '/search', '/profile', '/products', '/services', '/classifieds'];
-      const currentPath = window.location.pathname;
-      const isPublicRoute = publicRoutes.some(route => currentPath.startsWith(route)) || currentPath === '/';
-      
-      console.log('🔍 Route check:', { currentPath, isPublicRoute });
-      
-      if (isPublicRoute) {
-        console.log('✅ On public route, skipping auth initialization');
-        setIsLoading(false);
-        setInitialized(true);
-        return;
-      }
       
       const oidcUser = await oidcService.getUser();
       
@@ -73,6 +57,7 @@ export const useAuthInitialization = () => {
         setAccessToken(oidcUser.access_token);
 
         // ROLE-BASED REDIRECTION LOGIC - CASE INSENSITIVE
+        const currentPath = window.location.pathname;
         const userRoles = transformedUser.roles || [];
         
         console.log('🔀 AUTH CONTEXT - Checking if redirection needed:', {
@@ -116,7 +101,6 @@ export const useAuthInitialization = () => {
       }
     } catch (error) {
       console.error('❌ AUTH CONTEXT - Auth initialization failed:', error);
-      console.error('❌ AUTH CONTEXT - Error details:', error.message);
       setUser(null);
       setAccessToken(null);
     } finally {
