@@ -42,25 +42,14 @@ export const fetchClassifieds = async (filters: ClassifiedFilters, apiClient: an
       searchParams.set('page', '0');
       searchParams.set('limit', '15');
 
-      const response: any = await apiClient.get(`/classified/search?${searchParams.toString()}`);
+      const response: ClassifiedSearchResponse = await apiClient.get(`/classified/search?${searchParams.toString()}`);
       
       console.log('Search API Response for classifieds:', response);
       
-      // Check the actual response structure - could be response.response or response.responseList
-      let classifiedsList = null;
-      
-      if (response.response && Array.isArray(response.response)) {
-        classifiedsList = response.response;
-        console.log(`Found ${classifiedsList.length} classifieds from search API (response.response)`);
-      } else if (response.responseList && Array.isArray(response.responseList)) {
-        classifiedsList = response.responseList;
-        console.log(`Found ${classifiedsList.length} classifieds from search API (response.responseList)`);
-      } else {
-        console.log('No classifieds array found in response:', Object.keys(response));
-      }
-      
-      if (classifiedsList && classifiedsList.length > 0) {
-        return classifiedsList.map(convertToClassified);
+      // Use the exact structure from your payload: response.responseList
+      if (response.responseList && Array.isArray(response.responseList) && response.responseList.length > 0) {
+        console.log(`Found ${response.responseList.length} classifieds from search API`);
+        return response.responseList.map(convertToClassified);
       }
       
       // If search API returns no data, return empty array
