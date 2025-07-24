@@ -79,7 +79,7 @@ export const useSignUpSubmission = () => {
     selectedSubscription: any, 
     producerSubscriptions: any[]
   ) => {
-    console.log('🔗 Building payment URL with comprehensive parameter handling');
+    console.log('🔗 Building payment URL with improved parameter handling');
     
     const paymentParams = new URLSearchParams();
     
@@ -88,7 +88,6 @@ export const useSignUpSubmission = () => {
     paymentParams.set('email', data.emailAddress);
     paymentParams.set('firstName', data.firstName);
     paymentParams.set('lastName', data.lastName);
-    paymentParams.set('businessName', data.businessName);
     
     // Optional contact parameters
     if (data.phoneNumber) paymentParams.set('phone', data.phoneNumber);
@@ -99,19 +98,11 @@ export const useSignUpSubmission = () => {
     
     // Handle subscription ID with multiple fallbacks
     let subscriptionIdToPass = '';
-    let subscriptionPrice = '';
-    let subscriptionName = '';
     
     // Priority order: selectedSubscription > form data > API data
     if (selectedSubscription?.subscriptionId) {
       subscriptionIdToPass = selectedSubscription.subscriptionId;
-      subscriptionPrice = selectedSubscription.monthlyAutopayAmount?.toString() || '5';
-      subscriptionName = selectedSubscription.displayName || 'Basic Listing';
-      console.log('🎯 Using selectedSubscription data:', { 
-        id: subscriptionIdToPass, 
-        price: subscriptionPrice, 
-        name: subscriptionName 
-      });
+      console.log('🎯 Using selectedSubscription ID:', subscriptionIdToPass);
     } else if (data.subscriptionId) {
       subscriptionIdToPass = data.subscriptionId;
       console.log('🎯 Using form data subscription ID:', subscriptionIdToPass);
@@ -120,10 +111,8 @@ export const useSignUpSubmission = () => {
       console.log('🎯 Using API subscription ID as fallback:', subscriptionIdToPass);
     }
     
-    // Set subscription parameters
+    // Always set subscription parameter, even if empty (for validation)
     paymentParams.set('subscription', subscriptionIdToPass);
-    if (subscriptionPrice) paymentParams.set('planPrice', subscriptionPrice);
-    if (subscriptionName) paymentParams.set('plan', subscriptionName);
     
     // Add API subscription data if available for fallback
     if (producerSubscriptions.length > 0) {
@@ -133,7 +122,7 @@ export const useSignUpSubmission = () => {
     
     const paymentUrl = `/subscribers/signup/payment?${paymentParams.toString()}`;
     
-    console.log('🎯 Payment URL construction complete:', {
+    console.log('🎯 Payment URL construction details:', {
       subscriptionSources: {
         selectedSubscription: selectedSubscription?.subscriptionId || 'not available',
         formData: data.subscriptionId || 'not available',
@@ -141,34 +130,10 @@ export const useSignUpSubmission = () => {
       },
       finalSubscriptionId: subscriptionIdToPass,
       hasApiSubscriptionData: producerSubscriptions.length > 0,
-      fullUrl: paymentUrl,
-      parameterCount: paymentParams.toString().split('&').length
+      fullUrl: paymentUrl
     });
     
     return paymentUrl;
-  };
-
-  const navigateToPayment = (paymentUrl: string) => {
-    console.log('🚀 Attempting navigation to payment page:', paymentUrl);
-    
-    try {
-      // First attempt: React Router navigation
-      console.log('📍 Using React Router navigate...');
-      navigate(paymentUrl);
-      console.log('✅ React Router navigation initiated');
-    } catch (navError) {
-      console.error('❌ React Router navigation failed:', navError);
-      
-      try {
-        // Fallback: window.location
-        console.log('📍 Falling back to window.location...');
-        window.location.href = paymentUrl;
-        console.log('✅ Window location navigation initiated');
-      } catch (windowError) {
-        console.error('❌ Window location navigation failed:', windowError);
-        throw new Error('Navigation failed - please refresh the page and try again');
-      }
-    }
   };
 
   const handleSubmit = async (
@@ -176,17 +141,11 @@ export const useSignUpSubmission = () => {
     selectedSubscription: any, 
     categories: any[]
   ) => {
-    console.log('🚀 Starting signup submission with enhanced error handling and navigation');
-    console.log('📝 Form data summary:', { 
-      email: data.emailAddress, 
-      businessName: data.businessName,
-      subscriptionId: data.subscriptionId,
-      selectedSubscriptionId: selectedSubscription?.subscriptionId
-    });
+    console.log('🚀 Starting signup submission with enhanced error handling');
+    console.log('📝 Form data:', { email: data.emailAddress, businessName: data.businessName });
     console.log('📋 Selected subscription details:', {
       subscriptionId: selectedSubscription?.subscriptionId,
       displayName: selectedSubscription?.displayName,
-      price: selectedSubscription?.monthlyAutopayAmount,
       hasValidSubscription: !!selectedSubscription
     });
     
@@ -204,12 +163,13 @@ export const useSignUpSubmission = () => {
         return;
       }
 
-      // Enhanced subscription validation
+      // Enhanced subscription validation - proceed even if subscription is missing from form
       if (!data.subscriptionId && !selectedSubscription?.subscriptionId) {
         console.warn('⚠️ No subscription ID provided, but proceeding with submission');
+        // Don't return here - let the backend handle subscription assignment
       }
 
-      // Step 2: Pre-check email availability
+      // Step 2: Pre-check email availability (but don't fail if this check fails)
       try {
         console.log('🔍 Pre-checking email availability...');
         const emailExists = await checkEmailExists(data.emailAddress);
@@ -223,6 +183,7 @@ export const useSignUpSubmission = () => {
         }
       } catch (emailCheckError) {
         console.warn('⚠️ Email check failed, proceeding anyway:', emailCheckError);
+        // Continue with submission even if email check fails
       }
 
       // Step 3: Create the account
@@ -255,7 +216,7 @@ export const useSignUpSubmission = () => {
           const producerId = producerData.producerId;
           console.log('🆔 Producer ID extracted:', producerId);
 
-          // Step 4: Fetch complete account data
+          // Step 4: Fetch complete account data (but don't fail if this fails)
           let producerSubscriptions = [];
           try {
             const accountData = await fetchAccountData(producerId);
@@ -267,6 +228,7 @@ export const useSignUpSubmission = () => {
             }
           } catch (accountError) {
             console.warn('⚠️ Failed to fetch account data, proceeding without:', accountError);
+            // Use whatever subscription data we have from the initial response
             if (producerData.subscriptions) {
               producerSubscriptions = producerData.subscriptions;
             }
@@ -278,18 +240,20 @@ export const useSignUpSubmission = () => {
             subscriptions: producerSubscriptions
           });
 
-          toast.success("Account created successfully! Redirecting to payment...");
+          toast.success("Account created successfully! Please complete your payment to activate your subscription.");
           
-          // Step 5: Build and navigate to payment URL
+          // Step 5: Build and navigate to payment URL with enhanced parameter handling
           const paymentUrl = buildPaymentUrl(producerId, data, selectedSubscription, producerSubscriptions);
           
-          console.log('🎯 Initiating navigation to payment page');
+          console.log('🎯 Navigating to payment page:', paymentUrl);
           
-          // Small delay to ensure toast is visible
-          setTimeout(() => {
-            navigateToPayment(paymentUrl);
-          }, 1000);
-          
+          // Force navigation with error boundary
+          try {
+            navigate(paymentUrl);
+          } catch (navError) {
+            console.error('❌ Navigation failed, trying window.location:', navError);
+            window.location.href = paymentUrl;
+          }
           return;
           
         } catch (parseError) {
@@ -338,9 +302,11 @@ export const useSignUpSubmission = () => {
     } catch (error) {
       console.error('🌐 Network or system error occurred:', error);
       
+      // Enhanced error handling for different error types
       if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
         setError("Network connection failed. Please check your internet connection and try again.");
       } else if (error.message?.includes('content_script')) {
+        // Ignore content script errors and proceed
         console.warn('⚠️ Content script error detected, but continuing...');
         setError("Page interference detected. Please disable browser extensions and try again.");
       } else {
