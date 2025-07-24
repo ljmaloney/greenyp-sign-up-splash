@@ -1,11 +1,18 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { useSubscriptions } from '@/hooks/useSubscriptions';
+import { useLineOfBusiness } from '@/hooks/useLineOfBusiness';
+import { findSubscriptionMatch } from '@/utils/subscriptionMatching';
 import EmailValidationCard from '@/components/payment/EmailValidationCard';
 import PaymentInformationCard from '@/components/payment/PaymentInformationCard';
 import ReactSquareSubscriptionCard from './ReactSquareSubscriptionCard';
 import SubscriptionSummaryCard from './SubscriptionSummaryCard';
+import SubscriptionDetailsCard from './SubscriptionDetailsCard';
+import BusinessDetailsCard from './BusinessDetailsCard';
 import { getApiUrl } from '@/config/api';
+import { Producer, PrimaryLocation } from '@/services/accountService';
 
 const SignUpPaymentContainer = () => {
   const [searchParams] = useSearchParams();
@@ -19,6 +26,12 @@ const SignUpPaymentContainer = () => {
   
   const [businessName, setBusinessName] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [producer, setProducer] = useState<Producer | null>(null);
+  const [primaryLocation, setPrimaryLocation] = useState<PrimaryLocation | null>(null);
+
+  // Fetch subscriptions and line of business data
+  const { data: subscriptions, isLoading: subscriptionsLoading } = useSubscriptions();
+  const { data: lineOfBusinessData } = useLineOfBusiness();
 
   const [billingContact, setBillingContact] = useState({
     firstName: searchParams.get('firstName') || '',
@@ -37,6 +50,14 @@ const SignUpPaymentContainer = () => {
 
   const [emailValidationToken, setEmailValidationToken] = useState('');
   const [isEmailValidated, setIsEmailValidated] = useState(false);
+
+  // Find subscription details
+  const selectedSubscription = findSubscriptionMatch(subscriptions, producer?.subscriptions?.[0]?.subscriptionId || null);
+
+  // Find line of business name
+  const lineOfBusinessName = lineOfBusinessData?.find(
+    lob => lob.lineOfBusinessId === producer?.lineOfBusinessId
+  )?.lineOfBusinessName || 'Unknown';
 
   // Fetch producer data using producerId
   useEffect(() => {
@@ -65,9 +86,12 @@ const SignUpPaymentContainer = () => {
         const data = await response.json();
         console.log('✅ Producer data retrieved:', data);
         
-        // Extract business name from response
-        const businessNameFromApi = data?.response?.producer?.businessName || 'Business';
-        setBusinessName(businessNameFromApi);
+        if (data.response) {
+          const { producer: producerData, primaryLocation: locationData } = data.response;
+          setProducer(producerData);
+          setPrimaryLocation(locationData);
+          setBusinessName(producerData.businessName || 'Business');
+        }
         
         setIsLoading(false);
       } catch (error) {
@@ -138,6 +162,18 @@ const SignUpPaymentContainer = () => {
             subscriptionPlan={subscriptionPlan || 'Basic Listing'}
             subscriptionPrice={subscriptionPrice || '$5'}
             producerId={producerId || 'sample-producer-id'}
+        />
+        
+        <SubscriptionDetailsCard
+          subscription={selectedSubscription}
+          isLoading={subscriptionsLoading}
+        />
+        
+        <BusinessDetailsCard
+          producer={producer}
+          primaryLocation={primaryLocation}
+          lineOfBusinessName={lineOfBusinessName}
+          isLoading={isLoading}
         />
       </div>
       <div className="space-y-6">
