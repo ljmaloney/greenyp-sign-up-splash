@@ -21,12 +21,14 @@ const LocationInformationCard = ({ control }: LocationInformationCardProps) => {
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <LocationNameField control={control} />
-          <LocationDisplayTypeField control={control} />
+            <div className="col-span-2">
+                <LocationDisplayTypeField control={control}/>
+            </div>
+            <LocationNameField control={control} />
+          
           <WebsiteUrlField control={control} />
-          <div></div>
-          <AddressFields control={control} />
-          <CityStateZipFields control={control} />
+            <AddressFields control={control}/>
+            <CityStateZipFields control={control} />
         </div>
       </CardContent>
     </Card>
