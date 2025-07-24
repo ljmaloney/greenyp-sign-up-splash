@@ -29,13 +29,12 @@ export const useCategoriesCache = () => {
     return cachedData;
   };
 
-  // Check if categories are cached and fresh
+  // Check if categories are cached
   const isCategoriesCached = (): boolean => {
     const queryState = queryClient.getQueryState(['categories']);
     const isCached = !!queryState?.data;
-    const isStale = queryState?.isStale;
-    console.log('🔍 Cache state - Cached:', isCached, 'Stale:', isStale);
-    return isCached && !isStale;
+    console.log('🔍 Cache state - Cached:', isCached);
+    return isCached;
   };
 
   // Invalidate categories cache (useful for forced refresh)
