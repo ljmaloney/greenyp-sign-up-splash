@@ -1,12 +1,11 @@
-
 import React from 'react';
 import { ChevronRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useCategoriesContext } from '@/components/providers/CategoriesProvider';
+import { useCategories } from '@/components/providers/CategoriesProvider';
 import { CategoryWithIcon } from '@/types/category';
 
 const CategorySection = () => {
-  const { categories, isLoading, error } = useCategoriesContext();
+  const { categories, isLoading, error } = useCategories();
   const navigate = useNavigate();
 
   const handleViewAllClick = () => {

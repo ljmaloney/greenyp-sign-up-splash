@@ -6,11 +6,11 @@ import CategorySection from '@/components/CategorySection';
 import FeaturesSection from '@/components/FeaturesSection';
 import Footer from '@/components/Footer';
 import DevApiConfig from '@/components/DevApiConfig';
-import { useCategoriesContext } from '@/components/providers/CategoriesProvider';
+import { useCategoriesCache } from '@/hooks/useCategoriesCache';
 import { API_CONFIG, isUsingLocalApi } from '@/config/api';
 
 const PublicIndex = () => {
-  const { prefetchCategories, isCategoriesCached } = useCategoriesContext();
+  const { prefetchCategories, isCategoriesCached } = useCategoriesCache();
 
   // Log API configuration and prefetch categories on page load
   useEffect(() => {
