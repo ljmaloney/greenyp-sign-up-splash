@@ -1,10 +1,10 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { fetchCategories } from '@/services/categoryService';
-import { CategoryWithIcon } from '@/types/category';
+import { useCategoriesCache } from '@/hooks/useCategoriesCache';
+import { Category } from '@/types/category';
 
 interface CategoriesContextType {
-  categories: CategoryWithIcon[];
+  categories: Category[];
   isLoading: boolean;
   error: Error | null;
   refetch: () => void;
@@ -26,29 +26,31 @@ interface CategoriesProviderProps {
 }
 
 export const CategoriesProvider = ({ children, prefetchOnMount = false }: CategoriesProviderProps) => {
-  const [categories, setCategories] = useState<CategoryWithIcon[]>([]);
+  const { prefetchCategories } = useCategoriesCache();
+  const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     if (prefetchOnMount) {
       console.log('🚀 CategoriesProvider: Prefetching categories on mount');
-      handleFetch();
+      handlePrefetch();
     }
   }, [prefetchOnMount]);
 
-  const handleFetch = async () => {
+  const handlePrefetch = async () => {
     try {
       setIsLoading(true);
       setError(null);
-      console.log('🔄 CategoriesProvider: Starting fetch');
+      console.log('🔄 CategoriesProvider: Starting prefetch');
       
-      const result = await fetchCategories();
-      setCategories(result);
-      console.log('✅ CategoriesProvider: Fetch successful');
+      const result = await prefetchCategories();
+      setCategories(result || []);
+      console.log('✅ CategoriesProvider: Prefetch successful');
     } catch (err) {
-      console.error('❌ CategoriesProvider: Fetch failed:', err);
-      setError(err instanceof Error ? err : new Error('Failed to fetch categories'));
+      console.error('❌ CategoriesProvider: Prefetch failed:', err);
+      setError(err instanceof Error ? err : new Error('Failed to prefetch categories'));
+      // Set fallback categories to prevent app crash
       setCategories([]);
     } finally {
       setIsLoading(false);
@@ -57,7 +59,7 @@ export const CategoriesProvider = ({ children, prefetchOnMount = false }: Catego
 
   const refetch = () => {
     console.log('🔄 CategoriesProvider: Manual refetch requested');
-    handleFetch();
+    handlePrefetch();
   };
 
   const value: CategoriesContextType = {
