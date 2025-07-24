@@ -1,14 +1,13 @@
 
 import { useSignUpFormConfig } from './useSignUpFormConfig';
-import { useCreateAccountSubmission } from './useCreateAccountSubmission';
+import { useSignUpSubmission } from './useSignUpSubmission';
 
 export const useSignUpForm = (selectedPlan: string) => {
   const form = useSignUpFormConfig(selectedPlan);
-  const { loading, error, handleCreateAccount, resetError } = useCreateAccountSubmission();
+  const { loading, error, isSystemError, isDuplicateEmail, handleSubmit, resetError } = useSignUpSubmission();
 
-  const onSubmit = (data: any) => {
-    console.log('📋 Form submission triggered with 4-step process');
-    handleCreateAccount(data);
+  const onSubmit = (data: any, selectedSubscription: any, categories: any[]) => {
+    handleSubmit(data, selectedSubscription, categories);
   };
 
   return {
@@ -16,6 +15,8 @@ export const useSignUpForm = (selectedPlan: string) => {
     loading,
     onSubmit,
     error,
+    isSystemError,
+    isDuplicateEmail,
     resetError
   };
 };
