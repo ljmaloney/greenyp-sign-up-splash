@@ -73,66 +73,20 @@ export const useSignUpSubmission = () => {
     setIsDuplicateEmail(false);
   };
 
-  const buildPaymentUrl = (
-    producerId: string, 
-    data: SignUpFormSchema, 
-    selectedSubscription: any, 
-    producerSubscriptions: any[]
-  ) => {
-    console.log('🔗 Building payment URL with improved parameter handling');
+  const buildPaymentUrl = (producerId: string) => {
+    console.log('🔗 Building simplified payment URL');
     
     const paymentParams = new URLSearchParams();
     
-    // Essential parameters - these are required
+    // Only include the essential producerId parameter
+    // The payment page will fetch other data via API call
     paymentParams.set('producerId', producerId);
-    paymentParams.set('email', data.emailAddress);
-    paymentParams.set('firstName', data.firstName);
-    paymentParams.set('lastName', data.lastName);
-    
-    // Optional contact parameters
-    if (data.phoneNumber) paymentParams.set('phone', data.phoneNumber);
-    if (data.addressLine1) paymentParams.set('address', data.addressLine1);
-    if (data.city) paymentParams.set('city', data.city);
-    if (data.state) paymentParams.set('state', data.state);
-    if (data.postalCode) paymentParams.set('postalCode', data.postalCode);
-    
-    // Handle subscription ID with multiple fallbacks
-    let subscriptionIdToPass = '';
-    
-    // Priority order: selectedSubscription > form data > API data
-    if (selectedSubscription?.subscriptionId) {
-      subscriptionIdToPass = selectedSubscription.subscriptionId;
-      console.log('🎯 Using selectedSubscription ID:', subscriptionIdToPass);
-    } else if (data.subscriptionId) {
-      subscriptionIdToPass = data.subscriptionId;
-      console.log('🎯 Using form data subscription ID:', subscriptionIdToPass);
-    } else if (producerSubscriptions.length > 0 && producerSubscriptions[0].subscriptionId) {
-      subscriptionIdToPass = producerSubscriptions[0].subscriptionId;
-      console.log('🎯 Using API subscription ID as fallback:', subscriptionIdToPass);
-    }
-    
-    // Always set subscription parameter, even if empty (for validation)
-    paymentParams.set('subscription', subscriptionIdToPass);
-    
-    // Add API subscription data if available for fallback
-    if (producerSubscriptions.length > 0) {
-      console.log('📋 Adding API subscription data to URL parameters:', producerSubscriptions[0]);
-      paymentParams.set('subscriptionData', JSON.stringify(producerSubscriptions[0]));
-    }
     
     const paymentUrl = `/subscribers/signup/payment?${paymentParams.toString()}`;
     
-    console.log('🎯 Payment URL construction details:', {
-      subscriptionSources: {
-        selectedSubscription: selectedSubscription?.subscriptionId || 'not available',
-        formData: data.subscriptionId || 'not available',
-        apiData: producerSubscriptions.length > 0 ? producerSubscriptions[0].subscriptionId : 'not available'
-      },
-      finalSubscriptionId: subscriptionIdToPass,
-      hasApiSubscriptionData: producerSubscriptions.length > 0,
-      fullUrl: paymentUrl
-    });
-    
+    console.log('🔍 SIMPLIFIED PAYMENT URL BUILT:', paymentUrl);
+    console.log('🔍 PARAMS:', Array.from(paymentParams.entries()));
+
     return paymentUrl;
   };
 
@@ -213,11 +167,16 @@ export const useSignUpSubmission = () => {
 
           toast.success("Account created successfully! Please complete your payment to activate your subscription.");
           
-          // Step 4: Build and navigate to payment URL with enhanced parameter handling
-          const paymentUrl = buildPaymentUrl(producerId, data, selectedSubscription, producerSubscriptions);
+          // Step 4: Build simplified payment URL with only producerId
+          const paymentUrl = buildPaymentUrl(producerId);
+          console.log('⚠️ ABOUT TO NAVIGATE - URL TYPE:', typeof paymentUrl, 'URL VALUE:', paymentUrl);
           
-          console.log('🎯 Navigating to payment page:', paymentUrl);
-          navigate(paymentUrl);
+          // Bypass React Router entirely to avoid rendering errors
+          console.log('🔄 Using direct browser navigation to avoid React rendering issues');
+          window.location.href = paymentUrl;
+          
+          // Never reaches this point due to page navigation
+          console.log('⚠️ NAVIGATION ATTEMPT COMPLETED');  
           return;
           
         } catch (parseError) {
