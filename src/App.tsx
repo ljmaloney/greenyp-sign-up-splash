@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   BrowserRouter as Router,
@@ -21,9 +20,6 @@ import PrivacyPage from '@/pages/PrivacyPage';
 import SearchResults from '@/pages/SearchResults';
 import CategoryPage from '@/pages/CategoryPage';
 import BusinessProfile from '@/pages/BusinessProfile';
-
-// Auth pages
-import Unauthorized from '@/pages/auth/Unauthorized';
 
 // Dashboard pages
 import DashboardIndex from '@/pages/dashboard/Index';
@@ -69,7 +65,6 @@ function App() {
             <Route path="/search" element={<SearchResults />} />
             <Route path="/category/:categoryId" element={<CategoryPage />} />
             <Route path="/business/:producerId" element={<BusinessProfile />} />
-            <Route path="/unauthorized" element={<Unauthorized />} />
             
             {/* Subscriber/Professional routes */}
             <Route path="/subscribers" element={<SubscriberIndex />} />
