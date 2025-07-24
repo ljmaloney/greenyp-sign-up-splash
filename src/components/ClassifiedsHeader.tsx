@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useClassifiedsNavigation } from "@/hooks/useClassifiedsNavigation";
-import { Leaf, ArrowLeft } from 'lucide-react';
+import {Leaf, ArrowLeft, Eye, Plus} from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const ClassifiedsHeader = () => {
@@ -46,6 +46,18 @@ const ClassifiedsHeader = () => {
         <Link to="/">
           <Button variant="outline" className="border-greenyp-600 text-greenyp-600 hover:bg-greenyp-50">
             Back to the Market
+          </Button>
+        </Link>
+        <Link to="/classifieds/samples">
+          <Button variant="outline" className="border-greenyp-600 text-greenyp-600 hover:bg-greenyp-50">
+            <Eye className="w-4 h-4 mr-2" />
+            View Ad Types
+          </Button>
+        </Link>
+        <Link to="/classifieds/create">
+          <Button className="bg-greenyp-600 hover:bg-greenyp-700">
+            <Plus className="w-4 h-4 mr-2" />
+            Post an Ad
           </Button>
         </Link>
       </div>

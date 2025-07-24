@@ -25,6 +25,11 @@ const SubscribersHeader = () => {
             <Link to="/subscribers/contact" className="text-gray-700 hover:text-greenyp-600 transition-colors">Contact</Link>
           </nav>
         )}
+          <Link to="/">
+              <Button variant="outline" className="border-greenyp-600 text-greenyp-600 hover:bg-greenyp-50">
+                  Back to the Market
+              </Button>
+          </Link>
         <Link to="/dashboard">
           <Button variant="outline" className="border-greenyp-500 text-greenyp-700 hover:bg-greenyp-50">Pro Login</Button>
         </Link>
