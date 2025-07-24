@@ -8,14 +8,16 @@ interface CategoriesContextType {
   isLoading: boolean;
   error: Error | null;
   refetch: () => void;
+  prefetchCategories: () => Promise<void>;
+  isCategoriesCached: () => boolean;
 }
 
 const CategoriesContext = createContext<CategoriesContextType | undefined>(undefined);
 
-export const useCategories = () => {
+export const useCategoriesContext = () => {
   const context = useContext(CategoriesContext);
   if (!context) {
-    throw new Error('useCategories must be used within a CategoriesProvider');
+    throw new Error('useCategoriesContext must be used within a CategoriesProvider');
   }
   return context;
 };
@@ -26,7 +28,7 @@ interface CategoriesProviderProps {
 }
 
 export const CategoriesProvider = ({ children, prefetchOnMount = false }: CategoriesProviderProps) => {
-  const { prefetchCategories } = useCategoriesCache();
+  const { prefetchCategories, isCategoriesCached } = useCategoriesCache();
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -44,13 +46,14 @@ export const CategoriesProvider = ({ children, prefetchOnMount = false }: Catego
       setError(null);
       console.log('🔄 CategoriesProvider: Starting prefetch');
       
-      const result = await prefetchCategories();
-      setCategories(result || []);
-      console.log('✅ CategoriesProvider: Prefetch successful');
+      await prefetchCategories();
+      const cachedCategories = isCategoriesCached();
+      if (cachedCategories) {
+        console.log('✅ CategoriesProvider: Prefetch successful');
+      }
     } catch (err) {
       console.error('❌ CategoriesProvider: Prefetch failed:', err);
       setError(err instanceof Error ? err : new Error('Failed to prefetch categories'));
-      // Set fallback categories to prevent app crash
       setCategories([]);
     } finally {
       setIsLoading(false);
@@ -66,7 +69,9 @@ export const CategoriesProvider = ({ children, prefetchOnMount = false }: Catego
     categories,
     isLoading,
     error,
-    refetch
+    refetch,
+    prefetchCategories: handlePrefetch,
+    isCategoriesCached
   };
 
   return (
