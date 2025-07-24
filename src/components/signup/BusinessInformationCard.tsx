@@ -36,9 +36,6 @@ const BusinessInformationCard = ({ control }: BusinessInformationCardProps) => {
     available: !!displayCategories.length
   });
 
-  // Filter available subscriptions (exclude coming soon)
-  const availableSubscriptions = subscriptions?.filter(sub => !sub.comingSoon) || [];
-
   return (
     <Card>
       <CardHeader>
@@ -71,7 +68,7 @@ const BusinessInformationCard = ({ control }: BusinessInformationCardProps) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Line of Business *</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder={
@@ -100,18 +97,14 @@ const BusinessInformationCard = ({ control }: BusinessInformationCardProps) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Subscription Plan *</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder={
-                        availableSubscriptions.length > 0 
-                          ? "Select subscription plan" 
-                          : "Loading subscription plans..."
-                      } />
+                      <SelectValue placeholder="Select subscription plan" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {availableSubscriptions.map((subscription) => (
+                    {subscriptions?.filter(sub => !sub.comingSoon).map((subscription) => (
                       <SelectItem key={subscription.subscriptionId} value={subscription.subscriptionId}>
                         {subscription.displayName} - {subscription.formattedMonthlyPrice}
                       </SelectItem>
