@@ -107,7 +107,7 @@ const ReactSquareCard = ({
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <CreditCardIcon className="h-5 w-5" />
+          <CreditCardIcon className="h-5 w-5 text-greenyp-600" />
           Payment Method
         </CardTitle>
       </CardHeader>

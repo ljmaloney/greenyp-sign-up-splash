@@ -149,7 +149,7 @@ const PaymentInformationCard = ({
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <User className="h-5 w-5" />
+            <User className="h-5 w-5 text-greenyp-600" />
             Billing Information
           </div>
           <Button

@@ -157,13 +157,7 @@ const SignUpPaymentContainer = () => {
   return (
     <div className="grid gap-8 md:grid-cols-2">
       <div className="space-y-6">
-        <SubscriptionSummaryCard
-            businessName={businessName || 'Sample Business'}
-            subscriptionPlan={subscriptionPlan || 'Basic Listing'}
-            subscriptionPrice={subscriptionPrice || '$5'}
-            producerId={producerId || 'sample-producer-id'}
-        />
-        
+
         <SubscriptionDetailsCard
           subscription={selectedSubscription}
           isLoading={subscriptionsLoading}

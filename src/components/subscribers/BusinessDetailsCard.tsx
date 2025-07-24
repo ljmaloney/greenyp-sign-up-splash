@@ -27,7 +27,7 @@ const BusinessDetailsCard = ({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Building2 className="h-5 w-5" />
+            <Building2 className="h-5 w-5 text-greenyp-600" />
             Business Details
           </CardTitle>
         </CardHeader>
@@ -48,7 +48,7 @@ const BusinessDetailsCard = ({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Building2 className="h-5 w-5" />
+            <Building2 className="h-5 w-5 text-greenyp-600" />
             Business Details
           </CardTitle>
         </CardHeader>
@@ -63,7 +63,7 @@ const BusinessDetailsCard = ({
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Building2 className="h-5 w-5" />
+          <Building2 className="h-5 w-5 text-greenyp-600" />
           Business Details
         </CardTitle>
       </CardHeader>

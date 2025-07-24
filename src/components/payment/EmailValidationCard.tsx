@@ -41,7 +41,7 @@ const EmailValidationCard = ({
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Mail className="h-5 w-5" />
+          <Mail className="h-5 w-5 text-greenyp-600" />
           Email Verification
         </CardTitle>
       </CardHeader>
