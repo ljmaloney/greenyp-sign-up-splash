@@ -42,10 +42,12 @@ const ReactSquareCard = ({
 }: ReactSquareCardProps) => {
   const squareConfig = getSquareConfig();
 
-  const handleCardTokenization = async (token: any) => {
+  const handleCardTokenization = async (token: any, verifiedBuyer: any) => {
     try {
       console.log('💳 Card tokenization successful:', token);
+      console.log('🔐 3DS verification data:', verifiedBuyer);
       console.log('💳 Full token object:', JSON.stringify(token, null, 2));
+      console.log('🔐 Full verifiedBuyer object:', JSON.stringify(verifiedBuyer, null, 2));
       
       // Ensure we have the payment token
       if (!token.token) {
@@ -53,11 +55,18 @@ const ReactSquareCard = ({
         throw new Error('Payment token not found in Square response');
       }
       
-      // For React SDK, we don't need a separate verification token
-      // The token itself is sufficient for processing
+      // Extract the 3DS verification token from verifiedBuyer
+      const verificationToken = verifiedBuyer?.token || null;
+      
+      console.log('🔐 3DS verification token:', {
+        hasVerificationToken: !!verificationToken,
+        verificationTokenLength: verificationToken?.length,
+        verificationTokenStart: verificationToken?.substring(0, 10) + '...'
+      });
+      
       const result = {
         token: token.token,  // This is the payment token
-        verificationToken: null,  // React SDK doesn't provide this separately
+        verificationToken: verificationToken,  // This is the 3DS verification token
         details: {
           card: {
             brand: token.details?.card?.brand || 'UNKNOWN',
@@ -74,6 +83,9 @@ const ReactSquareCard = ({
         hasPaymentToken: !!result.token,
         paymentTokenLength: result.token?.length,
         paymentTokenStart: result.token?.substring(0, 10) + '...',
+        hasVerificationToken: !!result.verificationToken,
+        verificationTokenLength: result.verificationToken?.length,
+        verificationTokenStart: result.verificationToken?.substring(0, 10) + '...',
         cardBrand: result.details.card.brand,
         cardLast4: result.details.card.last4
       });
