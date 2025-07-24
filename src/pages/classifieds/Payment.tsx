@@ -215,8 +215,43 @@ const Payment = () => {
       // Submit payment
       const paymentResponse = await apiClient.post('/classified/payment', paymentPayload, { requireAuth: false });
       
-      console.log('✅ Payment successful:', paymentResponse);
-      
+      console.log('✅ Payment response received:', paymentResponse);
+
+      // Check response body for error fields and payment status
+      const responseBody = paymentResponse.response;
+      const paymentStatus = responseBody?.paymentStatus;
+      const errorStatusCode = responseBody?.errorStatusCode;
+      const errorDetail = responseBody?.errorDetail;
+
+      console.log('💳 Payment status check:', {
+        paymentStatus,
+        errorStatusCode,
+        errorDetail,
+        hasError: !!errorStatusCode || !!errorDetail
+      });
+
+      // Check if payment failed
+      if (paymentStatus === 'PAYMENT_ERROR' || errorStatusCode || errorDetail) {
+        console.error('❌ Payment failed with error:', {
+          paymentStatus,
+          errorStatusCode,
+          errorDetail
+        });
+
+        const errorMessage = errorDetail || `Payment failed with status: ${paymentStatus}`;
+        
+        toast({
+          title: "Payment Failed",
+          description: errorMessage,
+          variant: "destructive",
+        });
+
+        // Navigate to error page instead of confirmation
+        navigate(`/classifieds/payment/error/${classifiedId}?error=${encodeURIComponent(errorMessage)}&errorCode=${errorStatusCode || 'PAYMENT_ERROR'}`);
+        return;
+      }
+
+      // Payment successful - proceed to confirmation
       toast({
         title: "Payment Successful",
         description: "Your payment has been processed successfully.",
@@ -233,6 +268,9 @@ const Payment = () => {
         description: errorMessage,
         variant: "destructive",
       });
+
+      // Navigate to error page on exception
+      navigate(`/classifieds/payment/error/${classifiedId}?error=${encodeURIComponent(errorMessage)}&errorCode=EXCEPTION`);
     }
   };
 
