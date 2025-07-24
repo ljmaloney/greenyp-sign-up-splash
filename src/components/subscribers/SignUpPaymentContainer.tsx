@@ -125,6 +125,13 @@ const SignUpPaymentContainer = () => {
   return (
     <div className="grid gap-8 md:grid-cols-2">
       <div className="space-y-6">
+        <SubscriptionSummaryCard
+            businessName={businessName || ''}
+            subscriptionPlan={subscriptionPlan || 'Basic Listing'}
+            subscriptionPrice={subscriptionPrice || '$5'}
+            producerId={producerId || ''}
+        />
+      <div className="space-y-6">
         <BillingContactForm
           billingContact={billingContact}
           onChange={handleBillingContactChange}
@@ -145,13 +152,7 @@ const SignUpPaymentContainer = () => {
         />
       </div>
 
-      <div className="space-y-6">
-        <SubscriptionSummaryCard
-          businessName={businessName || ''}
-          subscriptionPlan={subscriptionPlan || 'Basic Listing'}
-          subscriptionPrice={subscriptionPrice || '$5'}
-          producerId={producerId || ''}
-        />
+
         
         <ReactSquareSubscriptionCard
           billingContact={billingContact}
