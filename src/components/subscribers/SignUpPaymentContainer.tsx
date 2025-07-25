@@ -28,6 +28,7 @@ const SignUpPaymentContainer = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [producer, setProducer] = useState<Producer | null>(null);
   const [primaryLocation, setPrimaryLocation] = useState<PrimaryLocation | null>(null);
+  const [contacts, setContacts] = useState<any[]>([]);
 
   // Fetch subscriptions and line of business data
   const { data: subscriptions, isLoading: subscriptionsLoading } = useSubscriptions();
@@ -50,6 +51,8 @@ const SignUpPaymentContainer = () => {
 
   const [emailValidationToken, setEmailValidationToken] = useState('');
   const [isEmailValidated, setIsEmailValidated] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
+  const [validationError, setValidationError] = useState('');
 
   // Find subscription details
   const selectedSubscription = findSubscriptionMatch(subscriptions, producer?.subscriptions?.[0]?.subscriptionId || null);
@@ -87,10 +90,16 @@ const SignUpPaymentContainer = () => {
         console.log('✅ Producer data retrieved:', data);
         
         if (data.response) {
-          const { producer: producerData, primaryLocation: locationData } = data.response;
+          const { producer: producerData, primaryLocation: locationData, contacts: contactsData } = data.response;
           setProducer(producerData);
           setPrimaryLocation(locationData);
           setBusinessName(producerData.businessName || 'Business');
+          
+          // Store the contacts array directly from the API response
+          if (Array.isArray(contactsData)) {
+            console.log('📃 Setting contacts from API response:', contactsData);
+            setContacts(contactsData);
+          }
         }
         
         setIsLoading(false);
@@ -124,13 +133,85 @@ const SignUpPaymentContainer = () => {
     }
   };
 
-  const handleEmailValidated = (token: string) => {
-    setEmailValidationToken(token);
-    setIsEmailValidated(true);
-    toast({
-      title: "Email Validated",
-      description: "Your email has been successfully validated.",
-    });
+  // Get the admin email address from the contacts array in the response
+  const getAdminEmail = () => {
+    // Check the contacts array that we stored directly from the API response
+    if (Array.isArray(contacts) && contacts.length > 0) {
+      // Find the admin contact in the contacts array
+      const adminContact = contacts.find(c => c.producerContactType === 'ADMIN');
+      if (adminContact?.emailAddress) {
+        console.log('🔍 Using admin email from contacts array:', adminContact.emailAddress);
+        return adminContact.emailAddress;
+      }
+    }
+    
+    // Fallback to billing contact email
+    return billingContact.email || '';
+  };
+
+  const handleEmailValidated = async () => {
+    if (!emailValidationToken.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Please enter a verification code",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Get the email address for validation from admin contact
+    const emailAddress = getAdminEmail();
+    if (!emailAddress) {
+      toast({
+        title: "Validation Error",
+        description: "Email address is missing",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsValidating(true);
+    setValidationError('');
+    
+    try {
+      console.log('📧 Using email for validation:', emailAddress);
+      
+      // Call the email validation endpoint
+      const response = await fetch(getApiUrl('/email/validate'), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          externRef: producerId || '',
+          emailAddress: emailAddress,
+          token: emailValidationToken.trim()
+        })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to validate email');
+      }
+      
+      // If successful
+      setIsEmailValidated(true);
+      toast({
+        title: "Email Validated",
+        description: "Your email has been successfully validated.",
+      });
+      
+    } catch (error) {
+      console.error('❌ Email validation error:', error);
+      setValidationError(error instanceof Error ? error.message : 'Failed to validate email');
+      toast({
+        title: "Validation Failed",
+        description: error instanceof Error ? error.message : 'Failed to validate email',
+        variant: "destructive",
+      });
+    } finally {
+      setIsValidating(false);
+    }
   };
 
   // Show loading state
@@ -174,10 +255,12 @@ const SignUpPaymentContainer = () => {
         <EmailValidationCard
           validationToken={emailValidationToken}
           onChange={setEmailValidationToken}
-          emailAddress={billingContact.email || 'sample@example.com'}
-          helperText="Please validate your email address to continue"
+          emailAddress={getAdminEmail()}
+          helperText={`We have sent a confirmation email to ${getAdminEmail()}. Please check your email and enter the token below to validate.`}
           isValidated={isEmailValidated}
-          onValidate={() => handleEmailValidated(emailValidationToken)}
+          isValidating={isValidating}
+          validationError={validationError}
+          onValidate={() => handleEmailValidated()}
         />
         <div className={!isEmailValidated ? "opacity-50 pointer-events-none" : ""}>  
           <h3 className="text-lg font-medium mb-2">Billing Information</h3>
@@ -185,10 +268,10 @@ const SignUpPaymentContainer = () => {
           <PaymentInformationCard
             classified={{}}
             customer={{
-              firstName: billingContact.firstName || 'John',
-              lastName: billingContact.lastName || 'Doe',
-              emailAddress: billingContact.email || 'sample@example.com',
-              phoneNumber: billingContact.phone || '(555) 123-4567'
+              firstName: billingContact.firstName || '',
+              lastName: billingContact.lastName || '',
+              emailAddress: billingContact.email || '',
+              phoneNumber: billingContact.phone || ''
             }}
             onBillingInfoChange={handleBillingInfoChange}
             emailValidationToken={emailValidationToken}
@@ -201,19 +284,19 @@ const SignUpPaymentContainer = () => {
           <p className="text-sm text-gray-500 mb-4">{!isEmailValidated ? "Please validate your email address to enable this section" : "Please enter your payment information below"}</p>
           <ReactSquareSubscriptionCard
             billingContact={{
-              firstName: billingContact.firstName || 'John',
-              lastName: billingContact.lastName || 'Doe',
-              email: billingContact.email || 'sample@example.com',
-              phone: billingContact.phone || '(555) 123-4567'
+              firstName: billingContact.firstName || '',
+              lastName: billingContact.lastName || '',
+              email: billingContact.email || '',
+              phone: billingContact.phone || ''
             }}
             billingAddress={{
-              address: billingAddress.address || '123 Main St',
-              city: billingAddress.city || 'Anytown',
-              state: billingAddress.state || 'CA',
-              zipCode: billingAddress.zipCode || '12345'
+              address: billingAddress.address || '',
+              city: billingAddress.city || '',
+              state: billingAddress.state || '',
+              zipCode: billingAddress.zipCode || ''
             }}
             emailValidationToken={emailValidationToken}
-            producerId={producerId || 'sample-producer-id'}
+            producerId={producerId || ''}
           />
         </div>
       </div>
