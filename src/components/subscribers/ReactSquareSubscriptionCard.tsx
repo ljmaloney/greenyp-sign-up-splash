@@ -90,8 +90,8 @@ const ReactSquareSubscriptionCard = ({
           description: "Your subscription payment has been processed successfully.",
         });
         
-        // Navigate to subscription confirmation
-        navigate('/subscribers/payment/confirmation');
+        // Navigate to subscription confirmation - using the correct path defined in App.tsx
+        navigate('/subscribers/signup/confirmation');
       } else {
         console.log('Subscription payment not completed, status:', paymentResponse.response?.paymentStatus);
         setError('Subscription payment was not completed successfully');
