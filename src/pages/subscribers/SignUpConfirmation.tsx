@@ -105,11 +105,39 @@ const SignUpConfirmation = () => {
     fetchProducerData();
   }, [producerId, toast]);
   
+  // Get subscription price directly from API response
+  const getSubscriptionPrice = () => {
+    // Use the first subscription from the producer's subscriptions array (from API response)
+    if (producer?.subscriptions && producer.subscriptions.length > 0) {
+      const firstSubscription = producer.subscriptions[0];
+      return `$${firstSubscription.subscriptionAmount}`;
+    }
+    // Fallback to selectedSubscription if available
+    if (selectedSubscription && 'subscriptionAmount' in selectedSubscription) {
+      return `$${selectedSubscription.subscriptionAmount}`;
+    }
+    return '$0';
+  };
+
+  // Get subscription display name
+  const getSubscriptionDisplayName = () => {
+    // Use the first subscription from the producer's subscriptions array (from API response)
+    if (producer?.subscriptions && producer.subscriptions.length > 0) {
+      const firstSubscription = producer.subscriptions[0];
+      return firstSubscription.displayName;
+    }
+    // Fallback to selectedSubscription if available
+    if (selectedSubscription?.displayName) {
+      return selectedSubscription.displayName;
+    }
+    return 'Basic Listing';
+  };
+  
   // Prepare account data from the API response
   const accountData = {
     businessName: producer?.businessName || 'Your Business',
-    subscriptionPlan: selectedSubscription?.displayName || 'Basic Listing',
-    subscriptionPrice: selectedSubscription && 'subscriptionAmount' in selectedSubscription ? `$${selectedSubscription.subscriptionAmount}` : '$0',
+    subscriptionPlan: getSubscriptionDisplayName(),
+    subscriptionPrice: getSubscriptionPrice(),
     subscriptionType: producer?.subscriptionType || 'LIVE_UNPAID',
     lineOfBusiness: lineOfBusinessName,
     email: adminContact?.emailAddress || 'Not provided',
@@ -155,7 +183,7 @@ const SignUpConfirmation = () => {
       <SubscribersHeader />
       <main className="flex-grow bg-gray-50 py-12">
         <div className="container mx-auto px-4 max-w-6xl">
-          <ConfirmationHeader />
+          <ConfirmationHeader businessName={accountData.businessName} />
 
           {/* Payment Reference Information - Show first if payment was successful */}
           {(orderRef || paymentRef || receiptNumber) && (

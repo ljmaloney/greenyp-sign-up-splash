@@ -58,10 +58,6 @@ const AccountSummaryCard = ({
           </p>
         </div>
         <div>
-          <p className="text-sm text-gray-600">Subscription Type</p>
-          <p className="font-semibold text-purple-600">{formatSubscriptionType(subscriptionType)}</p>
-        </div>
-        <div>
           <p className="text-sm text-gray-600">Account ID</p>
           <p className="font-mono text-sm bg-gray-100 p-2 rounded">{producerId}</p>
         </div>
