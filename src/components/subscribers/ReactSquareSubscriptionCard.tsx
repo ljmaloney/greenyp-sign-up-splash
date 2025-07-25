@@ -74,7 +74,11 @@ const ReactSquareSubscriptionCard = ({
         producerId,
         apiClient,
         emailValidationToken,
-        { isSubscription: true }
+        { 
+          isSubscription: true,
+          billingContact: billingContact,
+          billingAddress: billingAddress
+        }
       );
       
       // Check if payment was completed successfully
