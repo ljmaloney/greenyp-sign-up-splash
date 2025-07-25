@@ -7,6 +7,35 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { User, Copy } from 'lucide-react';
 import { formatPhoneAsUserTypes } from '@/utils/phoneFormatting';
 
+interface Contact {
+  contactId: string;
+  createDate: string;
+  lastUpdateDate: string;
+  producerId: string;
+  producerLocationId: string;
+  producerContactType: string;
+  displayContactType: string;
+  genericContactName?: string;
+  firstName: string;
+  lastName: string;
+  title?: string;
+  phoneNumber: string;
+  cellPhoneNumber?: string;
+  emailConfirmed: boolean;
+  emailAddress: string;
+}
+
+interface AccountData {
+  primaryLocation?: {
+    addressLine1?: string;
+    addressLine2?: string;
+    city?: string;
+    state?: string;
+    postalCode?: string;
+  };
+  contacts?: Contact[];
+}
+
 interface PaymentInformationCardProps {
   classified: any;
   customer: any;
@@ -14,6 +43,7 @@ interface PaymentInformationCardProps {
   emailValidationToken: string;
   isEmailValidated: boolean;
   showPaymentButton?: boolean;
+  accountData?: AccountData; // New optional prop
 }
 
 const PaymentInformationCard = ({
@@ -22,7 +52,8 @@ const PaymentInformationCard = ({
   onBillingInfoChange,
   emailValidationToken,
   isEmailValidated,
-  showPaymentButton = false
+  showPaymentButton = false,
+  accountData // New prop
 }: PaymentInformationCardProps) => {
   const [billingContact, setBillingContact] = useState({
     firstName: customer?.firstName || '',
@@ -75,19 +106,27 @@ const PaymentInformationCard = ({
   const handleCopyFromAd = () => {
     if (!isEmailValidated) return;
     
+    // Find the ADMIN contact from account data
+    const adminContact = accountData?.contacts?.find(
+      contact => contact.producerContactType === 'ADMIN'
+    );
+    
+    const sourceLocation = accountData?.primaryLocation;
+    
+    // Prioritize account data (ADMIN contact) if available, otherwise use customer data
     setBillingContact({
-      firstName: customer?.firstName || '',
-      lastName: customer?.lastName || '',
-      email: customer?.emailAddress || '',
-      phone: formatPhoneAsUserTypes(customer?.phoneNumber || '')
+      firstName: adminContact?.firstName || customer?.firstName || '',
+      lastName: adminContact?.lastName || customer?.lastName || '',
+      email: adminContact?.emailAddress || customer?.emailAddress || '',
+      phone: formatPhoneAsUserTypes(adminContact?.phoneNumber || customer?.phoneNumber || '')
     });
 
     setBillingAddress({
-      address: customer?.address || '',
-      address2: '',
-      city: customer?.city || '',
-      state: customer?.state || '',
-      zipCode: customer?.postalCode || ''
+      address: sourceLocation?.addressLine1 || customer?.address || '',
+      address2: sourceLocation?.addressLine2 || '',
+      city: sourceLocation?.city || customer?.city || '',
+      state: sourceLocation?.state || customer?.state || '',
+      zipCode: sourceLocation?.postalCode || customer?.postalCode || ''
     });
   };
 
@@ -158,7 +197,7 @@ const PaymentInformationCard = ({
             onClick={handleCopyFromAd}
             disabled={!isEmailValidated}
             className="text-xs"
-            title={!isEmailValidated ? "Email must be validated before copying from ad" : "Copy information from classified ad"}
+            title={!isEmailValidated ? "Email must be validated before copying from ad" : "Copy information from account data"}
           >
             <Copy className="w-3 h-3 mr-1" />
             Copy from Ad
