@@ -1,383 +1,417 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { useApiClient } from '@/hooks/useApiClient';
-import { useClassifiedCategories } from '@/hooks/useClassifiedCategories';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
-import { useEmailValidation } from '@/hooks/useEmailValidation';
-import ClassifiedsHeader from '@/components/ClassifiedsHeader';
-import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
-import NewOrderSummaryCard from '@/components/classifieds/NewOrderSummaryCard';
-import ClassifiedCard from '@/components/classifieds/ClassifiedCard';
 import EmailValidationCard from '@/components/payment/EmailValidationCard';
 import PaymentInformationCard from '@/components/payment/PaymentInformationCard';
-import ReactSquareCard from '@/components/payment/ReactSquareCard';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { validatePaymentFields } from '@/utils/paymentValidation';
-import { formatPhoneForSquareAPI } from '@/utils/phoneUtils';
-import { Classified } from '@/types/classifieds';
-import { ClassifiedPaymentData, PaymentProcessResponse } from '@/types/classifiedPayment';
-import { AlertCircle } from 'lucide-react';
+import PaymentMethodCard from '@/components/payment/PaymentMethodCard';
+import { normalizePhoneForSquare } from '@/utils/phoneUtils';
+import { getApiUrl } from '@/config/api';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { DollarSign, MapPin, Calendar } from 'lucide-react';
+
+interface BillingInformation {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: string;
+  address2: string;
+  city: string;
+  state: string;
+  zipCode: string;
+}
+
+interface ClassifiedData {
+  classifiedId: string;
+  title: string;
+  description: string;
+  categoryId: string;
+  price: number;
+  perUnitType: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  createDate: string;
+  adTypeId: string;
+}
+
+interface CustomerData {
+  firstName?: string;
+  lastName?: string;
+  emailAddress: string;
+  phoneNumber: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  postalCode?: string;
+}
+
+interface PaymentData {
+  classified: ClassifiedData;
+  customer: CustomerData;
+}
+
+// Simple classified details card component
+const ClassifiedDetailsCard = ({ classified, customer }: { classified: ClassifiedData; customer: CustomerData }) => {
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD'
+    }).format(price);
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <DollarSign className="h-5 w-5 text-greenyp-600" />
+          Ad Details
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div>
+          <h3 className="font-semibold text-lg">{classified.title}</h3>
+          <p className="text-gray-600 mt-2">{classified.description}</p>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <DollarSign className="h-4 w-4 text-gray-500" />
+          <span className="font-medium">{formatPrice(classified.price)}</span>
+          {classified.perUnitType && (
+            <span className="text-gray-600">per {classified.perUnitType}</span>
+          )}
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <MapPin className="h-4 w-4 text-gray-500" />
+          <span className="text-gray-600">
+            {classified.city}, {classified.state} {classified.postalCode}
+          </span>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <Calendar className="h-4 w-4 text-gray-500" />
+          <span className="text-gray-600">
+            Created: {new Date(classified.createDate).toLocaleDateString()}
+          </span>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+// Simple payment layout component
+const PaymentLayout = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Complete Your Payment</h1>
+          <p className="text-gray-600 mt-2">Review your ad details and complete payment to publish your classified ad.</p>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+};
 
 const Payment = () => {
-  const { classifiedId } = useParams<{ classifiedId: string }>();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const apiClient = useApiClient();
   const { toast } = useToast();
+  
+  const classifiedId = searchParams.get('classifiedId');
+  const customerId = searchParams.get('customerId');
+  
+  // State management
+  const [paymentData, setPaymentData] = useState<PaymentData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  const [billingContact, setBillingContact] = useState({
+  // Email validation state
+  const [emailValidationToken, setEmailValidationToken] = useState('');
+  const [isEmailValidated, setIsEmailValidated] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
+  const [validationError, setValidationError] = useState('');
+
+  // Billing information state - consolidated structure
+  const [billingInfo, setBillingInfo] = useState<BillingInformation>({
     firstName: '',
     lastName: '',
     email: '',
-    phone: ''
-  });
-  
-  const [billingAddress, setBillingAddress] = useState({
+    phone: '',
     address: '',
+    address2: '',
     city: '',
     state: '',
     zipCode: ''
   });
 
-  const [emailValidationToken, setEmailValidationToken] = useState('');
-  const [paymentError, setPaymentError] = useState<string | null>(null);
-  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  // Mock payment method card ref for PaymentMethodCard
+  const cardContainerRef = React.useRef<HTMLDivElement>(null);
 
-  // Enhanced email validation hook
-  const {
-    isValidating,
-    isValidated,
-    validationError,
-    validateEmail,
-    resetValidation
-  } = useEmailValidation({
-    emailAddress: billingContact.email,
-    context: 'classifieds',
-    classifiedId: classifiedId
-  });
+  // Fetch payment data
+  useEffect(() => {
+    const fetchPaymentData = async () => {
+      if (!classifiedId || !customerId) {
+        setError('Missing required parameters');
+        setIsLoading(false);
+        return;
+      }
 
-  // Fetch classified categories
-  const { data: categoriesData } = useClassifiedCategories();
+      try {
+        // Mock data for development - replace with actual API call
+        const mockData: PaymentData = {
+          classified: {
+            classifiedId: classifiedId,
+            title: 'Premium Hay Bales - High Quality',
+            description: 'Fresh, premium quality hay bales perfect for livestock feed. Stored in dry conditions.',
+            categoryId: '1',
+            price: 12.50,
+            perUnitType: 'Bale',
+            city: 'Bakersfield',
+            state: 'CA',
+            postalCode: '93301',
+            createDate: new Date().toISOString(),
+            adTypeId: '1'
+          },
+          customer: {
+            firstName: 'John',
+            lastName: 'Doe',
+            emailAddress: 'john.doe@example.com',
+            phoneNumber: '555-123-4567',
+            address: '123 Farm Road',
+            city: 'Bakersfield',
+            state: 'CA',
+            postalCode: '93301'
+          }
+        };
+        
+        setPaymentData(mockData);
+        setIsLoading(false);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load payment data');
+        setIsLoading(false);
+      }
+    };
 
-  // Fetch classified data
-  const { data: classifiedData, isLoading, error } = useQuery({
-    queryKey: ['classified-payment', classifiedId],
-    queryFn: async (): Promise<ClassifiedPaymentData> => {
-      console.log('Fetching classified data for payment:', classifiedId);
-      const response = await apiClient.get(`/classified/${classifiedId}/customer`, { requireAuth: false });
-      
-      // Type assertion to properly handle the response
-      const apiResponse = response as { response: ClassifiedPaymentData };
-      return apiResponse.response;
-    },
-    enabled: !!classifiedId && classifiedId !== ':classifiedId'
-  });
+    fetchPaymentData();
+  }, [classifiedId, customerId]);
 
-  // Transform classified data for ClassifiedCard
-  const transformedClassified: Classified | null = classifiedData?.classified ? {
-    id: classifiedData.classified.classifiedId,
-    title: classifiedData.classified.title,
-    description: classifiedData.classified.description,
-    category: (() => {
-      // Find the actual category name from the categories API
-      const categoryMatch = categoriesData?.response?.find(
-        cat => cat.categoryId === classifiedData.classified.categoryId
-      );
-      return categoryMatch?.name || 'General';
-    })(),
-    price: classifiedData.classified.price,
-    perUnitType: classifiedData.classified.perUnitType,
-    city: classifiedData.classified.city,
-    state: classifiedData.classified.state,
-    zipCode: classifiedData.classified.postalCode,
-    email: classifiedData.customer?.emailAddress || '',
-    phone: classifiedData.customer?.phoneNumber || '',
-    images: [],
-    createdAt: classifiedData.classified.createDate,
-    expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days from now
-    contactObfuscated: false,
-    pricingTier: classifiedData.classified.adTypeId || '1'
-  } : null;
-
-  const handleEmailValidationTokenChange = (value: string) => {
-    console.log('🔑 Email validation token changed:', { hasValue: !!value });
-    setEmailValidationToken(value);
-    if (!value.trim()) {
-      resetValidation();
+  // Initialize billing info from customer data
+  useEffect(() => {
+    if (paymentData?.customer) {
+      setBillingInfo({
+        firstName: paymentData.customer.firstName || '',
+        lastName: paymentData.customer.lastName || '',
+        email: paymentData.customer.emailAddress || '',
+        phone: paymentData.customer.phoneNumber || '',
+        address: paymentData.customer.address || '',
+        address2: '',
+        city: paymentData.customer.city || '',
+        state: paymentData.customer.state || '',
+        zipCode: paymentData.customer.postalCode || ''
+      });
     }
-    // Clear payment error when user makes changes
-    if (paymentError) {
-      setPaymentError(null);
-    }
+  }, [paymentData?.customer]);
+
+  // Get the customer email for validation
+  const getCustomerEmail = () => {
+    return paymentData?.customer?.emailAddress || '';
   };
 
-  const handleEmailValidation = async () => {
-    console.log('✉️ Validating email with token:', emailValidationToken);
-    await validateEmail(emailValidationToken);
+  // Prepare copy from ad data
+  const copyFromAdData: BillingInformation | undefined = paymentData?.customer ? {
+    firstName: paymentData.customer.firstName || '',
+    lastName: paymentData.customer.lastName || '',
+    email: paymentData.customer.emailAddress || '',
+    phone: normalizePhoneForSquare(paymentData.customer.phoneNumber || ''),
+    address: paymentData.customer.address || '',
+    address2: '',
+    city: paymentData.customer.city || '',
+    state: paymentData.customer.state || '',
+    zipCode: paymentData.customer.postalCode || ''
+  } : undefined;
+
+  const handleBillingInfoChange = (updatedBillingInfo: BillingInformation, emailToken: string) => {
+    setBillingInfo(updatedBillingInfo);
+    setEmailValidationToken(emailToken);
   };
 
-  const handleBillingInfoChange = (contact: any, address: any, emailToken: string) => {
-    console.log('📝 Billing info updated:', { contact, address, hasToken: !!emailToken });
-    setBillingContact(contact);
-    setBillingAddress(address);
-    // Clear payment error when user makes changes
-    if (paymentError) {
-      setPaymentError(null);
-    }
-  };
-
-  const handlePaymentSuccess = async (tokenData: any) => {
-    if (!classifiedId) {
-      setPaymentError("Missing classified ID");
-      return;
-    }
-
-    // Clear any previous errors
-    setPaymentError(null);
-    setIsProcessingPayment(true);
-
-    // Validate all required fields
-    const validationError = validatePaymentFields(billingContact, billingAddress);
-    if (validationError) {
-      setPaymentError(validationError);
-      setIsProcessingPayment(false);
-      return;
-    }
-
+  // Email validation handler
+  const handleEmailValidated = async () => {
     if (!emailValidationToken.trim()) {
-      setPaymentError("Please validate your email address first");
-      setIsProcessingPayment(false);
+      toast({
+        title: "Validation Error",
+        description: "Please enter a verification code",
+        variant: "destructive",
+      });
       return;
     }
 
-    try {
-      // Format phone number specifically for Square API
-      const formattedPhone = formatPhoneForSquareAPI(billingContact.phone);
-      
-      console.log('📞 Phone number formatting:', {
-        original: billingContact.phone,
-        formatted: formattedPhone
-      });
-
-      if (!formattedPhone) {
-        setPaymentError("Please enter a valid US phone number");
-        setIsProcessingPayment(false);
-        return;
-      }
-
-      // Prepare the payment payload with correct field mapping for the API
-      const paymentPayload = {
-        referenceId: classifiedId,
-        paymentToken: tokenData.token,
-        // Only include verificationToken if we have a valid one that's different from paymentToken
-        ...(tokenData.verificationToken && tokenData.verificationToken !== tokenData.token 
-          ? { verificationToken: tokenData.verificationToken }
-          : {}),
-        emailValidationToken: emailValidationToken,
-        // Map billing fields to the expected API field names
-        firstName: billingContact.firstName,
-        lastName: billingContact.lastName,
-        emailAddress: billingContact.email,
-        phoneNumber: formattedPhone, // Use the properly formatted phone number
-        addressLine1: billingAddress.address,
-        city: billingAddress.city,
-        state: billingAddress.state,
-        postalCode: billingAddress.zipCode,
-        cardDetails: tokenData.details,
-        amount: classifiedData?.classified?.price || 0,
-        currency: 'USD'
-      };
-
-      console.log('💳 Payment payload being sent:', {
-        referenceId: paymentPayload.referenceId,
-        hasPaymentToken: !!paymentPayload.paymentToken,
-        paymentTokenLength: paymentPayload.paymentToken?.length,
-        hasVerificationToken: !!(paymentPayload as any).verificationToken,
-        verificationTokenLength: (paymentPayload as any).verificationToken?.length,
-        verificationTokenStart: (paymentPayload as any).verificationToken?.substring(0, 10) + '...',
-        hasEmailValidationToken: !!paymentPayload.emailValidationToken,
-        emailValidationTokenLength: paymentPayload.emailValidationToken?.length,
-        // Log the specific fields that were failing
-        firstName: paymentPayload.firstName,
-        lastName: paymentPayload.lastName,
-        emailAddress: paymentPayload.emailAddress,
-        phoneNumber: paymentPayload.phoneNumber,
-        addressLine1: paymentPayload.addressLine1,
-        city: paymentPayload.city,
-        state: paymentPayload.state,
-        postalCode: paymentPayload.postalCode,
-        amount: paymentPayload.amount,
-        currency: paymentPayload.currency
-      });
-
-      console.log('💳 Full payment payload:', paymentPayload);
-
-      // Submit payment
-      const paymentResponse = await apiClient.post('/classified/payment', paymentPayload, { requireAuth: false });
-      
-      console.log('✅ Payment response received:', paymentResponse);
-
-      // Check response body for error fields and payment status
-      const responseBody = paymentResponse.response as PaymentProcessResponse;
-      const paymentStatus = responseBody?.paymentStatus;
-      const errorStatusCode = responseBody?.errorStatusCode;
-      const errorDetail = responseBody?.errorDetail;
-
-      console.log('💳 Payment status check:', {
-        paymentStatus,
-        errorStatusCode,
-        errorDetail,
-        hasError: !!errorStatusCode || !!errorDetail
-      });
-
-      // Check if payment failed
-      if (paymentStatus === 'PAYMENT_ERROR' || errorStatusCode || errorDetail) {
-        console.error('❌ Payment failed with error:', {
-          paymentStatus,
-          errorStatusCode,
-          errorDetail
-        });
-
-        const errorMessage = errorDetail || `Payment failed with status: ${paymentStatus}`;
-        setPaymentError(errorMessage);
-        setIsProcessingPayment(false);
-        return;
-      }
-
-      // Payment successful - proceed to confirmation
+    const emailAddress = getCustomerEmail();
+    if (!emailAddress) {
       toast({
-        title: "Payment Successful",
-        description: "Your payment has been processed successfully.",
+        title: "Validation Error",
+        description: "Email address is missing",
+        variant: "destructive",
       });
+      return;
+    }
 
-      // Navigate to confirmation page
-      navigate(`/classifieds/payment/confirmation/${classifiedId}?paymentSuccess=true`);
+    setIsValidating(true);
+    setValidationError('');
+    
+    try {
+      console.log('📧 Using email for validation:', emailAddress);
+      
+      // Call the email validation endpoint
+      const response = await fetch(getApiUrl('/email/validate'), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          token: emailValidationToken.trim(),
+          emailAddress: emailAddress,
+          context: 'classifieds',
+          classifiedId: classifiedId
+        })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to validate email');
+      }
+      
+      // If successful
+      setIsEmailValidated(true);
+      toast({
+        title: "Email Validated",
+        description: "Your email has been successfully validated.",
+      });
       
     } catch (error) {
-      console.error('❌ Payment failed:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Payment processing failed';
-      setPaymentError(errorMessage);
-      setIsProcessingPayment(false);
+      console.error('❌ Email validation error:', error);
+      setValidationError(error instanceof Error ? error.message : 'Failed to validate email');
+      toast({
+        title: "Validation Failed",
+        description: error instanceof Error ? error.message : 'Failed to validate email',
+        variant: "destructive",
+      });
+    } finally {
+      setIsValidating(false);
     }
   };
 
-  const handlePaymentError = (errorMessage: string) => {
-    setPaymentError(errorMessage);
-    setIsProcessingPayment(false);
+  const handlePayment = () => {
+    setIsProcessing(true);
+    // Simulate payment processing
+    setTimeout(() => {
+      setIsProcessing(false);
+      toast({
+        title: "Payment Successful",
+        description: "Your classified ad has been published successfully!",
+      });
+      navigate('/classifieds/payment-confirmation');
+    }, 2000);
   };
 
+  // Show loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col">
-        <ClassifiedsHeader />
-        <main className="flex-grow bg-gray-50 py-8">
-          <div className="container mx-auto px-4 max-w-6xl">
-            <div className="flex items-center justify-center py-12">
-              <div className="text-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                <p className="text-gray-600">Loading payment form...</p>
-              </div>
-            </div>
-          </div>
-        </main>
-        <ClassifiedsFooter />
-      </div>
+      <PaymentLayout>
+        <div className="text-center py-12">
+          <h2 className="text-xl font-semibold mb-4">Loading Payment Information</h2>
+          <p className="text-gray-600">Please wait while we retrieve your ad details...</p>
+        </div>
+      </PaymentLayout>
     );
   }
 
-  if (error || !classifiedData) {
+  // Show error state
+  if (error) {
     return (
-      <div className="min-h-screen flex flex-col">
-        <ClassifiedsHeader />
-        <main className="flex-grow bg-gray-50 py-8">
-          <div className="container mx-auto px-4 max-w-6xl">
-            <div className="text-center py-12">
-              <h2 className="text-xl font-semibold text-red-600 mb-4">Error Loading Payment Form</h2>
-              <p className="text-gray-600">Unable to load classified information. Please try again.</p>
-            </div>
-          </div>
-        </main>
-        <ClassifiedsFooter />
-      </div>
+      <PaymentLayout>
+        <div className="text-center py-12">
+          <h2 className="text-xl font-semibold text-red-600 mb-4">Error Loading Payment Data</h2>
+          <p className="text-gray-600">{error}</p>
+        </div>
+      </PaymentLayout>
+    );
+  }
+
+  // Show missing data error
+  if (!paymentData) {
+    return (
+      <PaymentLayout>
+        <div className="text-center py-12">
+          <h2 className="text-xl font-semibold text-red-600 mb-4">Payment Data Not Found</h2>
+          <p className="text-gray-600">Unable to load payment information.</p>
+        </div>
+      </PaymentLayout>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <ClassifiedsHeader />
-      <main className="flex-grow bg-gray-50 py-8">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Complete Your Purchase</h1>
-            <p className="text-gray-600">Review your ad details and complete payment</p>
+    <PaymentLayout>
+      <div className="grid gap-8 md:grid-cols-2">
+        {/* Left Column - Classified Details */}
+        <div className="space-y-6">
+          <ClassifiedDetailsCard 
+            classified={paymentData.classified}
+            customer={paymentData.customer}
+          />
+        </div>
+
+        {/* Right Column - Payment Information */}
+        <div className="space-y-6">
+          {/* Email Validation Card - CRITICAL COMPONENT */}
+          <EmailValidationCard
+            validationToken={emailValidationToken}
+            onChange={setEmailValidationToken}
+            emailAddress={getCustomerEmail()}
+            helperText={`We have sent a confirmation email to ${getCustomerEmail()}. Please check your email and enter the token below to validate.`}
+            isValidated={isEmailValidated}
+            isValidating={isValidating}
+            validationError={validationError}
+            onValidate={handleEmailValidated}
+          />
+
+          {/* Payment Information Card - Disabled until email is validated */}
+          <div className={!isEmailValidated ? "opacity-50 pointer-events-none" : ""}>
+            <h3 className="text-lg font-medium mb-2">Billing Information</h3>
+            <p className="text-sm text-gray-500 mb-4">
+              {!isEmailValidated ? "Please validate your email address to enable this section" : "Please enter your billing information below"}
+            </p>
+            <PaymentInformationCard
+              initialBillingInfo={billingInfo}
+              onBillingInfoChange={handleBillingInfoChange}
+              emailValidationToken={emailValidationToken}
+              isEmailValidated={isEmailValidated}
+              copyFromAdData={copyFromAdData}
+              showCopyButton={true}
+            />
           </div>
 
-          {/* Payment Error Alert */}
-          {paymentError && (
-            <div className="mb-6">
-              <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
-                  <strong>Payment Error:</strong> {paymentError}
-                </AlertDescription>
-              </Alert>
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Left Column */}
-            <div className="space-y-6">
-              <NewOrderSummaryCard classified={classifiedData.classified} />
-              {transformedClassified && (
-                <div>
-                  <h3 className="text-lg font-semibold mb-4">Your Ad Preview</h3>
-                  <ClassifiedCard classified={transformedClassified} />
-                </div>
-              )}
-            </div>
-
-            {/* Right Column */}
-            <div className="space-y-6">
-              <EmailValidationCard
-                validationToken={emailValidationToken}
-                onChange={handleEmailValidationTokenChange}
-                emailAddress={classifiedData.customer?.emailAddress}
-                helperText="Please validate your email address to continue with payment"
-                isValidating={isValidating}
-                isValidated={isValidated}
-                validationError={validationError}
-                onValidate={handleEmailValidation}
-              />
-
-              {/* Payment Information - Only enabled after email validation, NO payment button */}
-              <div className={!isValidated ? 'opacity-50 pointer-events-none' : ''}>
-                <PaymentInformationCard
-                  classified={classifiedData.classified}
-                  customer={classifiedData.customer}
-                  onBillingInfoChange={handleBillingInfoChange}
-                  emailValidationToken={emailValidationToken}
-                  isEmailValidated={isValidated}
-                  showPaymentButton={false}
-                />
-              </div>
-
-              {/* Payment Method - Only enabled after email validation, THIS IS THE ONLY PAYMENT BUTTON */}
-              <div className={!isValidated ? 'opacity-50 pointer-events-none' : ''}>
-                <ReactSquareCard
-                  billingContact={billingContact}
-                  billingAddress={billingAddress}
-                  onPaymentSuccess={handlePaymentSuccess}
-                  onPaymentError={handlePaymentError}
-                  disabled={!isValidated || !emailValidationToken.trim() || isProcessingPayment}
-                  buttonText={isProcessingPayment ? "Processing..." : "Pay"}
-                />
-              </div>
-            </div>
+          {/* Payment Method Card - Disabled until email is validated */}
+          <div className={!isEmailValidated ? "opacity-50 pointer-events-none" : ""}>
+            <h3 className="text-lg font-medium mb-2">Payment Method</h3>
+            <p className="text-sm text-gray-500 mb-4">
+              {!isEmailValidated ? "Please validate your email address to enable this section" : "Please enter your payment information below"}
+            </p>
+            <PaymentMethodCard
+              cardContainerRef={cardContainerRef}
+              error={null}
+              isProcessing={isProcessing}
+              onPayment={handlePayment}
+              isCardReady={isEmailValidated}
+            />
           </div>
         </div>
-      </main>
-      <ClassifiedsFooter />
-    </div>
+      </div>
+    </PaymentLayout>
   );
 };
 

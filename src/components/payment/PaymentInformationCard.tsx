@@ -7,86 +7,53 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { User, Copy } from 'lucide-react';
 import { formatPhoneAsUserTypes } from '@/utils/phoneFormatting';
 
-interface Contact {
-  contactId: string;
-  createDate: string;
-  lastUpdateDate: string;
-  producerId: string;
-  producerLocationId: string;
-  producerContactType: string;
-  displayContactType: string;
-  genericContactName?: string;
+interface BillingInformation {
   firstName: string;
   lastName: string;
-  title?: string;
-  phoneNumber: string;
-  cellPhoneNumber?: string;
-  emailConfirmed: boolean;
-  emailAddress: string;
-}
-
-interface AccountData {
-  primaryLocation?: {
-    addressLine1?: string;
-    addressLine2?: string;
-    city?: string;
-    state?: string;
-    postalCode?: string;
-  };
-  contacts?: Contact[];
+  email: string;
+  phone: string;
+  address: string;
+  address2: string;
+  city: string;
+  state: string;
+  zipCode: string;
 }
 
 interface PaymentInformationCardProps {
-  classified: any;
-  customer: any;
-  onBillingInfoChange: (contact: any, address: any, emailToken: string) => void;
+  initialBillingInfo: BillingInformation;
+  onBillingInfoChange: (billingInfo: BillingInformation, emailToken: string) => void;
   emailValidationToken: string;
   isEmailValidated: boolean;
-  showPaymentButton?: boolean;
-  accountData?: AccountData; // New optional prop
+  copyFromAdData?: BillingInformation; // Optional data to copy from ad
+  showCopyButton?: boolean; // Control whether to show the copy button
 }
 
 const PaymentInformationCard = ({
-  classified,
-  customer,
+  initialBillingInfo,
   onBillingInfoChange,
   emailValidationToken,
   isEmailValidated,
-  showPaymentButton = false,
-  accountData // New prop
+  copyFromAdData,
+  showCopyButton = true
 }: PaymentInformationCardProps) => {
-  const [billingContact, setBillingContact] = useState({
-    firstName: customer?.firstName || '',
-    lastName: customer?.lastName || '',
-    email: customer?.emailAddress || '',
-    phone: customer?.phoneNumber || ''
-  });
+  const [billingInfo, setBillingInfo] = useState<BillingInformation>(initialBillingInfo);
 
-  const [billingAddress, setBillingAddress] = useState({
-    address: customer?.address || '',
-    address2: '',
-    city: customer?.city || '',
-    state: customer?.state || '',
-    zipCode: customer?.postalCode || ''
-  });
+  // Update internal state when initial values change
+  useEffect(() => {
+    setBillingInfo(initialBillingInfo);
+  }, [initialBillingInfo]);
 
   useEffect(() => {
-    onBillingInfoChange(billingContact, billingAddress, emailValidationToken);
-  }, [billingContact, billingAddress, emailValidationToken, onBillingInfoChange]);
+    onBillingInfoChange(billingInfo, emailValidationToken);
+  }, [billingInfo, emailValidationToken, onBillingInfoChange]);
 
-  const handleContactChange = (field: string, value: string) => {
+  const handleFieldChange = (field: keyof BillingInformation, value: string) => {
     let processedValue = value;
     
     // Format phone number as user types
     if (field === 'phone') {
       processedValue = formatPhoneAsUserTypes(value);
     }
-    
-    setBillingContact(prev => ({ ...prev, [field]: processedValue }));
-  };
-
-  const handleAddressChange = (field: string, value: string) => {
-    let processedValue = value;
     
     // Format ZIP code to acceptable formats
     if (field === 'zipCode') {
@@ -100,34 +67,14 @@ const PaymentInformationCard = ({
       }
     }
     
-    setBillingAddress(prev => ({ ...prev, [field]: processedValue }));
+    setBillingInfo(prev => ({ ...prev, [field]: processedValue }));
   };
 
   const handleCopyFromAd = () => {
-    if (!isEmailValidated) return;
+    if (!isEmailValidated || !copyFromAdData) return;
     
-    // Find the ADMIN contact from account data
-    const adminContact = accountData?.contacts?.find(
-      contact => contact.producerContactType === 'ADMIN'
-    );
-    
-    const sourceLocation = accountData?.primaryLocation;
-    
-    // Prioritize account data (ADMIN contact) if available, otherwise use customer data
-    setBillingContact({
-      firstName: adminContact?.firstName || customer?.firstName || '',
-      lastName: adminContact?.lastName || customer?.lastName || '',
-      email: adminContact?.emailAddress || customer?.emailAddress || '',
-      phone: formatPhoneAsUserTypes(adminContact?.phoneNumber || customer?.phoneNumber || '')
-    });
-
-    setBillingAddress({
-      address: sourceLocation?.addressLine1 || customer?.address || '',
-      address2: sourceLocation?.addressLine2 || '',
-      city: sourceLocation?.city || customer?.city || '',
-      state: sourceLocation?.state || customer?.state || '',
-      zipCode: sourceLocation?.postalCode || customer?.postalCode || ''
-    });
+    // Copy all data from the ad data
+    setBillingInfo(copyFromAdData);
   };
 
   const US_STATES = [
@@ -191,17 +138,19 @@ const PaymentInformationCard = ({
             <User className="h-5 w-5 text-greenyp-600" />
             Billing Information
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleCopyFromAd}
-            disabled={!isEmailValidated}
-            className="text-xs"
-            title={!isEmailValidated ? "Email must be validated before copying from ad" : "Copy information from account data"}
-          >
-            <Copy className="w-3 h-3 mr-1" />
-            Copy from Ad
-          </Button>
+          {showCopyButton && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleCopyFromAd}
+              disabled={!isEmailValidated || !copyFromAdData}
+              className="text-xs"
+              title={!isEmailValidated ? "Email must be validated before copying from ad" : "Copy information from account data"}
+            >
+              <Copy className="w-3 h-3 mr-1" />
+              Copy from Ad
+            </Button>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -211,8 +160,8 @@ const PaymentInformationCard = ({
             <Label htmlFor="firstName">First Name</Label>
             <Input
               id="firstName"
-              value={billingContact.firstName}
-              onChange={(e) => handleContactChange('firstName', e.target.value)}
+              value={billingInfo.firstName}
+              onChange={(e) => handleFieldChange('firstName', e.target.value)}
               placeholder="John"
               required
             />
@@ -221,8 +170,8 @@ const PaymentInformationCard = ({
             <Label htmlFor="lastName">Last Name</Label>
             <Input
               id="lastName"
-              value={billingContact.lastName}
-              onChange={(e) => handleContactChange('lastName', e.target.value)}
+              value={billingInfo.lastName}
+              onChange={(e) => handleFieldChange('lastName', e.target.value)}
               placeholder="Doe"
               required
             />
@@ -234,8 +183,8 @@ const PaymentInformationCard = ({
           <Label htmlFor="address">Address Line 1</Label>
           <Input
             id="address"
-            value={billingAddress.address}
-            onChange={(e) => handleAddressChange('address', e.target.value)}
+            value={billingInfo.address}
+            onChange={(e) => handleFieldChange('address', e.target.value)}
             placeholder="123 Main St"
             required
           />
@@ -246,8 +195,8 @@ const PaymentInformationCard = ({
           <Label htmlFor="address2">Address Line 2</Label>
           <Input
             id="address2"
-            value={billingAddress.address2}
-            onChange={(e) => handleAddressChange('address2', e.target.value)}
+            value={billingInfo.address2}
+            onChange={(e) => handleFieldChange('address2', e.target.value)}
             placeholder="Apt 4B, Suite 100, etc. (optional)"
           />
         </div>
@@ -257,8 +206,8 @@ const PaymentInformationCard = ({
           <Label htmlFor="city">City</Label>
           <Input
             id="city"
-            value={billingAddress.city}
-            onChange={(e) => handleAddressChange('city', e.target.value)}
+            value={billingInfo.city}
+            onChange={(e) => handleFieldChange('city', e.target.value)}
             placeholder="New York"
             required
           />
@@ -268,7 +217,7 @@ const PaymentInformationCard = ({
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Label htmlFor="state">State</Label>
-            <Select value={billingAddress.state} onValueChange={(value) => handleAddressChange('state', value)}>
+            <Select value={billingInfo.state} onValueChange={(value) => handleFieldChange('state', value)}>
               <SelectTrigger>
                 <SelectValue placeholder="Select state" />
               </SelectTrigger>
@@ -285,8 +234,8 @@ const PaymentInformationCard = ({
             <Label htmlFor="zipCode">ZIP Code</Label>
             <Input
               id="zipCode"
-              value={billingAddress.zipCode}
-              onChange={(e) => handleAddressChange('zipCode', e.target.value)}
+              value={billingInfo.zipCode}
+              onChange={(e) => handleFieldChange('zipCode', e.target.value)}
               placeholder="12345 or 12345-6789"
               required
             />
@@ -299,25 +248,27 @@ const PaymentInformationCard = ({
           <Input
             id="phone"
             type="tel"
-            value={billingContact.phone}
-            onChange={(e) => handleContactChange('phone', e.target.value)}
+            value={billingInfo.phone}
+            onChange={(e) => handleFieldChange('phone', e.target.value)}
             placeholder="(555) 123-4567"
             required
           />
         </div>
 
-        {/* LINE SEVEN: Email Address */}
+        {/* LINE SEVEN: Email Address - EDITABLE */}
         <div>
           <Label htmlFor="email">Email Address</Label>
           <Input
             id="email"
             type="email"
-            value={billingContact.email}
-            onChange={(e) => handleContactChange('email', e.target.value)}
+            value={billingInfo.email}
+            onChange={(e) => handleFieldChange('email', e.target.value)}
             placeholder="john@example.com"
             required
-            disabled
           />
+          <p className="text-xs text-gray-500 mt-1">
+            This email address will be used for billing purposes only. It will not be displayed publicly.
+          </p>
         </div>
       </CardContent>
     </Card>

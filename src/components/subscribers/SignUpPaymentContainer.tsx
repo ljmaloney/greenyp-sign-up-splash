@@ -1,21 +1,33 @@
-
 import React, { useState, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { useSubscriptions } from '@/hooks/useSubscriptions';
 import { useLineOfBusiness } from '@/hooks/useLineOfBusiness';
 import { findSubscriptionMatch } from '@/utils/subscriptionMatching';
 import EmailValidationCard from '@/components/payment/EmailValidationCard';
 import PaymentInformationCard from '@/components/payment/PaymentInformationCard';
-import ReactSquareSubscriptionCard from './ReactSquareSubscriptionCard';
-import SubscriptionDetailsCard from './SubscriptionDetailsCard';
-import BusinessDetailsCard from './BusinessDetailsCard';
+import ReactSquareSubscriptionCard from '@/components/subscribers/ReactSquareSubscriptionCard';
+import SubscriptionDetailsCard from '@/components/subscribers/SubscriptionDetailsCard';
+import BusinessDetailsCard from '@/components/subscribers/BusinessDetailsCard';
 import { getApiUrl } from '@/config/api';
 import { Producer, PrimaryLocation } from '@/services/accountService';
+import { normalizePhoneForSquare } from '@/utils/phoneUtils';
+
+interface BillingInformation {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: string;
+  address2: string;
+  city: string;
+  state: string;
+  zipCode: string;
+}
 
 const SignUpPaymentContainer = () => {
   const [searchParams] = useSearchParams();
-    const { toast } = useToast();
+  const { toast } = useToast();
   
   // Extract data from URL params
   const producerId = searchParams.get('producerId');
@@ -29,14 +41,12 @@ const SignUpPaymentContainer = () => {
   const { data: subscriptions, isLoading: subscriptionsLoading } = useSubscriptions();
   const { data: lineOfBusinessData } = useLineOfBusiness();
 
-  const [billingContact, setBillingContact] = useState({
+  // Updated billing information state using consolidated structure
+  const [billingInfo, setBillingInfo] = useState<BillingInformation>({
     firstName: searchParams.get('firstName') || '',
     lastName: searchParams.get('lastName') || '',
     email: searchParams.get('email') || '',
-    phone: searchParams.get('phone') || ''
-  });
-  
-  const [billingAddress, setBillingAddress] = useState({
+    phone: searchParams.get('phone') || '',
     address: searchParams.get('address') || '',
     address2: '',
     city: searchParams.get('city') || '',
@@ -120,10 +130,10 @@ const SignUpPaymentContainer = () => {
     fetchProducerData();
   }, [producerId, toast]);
 
-  const handleBillingInfoChange = (contact: any, address: any, emailToken: string) => {
-    setBillingContact(contact);
-    setBillingAddress(address);
-    if (emailToken) {
+  // Updated handler to work with new PaymentInformationCard interface
+  const handleBillingInfoChange = (updatedBillingInfo: BillingInformation, emailToken: string) => {
+    setBillingInfo(updatedBillingInfo);
+    if (emailToken && emailToken !== emailValidationToken) {
       setEmailValidationToken(emailToken);
     }
   };
@@ -140,8 +150,19 @@ const SignUpPaymentContainer = () => {
       }
     }
     
-    // Fallback to billing contact email
-    return billingContact.email || '';
+    // Fallback to billing info email
+    return billingInfo.email || '';
+  };
+
+  // Get the admin contact information for copying
+  const getAdminContact = () => {
+    if (Array.isArray(contacts) && contacts.length > 0) {
+      const adminContact = contacts.find(c => c.producerContactType === 'ADMIN');
+      if (adminContact) {
+        return adminContact;
+      }
+    }
+    return null;
   };
 
   const handleEmailValidated = async () => {
@@ -209,6 +230,27 @@ const SignUpPaymentContainer = () => {
     }
   };
 
+  // Prepare copy from account data for the new interface - FIXED VERSION
+  const copyFromAccountData: BillingInformation | undefined = (() => {
+    const adminContact = getAdminContact();
+    
+    if (!adminContact || !primaryLocation) {
+      return undefined;
+    }
+
+    return {
+      firstName: adminContact.firstName || '',
+      lastName: adminContact.lastName || '',
+      email: adminContact.emailAddress || '',
+      phone: normalizePhoneForSquare(adminContact.phoneNumber || ''),
+      address: primaryLocation.addressLine1 || '',
+      address2: primaryLocation.addressLine2 || '',
+      city: primaryLocation.city || '',
+      state: primaryLocation.state || '',
+      zipCode: primaryLocation.postalCode || ''
+    };
+  })();
+
   // Show loading state
   if (isLoading) {
     return (
@@ -233,7 +275,6 @@ const SignUpPaymentContainer = () => {
   return (
     <div className="grid gap-8 md:grid-cols-2">
       <div className="space-y-6">
-
         <SubscriptionDetailsCard
           subscription={selectedSubscription}
           isLoading={subscriptionsLoading}
@@ -255,22 +296,18 @@ const SignUpPaymentContainer = () => {
           isValidated={isEmailValidated}
           isValidating={isValidating}
           validationError={validationError}
-          onValidate={() => handleEmailValidated()}
+          onValidate={handleEmailValidated}
         />
         <div className={!isEmailValidated ? "opacity-50 pointer-events-none" : ""}>  
           <h3 className="text-lg font-medium mb-2">Billing Information</h3>
           <p className="text-sm text-gray-500 mb-4">{!isEmailValidated ? "Please validate your email address to enable this section" : "Please enter your billing information below"}</p>
           <PaymentInformationCard
-            classified={{}}
-            customer={{
-              firstName: billingContact.firstName || '',
-              lastName: billingContact.lastName || '',
-              emailAddress: billingContact.email || '',
-              phoneNumber: billingContact.phone || ''
-            }}
+            initialBillingInfo={billingInfo}
             onBillingInfoChange={handleBillingInfoChange}
             emailValidationToken={emailValidationToken}
             isEmailValidated={isEmailValidated}
+            copyFromAdData={copyFromAccountData}
+            showCopyButton={true}
           />
         </div>
         
@@ -279,16 +316,16 @@ const SignUpPaymentContainer = () => {
           <p className="text-sm text-gray-500 mb-4">{!isEmailValidated ? "Please validate your email address to enable this section" : "Please enter your payment information below"}</p>
           <ReactSquareSubscriptionCard
             billingContact={{
-              firstName: billingContact.firstName || '',
-              lastName: billingContact.lastName || '',
-              email: billingContact.email || '',
-              phone: billingContact.phone || ''
+              firstName: billingInfo.firstName || '',
+              lastName: billingInfo.lastName || '',
+              email: billingInfo.email || '',
+              phone: billingInfo.phone || ''
             }}
             billingAddress={{
-              address: billingAddress.address || '',
-              city: billingAddress.city || '',
-              state: billingAddress.state || '',
-              zipCode: billingAddress.zipCode || ''
+              address: billingInfo.address || '',
+              city: billingInfo.city || '',
+              state: billingInfo.state || '',
+              zipCode: billingInfo.zipCode || ''
             }}
             emailValidationToken={emailValidationToken}
             producerId={producerId || ''}
