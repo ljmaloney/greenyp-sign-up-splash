@@ -8,7 +8,6 @@ import { findSubscriptionMatch } from '@/utils/subscriptionMatching';
 import EmailValidationCard from '@/components/payment/EmailValidationCard';
 import PaymentInformationCard from '@/components/payment/PaymentInformationCard';
 import ReactSquareSubscriptionCard from './ReactSquareSubscriptionCard';
-import SubscriptionSummaryCard from './SubscriptionSummaryCard';
 import SubscriptionDetailsCard from './SubscriptionDetailsCard';
 import BusinessDetailsCard from './BusinessDetailsCard';
 import { getApiUrl } from '@/config/api';
@@ -16,14 +15,10 @@ import { Producer, PrimaryLocation } from '@/services/accountService';
 
 const SignUpPaymentContainer = () => {
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
-  const { toast } = useToast();
+    const { toast } = useToast();
   
   // Extract data from URL params
   const producerId = searchParams.get('producerId');
-  const subscriptionPlan = searchParams.get('plan');
-  const subscriptionPrice = searchParams.get('planPrice');
-  
   const [businessName, setBusinessName] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [producer, setProducer] = useState<Producer | null>(null);
