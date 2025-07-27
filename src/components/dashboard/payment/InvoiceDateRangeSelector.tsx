@@ -1,12 +1,11 @@
-
 import React from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card.tsx";
-import { Button } from "@/components/ui/button.tsx";
-import { Calendar } from "@/components/ui/calendar.tsx";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover.tsx";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
-import { cn } from '@/lib/utils.ts';
+import { cn } from '@/lib/utils';
 
 interface InvoiceDateRangeSelectorProps {
   startDate: Date | undefined;
@@ -69,8 +68,8 @@ const InvoiceDateRangeSelector = ({
           </Button>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex-1 space-y-2">
             <label className="text-sm font-medium">Start Date</label>
             <Popover>
               <PopoverTrigger asChild>
@@ -96,7 +95,7 @@ const InvoiceDateRangeSelector = ({
             </Popover>
           </div>
           
-          <div className="space-y-2">
+          <div className="flex-1 space-y-2">
             <label className="text-sm font-medium">End Date</label>
             <Popover>
               <PopoverTrigger asChild>
@@ -121,15 +120,17 @@ const InvoiceDateRangeSelector = ({
               </PopoverContent>
             </Popover>
           </div>
+
+          <div className="flex items-end">
+            <Button 
+              onClick={onSearch} 
+              disabled={!startDate || !endDate}
+              className="w-full md:w-auto"
+            >
+              Search Invoices
+            </Button>
+          </div>
         </div>
-        
-        <Button 
-          onClick={onSearch} 
-          className="w-full"
-          disabled={!startDate || !endDate}
-        >
-          Search Invoices
-        </Button>
       </CardContent>
     </Card>
   );
