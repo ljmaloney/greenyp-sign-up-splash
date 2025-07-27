@@ -6,7 +6,7 @@ import { CreditCard, Plus, AlertTriangle } from 'lucide-react';
 import { useAccountData } from '@/hooks/useAccountData';
 import { usePaymentMethod } from '@/hooks/usePaymentMethod';
 import { useReactSquarePaymentDialog } from '@/hooks/useReactSquarePaymentDialog';
-import ReactSquareUpdatePaymentDialog from './ReactSquareUpdatePaymentDialog';
+import UpdatePaymentMethodDialog from './UpdatePaymentMethodDialog';
 
 const PaymentMethodCard = () => {
   const { data: accountData } = useAccountData();
@@ -80,9 +80,10 @@ const PaymentMethodCard = () => {
         </CardContent>
       </Card>
 
-      <ReactSquareUpdatePaymentDialog
+      <UpdatePaymentMethodDialog
         isOpen={isDialogOpen}
         onClose={closeDialog}
+        producerId={producerId || ''}
       />
     </>
   );
