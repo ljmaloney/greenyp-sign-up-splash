@@ -52,7 +52,8 @@ const ReactSquareSubscriptionCard: React.FC<ReactSquareSubscriptionCardProps> = 
       return;
     }
 
-    if (!emailValidationToken || emailValidationToken.trim() === '') {
+    if ( paymentType !== 'PAYMENT_UPDATE'
+         && (!emailValidationToken || emailValidationToken.trim() === '')) {
       setError('Email validation token is required');
       toast({
         title: "Required Information Missing",
