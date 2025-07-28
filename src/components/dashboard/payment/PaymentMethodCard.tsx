@@ -11,8 +11,28 @@ import UpdatePaymentMethodDialog from './UpdatePaymentMethodDialog';
 const PaymentMethodCard = () => {
   const { data: accountData } = useAccountData();
   const producerId = accountData?.producer?.producerId;
-  const { data: paymentMethod, isLoading, error } = usePaymentMethod(producerId || '');
+  
+  // Prevent queries if we don't have a producerId
+  const enabled = !!producerId && producerId !== '';
+  
+  // Only run the query if we have a valid producerId to prevent 404 retry loops
+  const { data: paymentMethod, isLoading, error } = usePaymentMethod(
+    enabled ? producerId || '' : ''
+  );
   const { isDialogOpen, openDialog, closeDialog } = useReactSquarePaymentDialog();
+  
+  // Log producerId availability for debugging
+  console.log('PaymentMethodCard - producerId:', producerId || 'NOT_AVAILABLE');
+  
+  // Only open dialog if we have a valid producer ID
+  const handleOpenDialog = () => {
+    if (!producerId) {
+      console.error('Cannot open payment dialog: Missing producerId');
+      return;
+    }
+    console.log('Opening payment dialog with producerId:', producerId);
+    openDialog();
+  };
 
   if (isLoading) {
     return (
@@ -55,7 +75,7 @@ const PaymentMethodCard = () => {
                 <CreditCard className="h-5 w-5 text-green-600" />
               </div>
               
-              <Button onClick={openDialog} variant="outline" className="w-full">
+              <Button onClick={handleOpenDialog} variant="outline" className="w-full">
                 Update Payment Method
               </Button>
             </div>
@@ -71,7 +91,7 @@ const PaymentMethodCard = () => {
                 </div>
               </div>
               
-              <Button onClick={openDialog} className="w-full">
+              <Button onClick={handleOpenDialog} className="w-full">
                 <Plus className="h-4 w-4 mr-2" />
                 Add Payment Method
               </Button>

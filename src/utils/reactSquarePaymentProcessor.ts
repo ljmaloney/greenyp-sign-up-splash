@@ -16,6 +16,7 @@ export const processReactSquarePayment = async (
   referenceId: string,
   apiClient: any,
   emailValidationToken: string,
+  paymentType: 'SUBSCRIPTION' | 'CLASSIFIED' | 'PAYMENT_UPDATE' = 'CLASSIFIED',
   options?: { 
     isSubscription?: boolean,
     billingContact?: any,
@@ -64,24 +65,43 @@ export const processReactSquarePayment = async (
       }
     };
 
-    console.log('🚀 Sending payment payload to /account/applyInitialPayment:', paymentPayload);
-    
+
+    let apiUrl: string;
+    switch (paymentType) {
+      case 'SUBSCRIPTION':
+        apiUrl = '/account/applyInitialPayment';
+        paymentPayload.producerPayment.actionType = 'APPLY_ONCE'; // One-time payment for subscription
+        paymentPayload.producerPayment.cycleType = 'MONTHLY'; // Monthly cycle for subscription
+        break;
+      case 'PAYMENT_UPDATE':
+        apiUrl = '/account/replace/payment';
+        paymentPayload.producerPayment.actionType = 'UPDATE'; // Update action
+        break;
+      case 'CLASSIFIED':
+      default:
+        apiUrl = '/classified/applyPayment'; // Default to classified payment
+        paymentPayload.producerPayment.actionType = 'APPLY_ONCE'; // One-time payment
+        break;
+    }
+
+    console.log('🚀 Sending payment payload to ' + apiUrl + ':', paymentPayload);
+
     // Make the actual API call
-    const response = await apiClient.post('/account/applyInitialPayment', paymentPayload);
-    
-    // Handle successful response
-    console.log('✅ Payment API response:', response);
-    
-    return {
-      response: {
-        paymentStatus: response?.paymentStatus || 'COMPLETED',
-        orderRef: response?.orderRef || `order_${Date.now()}`,
-        paymentRef: response?.paymentRef || `payment_${Date.now()}`,
-        receiptNumber: response?.receiptNumber || `receipt_${Date.now()}`
-      }
-    };
-    
-  } catch (error) {
+        const response = await apiClient.post(apiUrl, paymentPayload);
+
+        // Handle successful response
+        console.log('✅ Payment API response:', response);
+
+        return {
+          response: {
+            paymentStatus: response?.paymentStatus || 'COMPLETED',
+            orderRef: response?.orderRef || `order_${Date.now()}`,
+            paymentRef: response?.paymentRef || `payment_${Date.now()}`,
+            receiptNumber: response?.receiptNumber || `receipt_${Date.now()}`
+          }
+        };
+
+    } catch (error) {
     console.error('❌ Payment processing error:', error);
     return {
       error: error instanceof Error ? error.message : 'Payment processing failed'

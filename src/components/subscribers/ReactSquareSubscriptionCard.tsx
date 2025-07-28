@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApiClient } from '@/hooks/useApiClient';
@@ -7,35 +6,33 @@ import { validatePaymentFields } from '@/utils/paymentValidation';
 import { processReactSquarePayment } from '@/utils/reactSquarePaymentProcessor';
 import ReactSquareCard from '@/components/payment/ReactSquareCard';
 
-interface BillingContactData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-}
-
-interface BillingAddressData {
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
-}
-
 interface ReactSquareSubscriptionCardProps {
-  billingContact: BillingContactData;
-  billingAddress: BillingAddressData;
+  billingContact: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+  };
+  billingAddress: {
+    address: string;
+    city: string;
+    state: string;
+    zipCode: string;
+  };
   emailValidationToken: string;
   producerId: string;
+  paymentType?: 'SUBSCRIPTION' | 'CLASSIFIED' | 'PAYMENT_UPDATE';
   onPaymentProcessed?: (result: any) => void;
 }
 
-const ReactSquareSubscriptionCard = ({ 
+const ReactSquareSubscriptionCard: React.FC<ReactSquareSubscriptionCardProps> = ({ 
   billingContact, 
   billingAddress, 
   emailValidationToken,
   producerId,
+  paymentType = 'SUBSCRIPTION',
   onPaymentProcessed 
-}: ReactSquareSubscriptionCardProps) => {
+}) => {
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -74,8 +71,8 @@ const ReactSquareSubscriptionCard = ({
         producerId,
         apiClient,
         emailValidationToken,
+        paymentType,
         { 
-          isSubscription: true,
           billingContact: billingContact,
           billingAddress: billingAddress
         }
@@ -83,15 +80,24 @@ const ReactSquareSubscriptionCard = ({
       
       // Check if payment was completed successfully
       if (paymentResponse.response?.paymentStatus === 'COMPLETED') {
-        console.log('Subscription payment completed successfully');
-        
-        toast({
-          title: "Payment Successful",
-          description: "Your subscription payment has been processed successfully.",
-        });
-        
-        // Navigate to subscription confirmation - using the correct path defined in App.tsx
-        navigate('/subscribers/signup/confirmation');
+        if ( paymentType === 'SUBSCRIPTION' ) {
+          console.log('Subscription payment completed successfully');
+
+          toast({
+            title: "Payment Successful",
+            description: "Your subscription payment has been processed successfully.",
+          });
+
+          // Navigate to subscription confirmation - using the correct path defined in App.tsx
+          navigate('/subscribers/signup/confirmation');
+        }
+        else if ( paymentType === 'PAYMENT_UPDATE' ) {
+          console.log('Subscription payment method successfully updated');
+          toast({
+            title: "Payment Method Updated",
+            description: "Your subscription payment method has been updated successfully.",
+          });
+        }
       } else {
         console.log('Subscription payment not completed, status:', paymentResponse.response?.paymentStatus);
         setError('Subscription payment was not completed successfully');

@@ -89,6 +89,7 @@ const Payment = () => {
           initializationPhase={initializationPhase}
           retryCount={retryCount}
           onSquareRetry={retrySquareInitialization}
+          producerId={producerId} // Explicitly pass the producerId
         />
       </div>
     </DashboardLayout>
