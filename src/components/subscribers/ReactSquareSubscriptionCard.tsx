@@ -33,6 +33,7 @@ const ReactSquareSubscriptionCard: React.FC<ReactSquareSubscriptionCardProps> = 
   paymentType = 'SUBSCRIPTION',
   onPaymentProcessed 
 }) => {
+  // Remove all logging to prevent re-render loops
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -40,6 +41,7 @@ const ReactSquareSubscriptionCard: React.FC<ReactSquareSubscriptionCardProps> = 
   const { toast } = useToast();
 
   const handlePaymentSuccess = async (tokenData: any) => {
+    // Payment success handler
     // Validate all required fields before proceeding
     const validationError = validatePaymentFields(billingContact, billingAddress);
     if (validationError) {
@@ -125,6 +127,7 @@ const ReactSquareSubscriptionCard: React.FC<ReactSquareSubscriptionCardProps> = 
   };
 
   const handlePaymentError = (errorMessage: string) => {
+    // Payment error handler
     setError(errorMessage);
     toast({
       title: "Payment Error",
@@ -142,6 +145,7 @@ const ReactSquareSubscriptionCard: React.FC<ReactSquareSubscriptionCardProps> = 
       isProcessing={isProcessing}
       disabled={!emailValidationToken && paymentType !== 'PAYMENT_UPDATE'}
       error={error}
+      paymentType={paymentType}
       buttonText= {paymentType !== 'PAYMENT_UPDATE' ? "Process Subscription Payment" : "Update Payment Method"}
     />
   );

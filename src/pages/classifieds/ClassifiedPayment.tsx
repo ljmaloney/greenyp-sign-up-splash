@@ -521,6 +521,7 @@ const Payment = () => {
                   }}
                   isProcessing={isProcessing}
                   disabled={!isEmailValidated}
+                  paymentType="CLASSIFIED"
                   buttonText="Pay for Classified"
                   error={null}
                 />

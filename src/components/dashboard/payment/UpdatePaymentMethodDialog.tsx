@@ -62,24 +62,7 @@ const UpdatePaymentMethodDialog: React.FC<UpdatePaymentMethodDialogProps> = (pro
   // Destructure props to ensure they're captured
   const { isOpen, onClose, producerId } = props;
   
-  // Debug: Log props on mount and when they change
-  useEffect(() => {
-    console.log('🔄 UpdatePaymentMethodDialog mounted or props changed:', { 
-      isOpen, 
-      producerId 
-    });
-  }, [isOpen, producerId]);
-  
-  // Better validation and debugging for producerId
-  useEffect(() => {
-    if (isOpen) {
-      if (!producerId) {
-        console.error('❌ UpdatePaymentMethodDialog opened without a producerId');
-      } else {
-        console.log('✅ UpdatePaymentMethodDialog has valid producerId:', producerId);
-      }
-    }
-  }, [isOpen, producerId]);
+  // Removed debug useEffect hooks that were causing infinite render loops
   
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -281,6 +264,7 @@ const UpdatePaymentMethodDialog: React.FC<UpdatePaymentMethodDialogProps> = (pro
                 paymentType={"PAYMENT_UPDATE"}
                 emailValidationToken=''
                 producerId={producerId || ''}
+                onPaymentProcessed={handlePayment}
             />
           </div>
           
