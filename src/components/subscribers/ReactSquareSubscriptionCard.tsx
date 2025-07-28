@@ -139,9 +139,9 @@ const ReactSquareSubscriptionCard: React.FC<ReactSquareSubscriptionCardProps> = 
       onPaymentSuccess={handlePaymentSuccess}
       onPaymentError={handlePaymentError}
       isProcessing={isProcessing}
-      disabled={!emailValidationToken}
+      disabled={!emailValidationToken && paymentType !== 'PAYMENT_UPDATE'}
       error={error}
-      buttonText="Process Subscription Payment"
+      buttonText= {paymentType !== 'PAYMENT_UPDATE' ? "Process Subscription Payment" : "Update Payment Method"}
     />
   );
 };
