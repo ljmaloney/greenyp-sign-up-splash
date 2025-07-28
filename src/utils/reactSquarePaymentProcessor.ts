@@ -70,12 +70,12 @@ export const processReactSquarePayment = async (
     switch (paymentType) {
       case 'SUBSCRIPTION':
         apiUrl = '/account/applyInitialPayment';
-        paymentPayload.producerPayment.actionType = 'APPLY_ONCE'; // One-time payment for subscription
+        paymentPayload.producerPayment.actionType = 'APPLY_RECURRING'; // One-time payment for subscription
         paymentPayload.producerPayment.cycleType = 'MONTHLY'; // Monthly cycle for subscription
         break;
       case 'PAYMENT_UPDATE':
         apiUrl = '/account/replace/payment';
-        paymentPayload.producerPayment.actionType = 'UPDATE'; // Update action
+        paymentPayload.producerPayment.actionType = 'REPLACE_EXISTING'; // Update action
         break;
       case 'CLASSIFIED':
       default:
