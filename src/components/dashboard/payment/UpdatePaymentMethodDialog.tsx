@@ -248,24 +248,30 @@ const UpdatePaymentMethodDialog: React.FC<UpdatePaymentMethodDialogProps> = (pro
 
           <div className= "">
             <h3 className="text-lg font-medium mb-2">Payment Method</h3>
-            <ReactSquareSubscriptionCard
-                billingContact={{
-                  firstName: billingInfo.firstName || '',
-                  lastName: billingInfo.lastName || '',
-                  email: billingInfo.email || '',
-                  phone: billingInfo.phone || ''
-                }}
-                billingAddress={{
-                  address: billingInfo.address || '',
-                  city: billingInfo.city || '',
-                  state: billingInfo.state || '',
-                  zipCode: billingInfo.zipCode || ''
-                }}
-                paymentType={"PAYMENT_UPDATE"}
-                emailValidationToken=''
-                producerId={producerId || ''}
-                onPaymentProcessed={handlePayment}
-            />
+            {producerId ? (
+              <ReactSquareSubscriptionCard
+                  billingContact={{
+                    firstName: billingInfo.firstName || '',
+                    lastName: billingInfo.lastName || '',
+                    email: billingInfo.email || '',
+                    phone: billingInfo.phone || ''
+                  }}
+                  billingAddress={{
+                    address: billingInfo.address || '',
+                    city: billingInfo.city || '',
+                    state: billingInfo.state || '',
+                    zipCode: billingInfo.zipCode || ''
+                  }}
+                  paymentType={"PAYMENT_UPDATE"}
+                  emailValidationToken={null}
+                  producerId={producerId}
+                  onPaymentProcessed={handlePayment}
+              />
+            ) : (
+              <div className="p-4 text-center text-gray-500">
+                Loading payment form...
+              </div>
+            )}
           </div>
           
           {/* Error display */}

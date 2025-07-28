@@ -78,7 +78,7 @@ const ReactSquareCard: React.FC<ReactSquareCardProps> = ({
           },
           amount: '1.00',
           currencyCode: 'USD',
-          intent: paymentType === 'SUBSCRIPTION' ? 'STORE' : 'CHARGE',
+          intent: paymentType === 'CLASSIFIED' ? 'CHARGE' : 'STORE',
         })}
       >
         <div className="border border-gray-300 rounded-lg p-4 min-h-[120px]">

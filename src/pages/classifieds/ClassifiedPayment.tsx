@@ -389,7 +389,7 @@ const Payment = () => {
       
       // Navigate to confirmation page with the classifiedId in the path parameter
       // and additional payment details as query parameters
-      navigate(`/classifieds/payment/confirmation/${classifiedId}?paymentRef=${paymentRef || ''}&orderRef=${orderRef || ''}&receiptNumber=${receiptNumber || ''}`, {
+      navigate(`/classifieds/payment/confirmation/${classifiedId}?paymentSuccess=true&paymentRef=${paymentRef || ''}&orderRef=${orderRef || ''}&receiptNumber=${receiptNumber || ''}`, {
         state: { paymentDetails }
       });
       return responseData;
