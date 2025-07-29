@@ -99,25 +99,17 @@ const UpdatePaymentMethod: React.FC<UpdatePaymentMethodProps> = ({
         description: "Payment method updated successfully",
       });
 
-      // Invalidate relevant queries to refresh payment method data
-      queryClient.invalidateQueries({ queryKey: ['payment-method', producerId] });
-      queryClient.invalidateQueries({ queryKey: ['subscriptions'] });
-
-      // Clear form and close
-      setBillingInfo({
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        company: '',
-        address: '',
-        address2: '',
-        city: '',
-        state: '',
-        zipCode: ''
-      });
-      setError(null);
+      // Close the form first to prevent re-renders during query invalidation
       onCancel();
+      
+      // Clear any errors
+      setError(null);
+
+      // Delay query invalidation slightly to avoid conflicts with state updates
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ['payment-method', producerId] });
+        queryClient.invalidateQueries({ queryKey: ['subscriptions'] });
+      }, 100);
 
     } catch (err) {
       console.error('❌ Payment update error:', err);

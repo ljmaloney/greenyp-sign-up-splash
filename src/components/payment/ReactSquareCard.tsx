@@ -70,7 +70,7 @@ const ReactSquareCard: React.FC<ReactSquareCardProps> = ({
     },
     amount: '1.00',
     currencyCode: 'USD',
-    intent: paymentType === 'CLASSIFIED' ? 'CHARGE' as const : 'CHARGE_AND_STORE' as const,
+    intent: paymentType === 'CLASSIFIED' ? 'CHARGE' as const : 'STORE' as const,
   }), [billingContact, billingAddress, paymentType]);
 
   return (
