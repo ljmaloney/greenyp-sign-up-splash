@@ -1,19 +1,5 @@
-
-import { useState, useEffect, useCallback } from 'react';
-
-interface BillingContactData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-}
-
-interface BillingAddressData {
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
-}
+import { useState, useCallback } from 'react';
+import { normalizePhoneForSquare } from '@/utils/phoneUtils';
 
 interface CustomerData {
   firstName: string;
@@ -28,7 +14,7 @@ interface CustomerData {
 
 interface UsePaymentInformationProps {
   customer?: CustomerData;
-  onBillingInfoChange?: (contact: BillingContactData, address: BillingAddressData, emailValidationToken: string) => void;
+  onBillingInfoChange?: (contact: any, address: any, emailValidationToken: string) => void;
   emailValidationToken?: string;
   onEmailValidationTokenChange?: (token: string) => void;
   isValidated?: boolean;
@@ -37,92 +23,70 @@ interface UsePaymentInformationProps {
 export const usePaymentInformation = ({
   customer,
   onBillingInfoChange,
-  emailValidationToken = '',
+  emailValidationToken,
   onEmailValidationTokenChange,
-  isValidated = false
+  isValidated
 }: UsePaymentInformationProps) => {
-  const [billingContact, setBillingContact] = useState<BillingContactData>({
+  const [billingContact, setBillingContact] = useState({
     firstName: '',
     lastName: '',
     email: '',
     phone: ''
   });
 
-  const [billingAddress, setBillingAddress] = useState<BillingAddressData>({
+  const [billingAddress, setBillingAddress] = useState({
     address: '',
+    address2: '',
     city: '',
     state: '',
     zipCode: ''
   });
 
-  // Initialize from customer data
-  useEffect(() => {
-    if (customer) {
-      console.log('📋 usePaymentInformation: Initializing from customer data:', customer);
-      
-      setBillingContact({
-        firstName: customer.firstName || '',
-        lastName: customer.lastName || '',
-        email: customer.emailAddress || '',
-        phone: customer.phoneNumber || ''
-      });
-
-      setBillingAddress({
-        address: customer.address || '',
-        city: customer.city || '',
-        state: customer.state || '',
-        zipCode: customer.postalCode || ''
-      });
-    }
-  }, [customer]);
-
-  // Notify parent of changes
-  useEffect(() => {
-    if (onBillingInfoChange) {
-      console.log('📋 usePaymentInformation: Notifying parent of billing info change:', {
-        contact: billingContact,
-        address: billingAddress,
-        emailValidationToken
-      });
-      onBillingInfoChange(billingContact, billingAddress, emailValidationToken);
-    }
-  }, [billingContact, billingAddress, emailValidationToken, onBillingInfoChange]);
-
   const handleCopyFromCustomer = useCallback(() => {
-    if (customer) {
-      console.log('📋 usePaymentInformation: Copying from customer data');
-      
-      setBillingContact({
-        firstName: customer.firstName || '',
-        lastName: customer.lastName || '',
-        email: customer.emailAddress || '',
-        phone: customer.phoneNumber || ''
-      });
+    if (!customer || !isValidated) return;
 
-      setBillingAddress({
-        address: customer.address || '',
-        city: customer.city || '',
-        state: customer.state || '',
-        zipCode: customer.postalCode || ''
-      });
+    const newContact = {
+      firstName: customer.firstName,
+      lastName: customer.lastName,
+      email: customer.emailAddress,
+      phone: normalizePhoneForSquare(customer.phoneNumber)
+    };
+
+    const newAddress = {
+      address: customer.address,
+      address2: '',
+      city: customer.city,
+      state: customer.state,
+      zipCode: customer.postalCode
+    };
+
+    setBillingContact(newContact);
+    setBillingAddress(newAddress);
+
+    if (onBillingInfoChange) {
+      onBillingInfoChange(newContact, newAddress, emailValidationToken || '');
     }
-  }, [customer]);
+  }, [customer, isValidated, onBillingInfoChange, emailValidationToken]);
 
   const handleContactChange = useCallback((field: string, value: string) => {
-    console.log('📋 usePaymentInformation: Contact field changed:', { field, value });
-    setBillingContact(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  }, []);
+    setBillingContact(prev => {
+      const updated = { ...prev, [field]: value };
+      if (onBillingInfoChange) {
+        onBillingInfoChange(updated, billingAddress, emailValidationToken || '');
+      }
+      return updated;
+    });
+  }, [billingAddress, onBillingInfoChange, emailValidationToken]);
 
   const handleAddressChange = useCallback((field: string, value: string) => {
-    console.log('📋 usePaymentInformation: Address field changed:', { field, value });
-    setBillingAddress(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  }, []);
+    setBillingAddress(prev => {
+      const updated = { ...prev, [field]: value };
+      if (onBillingInfoChange) {
+        onBillingInfoChange(billingContact, updated, emailValidationToken || '');
+      }
+      return updated;
+    });
+  }, [billingContact, onBillingInfoChange, emailValidationToken]);
 
   return {
     billingContact,

@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import PublicHeader from '@/components/PublicHeader';
+import ClassifiedsHeader from '@/components/ClassifiedsHeader';
 import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
 import PrototypeAdCard from '@/components/classifieds/PrototypeAdCard';
 import PrototypeAdDetail from '@/components/classifieds/PrototypeAdDetail';
@@ -102,7 +101,7 @@ const Samples = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col">
-        <PublicHeader />
+        <ClassifiedsHeader />
         <main className="flex-grow bg-gray-50 py-8">
           <div className="container mx-auto px-4 max-w-4xl">
             <div className="text-center">Loading...</div>
@@ -134,7 +133,7 @@ const Samples = () => {
   if (!activePackages.length) {
     return (
       <div className="min-h-screen flex flex-col">
-        <PublicHeader />
+        <ClassifiedsHeader />
         <main className="flex-grow bg-gray-50 py-8">
           <div className="container mx-auto px-4 max-w-4xl">
             <div className="text-center text-red-600">No ad packages available</div>
@@ -149,7 +148,7 @@ const Samples = () => {
   if (!selectedTierId) {
     return (
       <div className="min-h-screen flex flex-col">
-        <PublicHeader />
+        <ClassifiedsHeader />
         <main className="flex-grow bg-gray-50 py-8">
           <div className="container mx-auto px-4 max-w-4xl">
             <div className="text-center">Loading packages...</div>
@@ -165,7 +164,7 @@ const Samples = () => {
     console.error('Ad prototype not found:', { selectedPackage, selectedTierId, selectedAd });
     return (
       <div className="min-h-screen flex flex-col">
-        <PublicHeader />
+        <ClassifiedsHeader />
         <main className="flex-grow bg-gray-50 py-8">
           <div className="container mx-auto px-4 max-w-4xl">
             <div className="text-center text-red-600">Error: Ad prototype not found for selected package</div>
@@ -178,7 +177,7 @@ const Samples = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <PublicHeader />
+      <ClassifiedsHeader />
       <main className="flex-grow bg-gray-50 py-8">
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="mb-6 flex items-center">

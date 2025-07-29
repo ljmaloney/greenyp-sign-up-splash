@@ -94,12 +94,16 @@ export const useSignUpPaymentParams = (): UseSignUpPaymentParamsReturn => {
       setValidationErrors(errors);
       setIsValidating(false);
 
-      // Only redirect on critical errors, not subscription data issues
-      if (errors.length > 0) {
+      // IMPORTANT: Only redirect in production, not during development/preview
+      const isDevelopment = import.meta.env.DEV || window.location.hostname === 'localhost';
+      
+      if (errors.length > 0 && !isDevelopment) {
         console.warn('❌ Critical URL parameter validation failed, redirecting to signup:', errors);
         setTimeout(() => {
           navigate('/subscribers/signup', { replace: true });
         }, 2000); // Give user time to see the error message
+      } else if (errors.length > 0 && isDevelopment) {
+        console.warn('⚠️ Critical URL parameter validation failed, but staying on page for development:', errors);
       } else if (warnings.length > 0) {
         console.log('⚠️ URL parameter warnings (proceeding with fallbacks):', warnings);
       } else {

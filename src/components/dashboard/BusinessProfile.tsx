@@ -8,10 +8,10 @@ import { useToast } from '@/hooks/use-toast';
 import { useSubscriptions } from '@/hooks/useSubscriptions';
 import { Contact } from '@/services/accountService';
 import BusinessProfileCard from './BusinessProfileCard';
-import PrimaryLocationCard from './PrimaryLocationCard';
+import PrimaryLocationCard from './location/PrimaryLocationCard.tsx';
 import ActiveSubscriptionsCard from './ActiveSubscriptionsCard';
-import DashboardContactCard from './DashboardContactCard';
-import EditDashboardContactDialog from './EditDashboardContactDialog';
+import DashboardContactCard from './contact/DashboardContactCard.tsx';
+import EditDashboardContactDialog from './contact/EditDashboardContactDialog.tsx';
 
 const BusinessProfile = () => {
   const { user } = useAuth();

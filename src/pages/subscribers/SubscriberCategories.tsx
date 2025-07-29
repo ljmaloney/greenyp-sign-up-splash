@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Header from '@/components/Header';
+import SubscribersHeader from '@/components/SubscribersHeader';
 import Footer from '@/components/Footer';
 import { ChevronRight, Check } from 'lucide-react';
 import { useCategories } from '@/hooks/useCategories';
@@ -43,7 +43,7 @@ const SubscriberCategories = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+        <SubscribersHeader />
         <main className="flex-grow container mx-auto px-4 py-16">
           <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center">Industry Categories</h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
@@ -68,7 +68,7 @@ const SubscriberCategories = () => {
   if (error) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+        <SubscribersHeader />
         <main className="flex-grow container mx-auto px-4 py-16 text-center">
           <h1 className="text-3xl md:text-4xl font-bold mb-8">Industry Categories</h1>
           <p className="text-xl text-red-600 mb-4">Error loading categories. Please try again later.</p>
@@ -86,7 +86,7 @@ const SubscriberCategories = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <SubscribersHeader />
       <main className="flex-grow container mx-auto px-4 py-16">
         <div className="text-center mb-12">
           <h1 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900">

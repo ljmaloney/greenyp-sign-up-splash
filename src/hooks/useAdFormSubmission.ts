@@ -3,6 +3,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useApiClient } from '@/hooks/useApiClient';
 import { ExtendedClassifiedFormData, Step } from '@/types/extendedClassifiedForm';
 import { AdPackage } from '@/types/adPackages';
+import { ClassifiedCreationApiResponse } from '@/types/classifiedCreation';
 import { FULL_NAME_TO_ABBREVIATION } from '@/constants/usStates';
 
 export const useAdFormSubmission = (
@@ -141,8 +142,11 @@ export const useAdFormSubmission = (
       console.log('✅ STEP 3 - *** POST REQUEST COMPLETED ***');
       console.log('✅ STEP 3 - API Response received:', JSON.stringify(response, null, 2));
 
-      if (response?.response?.classifiedId) {
-        console.log('🎉 STEP 3 - SUCCESS - Classified ad created with ID:', response.response.classifiedId);
+      // Type assertion to properly handle the response
+      const apiResponse = response as ClassifiedCreationApiResponse;
+      
+      if (apiResponse?.response?.classifiedId) {
+        console.log('🎉 STEP 3 - SUCCESS - Classified ad created with ID:', apiResponse.response.classifiedId);
         // Removed success toast - no longer showing success message
       } else {
         console.log('🎉 STEP 3 - SUCCESS - Classified ad created (no ID in response)');

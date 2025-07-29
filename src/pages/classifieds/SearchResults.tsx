@@ -1,7 +1,7 @@
 
 import React, { useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import PublicHeader from '@/components/PublicHeader';
+import ClassifiedsHeader from '@/components/ClassifiedsHeader';
 import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
 import ClassifiedsSearchForm from '@/components/classifieds/ClassifiedsSearchForm';
 import SearchResultsHeader from '@/components/classifieds/SearchResultsHeader';
@@ -66,7 +66,7 @@ const SearchResults = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <PublicHeader />
+      <ClassifiedsHeader />
       <main className="flex-grow bg-gray-50 py-8">
         <div className="container mx-auto px-4">
           <SearchResultsHeader />

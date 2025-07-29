@@ -1,103 +1,100 @@
 
-import { useState } from 'react';
-import { useToast } from '@/hooks/use-toast';
+import { useState, useCallback } from 'react';
 import { validateEmailToken } from '@/services/emailValidationService';
 
 interface UseEmailValidationProps {
   emailAddress: string;
-  context: 'classifieds' | 'subscribers';
+  context: string;
   classifiedId?: string;
   producerId?: string;
 }
 
-export const useEmailValidation = ({
-  emailAddress,
-  context,
-  classifiedId,
-  producerId
-}: UseEmailValidationProps) => {
+export const useEmailValidation = ({ emailAddress, context, classifiedId, producerId }: UseEmailValidationProps) => {
   const [isValidating, setIsValidating] = useState(false);
   const [isValidated, setIsValidated] = useState(false);
-  const [validationError, setValidationError] = useState<string | null>(null);
-  const { toast } = useToast();
+  const [validationError, setValidationError] = useState<string>('');
 
-  const validateEmail = async (token: string) => {
-    if (!token.trim()) {
-      setValidationError('Email validation token is required');
-      toast({
-        title: "Validation Required",
-        description: "Please enter the email validation token",
-        variant: "destructive",
-      });
+  const validateEmail = useCallback(async (emailValidationToken: string) => {
+    console.log('🔍 EMAIL VALIDATION HOOK - validateEmail called with token:', emailValidationToken);
+    console.log('🔍 EMAIL VALIDATION HOOK - Token length:', emailValidationToken?.length);
+    console.log('🔍 EMAIL VALIDATION HOOK - Full token value:', emailValidationToken);
+
+    // EXPLICITLY copy emailValidationToken to token variable
+    const token = emailValidationToken;
+    
+    console.log('🔍 EMAIL VALIDATION HOOK - Token copied to payload token field:', token);
+    console.log('🔍 EMAIL VALIDATION HOOK - Token field length:', token?.length);
+    console.log('🔍 EMAIL VALIDATION HOOK - Token field value:', token);
+
+    const trimmedToken = token?.trim();
+    if (!trimmedToken) {
+      setValidationError('Validation token is required');
+      console.log('❌ EMAIL VALIDATION HOOK - Token is empty after trim');
       return;
     }
 
-    // For classifieds, we need classifiedId
+    const trimmedEmail = emailAddress?.trim();
+    if (!trimmedEmail) {
+      setValidationError('Email address is required');
+      console.log('❌ EMAIL VALIDATION HOOK - Email address is missing or empty');
+      return;
+    }
+
     if (context === 'classifieds' && !classifiedId) {
-      setValidationError('Missing classified ID');
-      toast({
-        title: "Error",
-        description: "Missing classified information",
-        variant: "destructive",
-      });
+      setValidationError('Classified ID is required for validation');
+      console.log('❌ EMAIL VALIDATION HOOK - Classified ID is missing');
       return;
     }
 
-    // For subscribers, we need producerId
     if (context === 'subscribers' && !producerId) {
-      setValidationError('Missing producer ID');
-      toast({
-        title: "Error",
-        description: "Missing producer information",
-        variant: "destructive",
-      });
+      setValidationError('Producer ID is required for validation');
+      console.log('❌ EMAIL VALIDATION HOOK - Producer ID is missing');
       return;
     }
 
     setIsValidating(true);
-    setValidationError(null);
+    setValidationError('');
 
     try {
+      console.log('✉️ EMAIL VALIDATION HOOK - Calling validateEmailToken with:', { 
+        token: trimmedToken, // This is the token from emailValidationToken input
+        emailAddress: trimmedEmail, 
+        context, 
+        classifiedId, 
+        producerId
+      });
+      
       const result = await validateEmailToken({
-        token,
-        emailAddress,
-        context,
+        token: trimmedToken, // EXPLICITLY using the token from emailValidationToken input
+        emailAddress: trimmedEmail,
+        context: context as 'classifieds' | 'subscribers',
         classifiedId,
         producerId
       });
 
+      console.log('📨 EMAIL VALIDATION HOOK - API result:', result);
+
       if (result.success) {
         setIsValidated(true);
-        toast({
-          title: "Email Validated Successfully",
-          description: "You can now proceed with payment",
-        });
+        console.log('✅ EMAIL VALIDATION HOOK - Email validation successful');
       } else {
-        setValidationError(result.error || 'Validation failed');
-        toast({
-          title: "Validation Failed",
-          description: result.error || 'Invalid email validation token',
-          variant: "destructive",
-        });
+        setValidationError(result.error || 'Email validation failed');
+        console.error('❌ EMAIL VALIDATION HOOK - Email validation failed:', result.error);
       }
     } catch (error) {
-      console.error('Email validation error:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Network error occurred';
+      const errorMessage = error instanceof Error ? error.message : 'Email validation failed';
       setValidationError(errorMessage);
-      toast({
-        title: "Validation Error",
-        description: errorMessage,
-        variant: "destructive",
-      });
+      console.error('❌ EMAIL VALIDATION HOOK - Email validation error:', errorMessage);
     } finally {
       setIsValidating(false);
     }
-  };
+  }, [emailAddress, context, classifiedId, producerId]);
 
-  const resetValidation = () => {
+  const resetValidation = useCallback(() => {
     setIsValidated(false);
-    setValidationError(null);
-  };
+    setValidationError('');
+    setIsValidating(false);
+  }, []);
 
   return {
     isValidating,

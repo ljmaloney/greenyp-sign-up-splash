@@ -1,8 +1,9 @@
 
 import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { formatPhoneAsUserTypes } from '@/utils/phoneFormatting';
+import { User } from 'lucide-react';
 
 interface BillingContactData {
   firstName: string;
@@ -14,83 +15,69 @@ interface BillingContactData {
 interface BillingContactFormProps {
   billingContact: BillingContactData;
   onChange: (field: string, value: string) => void;
+  disabled?: boolean;
 }
 
-const BillingContactForm = ({ billingContact, onChange }: BillingContactFormProps) => {
-  const handleContactChange = (field: string, value: string) => {
-    if (field === 'phone') {
-      // Only format if the user is typing (not deleting)
-      const cleaned = value.replace(/\D/g, '');
-      if (cleaned.length <= 10) {
-        const formatted = formatPhoneAsUserTypes(value);
-        onChange(field, formatted);
-      }
-    } else {
-      onChange(field, value);
-    }
-  };
-
-  const handlePhoneKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    // Allow backspace, delete, navigation keys, and Tab key
-    if (e.key === 'Backspace' || e.key === 'Delete' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Tab') {
-      return;
-    }
-    
-    // Only allow numbers and basic formatting characters
-    if (!/[\d\(\)\-\s]/.test(e.key)) {
-      e.preventDefault();
-    }
-  };
-
+const BillingContactForm = ({ billingContact, onChange, disabled = false }: BillingContactFormProps) => {
   return (
-    <div>
-      <h3 className="text-lg font-semibold mb-4">Billing Contact</h3>
-      <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div>
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <User className="h-5 w-5" />
+          Billing Contact Information
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
             <Label htmlFor="firstName">First Name *</Label>
             <Input
               id="firstName"
-              placeholder="John"
+              type="text"
               value={billingContact.firstName}
-              onChange={(e) => handleContactChange('firstName', e.target.value)}
+              onChange={(e) => onChange('firstName', e.target.value)}
+              disabled={disabled}
+              required
             />
           </div>
-          <div>
+          <div className="space-y-2">
             <Label htmlFor="lastName">Last Name *</Label>
             <Input
               id="lastName"
-              placeholder="Doe"
+              type="text"
               value={billingContact.lastName}
-              onChange={(e) => handleContactChange('lastName', e.target.value)}
+              onChange={(e) => onChange('lastName', e.target.value)}
+              disabled={disabled}
+              required
             />
           </div>
         </div>
-
-        <div>
+        
+        <div className="space-y-2">
           <Label htmlFor="email">Email Address *</Label>
           <Input
             id="email"
             type="email"
-            placeholder="john@example.com"
             value={billingContact.email}
-            onChange={(e) => handleContactChange('email', e.target.value)}
+            onChange={(e) => onChange('email', e.target.value)}
+            disabled={disabled}
+            required
           />
         </div>
-
-        <div>
+        
+        <div className="space-y-2">
           <Label htmlFor="phone">Phone Number *</Label>
           <Input
             id="phone"
             type="tel"
-            placeholder="(555) 123-4567"
             value={billingContact.phone}
-            onChange={(e) => handleContactChange('phone', e.target.value)}
-            onKeyDown={handlePhoneKeyDown}
+            onChange={(e) => onChange('phone', e.target.value)}
+            disabled={disabled}
+            required
           />
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 

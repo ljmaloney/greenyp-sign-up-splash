@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Form } from "@/components/ui/form";
 import { useSubscriptions } from '@/hooks/useSubscriptions';
@@ -37,8 +36,15 @@ const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
 
   const handleSubmit = (data: any) => {
     console.log('📋 SignUpForm: Form submission triggered');
-    console.log('📝 SignUpForm: Form data valid, calling onSubmit');
-    onSubmit(data, selectedSubscription, categories);
+    
+    // Default username to email address if username is empty/null
+    const processedData = {
+      ...data,
+      userName: data.userName && data.userName.trim() !== '' ? data.userName : data.emailAddress
+    };
+    
+    console.log('📝 SignUpForm: Form data processed, calling onSubmit');
+    onSubmit(processedData, selectedSubscription, categories);
   };
 
   const handleRetry = () => {

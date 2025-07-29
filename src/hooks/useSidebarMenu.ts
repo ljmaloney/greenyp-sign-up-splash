@@ -7,7 +7,8 @@ import {
   Wrench,
   CreditCard,
   Crown,
-  Image
+  Image,
+  FileText
 } from 'lucide-react';
 import { useSubscriptions } from '@/hooks/useSubscriptions';
 import { useAuth } from '@/contexts/AuthContext';
@@ -108,6 +109,12 @@ export const useSidebarMenu = () => {
       label: 'Payment',
       icon: CreditCard,
       href: '/dashboard/payment',
+      enabled: true
+    },
+    {
+      label: 'Invoices',
+      icon: FileText,
+      href: producerId ? `/dashboard/invoices?producerId=${producerId}` : '/dashboard/invoices',
       enabled: true
     }
   ];

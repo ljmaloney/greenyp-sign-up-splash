@@ -1,6 +1,6 @@
 
 import React from 'react';
-import Header from '@/components/Header';
+import SubscribersHeader from '@/components/SubscribersHeader';
 import Footer from '@/components/Footer';
 import ContactPageHeader from '@/components/contact/ContactPageHeader';
 import QuickLinksCard from '@/components/contact/QuickLinksCard';
@@ -9,7 +9,7 @@ import ContactForm from '@/components/contact/ContactForm';
 const Contact = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <SubscribersHeader />
       <main className="flex-grow bg-gray-50 py-12">
         <div className="container mx-auto px-4 max-w-4xl">
           <ContactPageHeader />

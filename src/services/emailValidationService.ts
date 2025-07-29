@@ -1,5 +1,5 @@
 
-import { useApiClient } from '@/hooks/useApiClient';
+import { apiClient } from '@/utils/apiClient';
 
 interface EmailValidationRequest {
   token: string;
@@ -21,77 +21,73 @@ export const validateEmailToken = async ({
   classifiedId,
   producerId
 }: EmailValidationRequest): Promise<EmailValidationResponse> => {
-  // We can't use useApiClient hook here since this is not a component
-  // Instead, we'll create the API client directly
-  const { apiClient } = await import('@/utils/apiClient');
-  
   try {
-    // Use unified endpoint for all email validation
     const endpoint = '/email/validate';
     
-    // Map context-specific IDs to externRef
-    let externRef: string;
-    if (context === 'classifieds') {
-      if (!classifiedId) {
-        return { success: false, error: 'Missing classified ID for validation' };
-      }
-      externRef = classifiedId;
-    } else {
-      if (!producerId) {
-        return { success: false, error: 'Missing producer ID for validation' };
-      }
-      externRef = producerId;
-    }
-
-    // Create unified payload structure
+    console.log('🔍 EMAIL VALIDATION SERVICE - Received token parameter:', token);
+    console.log('🔍 EMAIL VALIDATION SERVICE - Token length:', token?.length);
+    console.log('🔍 EMAIL VALIDATION SERVICE - Token value:', token);
+    
+    // Create payload with token EXPLICITLY copied from the input parameter
     const payload = {
-      emailAddress: emailAddress,
-      token: token,
-      externRef: externRef,
+      externRef: context === 'classifieds' ? classifiedId : producerId,
+      emailAddress: emailAddress.trim(),
+      token: token.trim() // EXPLICITLY using the token parameter from emailValidationToken
     };
 
-    console.log('🔍 Email validation request:', {
-      endpoint,
-      context,
-      emailAddress,
-      hasToken: !!token,
-      externRef,
-      payload
-    });
+    console.log('🔍 EMAIL VALIDATION SERVICE - Payload token field set to:', payload.token);
+    console.log('🔍 EMAIL VALIDATION SERVICE - Payload token length:', payload.token?.length);
+    console.log('🔍 EMAIL VALIDATION SERVICE - Full payload:', payload);
+
+    if (!payload.externRef) {
+      const missingField = context === 'classifieds' ? 'classifiedId' : 'producerId';
+      return { success: false, error: `Missing ${missingField} for validation` };
+    }
+
+    // Validate payload before sending
+    if (!payload.token || payload.token.length === 0) {
+      console.error('❌ EMAIL VALIDATION SERVICE - Token is empty or invalid');
+      return { success: false, error: 'Token is required and cannot be empty' };
+    }
+
+    if (!payload.emailAddress || payload.emailAddress.length === 0) {
+      console.error('❌ EMAIL VALIDATION SERVICE - Email address is empty or invalid');
+      return { success: false, error: 'Email address is required and cannot be empty' };
+    }
+
+    if (!payload.externRef || payload.externRef.length === 0) {
+      console.error('❌ EMAIL VALIDATION SERVICE - External reference is empty or invalid');
+      return { success: false, error: 'External reference is required and cannot be empty' };
+    }
+
+    console.log('🔍 EMAIL VALIDATION SERVICE - Final payload being sent:', payload);
+    console.log('🔍 EMAIL VALIDATION SERVICE - Final payload.token:', payload.token);
 
     const response = await apiClient.post(endpoint, payload, { requireAuth: false });
     
-    console.log('✅ Email validation response:', response);
+    console.log('✅ EMAIL VALIDATION SERVICE - API response received:', response);
     
-    // Check for successful response
     if (response && (response.status === 200 || response.success)) {
+      console.log('✅ EMAIL VALIDATION SERVICE - Validation successful');
       return { success: true };
     }
     
-    // Handle error responses
     const errorMessage = response?.message || response?.error || 'Email validation failed';
+    console.log('❌ EMAIL VALIDATION SERVICE - Error response:', errorMessage);
+    
     return { success: false, error: errorMessage };
     
   } catch (error) {
-    console.error('❌ Email validation API error:', error);
+    console.error('❌ EMAIL VALIDATION SERVICE - API error:', error);
     
-    // Extract error message from API response if available
     if (error instanceof Error) {
       const errorMessage = error.message;
       
-      // Enhanced error handling for specific status codes
       if (errorMessage.includes('412')) {
-        console.error('🚨 Payload validation error - API expects different field structure');
-        return { success: false, error: 'Invalid email validation request format. Please contact support if this persists.' };
-      }
-      if (errorMessage.includes('400')) {
-        return { success: false, error: 'Invalid email validation token' };
-      }
-      if (errorMessage.includes('404')) {
-        return { success: false, error: 'Email validation service not found' };
-      }
-      if (errorMessage.includes('500')) {
-        return { success: false, error: 'Server error during validation' };
+        return { 
+          success: false, 
+          error: 'Email validation failed - the token may be expired, already used, or does not match the email address and reference ID combination' 
+        };
       }
       return { success: false, error: errorMessage };
     }

@@ -1,184 +1,184 @@
 
-import { getApiUrl, API_CONFIG } from '@/config/api';
+import { API_CONFIG } from '@/config/api';
 
-interface ApiOptions extends RequestInit {
-  requireAuth?: boolean;
+interface ApiResponse<T = any> {
+  response: T;
+  status: number;
+  success: boolean;
+  message?: string;
+  error?: string;
+  errorMessageApi: any | null;
 }
 
-export const apiClient = {
-  async request(endpoint: string, options: ApiOptions = {}) {
-    const { requireAuth = false, headers = {}, ...fetchOptions } = options;
-    
-    const url = getApiUrl(endpoint);
-    
-    console.log('🔧 API CLIENT - Request initiated:', {
-      endpoint,
-      baseUrl: API_CONFIG.BASE_URL,
-      fullUrl: url,
-      requireAuth,
-      method: fetchOptions.method || 'GET',
-      hasBody: !!fetchOptions.body
-    });
-    
-    const requestHeaders: HeadersInit = {
-      ...headers,
-    };
+interface ApiClientOptions {
+  requireAuth?: boolean;
+  headers?: Record<string, string>;
+}
 
-    // Only set Content-Type for non-FormData requests
-    if (!(fetchOptions.body instanceof FormData)) {
-      requestHeaders['Content-Type'] = 'application/json';
+class ApiClient {
+  private baseUrl: string;
+  private getAccessToken?: () => Promise<string | null>;
+
+  constructor(baseUrl: string) {
+    this.baseUrl = baseUrl;
+  }
+
+  // Method to set the access token getter (used by useApiClient hook)
+  setAccessTokenGetter(getter: () => Promise<string | null>) {
+    this.getAccessToken = getter;
+  }
+
+  // Method to get the base URL
+  getBaseUrl(): string {
+    return this.baseUrl;
+  }
+
+  private async makeRequest<T>(
+    endpoint: string,
+    options: RequestInit & { requireAuth?: boolean } = {}
+  ): Promise<ApiResponse<T>> {
+    const { requireAuth = true, ...fetchOptions } = options;
+    
+    const url = `${this.baseUrl}${endpoint}`;
+    console.log('🌐 API CLIENT - Making request:', {
+      method: fetchOptions.method || 'GET',
+      url,
+      requireAuth,
+      hasBody: !!fetchOptions.body,
+      bodyLength: fetchOptions.body ? String(fetchOptions.body).length : 0
+    });
+
+    // Log the exact body being sent for POST requests
+    if (fetchOptions.body && fetchOptions.method === 'POST') {
+      console.log('🌐 API CLIENT - POST body:', fetchOptions.body);
+      try {
+        const parsedBody = JSON.parse(String(fetchOptions.body));
+        console.log('🌐 API CLIENT - Parsed POST body:', parsedBody);
+      } catch (e) {
+        console.log('🌐 API CLIENT - Could not parse POST body as JSON');
+      }
     }
 
-    // Add authorization header if authentication is required
-    if (requireAuth) {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...((fetchOptions.headers as Record<string, string>) || {})
+    };
+
+    // Add authorization header if required
+    if (requireAuth && this.getAccessToken) {
       try {
         const token = await this.getAccessToken();
-        console.log('🔑 API CLIENT - Token check:', {
-          hasToken: !!token,
-          tokenStart: token ? token.substring(0, 20) + '...' : 'none'
-        });
-        
         if (token) {
-          requestHeaders['Authorization'] = `Bearer ${token}`;
+          headers['Authorization'] = `Bearer ${token}`;
+          console.log('🔐 API CLIENT - Added auth header');
         } else {
           console.warn('⚠️ API CLIENT - No access token available for authenticated request');
         }
       } catch (error) {
-        console.error('❌ API CLIENT - Failed to get access token:', error);
+        console.error('❌ API CLIENT - Error getting access token:', error);
       }
     }
 
-    // Helper function to get body info safely
-    const getBodyInfo = (body: BodyInit | undefined) => {
-      if (!body) return { hasBody: false, bodyInfo: 'none' };
-      
-      if (body instanceof FormData) {
-        return { hasBody: true, bodyInfo: 'FormData' };
-      }
-      
-      if (typeof body === 'string') {
-        return { hasBody: true, bodyInfo: `string (${body.length} chars)` };
-      }
-      
-      return { hasBody: true, bodyInfo: 'non-string body' };
-    };
-
-    const { hasBody, bodyInfo } = getBodyInfo(fetchOptions.body);
-
-    console.log(`🌐 API CLIENT - Making Request: ${fetchOptions.method || 'GET'} ${url}`, {
-      requireAuth,
-      hasAuthHeader: !!requestHeaders['Authorization'],
-      headers: Object.keys(requestHeaders),
-      bodyInfo
-    });
-
-    // Only log body details for non-FormData requests
-    if (fetchOptions.body && !(fetchOptions.body instanceof FormData)) {
-      console.log('📤 API CLIENT - Request body (raw):', fetchOptions.body);
-      try {
-        console.log('📤 API CLIENT - Request body (parsed):', JSON.parse(fetchOptions.body as string));
-      } catch (e) {
-        console.log('📤 API CLIENT - Request body (could not parse as JSON):', fetchOptions.body);
-      }
-    } else if (fetchOptions.body instanceof FormData) {
-      console.log('📤 API CLIENT - Request body: FormData (cannot display contents)');
-    }
-
-    console.log('🔍 API CLIENT - Final request details:', {
-      url,
-      method: fetchOptions.method,
-      headers: requestHeaders,
-      bodyType: fetchOptions.body instanceof FormData ? 'FormData' : typeof fetchOptions.body
-    });
+    console.log('🌐 API CLIENT - Request headers:', Object.keys(headers));
 
     try {
-      console.log('🚀 API CLIENT - About to make fetch request...');
       const response = await fetch(url, {
         ...fetchOptions,
-        headers: requestHeaders,
+        headers
       });
 
-      console.log('📡 API CLIENT - Response received:', {
+      console.log('🌐 API CLIENT - Response received:', {
         status: response.status,
         statusText: response.statusText,
         ok: response.ok,
-        url: response.url,
         headers: Object.fromEntries(response.headers.entries())
       });
 
+      const responseText = await response.text();
+      console.log('🌐 API CLIENT - Raw response text:', responseText);
+
+      // Try to parse as JSON
+      let responseData;
+      try {
+        responseData = responseText ? JSON.parse(responseText) : {};
+      } catch (parseError) {
+        console.warn('⚠️ API CLIENT - Could not parse response as JSON:', parseError);
+        responseData = { rawResponse: responseText };
+      }
+
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ API CLIENT - Error Response:', {
+        console.error('❌ API CLIENT - HTTP error:', {
           status: response.status,
           statusText: response.statusText,
-          body: errorText
+          responseData
         });
-        throw new Error(`API request failed: ${response.status} ${response.statusText} - ${errorText}`);
+        
+        // Create a detailed error message
+        const errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        throw new Error(errorMessage);
       }
 
-      // Check content type before parsing as JSON
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
-        const result = await response.json();
-        console.log('✅ API CLIENT - Success Response (JSON):', {
-          hasData: !!result,
-          dataKeys: result ? Object.keys(result) : [],
-          fullResponse: result
-        });
-        return result;
-      } else {
-        // For non-JSON responses (like successful file uploads), return a success indicator
-        const textResult = await response.text();
-        console.log('✅ API CLIENT - Success Response (Text):', textResult);
-        return { success: true, message: textResult };
-      }
-    } catch (error) {
-      console.error('❌ API CLIENT - Request Failed:', {
-        url,
-        error: error.message,
-        errorName: error.name,
-        requireAuth,
-        hasAuthHeader: !!requestHeaders['Authorization'],
-        stack: error.stack
+      console.log('✅ API CLIENT - Request successful:', {
+        status: response.status,
+        hasData: !!responseData,
+        dataKeys: responseData ? Object.keys(responseData) : []
       });
-      throw error;
+
+      // Return the properly typed response
+      return {
+        response: responseData.response || responseData,
+        status: response.status,
+        success: true,
+        errorMessageApi: responseData.errorMessageApi || null
+      };
+
+    } catch (error) {
+      console.error('❌ API CLIENT - Request failed:', error);
+      
+      // Re-throw with more context
+      if (error instanceof Error) {
+        throw new Error(`API request failed: ${error.message}`);
+      }
+      
+      throw new Error('API request failed: Unknown error');
     }
-  },
+  }
 
-  async getAccessToken(): Promise<string | null> {
-    // This will be dynamically set by the useApiClient hook
-    console.log('🔑 API CLIENT - getAccessToken called (default implementation)');
-    return null;
-  },
+  async get<T>(endpoint: string, options: ApiClientOptions = {}): Promise<ApiResponse<T>> {
+    return this.makeRequest<T>(endpoint, {
+      method: 'GET',
+      ...options
+    });
+  }
 
-  // Helper method to get the base URL for debugging
-  getBaseUrl(): string {
-    return API_CONFIG.BASE_URL;
-  },
-
-  get(endpoint: string, options: ApiOptions = {}) {
-    return this.request(endpoint, { ...options, method: 'GET' });
-  },
-
-  post(endpoint: string, data?: any, options: ApiOptions = {}) {
-    const body = data instanceof FormData ? data : (data ? JSON.stringify(data) : undefined);
-    return this.request(endpoint, {
-      ...options,
+  async post<T>(endpoint: string, data: any, options: ApiClientOptions = {}): Promise<ApiResponse<T>> {
+    return this.makeRequest<T>(endpoint, {
       method: 'POST',
-      body,
+      body: JSON.stringify(data),
+      ...options
     });
-  },
+  }
 
-  put(endpoint: string, data?: any, options: ApiOptions = {}) {
-    const body = data instanceof FormData ? data : (data ? JSON.stringify(data) : undefined);
-    return this.request(endpoint, {
-      ...options,
+  async put<T>(endpoint: string, data: any, options: ApiClientOptions = {}): Promise<ApiResponse<T>> {
+    return this.makeRequest<T>(endpoint, {
       method: 'PUT',
-      body,
+      body: JSON.stringify(data),
+      ...options
     });
-  },
+  }
 
-  delete(endpoint: string, options: ApiOptions = {}) {
-    return this.request(endpoint, { ...options, method: 'DELETE' });
-  },
-};
+  async delete<T>(endpoint: string, options: ApiClientOptions = {}): Promise<ApiResponse<T>> {
+    return this.makeRequest<T>(endpoint, {
+      method: 'DELETE',
+      ...options
+    });
+  }
+
+  // Legacy method for backward compatibility
+  async request<T>(endpoint: string, options: RequestInit & { requireAuth?: boolean } = {}): Promise<ApiResponse<T>> {
+    return this.makeRequest<T>(endpoint, options);
+  }
+}
+
+// Create and export the API client instance
+export const apiClient = new ApiClient(API_CONFIG.BASE_URL);

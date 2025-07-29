@@ -106,7 +106,10 @@ const ClassifiedCard = ({ classified }: ClassifiedCardProps) => {
           </div>
 
           <div className="mt-auto pt-4 space-y-2">
-            <Link to={`/classifieds/${classified.id}`}>
+            <Link 
+              to={`/classifieds/detail/${classified.id}`}
+              state={{ fromSearch: window.location.pathname.includes('/search') }}
+            >
               <Button 
                 variant="outline" 
                 className="w-full border-greenyp-600 text-greenyp-600 hover:bg-greenyp-50"

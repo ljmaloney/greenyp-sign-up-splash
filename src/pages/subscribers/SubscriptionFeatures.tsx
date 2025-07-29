@@ -1,13 +1,13 @@
 
 import React from 'react';
-import Header from '../../components/Header';
+import SubscribersHeader from '../../components/SubscribersHeader';
 import Footer from '../../components/Footer';
 import FeaturesSection from '../../components/FeaturesSection';
 
 const SubscriptionFeatures = () => {
   return (
     <div className="min-h-screen bg-white">
-      <Header />
+      <SubscribersHeader />
       <main>
         <FeaturesSection />
       </main>

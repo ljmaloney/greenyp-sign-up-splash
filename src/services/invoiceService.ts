@@ -2,15 +2,34 @@
 import { API_CONFIG, getApiUrl } from '@/config/api';
 import { APIResponse } from '@/types/responseBody';
 
+export interface LineItem {
+  lineItemId: string;
+  externalRef1: string;
+  externalRef2?: string;
+  lineNumber: number;
+  quantity: number;
+  description: string;
+  amount: number;
+}
+
 export interface Invoice {
   invoiceId: string;
-  producerId: string;
+  paymentTransactionId: string;
+  externalRef: string;
+  invoiceType: string;
   createDate: string;
-  subscriptionId: string;
-  subscriptionName: string;
   paidDate: string;
-  invoiceNumber: string;
+  description: string;
   invoiceTotal: number;
+  paymentReceiptNumber: string;
+  invoiceNumber: string;
+  paymentReceiptUrl?: string;
+  lineItems: LineItem[];
+  
+  // Legacy fields - keeping for backward compatibility
+  producerId?: string;
+  subscriptionId?: string;
+  subscriptionName?: string;
 }
 
 export interface InvoiceSearchParams {

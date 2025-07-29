@@ -10,13 +10,18 @@ export const useClassifiedCategories = () => {
     queryKey: ['classified-categories'],
     queryFn: async (): Promise<ClassifiedCategoriesResponse> => {
       console.log('🏷️ Fetching classified categories from API...');
-      const response: ClassifiedCategoriesResponse = await apiClient.get(
+      const response = await apiClient.get(
         '/reference/classified/categories',
         { requireAuth: false }
       );
       
       console.log('🏷️ Classified categories response:', response);
-      return response;
+      
+      // Transform the API response to match our expected structure
+      return {
+        response: Array.isArray(response.response) ? response.response : [],
+        errorMessageApi: response.errorMessageApi
+      };
     },
     staleTime: 10 * 60 * 1000, // 10 minutes
     gcTime: 15 * 60 * 1000, // 15 minutes cache time

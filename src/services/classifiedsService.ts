@@ -42,14 +42,21 @@ export const fetchClassifieds = async (filters: ClassifiedFilters, apiClient: an
       searchParams.set('page', '0');
       searchParams.set('limit', '15');
 
-      const response: ClassifiedSearchResponse = await apiClient.get(`/classified/search?${searchParams.toString()}`);
+      console.log('Making search API call with params:', searchParams.toString());
       
-      console.log('Search API Response for classifieds:', response);
+      // The apiClient.get() returns a wrapped response: { response: actualData, status, success }
+      const apiResponse = await apiClient.get(`/classified/search?${searchParams.toString()}`);
       
-      // Check if we have a successful response with data
-      if (response.responseList && Array.isArray(response.responseList) && response.responseList.length > 0) {
-        console.log(`Found ${response.responseList.length} classifieds from search API`);
-        return response.responseList.map(convertToClassified);
+      console.log('Raw API Response wrapper:', apiResponse);
+      console.log('Actual search response data:', apiResponse.response);
+      
+      // Access the actual search response data from the wrapper
+      const searchResponse: ClassifiedSearchResponse = apiResponse.response;
+      
+      // Now check for responseList in the actual search response
+      if (searchResponse && searchResponse.responseList && Array.isArray(searchResponse.responseList) && searchResponse.responseList.length > 0) {
+        console.log(`Found ${searchResponse.responseList.length} classifieds from search API`);
+        return searchResponse.responseList.map(convertToClassified);
       }
       
       // If search API returns no data, return empty array

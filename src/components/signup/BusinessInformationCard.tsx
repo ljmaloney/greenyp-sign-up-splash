@@ -51,6 +51,19 @@ const BusinessInformationCard = ({ control }: BusinessInformationCardProps) => {
               </FormItem>
             )}
           />
+            <FormField
+                control={control}
+                name="websiteUrl"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Website URL</FormLabel>
+                        <FormControl>
+                            <Input placeholder="https://www.yourbusiness.com" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
 
           <FormField
             control={control}
@@ -102,19 +115,7 @@ const BusinessInformationCard = ({ control }: BusinessInformationCardProps) => {
             )}
           />
 
-          <FormField
-            control={control}
-            name="websiteUrl"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Website URL</FormLabel>
-                <FormControl>
-                  <Input placeholder="https://www.yourbusiness.com" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+
 
           <FormField
             control={control}

@@ -7,16 +7,13 @@ export const useApiClient = () => {
   const { accessToken } = useAuth();
 
   const authenticatedApiClient = useMemo(() => {
-    // Create a copy of the apiClient with access to the current token
-    const client = { ...apiClient };
-    
-    // Override the getAccessToken method to return the current token
-    client.getAccessToken = async () => {
+    // Set the access token getter on the existing apiClient instance
+    apiClient.setAccessTokenGetter(async () => {
       console.log('🔑 Getting access token:', accessToken ? 'Token available' : 'No token');
       return accessToken;
-    };
+    });
     
-    return client;
+    return apiClient;
   }, [accessToken]);
 
   return authenticatedApiClient;

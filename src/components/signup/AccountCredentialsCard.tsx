@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Control, useWatch } from 'react-hook-form';
 import { Input } from "@/components/ui/input";
@@ -63,14 +62,14 @@ const AccountCredentialsCard = ({ control }: AccountCredentialsCardProps) => {
               <FormItem>
                 <FormLabel>Business Phone *</FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder="(555) 123-4567" 
+                  <Input
+                    placeholder="(555) 123-4567"
                     {...field}
                     onChange={(e) => {
                       const formatted = formatPhoneNumber(e.target.value);
                       field.onChange(formatted);
                     }}
-                    required 
+                    required
                   />
                 </FormControl>
                 <FormMessage />
@@ -85,14 +84,14 @@ const AccountCredentialsCard = ({ control }: AccountCredentialsCardProps) => {
               <FormItem>
                 <FormLabel>Cell Phone *</FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder="(555) 123-4567" 
+                  <Input
+                    placeholder="(555) 123-4567"
                     {...field}
                     onChange={(e) => {
                       const formatted = formatPhoneNumber(e.target.value);
                       field.onChange(formatted);
                     }}
-                    required 
+                    required
                   />
                 </FormControl>
                 <FormMessage />
@@ -121,14 +120,13 @@ const AccountCredentialsCard = ({ control }: AccountCredentialsCardProps) => {
               <FormItem>
                 <FormLabel>Username *</FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder="Username (defaults to email)" 
-                    {...field} 
-                    value={field.value || emailAddress || ''}
+                  <Input
+                    placeholder="Enter your username"
+                    {...field}
                     onChange={(e) => {
                       field.onChange(e.target.value);
                     }}
-                    required 
+                    required
                   />
                 </FormControl>
                 <FormMessage />

@@ -1,7 +1,7 @@
 
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import Header from '@/components/Header';
+import SubscribersHeader from '@/components/SubscribersHeader';
 import Footer from '@/components/Footer';
 import CategoryHeroSection from '@/components/category/CategoryHeroSection';
 import CategoryCTASection from '@/components/category/CategoryCTASection';
@@ -52,7 +52,7 @@ const SubscriberCategoryPage = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <SubscribersHeader />
       <main className="flex-grow">
         {/* Hero Section */}
         <CategoryHeroSection 

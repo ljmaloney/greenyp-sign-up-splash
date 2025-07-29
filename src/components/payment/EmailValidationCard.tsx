@@ -2,110 +2,100 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { Mail, CheckCircle, AlertCircle } from 'lucide-react';
 
 interface EmailValidationCardProps {
-  emailValidationToken: string;
+  validationToken: string;
   onChange: (value: string) => void;
   emailAddress?: string;
   helperText?: string;
   isValidating?: boolean;
   isValidated?: boolean;
-  validationError?: string | null;
-  onValidate?: () => void;
+  validationError?: string;
+  onValidate?: () => void | Promise<void>;
 }
 
-const EmailValidationCard = ({ 
-  emailValidationToken, 
-  onChange, 
-  emailAddress = '[insert email]',
-  helperText = 'A verified email address is required',
+const EmailValidationCard = ({
+  validationToken,
+  onChange,
+  emailAddress,
+  helperText,
   isValidating = false,
   isValidated = false,
-  validationError = null,
+  validationError = '',
   onValidate
 }: EmailValidationCardProps) => {
-  const getValidationStatus = () => {
-    if (isValidated) {
-      return {
-        icon: <CheckCircle className="h-5 w-5 text-green-600" />,
-        text: 'Email validated successfully',
-        className: 'text-green-600'
-      };
+  const handleValidate = () => {
+    console.log('🔍 EmailValidationCard - Verify button pressed with token:', validationToken);
+    console.log('🔍 EmailValidationCard - Token length:', validationToken?.length);
+    console.log('🔍 EmailValidationCard - Token value being passed:', validationToken);
+    
+    if (onValidate) {
+      onValidate();
     }
-    if (validationError) {
-      return {
-        icon: <AlertCircle className="h-5 w-5 text-red-600" />,
-        text: validationError,
-        className: 'text-red-600'
-      };
-    }
-    return null;
   };
 
-  const validationStatus = getValidationStatus();
-
   return (
-    <Card className={isValidated ? 'border-green-200 bg-green-50' : ''}>
+    <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          Email Validation
-          {validationStatus && validationStatus.icon}
+          <Mail className="h-5 w-5 text-greenyp-600" />
+          Email Verification
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="text-sm text-gray-600 italic">
-          {helperText}. We've sent a verification code to {emailAddress}.
-          Please check your email and enter the code below.
-        </div>
+        {emailAddress && (
+          <div className="text-sm text-gray-600">
+            Verifying: <span className="font-medium">{emailAddress}</span>
+          </div>
+        )}
         
+        {helperText && (
+          <p className="text-sm text-gray-600">{helperText}</p>
+        )}
+
         <div className="space-y-2">
-          <Label htmlFor="emailValidationToken">Email Validation Token *</Label>
+          <Label htmlFor="emailValidationToken">Verification Code</Label>
           <div className="flex gap-2">
             <Input
               id="emailValidationToken"
+              name="emailValidationToken"
               type="text"
-              value={emailValidationToken}
-              onChange={(e) => onChange(e.target.value)}
-              placeholder="Enter email validation token"
-              required
-              disabled={isValidated}
-              aria-describedby={validationStatus ? "validation-status" : undefined}
-              autoComplete="off"
-              data-form-type="other"
-              data-lpignore="true"
+              placeholder="Enter validation code"
+              value={validationToken}
+              onChange={(e) => {
+                console.log('🔍 EmailValidationCard - Input changed to:', e.target.value);
+                onChange(e.target.value);
+              }}
+              disabled={isValidating || isValidated}
+              className={isValidated ? 'bg-green-50 border-green-200' : ''}
             />
-            <Button
-              type="button"
-              onClick={onValidate}
-              disabled={isValidating || isValidated || !emailValidationToken.trim()}
-              className="whitespace-nowrap"
-            >
-              {isValidating ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  Validating...
-                </>
-              ) : isValidated ? (
-                'Validated'
-              ) : (
-                'Validate Email'
-              )}
-            </Button>
+            {onValidate && (
+              <Button
+                onClick={handleValidate}
+                disabled={!validationToken.trim() || isValidating || isValidated}
+                variant={isValidated ? 'outline' : 'default'}
+                size="sm"
+              >
+                {isValidating ? 'Verifying...' : isValidated ? 'Verified' : 'Verify'}
+              </Button>
+            )}
           </div>
         </div>
 
-        {validationStatus && (
-          <div 
-            id="validation-status" 
-            className={`text-sm flex items-center gap-2 ${validationStatus.className}`}
-            role="status"
-            aria-live="polite"
-          >
-            {validationStatus.icon}
-            {validationStatus.text}
+        {isValidated && (
+          <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+            <CheckCircle className="h-4 w-4 text-green-600" />
+            <span className="text-green-700 text-sm">Email verified successfully</span>
+          </div>
+        )}
+
+        {validationError && (
+          <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <AlertCircle className="h-4 w-4 text-red-600 mt-0.5 flex-shrink-0" />
+            <div className="text-red-700 text-sm">{validationError}</div>
           </div>
         )}
       </CardContent>

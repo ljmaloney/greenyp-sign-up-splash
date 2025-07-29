@@ -77,7 +77,12 @@ export const useAdPackages = () => {
       try {
         const response = await apiClient.get('/reference/classified/ad/types');
         console.log('📦 Ad packages response:', response);
-        return response;
+        
+        // Transform the API response to match our expected structure
+        return {
+          response: Array.isArray(response.response) ? response.response : [],
+          errorMessageApi: response.errorMessageApi
+        };
       } catch (error) {
         console.log('⚠️ API failed, using dummy data for demo purposes:', error);
         // Return dummy data when API fails

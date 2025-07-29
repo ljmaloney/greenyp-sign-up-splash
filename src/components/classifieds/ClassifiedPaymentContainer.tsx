@@ -1,41 +1,39 @@
-
 import React from 'react';
+import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useApiClient } from '@/hooks/useApiClient';
-import PaymentLoadingState from './PaymentLoadingState';
-import PaymentErrorState from './PaymentErrorState';
-import PaymentLayout from './PaymentLayout';
+import { ClassifiedPaymentData } from '@/types/classifiedPayment';
 
-interface NewPaymentContainerProps {
-  classifiedId: string;
-}
-
-const ClassifiedPaymentContainer = ({ classifiedId }: NewPaymentContainerProps) => {
+const ClassifiedPaymentContainer = () => {
+  const { classifiedId } = useParams<{ classifiedId: string }>();
   const apiClient = useApiClient();
 
-  const { data: classifiedData, isLoading } = useQuery({
-    queryKey: ['classified-customer', classifiedId],
-    queryFn: async () => {
-      console.log('Fetching classified data for ID:', classifiedId);
+  const { data: classifiedData, isLoading, error } = useQuery({
+    queryKey: ['classified-payment', classifiedId],
+    queryFn: async (): Promise<ClassifiedPaymentData> => {
+      console.log('Fetching classified data for payment:', classifiedId);
       const response = await apiClient.get(`/classified/${classifiedId}/customer`, { requireAuth: false });
-      return response.response;
+      
+      // Type assertion to properly handle the response
+      const apiResponse = response as { response: ClassifiedPaymentData };
+      return apiResponse.response;
     },
     enabled: !!classifiedId && classifiedId !== ':classifiedId'
   });
 
   if (isLoading) {
-    return <PaymentLoadingState />;
+    return <div>Loading...</div>;
   }
 
-  if (!classifiedData) {
-    return <PaymentErrorState />;
+  if (error || !classifiedData) {
+    return <div>Error loading classified data</div>;
   }
 
   return (
-    <PaymentLayout 
-      classified={classifiedData.classified}
-      customer={classifiedData.customer}
-    />
+    <div>
+      <h2>Payment for: {classifiedData.classified.title}</h2>
+      {/* Add your payment form components here */}
+    </div>
   );
 };
 
