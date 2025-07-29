@@ -15,11 +15,43 @@ const Payment = () => {
   const { data: accountData } = useAccountData();
   const producerId = accountData?.producer?.producerId;
   
-  // State for showing standalone update component
-  const [showUpdatePaymentMethod, setShowUpdatePaymentMethod] = useState(false);
+  // State for enabling/disabling the update payment method card
+  const [updatePaymentMethodEnabled, setUpdatePaymentMethodEnabled] = useState(false);
 
   // Fetch payment method data
   const { data: paymentMethod, isLoading: paymentLoading, error: paymentError } = usePaymentMethod(producerId || '');
+
+  // Set initial disabled state based on whether payment method exists (2XX response means disabled initially)
+  React.useEffect(() => {
+    if (!paymentLoading && !paymentError && paymentMethod) {
+      // Payment method exists (2XX response), so card should be disabled initially
+      setUpdatePaymentMethodEnabled(false);
+    }
+  }, [paymentMethod, paymentLoading, paymentError]);
+
+  // Map PaymentMethod data to BillingInfo structure for pre-population (memoized to prevent infinite loops)
+  const initialBillingInfo = React.useMemo(() => {
+    if (!paymentMethod) return undefined;
+
+    // Extract name from cardholderName or use empty strings
+    const cardholderName = paymentMethod.cardDetails?.cardholderName || '';
+    const nameParts = cardholderName.split(' ');
+    const firstName = nameParts[0] || '';
+    const lastName = nameParts.slice(1).join(' ') || '';
+
+    return {
+      firstName,
+      lastName,
+      email: paymentMethod.emailAddress || '',
+      phone: paymentMethod.phoneNumber || '',
+      company: '', // Not available in PaymentMethod
+      address: paymentMethod.payorAddress1 || '',
+      address2: paymentMethod.payorAddress2 || '',
+      city: paymentMethod.payorCity || '',
+      state: paymentMethod.payorState || '',
+      zipCode: paymentMethod.payorPostalCode || ''
+    };
+  }, [paymentMethod]);
 
   // Update payment method functionality
   const {
@@ -47,9 +79,13 @@ const Payment = () => {
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold text-gray-900">Payment Information</h1>
           <div className="flex gap-2">
-            <Button onClick={() => setShowUpdatePaymentMethod(!showUpdatePaymentMethod)} className="flex items-center">
+            <Button 
+              onClick={() => setUpdatePaymentMethodEnabled(true)} 
+              className="flex items-center"
+              disabled={updatePaymentMethodEnabled}
+            >
               <Edit className="w-4 h-4 mr-2" />
-              {showUpdatePaymentMethod ? 'Hide Update Form' : 'Update Payment Method'}
+              {updatePaymentMethodEnabled ? 'Update Form Enabled' : 'Update Payment Method'}
             </Button>
           </div>
         </div>
@@ -68,38 +104,18 @@ const Payment = () => {
           />
         </div>
         <div className="grid gap-6 md:grid-cols-2">
-          {/* Row 2 - UpdatePaymentMethod component when enabled */}
-          {showUpdatePaymentMethod && producerId && (
+          {/* Row 2 - UpdatePaymentMethod component - always shown but can be disabled */}
+          {producerId && (
             <div className="md:col-span-2">
               <UpdatePaymentMethod 
                 producerId={producerId}
-                onCancel={() => setShowUpdatePaymentMethod(false)}
+                onCancel={() => setUpdatePaymentMethodEnabled(false)}
+                disabled={!updatePaymentMethodEnabled}
+                initialBillingInfo={initialBillingInfo}
               />
             </div>
           )}
         </div>
-
-
-
-        {/* Update Payment Method Dialog */}
-        <UpdatePaymentMethodDialog
-          isOpen={isDialogOpen}
-          onClose={closeDialog}
-          isProcessing={isProcessing}
-          billingContact={billingContact}
-          billingAddress={billingAddress}
-          onBillingContactChange={handleBillingContactChange}
-          onBillingAddressChange={handleBillingAddressChange}
-          onUpdatePayment={handleUpdatePayment}
-          cardContainerRef={cardContainerRef}
-          squareError={squareError}
-          isSquareReady={isInitialized}
-          isSquareInitializing={isInitializing}
-          initializationPhase={initializationPhase}
-          retryCount={retryCount}
-          onSquareRetry={retrySquareInitialization}
-          producerId={producerId} // Explicitly pass the producerId
-        />
       </div>
     </DashboardLayout>
   );

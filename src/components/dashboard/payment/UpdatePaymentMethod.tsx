@@ -10,6 +10,8 @@ import ReactSquareCard from '@/components/payment/ReactSquareCard';
 interface UpdatePaymentMethodProps {
   producerId: string;
   onCancel: () => void;
+  disabled?: boolean;
+  initialBillingInfo?: Partial<BillingInfo>;
 }
 
 // Basic billing info structure
@@ -28,21 +30,23 @@ interface BillingInfo {
 
 const UpdatePaymentMethod: React.FC<UpdatePaymentMethodProps> = ({
   producerId,
-  onCancel
+  onCancel,
+  disabled = false,
+  initialBillingInfo
 }) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [billingInfo, setBillingInfo] = useState<BillingInfo>({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    company: '',
-    address: '',
-    address2: '',
-    city: '',
-    state: '',
-    zipCode: ''
+    firstName: initialBillingInfo?.firstName || '',
+    lastName: initialBillingInfo?.lastName || '',
+    email: initialBillingInfo?.email || '',
+    phone: initialBillingInfo?.phone || '',
+    company: initialBillingInfo?.company || '',
+    address: initialBillingInfo?.address || '',
+    address2: initialBillingInfo?.address2 || '',
+    city: initialBillingInfo?.city || '',
+    state: initialBillingInfo?.state || '',
+    zipCode: initialBillingInfo?.zipCode || ''
   });
 
   const apiClient = useApiClient();
@@ -129,9 +133,12 @@ const UpdatePaymentMethod: React.FC<UpdatePaymentMethodProps> = ({
   };
 
   return (
-    <Card>
+    <Card className={disabled ? 'opacity-50 pointer-events-none' : ''}>
       <CardHeader>
         <CardTitle>Update Payment Method</CardTitle>
+        {disabled && (
+          <p className="text-sm text-gray-500">Click "Update Payment Method" to enable editing</p>
+        )}
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Debug info */}
