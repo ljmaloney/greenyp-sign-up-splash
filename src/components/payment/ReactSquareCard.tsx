@@ -35,9 +35,7 @@ const ReactSquareCard: React.FC<ReactSquareCardProps> = ({
   error,
   paymentType
 }) => {
-  const squareConfig = getSquareConfig();
-
-  const handleCardTokenization = async (result: any, verifiedBuyer?: any) => {
+  const handleCardTokenization = React.useCallback(async (result: any, verifiedBuyer?: any) => {
     if (result.status === 'OK') {
       const tokenData = {
         token: result.token,
@@ -51,35 +49,37 @@ const ReactSquareCard: React.FC<ReactSquareCardProps> = ({
       const errorMessage = result.errors?.[0]?.detail || 'Payment processing failed';
       onPaymentError(errorMessage);
     }
-  };
+  }, [billingContact, billingAddress, onPaymentSuccess, onPaymentError]);
+
+  const createVerificationDetails = React.useCallback(() => ({
+    billingContact: {
+      givenName: billingContact.firstName,
+      familyName: billingContact.lastName,
+      addressLines: [billingAddress.address],
+      locality: billingAddress.city,
+      administrativeDistrictLevel1: billingAddress.state,
+      postalCode: billingAddress.zipCode,
+      email: billingContact.email,
+      phone: billingContact.phone,
+    },
+    billingAddress: {
+      addressLines: [billingAddress.address],
+      locality: billingAddress.city,
+      administrativeDistrictLevel1: billingAddress.state,
+      postalCode: billingAddress.zipCode,
+    },
+    amount: '1.00',
+    currencyCode: 'USD',
+    intent: paymentType === 'CLASSIFIED' ? 'CHARGE' as const : 'STORE' as const,
+  }), [billingContact, billingAddress, paymentType]);
 
   return (
     <div className="space-y-4">
       <PaymentForm
-        applicationId={squareConfig.applicationId}
-        locationId={squareConfig.locationId}
+        applicationId={import.meta.env.VITE_SQUARE_APPLICATION_ID}
+        locationId={import.meta.env.VITE_SQUARE_LOCATION_ID}
         cardTokenizeResponseReceived={handleCardTokenization}
-        createVerificationDetails={() => ({
-          billingContact: {
-            givenName: billingContact.firstName,
-            familyName: billingContact.lastName,
-            addressLines: [billingAddress.address],
-            locality: billingAddress.city,
-            administrativeDistrictLevel1: billingAddress.state,
-            postalCode: billingAddress.zipCode,
-            email: billingContact.email,
-            phone: billingContact.phone,
-          },
-          billingAddress: {
-            addressLines: [billingAddress.address],
-            locality: billingAddress.city,
-            administrativeDistrictLevel1: billingAddress.state,
-            postalCode: billingAddress.zipCode,
-          },
-          amount: '1.00',
-          currencyCode: 'USD',
-          intent: paymentType === 'CLASSIFIED' ? 'CHARGE' : 'STORE',
-        })}
+        createVerificationDetails={createVerificationDetails}
       >
         <div className="border border-gray-300 rounded-lg p-4 min-h-[120px]">
           <CreditCard

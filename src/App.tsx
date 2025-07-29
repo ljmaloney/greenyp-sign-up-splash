@@ -44,6 +44,7 @@ import DashboardPhotoGallery from '@/pages/dashboard/PhotoGallery';
 import DashboardAnalytics from '@/pages/dashboard/Analytics';
 import DashboardSubscription from '@/pages/dashboard/Subscription';
 import DashboardPayment from '@/pages/dashboard/Payment';
+import DashboardInvoices from '@/pages/dashboard/Invoices';
 
 // Import admin pages
 import AdminIndex from '@/pages/admin/Index';
@@ -129,6 +130,11 @@ function App() {
               <Route path="/dashboard/payment" element={
                 <ProtectedRoute requiredRole="Dashboard-Access">
                   <DashboardPayment />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/invoices" element={
+                <ProtectedRoute requiredRole="Dashboard-Access">
+                  <DashboardInvoices />
                 </ProtectedRoute>
               } />
 
