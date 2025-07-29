@@ -78,8 +78,15 @@ const ReactSquareCard: React.FC<ReactSquareCardProps> = ({
       <PaymentForm
         applicationId={import.meta.env.VITE_SQUARE_APPLICATION_ID}
         locationId={import.meta.env.VITE_SQUARE_LOCATION_ID}
-        cardTokenizeResponseReceived={handleCardTokenization}
-        createVerificationDetails={createVerificationDetails}
+        cardTokenizeResponseReceived={(result, verifiedBuyer) => {
+          console.log('📤 Tokenize Response:', result, verifiedBuyer);
+          handleCardTokenization(result, verifiedBuyer);
+        }}
+        createVerificationDetails={() => {
+          const details = createVerificationDetails();
+          console.log('🔐 Verification Details:', details);
+          return details;
+        }}
       >
         <div className="border border-gray-300 rounded-lg p-4 min-h-[120px]">
           <CreditCard
