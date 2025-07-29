@@ -36,7 +36,17 @@ const LocationMap = ({
       style: 'https://api.maptiler.com/maps/basic/style.json?key=gkmPj4sliSAhXjX94Anp', // Free MapLibre style
       center: [lng, lat],
       zoom: 14,
+      attributionControl: false, // Disable default attribution
     });
+
+    // Add minimal custom attribution
+    map.current.addControl(
+      new maplibregl.AttributionControl({
+        compact: true,
+        customAttribution: '© MapTiler'
+      }),
+      'bottom-right'
+    );
 
     // Add a marker for the business location
     new maplibregl.Marker({ color: '#059669' })
