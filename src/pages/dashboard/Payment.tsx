@@ -47,10 +47,6 @@ const Payment = () => {
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold text-gray-900">Payment Information</h1>
           <div className="flex gap-2">
-            <Button onClick={openDialog} variant="outline" className="flex items-center">
-              <Edit className="w-4 h-4 mr-2" />
-              Update (Dialog)
-            </Button>
             <Button onClick={() => setShowUpdatePaymentMethod(!showUpdatePaymentMethod)} className="flex items-center">
               <Edit className="w-4 h-4 mr-2" />
               {showUpdatePaymentMethod ? 'Hide Update Form' : 'Update Payment Method'}
