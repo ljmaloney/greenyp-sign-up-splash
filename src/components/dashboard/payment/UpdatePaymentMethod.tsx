@@ -6,6 +6,7 @@ import { useApiClient } from '@/hooks/useApiClient';
 import { useToast } from '@/hooks/use-toast';
 import { useQueryClient } from '@tanstack/react-query';
 import ReactSquareCard from '@/components/payment/ReactSquareCard';
+import { formatPhoneForSquareAPI } from '@/utils/phoneUtils';
 
 interface UpdatePaymentMethodProps {
   producerId: string;
@@ -79,7 +80,7 @@ const UpdatePaymentMethod: React.FC<UpdatePaymentMethodProps> = ({
         city: billingInfo.city,
         state: billingInfo.state,
         postalCode: billingInfo.zipCode,
-        phoneNumber: billingInfo.phone,
+        phoneNumber: formatPhoneForSquareAPI(billingInfo.phone),
         emailAddress: billingInfo.email,
         producerPayment: {
           paymentMethod: 'CREDIT_CARD',
@@ -98,9 +99,9 @@ const UpdatePaymentMethod: React.FC<UpdatePaymentMethodProps> = ({
         description: "Payment method updated successfully",
       });
 
-      // Invalidate relevant queries
+      // Invalidate relevant queries to refresh payment method data
+      queryClient.invalidateQueries({ queryKey: ['payment-method', producerId] });
       queryClient.invalidateQueries({ queryKey: ['subscriptions'] });
-      queryClient.invalidateQueries({ queryKey: ['payment-methods'] });
 
       // Clear form and close
       setBillingInfo({
