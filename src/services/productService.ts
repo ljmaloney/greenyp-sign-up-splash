@@ -1,6 +1,7 @@
 
 import { ProductsResponse } from '@/types/profile';
-import { getApiUrl } from '@/config/api';
+// Import the type returned by useApiClient hook
+type ApiClient = ReturnType<typeof import('@/hooks/useApiClient').useApiClient>;
 
 export interface ProductCreateRequest {
   producerId: string;
@@ -36,80 +37,62 @@ export interface ProductDiscontinueRequest {
   lastOrderDate: string;
 }
 
-export const fetchProducts = async (producerId: string, locationId: string): Promise<ProductsResponse> => {
-  const url = getApiUrl(`/producer/${producerId}/location/${locationId}/products`);
-  console.log('Fetching products from URL:', url);
+export const fetchProducts = async (apiClient: ApiClient, producerId: string, locationId: string): Promise<ProductsResponse> => {
+  const endpoint = `/producer/${producerId}/location/${locationId}/products`;
+  console.log('Fetching products from endpoint:', endpoint);
   console.log('Producer ID:', producerId, 'Location ID:', locationId);
   
-  const response = await fetch(url);
+  const response = await apiClient.get(endpoint, { requireAuth: true });
   
-  if (!response.ok) {
-    throw new Error(`Failed to fetch products: ${response.status}`);
+  if (response.error) {
+    throw new Error(`Failed to fetch products: ${response.error}`);
   }
   
-  return response.json();
+  return response.response as ProductsResponse;
 };
 
-export const createProduct = async (productData: ProductCreateRequest): Promise<any> => {
-  const response = await fetch(getApiUrl('/producer/location/product'), {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(productData),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to create product: ${response.status}`);
+export const createProduct = async (apiClient: ApiClient, productData: ProductCreateRequest): Promise<any> => {
+  const response = await apiClient.post('/producer/location/product', productData, { requireAuth: true });
+  
+  if (response.error) {
+    throw new Error(`Failed to create product: ${response.error}`);
   }
 
-  return response.json();
+  return response.response;
 };
 
-export const updateProduct = async (productData: ProductUpdateRequest): Promise<any> => {
-  const response = await fetch(getApiUrl('/producer/location/product'), {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(productData),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to update product: ${response.status}`);
+export const updateProduct = async (apiClient: ApiClient, productData: ProductUpdateRequest): Promise<any> => {
+  const response = await apiClient.put('/producer/location/product', productData, { requireAuth: true });
+  
+  if (response.error) {
+    throw new Error(`Failed to update product: ${response.error}`);
   }
 
-  return response.json();
+  return response.response;
 };
 
-export const deleteProduct = async (productId: string): Promise<any> => {
-  const response = await fetch(getApiUrl('/producer/product'), {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ productId }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to delete product: ${response.status}`);
+export const deleteProduct = async (apiClient: ApiClient, productId: string): Promise<any> => {
+  const response = await apiClient.delete('/producer/product', { 
+    requireAuth: true,
+    body: JSON.stringify({ productId })
+  } as any);
+  
+  if (response.error) {
+    throw new Error(`Failed to delete product: ${response.error}`);
   }
 
-  return response.json();
+  return response.response;
 };
 
-export const discontinueProduct = async (productData: ProductDiscontinueRequest): Promise<any> => {
-  const response = await fetch(getApiUrl('/producer/location/product/discontinue'), {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(productData),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to discontinue product: ${response.status}`);
+export const discontinueProduct = async (apiClient: ApiClient, productData: ProductDiscontinueRequest): Promise<any> => {
+  const response = await apiClient.delete('/producer/location/product/discontinue', { 
+    requireAuth: true,
+    body: JSON.stringify(productData)
+  } as any);
+  
+  if (response.error) {
+    throw new Error(`Failed to discontinue product: ${response.error}`);
   }
 
-  return response.json();
+  return response.response;
 };

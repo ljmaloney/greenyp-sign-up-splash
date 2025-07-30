@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useApiClient } from '@/hooks/useApiClient';
 import { updateService, ServiceUpdateRequest } from '@/services/serviceService';
 import { useEditServiceForm } from '@/hooks/useEditServiceForm';
 import EditServiceFormFields from './EditServiceFormFields';
@@ -18,6 +19,7 @@ interface EditServiceDialogProps {
 const EditServiceDialog = ({ isOpen, onClose, service, onServiceUpdated }: EditServiceDialogProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const apiClient = useApiClient();
   const { formData, handleChange } = useEditServiceForm(service);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -38,7 +40,7 @@ const EditServiceDialog = ({ isOpen, onClose, service, onServiceUpdated }: EditS
       };
 
       console.log('Updating service:', updateRequest);
-      await updateService(updateRequest);
+      await updateService(apiClient, updateRequest);
       
       toast({
         title: "Service Updated", 

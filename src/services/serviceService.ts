@@ -1,4 +1,5 @@
-import { getApiUrl } from '@/config/api';
+// Import the type returned by useApiClient hook
+type ApiClient = ReturnType<typeof import('@/hooks/useApiClient').useApiClient>;
 
 export interface ServiceCreateRequest {
   producerId: string;
@@ -26,66 +27,48 @@ export interface ServiceDiscontinueRequest {
   discontinueDate: string;
 }
 
-export const createService = async (serviceData: ServiceCreateRequest): Promise<any> => {
-  const response = await fetch(getApiUrl('/producer/location/service'), {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(serviceData),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to create service: ${response.status}`);
+export const createService = async (apiClient: ApiClient, serviceData: ServiceCreateRequest): Promise<any> => {
+  const response = await apiClient.post('/producer/location/service', serviceData, { requireAuth: true });
+  
+  if (response.error) {
+    throw new Error(`Failed to create service: ${response.error}`);
   }
 
-  return response.json();
+  return response.response;
 };
 
-export const updateService = async (serviceData: ServiceUpdateRequest): Promise<any> => {
-  const response = await fetch(getApiUrl('/producer/location/service'), {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(serviceData),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to update service: ${response.status}`);
+export const updateService = async (apiClient: ApiClient, serviceData: ServiceUpdateRequest): Promise<any> => {
+  const response = await apiClient.put('/producer/location/service', serviceData, { requireAuth: true });
+  
+  if (response.error) {
+    throw new Error(`Failed to update service: ${response.error}`);
   }
 
-  return response.json();
+  return response.response;
 };
 
-export const deleteService = async (serviceId: string): Promise<any> => {
-  const response = await fetch(getApiUrl('/producer/service'), {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ serviceId }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to delete service: ${response.status}`);
+export const deleteService = async (apiClient: ApiClient, serviceId: string): Promise<any> => {
+  const response = await apiClient.delete('/producer/service', { 
+    requireAuth: true,
+    body: JSON.stringify({ serviceId })
+  } as any);
+  
+  if (response.error) {
+    throw new Error(`Failed to delete service: ${response.error}`);
   }
 
-  return response.json();
+  return response.response;
 };
 
-export const discontinueService = async (serviceData: ServiceDiscontinueRequest): Promise<any> => {
-  const response = await fetch(getApiUrl('/producer/location/service/discontinue'), {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(serviceData),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to discontinue service: ${response.status}`);
+export const discontinueService = async (apiClient: ApiClient, serviceData: ServiceDiscontinueRequest): Promise<any> => {
+  const response = await apiClient.delete('/producer/location/service/discontinue', { 
+    requireAuth: true,
+    body: JSON.stringify(serviceData)
+  } as any);
+  
+  if (response.error) {
+    throw new Error(`Failed to discontinue service: ${response.error}`);
   }
 
-  return response.json();
+  return response.response;
 };
