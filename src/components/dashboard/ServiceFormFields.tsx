@@ -31,9 +31,9 @@ const ServiceFormFields = ({ formData, onFieldChange, locations }: ServiceFormFi
           <SelectContent>
             {locations.map((location) => (
               <SelectItem key={location.id} value={location.id}>
-                <div>
-                  <div className="font-medium">{location.name}</div>
-                  <div className="text-sm text-gray-500">{location.address}</div>
+                <div className="text-left">
+                  <div className="font-medium text-left">{location.name}</div>
+                  <div className="text-sm text-gray-500 text-left">{location.address}</div>
                 </div>
               </SelectItem>
             ))}

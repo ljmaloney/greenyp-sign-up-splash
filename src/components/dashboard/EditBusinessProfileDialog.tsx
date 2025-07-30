@@ -1,47 +1,154 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { useApiClient } from "@/hooks/useApiClient";
 
-interface BusinessData {
+interface ProducerData {
+  producerId: string;
   businessName: string;
-  contactName: string;
-  email: string;
-  phone: string;
-  address: string;
-  website: string;
+  lineOfBusinessId: string;
+  subscriptionId: string;
+  subscriptionType: string;
+  invoiceCycleType: string;
+  websiteUrl: string;
+  narrative: string;
+}
+
+interface LineOfBusiness {
+  lineOfBusinessId: string;
+  lineOfBusinessName: string;
+  createDate: string;
+  lastUpdateDate: string;
+  createType: string;
+  createByReference: string;
+  shortDescription: string;
   description: string;
+  enableDistanceRadius: boolean;
+  iconName: string;
+  iconFileName: string | null;
+}
+
+interface ProducerApiResponse {
+  producer: {
+    producerId: string;
+    businessName: string;
+    lineOfBusinessId: string;
+    subscriptionType: string;
+    websiteUrl?: string;
+    narrative?: string;
+    subscriptions?: {
+      subscriptionId: string;
+      invoiceCycleType: string;
+    }[];
+  };
 }
 
 interface EditBusinessProfileDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  businessData: BusinessData;
+  producer: {
+    producerId: string;
+    businessName: string;
+    lineOfBusinessId: string;
+    subscriptionType: string;
+    websiteUrl?: string;
+    narrative?: string;
+    subscriptions?: {
+      subscriptionId: string;
+      invoiceCycleType: string;
+    }[];
+  };
+  lineOfBusinessOptions: LineOfBusiness[];
+  onSuccess?: () => void;
 }
 
-const EditBusinessProfileDialog = ({ isOpen, onClose, businessData }: EditBusinessProfileDialogProps) => {
-  const [formData, setFormData] = useState(businessData);
+const EditBusinessProfileDialog = ({ isOpen, onClose, producer, lineOfBusinessOptions, onSuccess }: EditBusinessProfileDialogProps) => {
+  const [formData, setFormData] = useState<ProducerData | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const apiClient = useApiClient();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Initialize form data when dialog opens
+  useEffect(() => {
+    if (isOpen && producer) {
+      const subscription = producer.subscriptions?.[0]; // Get first subscription
+      
+      console.log('Initializing form with producer data:', producer);
+      console.log('Available LOB options:', lineOfBusinessOptions);
+      
+      setFormData({
+        producerId: producer.producerId,
+        businessName: producer.businessName,
+        lineOfBusinessId: producer.lineOfBusinessId,
+        subscriptionId: subscription?.subscriptionId || '',
+        subscriptionType: producer.subscriptionType,
+        invoiceCycleType: subscription?.invoiceCycleType || 'MONTHLY',
+        websiteUrl: producer.websiteUrl || '',
+        narrative: producer.narrative || ''
+      });
+    }
+  }, [isOpen, producer, lineOfBusinessOptions]);
+
+
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData) return;
     
-    // In a real app, this would call an API to update the business profile
-    console.log('Updating business profile:', formData);
-    
-    toast({
-      title: "Profile Updated",
-      description: "Your business profile has been successfully updated.",
-    });
-    
-    onClose();
+    setIsSubmitting(true);
+    try {
+      const payload = {
+        producerId: formData.producerId,
+        producerRequest: {
+          producerId: formData.producerId,
+          businessName: formData.businessName,
+          lineOfBusinessId: formData.lineOfBusinessId,
+          subscriptionId: formData.subscriptionId,
+          subscriptionType: formData.subscriptionType,
+          invoiceCycleType: formData.invoiceCycleType,
+          websiteUrl: formData.websiteUrl,
+          narrative: formData.narrative
+        }
+      };
+
+      const response = await apiClient.put('/account', payload, { requireAuth: true });
+      
+      if (response.error) {
+        throw new Error('Failed to update business profile');
+      }
+
+      toast({
+        title: "Profile Updated",
+        description: "Your business profile has been successfully updated.",
+      });
+      
+      onSuccess?.();
+      onClose();
+    } catch (error) {
+      console.error('Error updating business profile:', error);
+      toast({
+        title: "Update Failed",
+        description: "Failed to update business profile. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleChange = (field: keyof BusinessData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const handleChange = (field: keyof ProducerData, value: string) => {
+    if (!formData) return;
+    setFormData(prev => prev ? { ...prev, [field]: value } : null);
   };
+
+  if (!isOpen) return null;
+  
+  if (!formData) {
+    return null;
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -65,80 +172,63 @@ const EditBusinessProfileDialog = ({ isOpen, onClose, businessData }: EditBusine
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Contact Name
+                Line of Business
               </label>
-              <Input
-                value={formData.contactName}
-                onChange={(e) => handleChange('contactName', e.target.value)}
+              <select
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-greenyp-600"
+                value={formData.lineOfBusinessId}
+                onChange={(e) => handleChange('lineOfBusinessId', e.target.value)}
                 required
-              />
+              >
+                <option value="">Select a line of business</option>
+                {(() => {
+                  console.log('Rendering LOB options, count:', lineOfBusinessOptions.length);
+                  console.log('LOB options:', lineOfBusinessOptions);
+                  return lineOfBusinessOptions.map((lob) => (
+                    <option key={lob.lineOfBusinessId} value={lob.lineOfBusinessId}>
+                      {lob.lineOfBusinessName}
+                    </option>
+                  ));
+                })()}
+              </select>
             </div>
             
-            <div>
+            <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email
+                Website URL
               </label>
               <Input
-                type="email"
-                value={formData.email}
-                onChange={(e) => handleChange('email', e.target.value)}
-                required
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Phone
-              </label>
-              <Input
-                value={formData.phone}
-                onChange={(e) => handleChange('phone', e.target.value)}
-                required
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Website
-              </label>
-              <Input
-                value={formData.website}
-                onChange={(e) => handleChange('website', e.target.value)}
-                placeholder="www.example.com"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Address
-              </label>
-              <Input
-                value={formData.address}
-                onChange={(e) => handleChange('address', e.target.value)}
-                required
+                type="url"
+                value={formData.websiteUrl}
+                onChange={(e) => handleChange('websiteUrl', e.target.value)}
+                placeholder="https://www.example.com"
               />
             </div>
           </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description
+              Business Narrative
             </label>
             <textarea
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-greenyp-600"
-              rows={3}
-              value={formData.description}
-              onChange={(e) => handleChange('description', e.target.value)}
-              required
+              rows={4}
+              value={formData.narrative}
+              onChange={(e) => handleChange('narrative', e.target.value)}
+              placeholder="Describe your business, services, and what makes you unique..."
             />
           </div>
           
           <div className="flex justify-end space-x-2 pt-4">
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
               Cancel
             </Button>
-            <Button type="submit" className="bg-greenyp-600 hover:bg-greenyp-700">
-              Save Changes
+            <Button 
+              type="submit" 
+              className="bg-greenyp-600 hover:bg-greenyp-700" 
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Saving...' : 'Save Changes'}
             </Button>
           </div>
         </form>

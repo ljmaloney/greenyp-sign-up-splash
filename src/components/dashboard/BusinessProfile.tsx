@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Phone, Mail } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAccountData } from '@/hooks/useAccountData';
 import { useLogoUpload } from '@/hooks/useLogoUpload';
@@ -16,10 +17,22 @@ import EditDashboardContactDialog from './contact/EditDashboardContactDialog.tsx
 const BusinessProfile = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const { data: accountData, isLoading, error } = useAccountData();
   const { data: subscriptions } = useSubscriptions();
   const logoUploadMutation = useLogoUpload();
   const [editingContact, setEditingContact] = useState<Contact | null>(null);
+
+  // Function to refresh dashboard data after successful profile edit
+  const handleProfileUpdateSuccess = () => {
+    // Invalidate account data to trigger refetch
+    queryClient.invalidateQueries({ queryKey: ['account-data', user?.id] });
+    
+    toast({
+      title: "Profile Updated",
+      description: "Your business profile has been successfully updated.",
+    });
+  };
 
   const handleLogoUpload = async (file: File) => {
     try {
@@ -105,6 +118,7 @@ const BusinessProfile = () => {
         onLogoUpload={handleLogoUpload}
         isLogoUploading={logoUploadMutation.isPending}
         hasPhotoGalleryFeature={hasPhotoGalleryFeature}
+        onProfileUpdateSuccess={handleProfileUpdateSuccess}
       />
 
       {/* Primary Location */}

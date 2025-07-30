@@ -66,6 +66,25 @@ export const createContactService = (authenticatedApiClient: any) => ({
       console.error('❌ Failed to fetch location contacts:', error);
       throw error;
     }
+  },
+
+  async deleteContact(contactId: string): Promise<void> {
+    console.log('🗑️ Deleting contact:', contactId);
+    
+    const endpoint = `/producer/contact/${contactId}`;
+    
+    try {
+      const response = await authenticatedApiClient.delete(endpoint, { requireAuth: true });
+      
+      if (response.error) {
+        throw new Error(`Failed to delete contact: ${response.error}`);
+      }
+      
+      console.log('✅ Contact deleted successfully');
+    } catch (error) {
+      console.error('❌ Failed to delete contact:', error);
+      throw error;
+    }
   }
 });
 

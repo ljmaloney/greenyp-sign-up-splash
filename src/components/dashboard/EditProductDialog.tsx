@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useApiClient } from '@/hooks/useApiClient';
 import { updateProduct, ProductUpdateRequest, discontinueProduct } from '@/services/productService';
 import { useEditProductForm } from '@/hooks/useEditProductForm';
 import EditProductFormFields from './EditProductFormFields';
@@ -17,6 +18,7 @@ interface EditProductDialogProps {
 const EditProductDialog = ({ isOpen, onClose, product, onProductUpdated }: EditProductDialogProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const apiClient = useApiClient();
   const { formData, handleChange } = useEditProductForm(product);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -28,7 +30,7 @@ const EditProductDialog = ({ isOpen, onClose, product, onProductUpdated }: EditP
     try {
       if (formData.discontinued && formData.discontinueDate && formData.lastOrderDate) {
         // If product is being discontinued with dates, use the discontinue endpoint
-        await discontinueProduct({
+        await discontinueProduct(apiClient, {
           productId: product.productId,
           discontinueDate: formData.discontinueDate,
           lastOrderDate: formData.lastOrderDate
@@ -56,7 +58,7 @@ const EditProductDialog = ({ isOpen, onClose, product, onProductUpdated }: EditP
         };
 
         console.log('Updating product:', updateRequest);
-        await updateProduct(updateRequest);
+        await updateProduct(apiClient, updateRequest);
         
         toast({
           title: "Product Updated",

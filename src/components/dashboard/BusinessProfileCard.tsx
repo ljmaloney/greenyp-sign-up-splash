@@ -15,19 +15,21 @@ interface BusinessProfileCardProps {
   onLogoUpload?: (file: File) => Promise<void>;
   isLogoUploading?: boolean;
   hasPhotoGalleryFeature: boolean;
+  onProfileUpdateSuccess?: () => void;
 }
 
 const BusinessProfileCard = ({ 
   producer, 
   onLogoUpload, 
   isLogoUploading, 
-  hasPhotoGalleryFeature 
+  hasPhotoGalleryFeature,
+  onProfileUpdateSuccess 
 }: BusinessProfileCardProps) => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   return (
     <BusinessDataProcessor producer={producer}>
-      {({ businessData, lineOfBusinessName }) => (
+      {({ businessData, lineOfBusinessName, lineOfBusinessOptions }) => (
         <FeatureChecker producer={producer} hasPhotoGalleryFeature={hasPhotoGalleryFeature}>
           {({ hasProductsFeature, hasServicesFeature, hasLogoFeature, hasPhotoGalleryFeature: photoGalleryFeature }) => (
             <>
@@ -64,7 +66,9 @@ const BusinessProfileCard = ({
               <EditBusinessProfileDialog
                 isOpen={isEditDialogOpen}
                 onClose={() => setIsEditDialogOpen(false)}
-                businessData={businessData}
+                producer={producer}
+                lineOfBusinessOptions={lineOfBusinessOptions}
+                onSuccess={onProfileUpdateSuccess}
               />
             </>
           )}

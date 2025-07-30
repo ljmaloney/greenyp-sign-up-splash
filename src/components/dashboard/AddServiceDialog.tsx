@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useApiClient } from '@/hooks/useApiClient';
 import { createService, ServiceCreateRequest } from '@/services/serviceService';
 import { useServiceForm } from '@/hooks/useServiceForm';
 import { useLocationCache } from '@/hooks/useLocationCache';
@@ -19,6 +20,7 @@ interface AddServiceDialogProps {
 const AddServiceDialog = ({ isOpen, onClose, onServiceCreated, preSelectedLocationId }: AddServiceDialogProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const apiClient = useApiClient();
   const { locations, isLoading: locationsLoading } = useLocationCache();
   const { data: accountData } = useAccountData();
   const { formData, handleChange, resetForm } = useServiceForm(preSelectedLocationId);
@@ -76,7 +78,7 @@ const AddServiceDialog = ({ isOpen, onClose, onServiceCreated, preSelectedLocati
       };
 
       console.log('Creating service:', createRequest);
-      await createService(createRequest);
+      await createService(apiClient, createRequest);
       
       toast({
         title: "Service Created",
