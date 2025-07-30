@@ -14,7 +14,7 @@ export interface BusinessData {
 
 interface BusinessDataProcessorProps {
   producer: Producer;
-  children: (data: { businessData: BusinessData; lineOfBusinessName: string }) => React.ReactNode;
+  children: (data: { businessData: BusinessData; lineOfBusinessName: string; lineOfBusinessOptions: any[] }) => React.ReactNode;
 }
 
 const BusinessDataProcessor = ({ producer, children }: BusinessDataProcessorProps) => {
@@ -36,7 +36,7 @@ const BusinessDataProcessor = ({ producer, children }: BusinessDataProcessorProp
     description: producer.narrative || '',
   };
 
-  return <>{children({ businessData, lineOfBusinessName })}</>;
+  return <>{children({ businessData, lineOfBusinessName, lineOfBusinessOptions: lineOfBusinessData || [] })};</>;
 };
 
 export default BusinessDataProcessor;
