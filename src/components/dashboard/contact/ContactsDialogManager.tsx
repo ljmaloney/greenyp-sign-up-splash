@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { useToast } from '@/hooks/use-toast.ts';
-import { getApiUrl } from '@/config/api.ts';
+import { useApiClient } from '@/hooks/useApiClient';
+import { createContactService } from '@/services/contactService.ts';
 import AddContactDialog from './AddContactDialog.tsx';
 import EditContactDialog from './EditContactDialog.tsx';
 import DeleteContactDialog from '../DeleteContactDialog.tsx';
@@ -43,6 +44,8 @@ const ContactsDialogManager = ({
   isDashboardEdit = false
 }: ContactsDialogManagerProps) => {
   const { toast } = useToast();
+  const apiClient = useApiClient();
+  const contactService = createContactService(apiClient);
 
   // Transform service contact to component contact format
   const transformContactForDialog = (contact: ServiceContact): ComponentContact => {
@@ -86,13 +89,7 @@ const ContactsDialogManager = ({
     if (!selectedContact) return;
     
     try {
-      const response = await fetch(getApiUrl(`/producer/contact/${selectedContact.contactId}`), {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to delete contact: ${response.status}`);
-      }
+      await contactService.deleteContact(selectedContact.contactId);
 
       toast({
         title: "Contact Deleted",
