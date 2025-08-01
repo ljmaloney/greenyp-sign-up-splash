@@ -56,6 +56,26 @@ export const createLocationService = (authenticatedApiClient: any) => ({
       console.error('❌ Failed to fetch locations:', error);
       throw error;
     }
+  },
+
+  async updateLocation(locationData: any): Promise<any> {
+    console.log('🏢 Updating location:', locationData);
+    
+    const endpoint = '/producer/location';
+    
+    try {
+      const response = await authenticatedApiClient.put(endpoint, locationData, { requireAuth: true });
+      
+      if (response.error) {
+        throw new Error(`Failed to update location: ${response.error}`);
+      }
+      
+      console.log('✅ Location updated successfully');
+      return response.response;
+    } catch (error) {
+      console.error('❌ Failed to update location:', error);
+      throw error;
+    }
   }
 });
 

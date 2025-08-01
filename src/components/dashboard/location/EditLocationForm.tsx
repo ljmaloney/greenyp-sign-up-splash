@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { useToast } from "@/hooks/use-toast.ts";
-import { getApiUrl } from "@/config/api.ts";
+import { useApiClient } from '@/hooks/useApiClient';
+import { createLocationService } from '@/services/locationService.ts';
 import { FULL_NAME_TO_ABBREVIATION } from "@/constants/usStates.ts";
 import LocationFormFields from "./LocationFormFields.tsx";
 import { Location } from "@/services/locationService.ts";
@@ -25,6 +26,8 @@ const EditLocationForm = ({
   children 
 }: EditLocationFormProps) => {
   const { toast } = useToast();
+  const apiClient = useApiClient();
+  const locationService = createLocationService(apiClient);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,19 +56,7 @@ const EditLocationForm = ({
         websiteUrl: formData.websiteUrl
       };
       
-      const response = await fetch(getApiUrl('/producer/location'), {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to update location: ${response.status}`);
-      }
-
-      const result = await response.json();
+      const result = await locationService.updateLocation(payload);
       
       toast({
         title: "Location Updated",
