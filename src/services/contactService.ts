@@ -85,6 +85,26 @@ export const createContactService = (authenticatedApiClient: any) => ({
       console.error('❌ Failed to delete contact:', error);
       throw error;
     }
+  },
+
+  async updateContact(locationId: string, contactData: any): Promise<any> {
+    console.log('📝 Updating contact:', contactData);
+    
+    const endpoint = `/producer/location/${locationId}/contact`;
+    
+    try {
+      const response = await authenticatedApiClient.put(endpoint, contactData, { requireAuth: true });
+      
+      if (response.error) {
+        throw new Error(`Failed to update contact: ${response.error}`);
+      }
+      
+      console.log('✅ Contact updated successfully');
+      return response.response;
+    } catch (error) {
+      console.error('❌ Failed to update contact:', error);
+      throw error;
+    }
   }
 });
 

@@ -2,7 +2,8 @@
 import { useState } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from '@tanstack/react-query';
-import { getApiUrl } from '@/config/api';
+import { useApiClient } from '@/hooks/useApiClient';
+import { createLocationService } from '@/services/locationService';
 import { PrimaryLocation, Producer } from '@/services/accountService';
 import { STATE_ABBREVIATIONS, FULL_NAME_TO_ABBREVIATION } from '@/constants/usStates';
 
@@ -32,6 +33,8 @@ export const usePrimaryLocationForm = ({ primaryLocation, producer, onClose }: U
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
+  const locationService = createLocationService(apiClient);
 
   const handleChange = (field: keyof typeof formData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -63,17 +66,7 @@ export const usePrimaryLocationForm = ({ primaryLocation, producer, onClose }: U
 
       console.log('🚀 Updating primary location with payload:', payload);
       
-      const response = await fetch(getApiUrl('/producer/location'), {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to update primary location: ${response.status}`);
-      }
+      await locationService.updateLocation(payload);
 
       // Invalidate and refetch account data
       queryClient.invalidateQueries({ queryKey: ['accountData'] });

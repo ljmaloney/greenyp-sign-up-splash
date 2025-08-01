@@ -2,7 +2,8 @@
 import { useState } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from '@tanstack/react-query';
-import { getApiUrl } from '@/config/api';
+import { useApiClient } from '@/hooks/useApiClient';
+import { createContactService } from '@/services/contactService';
 import { Contact } from '@/services/accountService';
 import { normalizePhoneNumber } from "@/utils/phoneUtils";
 
@@ -44,6 +45,8 @@ export const useDashboardContactForm = ({ contact, locationId, onClose }: UseDas
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
+  const contactService = createContactService(apiClient);
 
   const handleChange = (field: keyof ContactFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -63,17 +66,7 @@ export const useDashboardContactForm = ({ contact, locationId, onClose }: UseDas
         cellPhoneNumber: formData.cellPhoneNumber.trim() ? normalizePhoneNumber(formData.cellPhoneNumber) : null
       };
       
-      const response = await fetch(getApiUrl(`/producer/location/${locationId}/contact`), {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(submissionData),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to update contact: ${response.status}`);
-      }
+      await contactService.updateContact(locationId, submissionData);
 
       // Invalidate and refetch account data
       queryClient.invalidateQueries({ queryKey: ['accountData'] });
