@@ -26,10 +26,10 @@ export interface ContactsResponse {
 
 // Create a function that accepts an API client for dependency injection
 export const createContactService = (authenticatedApiClient: any) => ({
-  async fetchContacts(producerId: string): Promise<Contact[]> {
-    console.log('👥 Fetching contacts for producer:', producerId);
+  async fetchContacts(producerId: string, activeOnly: boolean = false): Promise<Contact[]> {
+    console.log('👥 Fetching contacts for producer:', producerId, 'activeOnly:', activeOnly);
     
-    const endpoint = `/producer/${producerId}/contacts?activeOnly=false`;
+    const endpoint = `/producer/${producerId}/contacts?activeOnly=${activeOnly}`;
     
     try {
       const data: ContactsResponse = await authenticatedApiClient.get(endpoint, { requireAuth: true });
@@ -83,6 +83,26 @@ export const createContactService = (authenticatedApiClient: any) => ({
       console.log('✅ Contact deleted successfully');
     } catch (error) {
       console.error('❌ Failed to delete contact:', error);
+      throw error;
+    }
+  },
+
+  async updateContact(locationId: string, contactData: any): Promise<any> {
+    console.log('📝 Updating contact:', contactData);
+    
+    const endpoint = `/producer/location/${locationId}/contact`;
+    
+    try {
+      const response = await authenticatedApiClient.put(endpoint, contactData, { requireAuth: true });
+      
+      if (response.error) {
+        throw new Error(`Failed to update contact: ${response.error}`);
+      }
+      
+      console.log('✅ Contact updated successfully');
+      return response.response;
+    } catch (error) {
+      console.error('❌ Failed to update contact:', error);
       throw error;
     }
   }

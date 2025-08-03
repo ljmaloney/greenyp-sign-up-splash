@@ -46,20 +46,27 @@ const ContactCard = ({ contact, onEdit, onDelete, getLocationName }: ContactCard
     }
   };
 
+  const isDisabled = contact.producerContactType === 'DISABLED';
+
   return (
-    <Card key={contact.contactId}>
+    <Card key={contact.contactId} className={isDisabled ? 'opacity-75 bg-gray-50' : ''}>
       <CardHeader>
         <div className="flex justify-between items-start">
           <div className="flex-1">
-            <CardTitle className="text-xl text-greenyp-600 flex items-center gap-2">
+            <CardTitle className={`text-xl flex items-center gap-2 ${
+              isDisabled ? 'text-gray-500' : 'text-greenyp-600'
+            }`}>
               <Users className="h-5 w-5" />
               {contact.genericContactName || `${contact.firstName} ${contact.lastName}`}
             </CardTitle>
             <div className="flex gap-2 mt-2">
-              <Badge variant="default">
+              <Badge 
+                variant={isDisabled ? 'secondary' : 'default'}
+                className={isDisabled ? 'bg-gray-200 text-gray-700 hover:bg-gray-300' : ''}
+              >
                 {getContactTypeDisplay(contact.producerContactType)}
               </Badge>
-              {!contact.emailConfirmed && (
+              {contact.emailAddress && !contact.emailConfirmed && (
                 <Badge variant="destructive">
                   Email Unconfirmed
                 </Badge>
@@ -123,10 +130,6 @@ const ContactCard = ({ contact, onEdit, onDelete, getLocationName }: ContactCard
                 <p>
                   <span className="text-gray-600">Location:</span>{' '}
                   <span className="text-gray-900">{getLocationName(contact.producerLocationId)}</span>
-                </p>
-                <p>
-                  <span className="text-gray-600">Location ID:</span>{' '}
-                  <span className="text-gray-900 font-mono text-xs">{contact.producerLocationId}</span>
                 </p>
                 <p>
                   <span className="text-gray-600">Display Type:</span>{' '}
