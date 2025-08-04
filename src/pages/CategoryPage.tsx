@@ -12,16 +12,16 @@ import { useCategoryServices } from '@/hooks/useCategoryServices';
 import { CategoryWithIcon } from '@/types/category';
 
 const CategoryPage = () => {
-  const { lineOfBusinessId } = useParams<{ lineOfBusinessId: string }>();
+  const { urlLob } = useParams<{ urlLob: string }>();
   
   // Fetch all categories using the same service as the CategorySection
   const { data: categories, isLoading: categoriesLoading, error: categoriesError } = useCategories();
   
-  // Find the specific category based on the lineOfBusinessId
-  const category = categories?.find(cat => cat.lineOfBusinessId === lineOfBusinessId);
+  // Find the specific category based on the urlLob slug
+  const category = categories?.find(cat => cat.urlLob === urlLob);
   
-  // Fetch services for this category
-  const { data: services, isLoading: servicesLoading, error: servicesError } = useCategoryServices(lineOfBusinessId || '');
+  // Fetch services for this category using lineOfBusinessId
+  const { data: services, isLoading: servicesLoading, error: servicesError } = useCategoryServices(category?.lineOfBusinessId || '');
   
   useEffect(() => {
     // Scroll to top when page loads
@@ -139,7 +139,7 @@ const CategoryPage = () => {
         
         {/* Recent Listings Section - This calls the real API */}
         <RecentListings 
-          lineOfBusinessId={lineOfBusinessId || ''} 
+          lineOfBusinessId={category.lineOfBusinessId || ''} 
           categoryName={category.lineOfBusinessName} 
         />
         

@@ -70,7 +70,7 @@ function App() {
               <Route path="/contact" element={<Contact />} />
               <Route path="/search" element={<SearchResults />} />
               <Route path="/categories" element={<Categories />} />
-              <Route path="/categories/:lineOfBusinessId" element={<CategoryPage />} />
+              <Route path="/categories/:urlLob" element={<CategoryPage />} />
               <Route path="/category/:lineOfBusinessId" element={<CategoryPage />} />
               <Route path="/business/:businessId" element={<ProfilePage />} />
               <Route path="/profile/:producerId/:producerLocationId" element={<ProfilePage />} />
@@ -184,7 +184,7 @@ function App() {
               <Route path="/subscribers/subscription-features" element={<SubscriptionFeatures />} />
               <Route path="/subscribers/contact" element={<Contact />} />
               <Route path="/subscribers/categories" element={<SubscriberCategories />} />
-              <Route path="/subscribers/categories/:lineOfBusinessId" element={<SubscriberCategoryPage />} />
+              <Route path="/subscribers/categories/:urlLob" element={<SubscriberCategoryPage />} />
 
               {/* Classifieds routes */}
               <Route path="/classifieds" element={<Classifieds />} />

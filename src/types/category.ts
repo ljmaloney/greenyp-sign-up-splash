@@ -5,6 +5,7 @@ import { LucideIcon } from 'lucide-react';
 export interface APICategory {
   lineOfBusinessId: string;
   lineOfBusinessName: string;
+  urlLob: string; // SEO-friendly URL slug from API
   shortDescription: string;
   description?: string;
   iconName: string;
@@ -13,7 +14,7 @@ export interface APICategory {
 // For display purposes with icon component
 export interface CategoryWithIcon extends APICategory {
   iconComponent: LucideIcon;
-  slug: string; // Generated from lineOfBusinessId for URL routing
+  // urlLob inherited from APICategory provides SEO-friendly URL routing
 }
 
 // Service structure for category pages - updated to match API response
