@@ -43,7 +43,7 @@ const ClassifiedCategoryPage = () => {
           <div className="container mx-auto px-4 max-w-6xl">
             <div className="mb-6">
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                {currentCategory?.name || 'Category'} Classifieds
+                {currentCategory?.name || 'Category'}
               </h1>
               <p className="text-gray-600">
                 {currentCategory?.shortDescription || `Loading classifieds...`}
@@ -68,7 +68,7 @@ const ClassifiedCategoryPage = () => {
             {/* Header with friendly error message */}
             <div className="mb-8">
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                {currentCategory?.name || 'Category'} Classifieds
+                {currentCategory?.name || 'Category'}
               </h1>
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
                 <div className="flex items-start">
@@ -104,11 +104,12 @@ const ClassifiedCategoryPage = () => {
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="mb-6">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              {currentCategory?.name || 'Category'} Classifieds
+              {currentCategory?.name || 'Category'}
+              <span className="text-gray-600 text-base font-normal ml-2">
+                --- {currentCategory?.shortDescription || `Browse classifieds in the ${urlName} category`}
+              </span>
             </h1>
-            <p className="text-gray-600">
-              {currentCategory?.shortDescription || `Browse classifieds in the ${urlName} category`}
-            </p>
+              <span className="text-gray-600"></span>
           </div>
 
           {classifieds.length === 0 ? (
