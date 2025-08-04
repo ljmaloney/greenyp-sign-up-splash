@@ -29,7 +29,7 @@ const CategoryNavigationBar = () => {
     <div className="bg-gray-100 border-b border-gray-200 w-full overflow-hidden">
       <div className="flex items-center w-full">
         {/* Static Home button - Left - Always visible */}
-        <div className="flex-shrink-0 bg-gray-100 px-4 py-2 border-r border-gray-200">
+        <div className="flex-shrink-0 bg-gray-100 px-4 py-1 border-r border-gray-200">
           <Link
             to="/"
             className="flex items-center text-sm font-medium text-gray-700 hover:text-greenyp-600 transition-colors duration-200 py-1 px-3 rounded hover:bg-white/50 whitespace-nowrap"
@@ -38,7 +38,14 @@ const CategoryNavigationBar = () => {
             Home
           </Link>
         </div>
-
+          <div className="flex-shrink-0 bg-gray-100 px-4 py-1 border-r border-gray-200">
+              <Link
+                  to="/classifieds"
+                  className="flex items-center text-sm font-medium text-gray-700 hover:text-greenyp-600 transition-colors duration-200 py-1 px-3 rounded hover:bg-white/50 whitespace-nowrap"
+              >
+                  Classifieds
+              </Link>
+          </div>
         {/* Scrollable categories section - Center - Takes remaining space */}
         <div className="flex-1 min-w-0 relative">
           {/* Left scroll button */}
@@ -53,7 +60,7 @@ const CategoryNavigationBar = () => {
           {/* Scrollable categories container */}
           <div
             id="category-nav-container"
-            className="flex overflow-x-auto py-2 px-4 md:px-12 space-x-6 scroll-smooth"
+            className="flex overflow-x-auto py-1 px-4 md:px-12 space-x-6 scroll-smooth"
             style={{
               scrollbarWidth: 'none', // Firefox
               msOverflowStyle: 'none', // IE and Edge
@@ -82,12 +89,12 @@ const CategoryNavigationBar = () => {
         </div>
 
         {/* Static buttons - Right - Always visible */}
-        <div className="flex-shrink-0 bg-gray-100 flex items-center space-x-2 px-4 py-2 border-l border-gray-200">
+        <div className="flex-shrink-0 bg-gray-100 flex items-center space-x-1 px-3 py-1 border-l border-gray-200">
           <Link to="/subscribers">
             <Button 
               variant="outline" 
               size="sm"
-              className="border-greenyp-600 text-greenyp-600 hover:bg-greenyp-50 text-xs whitespace-nowrap"
+              className="border-greenyp-600 text-greenyp-600 hover:bg-greenyp-50 text-xs whitespace-nowrap h-7 px-2"
             >
               Be a Green Pro
             </Button>
@@ -95,7 +102,7 @@ const CategoryNavigationBar = () => {
           <Link to="/dashboard">
             <Button 
               size="sm"
-              className="bg-greenyp-600 hover:bg-greenyp-700 text-white text-xs whitespace-nowrap"
+              className="bg-greenyp-600 hover:bg-greenyp-700 text-white text-xs whitespace-nowrap h-7 px-2"
             >
               Pro Login
             </Button>
