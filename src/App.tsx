@@ -22,6 +22,7 @@ import UploadImages from '@/pages/classifieds/UploadImages';
 import SearchResultsClassifieds from '@/pages/classifieds/SearchResults';
 import ClassifiedDetail from '@/pages/classifieds/ClassifiedDetail';
 import CategoryDescriptions from '@/pages/classifieds/CategoryDescriptions';
+import ClassifiedCategoryPage from '@/pages/classifieds/ClassifiedCategoryPage';
 
 // Import subscriber pages
 import SubscribersIndex from '@/pages/subscribers/Index';
@@ -189,6 +190,7 @@ function App() {
               {/* Classifieds routes */}
               <Route path="/classifieds" element={<Classifieds />} />
               <Route path="/classifieds/samples" element={<Samples />} />
+              <Route path="/classifieds/:urlName" element={<ClassifiedCategoryPage />} />
               <Route path="/classifieds/create" element={<CreateAd />} />
               <Route path="/classifieds/uploadimages/:classifiedId" element={<UploadImages />} />
               <Route path="/classifieds/payment/:classifiedId" element={<ClassifiedPayment />} />
