@@ -81,6 +81,7 @@ export interface Producer {
   lineOfBusinessId: string;
   subscriptionType: string;
   websiteUrl?: string;
+  keywords?: string | null;
   narrative?: string;
   logoUrl?: string;
   subscriptions: Subscription[];

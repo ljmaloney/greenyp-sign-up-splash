@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Globe, Building, CreditCard, Calendar } from 'lucide-react';
+import { Globe, Building, CreditCard, Calendar, Hash } from 'lucide-react';
 import { Producer } from '@/services/accountService';
 
 interface BusinessDetailsProps {
@@ -59,6 +59,14 @@ const BusinessDetails = ({ producer, lineOfBusinessName }: BusinessDetailsProps)
           <span className="text-gray-600">Line of Business:</span>
           <span className="text-gray-900">
             {lineOfBusinessName}
+          </span>
+        </div>
+
+        <div className="flex items-start gap-2 text-sm">
+          <Hash className="h-4 w-4 text-gray-500 mt-0.5" />
+          <span className="text-gray-600">Keywords:</span>
+          <span className="text-gray-900">
+            {producer.keywords || ''}
           </span>
         </div>
 

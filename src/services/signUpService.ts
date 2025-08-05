@@ -10,6 +10,7 @@ export interface SignUpPayload {
     subscriptionType: string;
     invoiceCycleType: string;
     websiteUrl: string;
+    keywords: string;
     narrative: string;
     signupCode: string;
   };
@@ -59,6 +60,7 @@ export const createSignUpPayload = (data: SignUpFormSchema): SignUpPayload => {
       subscriptionType: "LIVE_UNPAID",
       invoiceCycleType: "MONTHLY",
       websiteUrl: data.websiteUrl,
+      keywords: data.keywords || "",
       narrative: data.narrative,
       signupCode: data.signupCode
     },

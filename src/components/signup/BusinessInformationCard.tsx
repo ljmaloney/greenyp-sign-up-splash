@@ -140,6 +140,28 @@ const BusinessInformationCard = ({ control }: BusinessInformationCardProps) => {
           />
         </div>
 
+          <FormField
+              control={control}
+              name="keywords"
+              render={({ field }) => (
+                  <FormItem className="flex flex-col items-start space-y-2">
+                      <FormLabel className="self-start">Keywords</FormLabel>
+                      <FormControl>
+                          <Input
+                              placeholder="Enter keywords for your business separated by commas"
+                              {...field}
+                              onChange={(e) => {
+                                  // Only allow valid characters: A-Z, a-z, 0-9, space, and comma
+                                  const cleanValue = e.target.value.replace(/[^A-Za-z0-9 ,]/g, '');
+                                  field.onChange(cleanValue);
+                              }}
+                          />
+                      </FormControl>
+                      <FormMessage />
+                  </FormItem>
+              )}
+          />
+
         <FormField
           control={control}
           name="narrative"

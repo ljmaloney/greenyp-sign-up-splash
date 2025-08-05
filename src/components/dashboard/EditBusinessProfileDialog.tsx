@@ -14,6 +14,7 @@ interface ProducerData {
   subscriptionType: string;
   invoiceCycleType: string;
   websiteUrl: string;
+  keywords: string;
   narrative: string;
 }
 
@@ -55,6 +56,7 @@ interface EditBusinessProfileDialogProps {
     lineOfBusinessId: string;
     subscriptionType: string;
     websiteUrl?: string;
+    keywords?: string | null;
     narrative?: string;
     subscriptions?: {
       subscriptionId: string;
@@ -87,6 +89,7 @@ const EditBusinessProfileDialog = ({ isOpen, onClose, producer, lineOfBusinessOp
         subscriptionType: producer.subscriptionType,
         invoiceCycleType: subscription?.invoiceCycleType || 'MONTHLY',
         websiteUrl: producer.websiteUrl || '',
+        keywords: producer.keywords || '',
         narrative: producer.narrative || ''
       });
     }
@@ -110,6 +113,7 @@ const EditBusinessProfileDialog = ({ isOpen, onClose, producer, lineOfBusinessOp
           subscriptionType: formData.subscriptionType,
           invoiceCycleType: formData.invoiceCycleType,
           websiteUrl: formData.websiteUrl,
+          keywords: formData.keywords,
           narrative: formData.narrative
         }
       };
@@ -202,6 +206,21 @@ const EditBusinessProfileDialog = ({ isOpen, onClose, producer, lineOfBusinessOp
                 value={formData.websiteUrl}
                 onChange={(e) => handleChange('websiteUrl', e.target.value)}
                 placeholder="https://www.example.com"
+              />
+            </div>
+            
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Keywords
+              </label>
+              <Input
+                value={formData.keywords}
+                onChange={(e) => {
+                  // Only allow valid characters: A-Z, a-z, 0-9, space, and comma
+                  const cleanValue = e.target.value.replace(/[^A-Za-z0-9 ,]/g, '');
+                  handleChange('keywords', cleanValue);
+                }}
+                placeholder="Enter keywords for your business separated by commas"
               />
             </div>
           </div>
