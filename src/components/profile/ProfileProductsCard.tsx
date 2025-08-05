@@ -15,13 +15,22 @@ const ProfileProductsCard = ({ profile }: ProfileProductsCardProps) => {
   const { data: subscriptions } = useSubscriptions();
   const { data: productsResponse, isLoading } = useProducts(profile.producerId, profile.locationId);
 
+  // Debug logging
+  console.log('🛒 ProfileProductsCard - productsResponse:', productsResponse);
+  console.log('🛒 ProfileProductsCard - productsResponse?.response:', productsResponse?.response);
+  console.log('🛒 ProfileProductsCard - profile.subscriptionIds:', profile.subscriptionIds);
+  console.log('🛒 ProfileProductsCard - subscriptions:', subscriptions);
+
   // Check if any of the profile's subscriptions have products feature
   const hasProductsFeature = profile.subscriptionIds.some(subscriptionId => {
     const subscription = subscriptions?.find(sub => sub.subscriptionId === subscriptionId);
     return subscription?.features.some(feature => feature.feature === 'products');
   });
 
+  console.log('🛒 ProfileProductsCard - hasProductsFeature:', hasProductsFeature);
+
   if (!hasProductsFeature) {
+    console.log('🛒 ProfileProductsCard - Returning null, no products feature');
     return null;
   }
 
