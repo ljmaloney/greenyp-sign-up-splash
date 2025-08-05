@@ -37,7 +37,7 @@ export const fetchClassifieds = async (filters: ClassifiedFilters, apiClient: an
       const searchParams = new URLSearchParams();
       if (filters.zipCode) searchParams.set('postalCode', filters.zipCode);
       if (filters.maxMiles) searchParams.set('distance', filters.maxMiles.toString());
-      if (filters.category) searchParams.set('categoryId', filters.category);
+      if (filters.category) searchParams.set('category', filters.category);
       if (filters.keyword) searchParams.set('keywords', filters.keyword);
       searchParams.set('page', '0');
       searchParams.set('limit', '15');
@@ -70,7 +70,16 @@ export const fetchClassifieds = async (filters: ClassifiedFilters, apiClient: an
   
   // If no search filters, get recent classifieds from API
   try {
-    const response: ApiResponse = await apiClient.get('/classified/mostRecent?number=9');
+    const params = new URLSearchParams('number=9');
+    console.log('🔥 DEBUG - filters.selectedCategory:', filters.selectedCategory);
+    if (filters.selectedCategory) {
+      console.log('🔥 DEBUG - Adding category parameter:', filters.selectedCategory);
+      params.set('categoryId', filters.selectedCategory);
+    } else {
+      console.log('🔥 DEBUG - No selectedCategory found in filters');
+    }
+    console.log('🔥 DEBUG - Final API URL:', `/classified/mostRecent?${params.toString()}`);
+    const response: ApiResponse = await apiClient.get(`/classified/mostRecent?${params.toString()}`);
     
     console.log('API Response for recent classifieds:', response);
     

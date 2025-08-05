@@ -16,9 +16,10 @@ const Categories = () => {
     return <IconComponent className="w-12 h-12 text-greenyp-500 mx-auto mb-4" />;
   };
 
-  const handleCategoryClick = (categoryId: string) => {
+  const handleCategoryClick = (urlLob: string, categoryId: string) => {
     // Store the last visited category for back navigation
     sessionStorage.setItem('lastVisitedCategory', categoryId);
+    sessionStorage.setItem('lastVisitedCategorySlug', urlLob);
   };
 
   if (isLoading) {
@@ -89,8 +90,8 @@ const Categories = () => {
               <h3 className="text-xl font-semibold mb-2 text-gray-800">{category.lineOfBusinessName}</h3>
               <p className="text-gray-600">{category.shortDescription}</p>
               <Link 
-                to={`/categories/${category.lineOfBusinessId}`}
-                onClick={() => handleCategoryClick(category.lineOfBusinessId)}
+                to={`/categories/${category.urlLob}`}
+                onClick={() => handleCategoryClick(category.urlLob, category.lineOfBusinessId)}
                 className="mt-6 inline-flex items-center text-greenyp-600 hover:text-greenyp-800 font-medium"
                 aria-label={`Show more information about ${category.lineOfBusinessName}`}
               >

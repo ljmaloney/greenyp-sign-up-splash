@@ -28,6 +28,7 @@ export interface ClassifiedFilters {
   zipCode?: string;
   keyword?: string;
   maxMiles?: number;
+  selectedCategory?: string;
 }
 
 export interface ClassifiedFormData {

@@ -22,6 +22,7 @@ import UploadImages from '@/pages/classifieds/UploadImages';
 import SearchResultsClassifieds from '@/pages/classifieds/SearchResults';
 import ClassifiedDetail from '@/pages/classifieds/ClassifiedDetail';
 import CategoryDescriptions from '@/pages/classifieds/CategoryDescriptions';
+import ClassifiedCategoryPage from '@/pages/classifieds/ClassifiedCategoryPage';
 
 // Import subscriber pages
 import SubscribersIndex from '@/pages/subscribers/Index';
@@ -70,7 +71,7 @@ function App() {
               <Route path="/contact" element={<Contact />} />
               <Route path="/search" element={<SearchResults />} />
               <Route path="/categories" element={<Categories />} />
-              <Route path="/categories/:lineOfBusinessId" element={<CategoryPage />} />
+              <Route path="/categories/:urlLob" element={<CategoryPage />} />
               <Route path="/category/:lineOfBusinessId" element={<CategoryPage />} />
               <Route path="/business/:businessId" element={<ProfilePage />} />
               <Route path="/profile/:producerId/:producerLocationId" element={<ProfilePage />} />
@@ -184,11 +185,12 @@ function App() {
               <Route path="/subscribers/subscription-features" element={<SubscriptionFeatures />} />
               <Route path="/subscribers/contact" element={<Contact />} />
               <Route path="/subscribers/categories" element={<SubscriberCategories />} />
-              <Route path="/subscribers/categories/:lineOfBusinessId" element={<SubscriberCategoryPage />} />
+              <Route path="/subscribers/categories/:urlLob" element={<SubscriberCategoryPage />} />
 
               {/* Classifieds routes */}
               <Route path="/classifieds" element={<Classifieds />} />
               <Route path="/classifieds/samples" element={<Samples />} />
+              <Route path="/classifieds/:urlName" element={<ClassifiedCategoryPage />} />
               <Route path="/classifieds/create" element={<CreateAd />} />
               <Route path="/classifieds/uploadimages/:classifiedId" element={<UploadImages />} />
               <Route path="/classifieds/payment/:classifiedId" element={<ClassifiedPayment />} />

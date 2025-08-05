@@ -10,6 +10,7 @@ export const useClassifieds = (filters: ClassifiedFilters) => {
   return useQuery({
     queryKey: ['classifieds', filters],
     queryFn: () => fetchClassifieds(filters, apiClient),
-    staleTime: 5 * 60 * 1000,
+    staleTime: 0, // NO CACHING - always fresh search results
+    gcTime: 0, // NO CACHE STORAGE - never store search results
   });
 };

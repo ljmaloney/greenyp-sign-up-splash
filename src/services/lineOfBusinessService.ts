@@ -6,6 +6,7 @@ export interface LineOfBusiness {
   createDate: string;
   lastUpdateDate: string;
   lineOfBusinessName: string; // Changed from displayName to match API
+  urlLob: string; // SEO-friendly URL slug for category routing
   createType: string;
   createByReference: string;
   shortDescription: string | null;
