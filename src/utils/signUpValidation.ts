@@ -22,6 +22,10 @@ export const signUpFormSchema = z.object({
   lineOfBusinessId: z.string().min(1, 'Line of business is required'),
   subscriptionId: z.string().min(1, 'Subscription plan is required'),
   websiteUrl: z.string().optional(),
+  keywords: z.string()
+    .regex(/^[A-Za-z0-9 ,]*$/, 'Keywords can only contain letters, numbers, spaces, and commas')
+    .optional()
+    .or(z.literal('')),
   narrative: z.string().optional(),
   signupCode: z.string()
     .regex(/^[A-Za-z0-9]*$/, 'Sign up code must be alphanumeric with no spaces')
