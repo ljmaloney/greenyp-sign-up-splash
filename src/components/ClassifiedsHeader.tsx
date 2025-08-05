@@ -42,10 +42,10 @@ const ClassifiedsHeader = () => {
       {/* Main Header */}
       <header className="py-4 px-6 md:px-8 lg:px-12 flex justify-between items-center border-b">
         <div className="flex flex-col">
-          <Link to="/classifieds" className="text-2xl font-bold text-greenyp-700 flex items-center">
+          <a href="/classifieds" className="text-2xl font-bold text-greenyp-700 flex items-center">
             <Leaf className="mr-2 h-8 w-8" />
             <span>GreenYP - Classifieds</span>
-          </Link>
+          </a>
           <p className="text-xs text-gray-600 mt-1">
             Buy and sell lawn, garden, and agricultural equipment and services.
           </p>
