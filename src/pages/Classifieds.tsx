@@ -4,9 +4,6 @@ import ClassifiedsHeader from '@/components/ClassifiedsHeader';
 import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
 import ClassifiedsFiltersLive from '@/components/classifieds/ClassifiedsFiltersLive';
 import ClassifiedsList from '@/components/classifieds/ClassifiedsList';
-import { Button } from '@/components/ui/button';
-import { Plus, Eye } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import { ClassifiedFilters } from '@/types/classifieds';
 
 const Classifieds = () => {
