@@ -23,8 +23,7 @@ export const useClassifiedCategories = () => {
         errorMessageApi: response.errorMessageApi
       };
     },
-    staleTime: 10 * 60 * 1000, // 10 minutes
-    gcTime: 15 * 60 * 1000, // 15 minutes cache time
-    refetchOnWindowFocus: false,
+    staleTime: 0, // Force fresh data - no cache
+    gcTime: 0, // No cache time - always fetch fresh
   });
 };

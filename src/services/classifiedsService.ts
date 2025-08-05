@@ -37,7 +37,7 @@ export const fetchClassifieds = async (filters: ClassifiedFilters, apiClient: an
       const searchParams = new URLSearchParams();
       if (filters.zipCode) searchParams.set('postalCode', filters.zipCode);
       if (filters.maxMiles) searchParams.set('distance', filters.maxMiles.toString());
-      if (filters.category) searchParams.set('categoryId', filters.category);
+      if (filters.category) searchParams.set('category', filters.category);
       if (filters.keyword) searchParams.set('keywords', filters.keyword);
       searchParams.set('page', '0');
       searchParams.set('limit', '15');
