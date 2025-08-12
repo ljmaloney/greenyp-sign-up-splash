@@ -83,9 +83,9 @@ const SubscriberCategoryPage = () => {
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-3xl font-bold text-gray-900">
-                Featured {category?.lineOfBusinessName} Professionals
-              </h2>
+                <h2 className="text-3xl font-bold text-gray-900 text-center">
+                    Featured {category?.lineOfBusinessName} Professionals
+                </h2>
             </div>
             
             {profilesLoading && (
@@ -208,10 +208,10 @@ const SubscriberCategoryPage = () => {
         <section className="py-16 bg-greenyp-50">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-3xl font-bold mb-6 text-gray-900">
-              Ready to List Your {category.lineOfBusinessName} Business?
+              Ready to List Your Green Business?
             </h2>
             <p className="text-xl text-gray-700 mb-8 max-w-3xl mx-auto">
-              Join GreenYP today and connect with customers looking for {category.lineOfBusinessName.toLowerCase()} services in your area.
+              Join us today and connect with customers looking for green market products and services in your area.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
