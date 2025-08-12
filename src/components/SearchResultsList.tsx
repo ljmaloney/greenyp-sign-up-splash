@@ -14,9 +14,9 @@ const SearchResultsList = ({ results, expandedNarratives, onToggleNarrative }: S
     <div className="grid gap-6 mb-8">
       {results.map((result) => (
         <SearchResultCard
-          key={result.producerId}
+          key={result.externId}
           result={result}
-          isNarrativeExpanded={expandedNarratives.has(result.producerId)}
+          isNarrativeExpanded={expandedNarratives.has(result.externId)}
           onToggleNarrative={onToggleNarrative}
         />
       ))}

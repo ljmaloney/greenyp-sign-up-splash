@@ -47,7 +47,7 @@ const PublicIndex = () => {
         
         <SearchForm />
         <CategorySection />
-        <FeaturesSection />
+        {/* <FeaturesSection /> */}
       </main>
       
       <Footer />

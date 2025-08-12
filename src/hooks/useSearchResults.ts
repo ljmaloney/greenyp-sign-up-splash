@@ -1,130 +1,167 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { getApiUrl } from '@/config/api';
 import { useCategories } from '@/hooks/useCategories';
-import type { SearchResponse } from '@/types/search';
+import { SearchService } from '@/services/searchService';
+import type { SearchResponse, SearchResult } from '@/types/search';
+import { RecordType } from '@/types/search';
 
-// Dummy data for testing UI - updated to match new API structure
+// Dummy data for testing UI - updated to match v2 API structure
 const dummyResults: SearchResponse = {
-  producerSearchResults: [
+  pageableResults: [
     {
+      externId: 'location-1',
       producerId: '1',
-      producerLocationId: '1',
+      locationId: 'location-1',
+      categoryRef: '6ea15820-5d6d-49d7-82ab-93c23c37f637',
+      categoryName: 'Landscaper',
+      recordType: RecordType.GREEN_PRO,
+      active: true,
+      lastActiveDate: null,
+      keywords: 'landscaping, garden design, lawn maintenance, sustainable gardening',
+      title: 'Green Thumb Landscaping',
       businessName: 'Green Thumb Landscaping',
-      phone: '(404) 555-0123',
-      cellPhone: '(404) 555-0124',
+      businessUrl: 'https://greenthumblandscaping.com',
+      businessIconUrl: null,
+      imageUrl: null,
       addressLine1: '123 Peachtree St',
-      addressLine2: '',
-      addressLine3: '',
+      addressLine2: null,
       city: 'Atlanta',
       state: 'GA',
       postalCode: '30309',
-      websiteUrl: 'https://greenthumblandscaping.com',
-      latitude: '33.7490',
-      longitude: '-84.3880',
+      emailAddress: 'info@greenthumblandscaping.com',
+      phoneNumber: '(404) 555-0123',
+      minPrice: null,
+      maxPrice: null,
+      priceUnitsType: null,
+      longitude: -84.3880,
+      latitude: 33.7490,
       distance: 2.5,
-      businessNarrative: 'We are a full-service landscaping company specializing in sustainable garden design, lawn maintenance, and eco-friendly landscaping solutions. Our team of certified professionals brings over 20 years of experience to every project, ensuring beautiful and environmentally responsible outdoor spaces.',
-      iconLink: 'https://via.placeholder.com/32x32/22c55e/ffffff?text=GT'
+      description: 'We are a full-service landscaping company specializing in sustainable garden design, lawn maintenance, and eco-friendly landscaping solutions.'
     },
     {
+      externId: 'location-2',
       producerId: '2',
-      producerLocationId: '2',
+      locationId: 'location-2',
+      categoryRef: '6b3afbf9-e575-419b-8539-e983ecf6c8ab',
+      categoryName: 'Nurseries',
+      recordType: RecordType.GREEN_PRO,
+      active: true,
+      lastActiveDate: null,
+      keywords: 'plants, garden supplies, native plants, organic fertilizers',
+      title: 'Atlanta Garden Center',
       businessName: 'Atlanta Garden Center',
-      phone: '(404) 555-0456',
-      cellPhone: '',
+      businessUrl: 'https://atlantagardencenter.com',
+      businessIconUrl: null,
+      imageUrl: null,
       addressLine1: '456 Buckhead Ave',
       addressLine2: 'Suite 200',
-      addressLine3: '',
       city: 'Atlanta',
       state: 'GA',
       postalCode: '30305',
-      websiteUrl: 'https://atlantagardencenter.com',
-      latitude: '33.8484',
-      longitude: '-84.3781',
+      emailAddress: 'info@atlantagardencenter.com',
+      phoneNumber: '(404) 555-0456',
+      minPrice: null,
+      maxPrice: null,
+      priceUnitsType: null,
+      longitude: -84.3781,
+      latitude: 33.8484,
       distance: 5.8,
-      businessNarrative: 'Your premier destination for plants, garden supplies, and expert horticultural advice. We offer a wide selection of native plants, specialty tools, and organic fertilizers to help you create the garden of your dreams.',
-      iconLink: ''
+      description: 'Your premier destination for plants, garden supplies, and expert horticultural advice.'
     },
     {
+      externId: 'service-1',
       producerId: '3',
-      producerLocationId: '3',
+      locationId: 'location-3',
+      categoryRef: 'c891d114-7603-40aa-be8d-e55a23d0d1ff',
+      categoryName: 'Lawn Care',
+      recordType: RecordType.GREEN_PRO_SERVICE,
+      active: true,
+      lastActiveDate: null,
+      keywords: 'lawn mowing, fertilization, pest control, seasonal cleanup',
+      title: 'Weekly Lawn Maintenance',
       businessName: 'Southern Lawn Care',
-      phone: '(404) 555-0789',
-      cellPhone: '(770) 555-0790',
+      businessUrl: null,
+      businessIconUrl: null,
+      imageUrl: null,
       addressLine1: '789 Midtown Blvd',
-      addressLine2: '',
-      addressLine3: 'Building C',
+      addressLine2: null,
       city: 'Atlanta',
       state: 'GA',
       postalCode: '30308',
-      websiteUrl: '',
-      latitude: '33.7701',
-      longitude: '-84.3870',
+      emailAddress: null,
+      phoneNumber: '(404) 555-0789',
+      minPrice: 50,
+      maxPrice: 100,
+      priceUnitsType: 'PER_VISIT',
+      longitude: -84.3870,
+      latitude: 33.7701,
       distance: 3.2,
-      businessNarrative: 'Professional lawn care services including mowing, fertilization, pest control, and seasonal cleanup. We serve residential and commercial properties throughout the Atlanta metro area with reliable, affordable service.',
-      iconLink: 'https://via.placeholder.com/32x32/16a34a/ffffff?text=SL'
+      description: 'Professional weekly lawn maintenance including mowing, edging, and cleanup.'
     },
     {
+      externId: 'product-1',
       producerId: '4',
-      producerLocationId: '4',
+      locationId: 'location-4',
+      categoryRef: '250f0927-f063-4707-b015-3a1a9c549115',
+      categoryName: 'Garden Center',
+      recordType: RecordType.GREEN_PRO_PRODUCT,
+      active: true,
+      lastActiveDate: null,
+      keywords: 'organic fertilizer, plant food, soil amendment',
+      title: 'Organic Plant Food - 25 lb bag',
       businessName: 'Eco-Friendly Gardens LLC',
-      phone: '(678) 555-0101',
-      cellPhone: '',
+      businessUrl: 'https://ecofriendlygardens.net',
+      businessIconUrl: null,
+      imageUrl: null,
       addressLine1: '321 Virginia Highland',
-      addressLine2: '',
-      addressLine3: '',
+      addressLine2: null,
       city: 'Atlanta',
       state: 'GA',
       postalCode: '30306',
-      websiteUrl: 'https://ecofriendlygardens.net',
-      latitude: '33.7775',
-      longitude: '-84.3533',
+      emailAddress: 'orders@ecofriendlygardens.net',
+      phoneNumber: '(678) 555-0101',
+      minPrice: 24.95,
+      maxPrice: null,
+      priceUnitsType: 'Each',
+      longitude: -84.3533,
+      latitude: 33.7775,
       distance: 4.7,
-      businessNarrative: 'Committed to creating beautiful outdoor spaces using sustainable practices and native plant species. Our designs focus on water conservation, wildlife habitat creation, and low-maintenance gardening solutions.',
-      iconLink: ''
+      description: 'Premium organic plant food made from sustainable ingredients.'
     },
     {
-      producerId: '5',
-      producerLocationId: '5',
-      businessName: 'Premier Tree Services',
-      phone: '(770) 555-0202',
-      cellPhone: '(770) 555-0203',
-      addressLine1: '654 Decatur St',
-      addressLine2: 'Unit 15',
-      addressLine3: '',
+      externId: 'classified-1',
+      producerId: null,
+      locationId: null,
+      categoryRef: '8185f13e-c3f1-4988-946d-01aae8329f17',
+      categoryName: 'Lawn & Garden Equipment',
+      recordType: RecordType.CLASSIFIED,
+      active: true,
+      lastActiveDate: '2025-08-10',
+      keywords: 'used lawn mower, riding mower, garden equipment',
+      title: 'Used Riding Mower - Excellent Condition',
+      businessName: null,
+      businessUrl: null,
+      businessIconUrl: null,
+      imageUrl: null,
+      addressLine1: null,
+      addressLine2: null,
       city: 'Atlanta',
       state: 'GA',
       postalCode: '30312',
-      websiteUrl: 'https://premiertreeservices.com',
-      latitude: '33.7376',
-      longitude: '-84.3963',
+      emailAddress: 'seller@example.com',
+      phoneNumber: '(770) 555-0202',
+      minPrice: 1250.00,
+      maxPrice: null,
+      priceUnitsType: 'Each',
+      longitude: -84.3963,
+      latitude: 33.7376,
       distance: 6.1,
-      businessNarrative: 'Expert tree care services including pruning, removal, emergency storm cleanup, and tree health assessments. Our certified arborists ensure the safety and beauty of your trees with professional, insured service.',
-      iconLink: 'https://via.placeholder.com/32x32/059669/ffffff?text=PT'
-    },
-    {
-      producerId: '6',
-      producerLocationId: '6',
-      businessName: 'Urban Oasis Landscaping',
-      phone: '(404) 555-0303',
-      cellPhone: '',
-      addressLine1: '987 Inman Park Dr',
-      addressLine2: '',
-      addressLine3: '',
-      city: 'Atlanta',
-      state: 'GA',
-      postalCode: '30307',
-      websiteUrl: '',
-      latitude: '33.7566',
-      longitude: '-84.3532',
-      distance: 4.3,
-      businessNarrative: 'Transforming urban spaces into beautiful, functional outdoor environments. We specialize in small space gardens, rooftop installations, and creative landscaping solutions for city properties.',
-      iconLink: ''
+      description: 'Well-maintained riding mower, perfect for large lawns. Runs great, new blades.'
     }
   ],
   totalCount: 42,
-  currentPage: 1,
+  currentPage: 0,
   totalPages: 3
 };
 
@@ -168,27 +205,19 @@ export const useSearchResults = () => {
       setIsApiSuccess(false);
 
       try {
-        const searchQuery = new URLSearchParams({
-          zipCode,
-          distance,
-          page: (page - 1).toString(), // Convert to 0-based indexing
-          limit: '15',
-          ...(categoryId && { categoryId }), // Use categoryId instead of category
-          ...(searchText && { searchText }),
-        });
-
-        console.log('Fetching search results from API...');
-        const searchUrl = getApiUrl(`/search?${searchQuery.toString()}`);
-        console.log('Search URL:', searchUrl);
-
-        const response = await fetch(searchUrl);
+        // Build search parameters using SearchService
+        const searchParams = new URLSearchParams();
+        searchParams.set('zipCode', zipCode);
+        searchParams.set('distance', distance);
+        searchParams.set('page', page.toString());
+        if (categoryId) searchParams.set('category', categoryId);
+        if (searchText) searchParams.set('searchText', searchText);
         
-        if (!response.ok) {
-          throw new Error(`Search failed: ${response.status} ${response.statusText}`);
-        }
-
-        const data: SearchResponse = await response.json();
-        console.log('Search results received:', data);
+        const params = SearchService.buildSearchParams(searchParams, categories);
+        
+        console.log('🔍 HOOK - Fetching search results with SearchService...');
+        const data = await SearchService.search(params);
+        
         setResults(data);
         setIsApiSuccess(true);
       } catch (err) {
