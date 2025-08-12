@@ -97,7 +97,7 @@ const PaymentConfirmation = () => {
 
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-3 pt-4">
-                <Link to={`/classifieds/${classifiedId}`} className="flex-1">
+                <Link to={`/classifieds/detail/${classifiedId}`} className="flex-1">
                   <Button variant="outline" className="w-full">
                     <Eye className="w-4 h-4 mr-2" />
                     View Your Ad
