@@ -3,42 +3,24 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import SubscribersHeader from '@/components/SubscribersHeader';
 import Footer from '@/components/Footer';
-import { ChevronRight, Check } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { useCategories } from '@/hooks/useCategories';
-import { useCategoryServices } from '@/hooks/useCategoryServices';
 import { CategoryWithIcon } from '@/types/category';
 
-const CategoryCard = ({ category }: { category: CategoryWithIcon }) => {
-  const { data: services } = useCategoryServices(category.lineOfBusinessId);
-  
+const SubscriberCategories = () => {
+  const { data: categories, isLoading, error } = useCategories();
+
+  // Render the icon component
   const renderIcon = (category: CategoryWithIcon) => {
     const IconComponent = category.iconComponent;
     return <IconComponent className="w-12 h-12 text-greenyp-500 mx-auto mb-4" />;
   };
 
-  return (
-    <div 
-      className="bg-white rounded-xl p-8 text-center transition-all hover:shadow-md border-2 border-greenyp-600 hover:border-yellow-500 w-full max-w-sm sm:w-80 lg:w-72 flex flex-col"
-    >
-      <div className="flex-grow">
-        {renderIcon(category)}
-        <h3 className="text-xl font-semibold mb-2 text-gray-800 text-center">{category.lineOfBusinessName}</h3>
-        <p className="text-gray-600 mb-4 text-center">{category.shortDescription}</p>
-      </div>
-      <Link 
-        to={`/subscribers/categories/${category.lineOfBusinessId}`}
-        className="mt-6 inline-flex items-center justify-center text-greenyp-600 hover:text-greenyp-800 font-medium"
-        aria-label={`Show more information about ${category.lineOfBusinessName}`}
-      >
-        Show more information
-        <ChevronRight className="w-4 h-4 ml-2" />
-      </Link>
-    </div>
-  );
-};
-
-const SubscriberCategories = () => {
-  const { data: categories, isLoading, error } = useCategories();
+  const handleCategoryClick = (urlLob: string, categoryId: string) => {
+    // Store the last visited category for back navigation
+    sessionStorage.setItem('lastVisitedCategory', categoryId);
+    sessionStorage.setItem('lastVisitedCategorySlug', urlLob);
+  };
   
   if (isLoading) {
     return (
@@ -90,16 +72,33 @@ const SubscriberCategories = () => {
       <main className="flex-grow container mx-auto px-4 py-16">
         <div className="text-center mb-12">
           <h1 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900">
-            Industry Categories
+            Find Local Green Industry Professionals by Category
           </h1>
-          <p className="text-xl text-gray-700">
-            List your business in one of our supported categories and connect with customers today.
+          <p className="text-lg text-gray-700">
+            Explore our growing network of skilled providers offering services in landscaping, lawn care, irrigation, tree work, hauling, cleanup, forestry mulching, and more.
+            Filter by category to discover professionals near you.
           </p>
         </div>
         
-        <div className="flex flex-wrap justify-center gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {categories?.map((category, index) => (
-            <CategoryCard key={index} category={category} />
+            <div 
+              key={index}
+              className="bg-gray-50 rounded-xl p-8 text-center transition-all hover:shadow-md hover:bg-gray-100 border border-greenyp-100"
+            >
+              {renderIcon(category)}
+              <h3 className="text-xl font-semibold mb-2 text-gray-800">{category.lineOfBusinessName}</h3>
+              <p className="text-gray-600">{category.shortDescription}</p>
+              <Link 
+                to={`/subscribers/categories/${category.urlLob}`}
+                onClick={() => handleCategoryClick(category.urlLob, category.lineOfBusinessId)}
+                className="mt-6 inline-flex items-center text-greenyp-600 hover:text-greenyp-800 font-medium"
+                aria-label={`Show more information about ${category.lineOfBusinessName}`}
+              >
+                View Providers
+                <ChevronRight className="w-4 h-4 ml-2" />
+              </Link>
+            </div>
           ))}
         </div>
       </main>
