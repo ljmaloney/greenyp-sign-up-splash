@@ -54,10 +54,10 @@ const SearchResultsContent = ({
       )}
 
       {/* Results */}
-      {results && results.producerSearchResults.length > 0 ? (
+      {results && results.pageableResults.length > 0 ? (
         <>
           <SearchResultsList
-            results={results.producerSearchResults}
+            results={results.pageableResults}
             expandedNarratives={expandedNarratives}
             onToggleNarrative={toggleNarrative}
           />

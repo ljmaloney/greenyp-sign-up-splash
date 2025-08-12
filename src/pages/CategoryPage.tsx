@@ -52,6 +52,10 @@ const CategoryPage = () => {
 
   const handleLearnMoreClick = () => {
     console.log('Learn More button clicked - navigating to /subscribers');
+    // Scroll to top of page when navigating to subscribers
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 100);
   };
   
   if (categoriesLoading) {
@@ -147,10 +151,10 @@ const CategoryPage = () => {
         <section className="bg-greenyp-100 py-8">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900">
-              Are you a {category.lineOfBusinessName} professional?
+                Ready to Grow Your Green Business?
             </h2>
             <p className="text-lg text-gray-700 mb-6 max-w-2xl mx-auto">
-              List your business in our directory and connect with customers looking for your services
+                Start connecting with customers today. Create your business listing and join the leading directory for green industry professionals.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Button asChild className="bg-greenyp-600 hover:bg-greenyp-700 text-white">

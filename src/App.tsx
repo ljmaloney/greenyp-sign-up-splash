@@ -33,6 +33,7 @@ import SubscriberCategories from '@/pages/subscribers/SubscriberCategories';
 import SubscriberCategoryPage from '@/pages/subscribers/CategoryPage';
 import SignUpConfirmation from '@/pages/subscribers/SignUpConfirmation';
 import SignUpPayment from '@/pages/subscribers/SignUpPayment';
+import SubscribersPricing from '@/pages/subscribers/Pricing';
 
 // Import dashboard pages
 import DashboardIndex from '@/pages/dashboard/Index';
@@ -183,6 +184,7 @@ function App() {
               <Route path="/subscribers/signup/payment" element={<SignUpPayment />} />
               <Route path="/subscribers/subscribe" element={<SubscribersSubscribe />} />
               <Route path="/subscribers/subscription-features" element={<SubscriptionFeatures />} />
+              <Route path="/subscribers/pricing" element={<SubscribersPricing />} />
               <Route path="/subscribers/contact" element={<Contact />} />
               <Route path="/subscribers/categories" element={<SubscriberCategories />} />
               <Route path="/subscribers/categories/:urlLob" element={<SubscriberCategoryPage />} />

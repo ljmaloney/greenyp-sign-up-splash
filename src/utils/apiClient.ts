@@ -113,6 +113,19 @@ class ApiClient {
           responseData
         });
         
+        // Handle 401 Unauthorized responses from dashboard context
+        if (response.status === 401) {
+          const currentPath = window.location.pathname;
+          if (currentPath.startsWith('/dashboard')) {
+            console.warn('🔒 API CLIENT - 401 from dashboard context, redirecting to login');
+            // Clear any existing auth state and redirect to login
+            localStorage.removeItem('accessToken');
+            sessionStorage.removeItem('accessToken');
+            window.location.href = '/login';
+            return Promise.reject(new Error('Authentication required - redirecting to login'));
+          }
+        }
+        
         // Create a detailed error message
         const errorMessage = `HTTP ${response.status}: ${response.statusText}`;
         throw new Error(errorMessage);

@@ -30,3 +30,13 @@ export const fetchProducerProfiles = async (lineOfBusinessId: string): Promise<P
   
   return response.json();
 };
+
+export const fetchProducerProfilesByLobUrl = async (lobUrl: string, mostRecent: boolean = true, number: number = 6): Promise<ProducerListingsResponse> => {
+  const response = await fetch(getApiUrl(`/producer/profiles?lobUrl=${lobUrl}&mostRecent=${mostRecent}&number=${number}`));
+  
+  if (!response.ok) {
+    throw new Error(`Failed to fetch producer profiles: ${response.status}`);
+  }
+  
+  return response.json();
+};

@@ -48,7 +48,8 @@ export const fetchProducts = async (apiClient: ApiClient, producerId: string, lo
     throw new Error(`Failed to fetch products: ${response.error}`);
   }
   
-  return response.response as ProductsResponse;
+  // Fix: Return the full API response structure, not just the array
+  return response as ProductsResponse;
 };
 
 export const createProduct = async (apiClient: ApiClient, productData: ProductCreateRequest): Promise<any> => {
