@@ -131,6 +131,7 @@ const getMockCategoriesData = (): CategoryWithIcon[] => {
     {
       lineOfBusinessId: "250f0927-f063-4707-b015-3a1a9c549115",
       lineOfBusinessName: "Garden Center",
+      urlLob: "garden-center",
       shortDescription: "Supplier of plants, tools, fertilizer and gardening equipment",
       description: "A garden center is a retail establishment specializing in the sale of plants, gardening supplies, and related products. These centers offer a wide range of items including flowers, trees, shrubs, seeds, gardening tools, soil amendments, and outdoor decor. Staff provide expert advice on plant care, landscaping, and garden design, catering to both amateur gardeners and professionals. Garden centers often host workshops, demonstrations, and community events to educate and engage customers in gardening pursuits.",
       iconName: "Shrub",
@@ -138,6 +139,7 @@ const getMockCategoriesData = (): CategoryWithIcon[] => {
     {
       lineOfBusinessId: "94b68c0d-4124-4a76-83fa-b022c308a42c",
       lineOfBusinessName: "Hardscape Supplier",
+      urlLob: "hardscape-supplier",
       shortDescription: "Supplies gravel, flagstone, and pavers",
       description: "A hardscape supplier specializes in providing materials for non-living, structural elements in landscaping, such as stone, brick, concrete, and wood products. They offer a diverse range of items including pavers, retaining walls, decorative stones, mulch, and landscape edging. Hardscape suppliers cater to contractors, landscapers, and homeowners, offering expert advice on material selection, design options, and installation techniques. Their products enhance outdoor spaces, providing durability, functionality, and aesthetic appeal to landscaping projects.",
       iconName: "Shovel",
@@ -145,6 +147,7 @@ const getMockCategoriesData = (): CategoryWithIcon[] => {
     {
       lineOfBusinessId: "05148cc4-a7ee-4415-917c-a478aef8ead5",
       lineOfBusinessName: "Landscape Supplier",
+      urlLob: "landscape-supplier",
       shortDescription: null,
       description: "A landscape supplier furnishes materials and supplies essential for outdoor projects, ranging from residential gardens to commercial developments. They offer a wide array of items such as plants, trees, soil, mulch, gravel, and decorative rocks. Catering to landscapers, contractors, and homeowners, they provide expertise on plant selection, soil types, and project requirements. Landscape suppliers play a pivotal role in ensuring the success and sustainability of landscaping endeavors by offering quality products and knowledgeable assistance.",
       iconName: "Flower2",
@@ -152,6 +155,7 @@ const getMockCategoriesData = (): CategoryWithIcon[] => {
     {
       lineOfBusinessId: "6ea15820-5d6d-49d7-82ab-93c23c37f637",
       lineOfBusinessName: "Landscaper",
+      urlLob: "landscaper",
       shortDescription: "Professional landscape design and installation",
       description: "Designs, installs, and maintains outdoor spaces, combining elements like plants, trees, flowers, and hardscape features to create harmonious environments. They assess site conditions, consider client preferences, and utilize knowledge of soil, climate, and plant species to craft functional and aesthetically pleasing landscapes. With expertise in horticulture and design principles, they transform yards, parks, and commercial properties into inviting retreats or vibrant showcases. Whether enhancing curb appeal or fostering natural habitats, landscapers balance creativity with practicality to bring outdoor visions to life.",
       iconName: "Tractor",
@@ -159,6 +163,7 @@ const getMockCategoriesData = (): CategoryWithIcon[] => {
     {
       lineOfBusinessId: "c891d114-7603-40aa-be8d-e55a23d0d1ff",
       lineOfBusinessName: "Lawn Care",
+      urlLob: "lawn-care",
       shortDescription: "Regular lawn maintaince",
       description: "Lawn care involves maintaining and improving the health and appearance of grassy areas. Services typically include mowing, edging, fertilizing, and weed control. Professionals assess soil conditions, provide proper irrigation, and address issues like pests and diseases to ensure lush, green lawns. Regular maintenance enhances curb appeal, promotes healthy growth, and creates enjoyable outdoor spaces for recreation and relaxation.",
       iconName: "Sprout",
@@ -166,6 +171,7 @@ const getMockCategoriesData = (): CategoryWithIcon[] => {
     {
       lineOfBusinessId: "6b3afbf9-e575-419b-8539-e983ecf6c8ab",
       lineOfBusinessName: "Nurseries",
+      urlLob: "nurseries",
       shortDescription: "Plant nurseries, growing young trees, shrubs, and garden plants",
       description: "A nursery is a specialized facility where plants are propagated, grown, and nurtured for sale. It offers a diverse selection of plants, including trees, shrubs, flowers, and vegetables, often organized by type and size. Nurseries provide expert guidance on plant care, cultivation techniques, and landscaping ideas. They serve both amateur gardeners and professionals, offering healthy, well-cared-for plants and essential gardening supplies. Nurseries contribute to the beautification of landscapes and the enjoyment of gardening enthusiasts.",
       iconName: "Trees",
@@ -173,6 +179,7 @@ const getMockCategoriesData = (): CategoryWithIcon[] => {
     {
       lineOfBusinessId: "54286c5f-7181-4166-a07e-21c0a05d57e5",
       lineOfBusinessName: "Pond Maintenance",
+      urlLob: "pond-maintenance",
       shortDescription: "Installation and maintaince of ponds and water features",
       description: "A pond maintenance business specializes in the care and upkeep of ponds, water features, and aquatic ecosystems. Services typically include cleaning, algae control, water quality testing, filtration system maintenance, and aquatic plant care. Professionals ensure the health and beauty of ponds, promoting balanced ecosystems and optimal water conditions. They may also offer pond design, installation, and repair services, catering to residential, commercial, and institutional clients seeking to enhance their outdoor spaces with tranquil and vibrant water features.",
       iconName: "Droplets",
