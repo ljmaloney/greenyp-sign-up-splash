@@ -17,6 +17,8 @@ const ContactSellerDialog = ({ isOpen, onOpenChange, classified }: ContactSeller
     formData,
     setFormData,
     errors,
+    isSubmitting,
+    isSuccess,
     handleEmailChange,
     handlePhoneChange,
     handleSubmit
@@ -40,6 +42,8 @@ const ContactSellerDialog = ({ isOpen, onOpenChange, classified }: ContactSeller
           onSubmit={handleSubmit}
           onCancel={() => onOpenChange(false)}
           errors={errors}
+          isSubmitting={isSubmitting}
+          isSuccess={isSuccess}
           onEmailChange={handleEmailChange}
           onPhoneChange={handlePhoneChange}
         />

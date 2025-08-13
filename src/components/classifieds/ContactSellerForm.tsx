@@ -4,8 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Mail } from 'lucide-react';
-import { validateEmail, validatePhone } from '@/utils/contactFormValidation';
+import { Mail, Loader2, CheckCircle } from 'lucide-react';
 
 interface ContactFormData {
   name: string;
@@ -23,7 +22,10 @@ interface ContactSellerFormProps {
   errors: {
     email: string;
     phone: string;
+    submit: string;
   };
+  isSubmitting: boolean;
+  isSuccess: boolean;
   onEmailChange: (email: string) => void;
   onPhoneChange: (phone: string) => void;
 }
@@ -34,6 +36,8 @@ const ContactSellerForm = ({
   onSubmit,
   onCancel,
   errors,
+  isSubmitting,
+  isSuccess,
   onEmailChange,
   onPhoneChange
 }: ContactSellerFormProps) => {
@@ -104,20 +108,48 @@ const ContactSellerForm = ({
         />
       </div>
 
+      {errors.submit && (
+        <div className="text-red-500 text-sm bg-red-50 p-3 rounded-lg">
+          {errors.submit}
+        </div>
+      )}
+
+      {isSuccess && (
+        <div className="text-green-500 text-sm bg-green-50 p-3 rounded-lg flex items-center">
+          <CheckCircle className="w-4 h-4 mr-2" />
+          Message sent successfully! The seller will contact you soon.
+        </div>
+      )}
+
       <div className="flex gap-3 pt-4">
         <Button 
           type="submit" 
           className="flex-1 bg-greenyp-600 hover:bg-greenyp-700"
-          disabled={!!errors.email || !!errors.phone}
+          disabled={!!errors.email || !!errors.phone || isSubmitting || isSuccess}
         >
-          <Mail className="w-4 h-4 mr-2" />
-          Send Message
+          {isSubmitting ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Sending...
+            </>
+          ) : isSuccess ? (
+            <>
+              <CheckCircle className="w-4 h-4 mr-2" />
+              Message Sent
+            </>
+          ) : (
+            <>
+              <Mail className="w-4 h-4 mr-2" />
+              Send Message
+            </>
+          )}
         </Button>
         <Button 
           type="button" 
           variant="outline" 
           onClick={onCancel}
           className="flex-1"
+          disabled={isSubmitting}
         >
           Cancel
         </Button>
