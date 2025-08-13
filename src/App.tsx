@@ -6,6 +6,8 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import { Toaster } from '@/components/ui/toaster';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import PublicIndex from './pages/PublicIndex';
+import Terms from './pages/Terms';
+import Privacy from './pages/Privacy';
 import Contact from './pages/subscribers/Contact';
 import SearchResults from './pages/SearchResults';
 import CategoryPage from './pages/CategoryPage';
@@ -69,6 +71,8 @@ function App() {
             <Routes>
               {/* Public Routes */}
               <Route path="/" element={<PublicIndex />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/privacy" element={<Privacy />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/search" element={<SearchResults />} />
               <Route path="/categories" element={<Categories />} />
