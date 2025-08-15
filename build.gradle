@@ -1,0 +1,9 @@
+plugins {
+    id 'base'
+}
+
+tasks.register('dockerBuildDev', Exec) {
+    group = "docker"
+    description = "Builds the dev Docker image with .env included"
+    commandLine 'docker', 'build', '-f', 'Dockerfile', '-t', 'greenyp:dev', '.'
+}
