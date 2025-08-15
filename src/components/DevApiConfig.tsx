@@ -71,8 +71,10 @@ const DevApiConfig = () => {
     window.location.reload();
   };
 
-  // Only show in local development mode (hide in test and production)
-  if (import.meta.env.PROD || import.meta.env.MODE !== 'development') {
+  // Check if lovable should be hidden via environment variable
+  const hideLovable = import.meta.env.VITE_HIDE_LOVABLE === 'true';
+  
+  if (hideLovable) {
     return null;
   }
 
