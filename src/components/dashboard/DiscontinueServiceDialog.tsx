@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { useApiClient } from '@/hooks/useApiClient';
 import { discontinueService } from '@/services/serviceService';
 
 interface DiscontinueServiceDialogProps {
@@ -28,6 +29,7 @@ const DiscontinueServiceDialog = ({
     return today.toISOString().split('T')[0];
   });
   const { toast } = useToast();
+  const apiClient = useApiClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +38,7 @@ const DiscontinueServiceDialog = ({
     setIsLoading(true);
     
     try {
-      await discontinueService(serviceId, {
+      await discontinueService(apiClient, serviceId, {
         discontinueDate
       });
       
