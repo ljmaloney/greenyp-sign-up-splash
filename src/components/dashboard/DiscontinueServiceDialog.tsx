@@ -36,8 +36,7 @@ const DiscontinueServiceDialog = ({
     setIsLoading(true);
     
     try {
-      await discontinueService({
-        serviceId,
+      await discontinueService(serviceId, {
         discontinueDate
       });
       
