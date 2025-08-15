@@ -1,7 +1,6 @@
 
 import { useState, useMemo } from 'react';
 import { useToast } from "@/hooks/use-toast";
-import { useApiClient } from '@/hooks/useApiClient';
 import { deleteService } from '@/services/serviceService';
 
 export const useServicesData = () => {
@@ -12,7 +11,6 @@ export const useServicesData = () => {
   const [preSelectedLocationId, setPreSelectedLocationId] = useState('');
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
   const { toast } = useToast();
-  const apiClient = useApiClient();
 
   // Mock locations data
   const locations = [
@@ -93,7 +91,7 @@ export const useServicesData = () => {
     
     try {
       console.log('Deleting service:', serviceId);
-      await deleteService(apiClient, serviceId);
+      await deleteService(serviceId);
       
       toast({
         title: "Service Deleted",

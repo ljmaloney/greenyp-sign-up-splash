@@ -32,6 +32,7 @@ export interface ProductUpdateRequest {
 }
 
 export interface ProductDiscontinueRequest {
+  productId: string;
   discontinueDate: string;
   lastOrderDate: string;
 }
@@ -84,10 +85,10 @@ export const deleteProduct = async (apiClient: ApiClient, productId: string): Pr
   return response.response;
 };
 
-export const discontinueProduct = async (apiClient: ApiClient, productId: string, productData: ProductDiscontinueRequest): Promise<any> => {
+export const discontinueProduct = async (apiClient: ApiClient, productData: ProductDiscontinueRequest): Promise<any> => {
   const response = await apiClient.delete('/producer/location/product/discontinue', { 
     requireAuth: true,
-    body: JSON.stringify({ productId, ...productData })
+    body: JSON.stringify(productData)
   } as any);
   
   if (response.error) {
