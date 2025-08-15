@@ -71,8 +71,8 @@ const DevApiConfig = () => {
     window.location.reload();
   };
 
-  // Only show in development mode
-  if (import.meta.env.PROD) {
+  // Only show in local development mode (hide in test and production)
+  if (import.meta.env.PROD || import.meta.env.MODE !== 'development') {
     return null;
   }
 
