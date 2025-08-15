@@ -48,7 +48,7 @@ const ClassifiedCategoryPage = () => {
 
                     <ClassifiedsFiltersLive filters={filters} onFiltersChange={setFilters} />
 
-                    <ClassifiedsList filters={filters} />
+                    <ClassifiedsList filters={filters} categoryName={currentCategory?.name} />
                 </div>
             </main>
             <ClassifiedsFooter />

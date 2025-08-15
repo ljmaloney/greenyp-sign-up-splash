@@ -3,27 +3,7 @@ import { Classified, ClassifiedFilters } from '@/types/classifieds';
 import { ClassifiedSearchResponse, ApiResponse } from '@/types/api';
 import { convertToClassified } from '@/utils/classifiedsConverter';
 
-// Mock data as fallback - only used when API fails
-const mockClassifieds: Classified[] = [
-  {
-    id: 'mock-1',
-    title: 'Sample Classified Ad',
-    description: 'This is a sample classified ad to show the layout when no real ads are available.',
-    category: 'Miscellaneous Farm & Garden',
-    zipCode: '12345',
-    city: 'Sample City',
-    state: 'CA',
-    email: 'sample@email.com',
-    phone: '(555) 123-4567',
-    images: [],
-    pricingTier: 'standard',
-    contactObfuscated: false,
-    createdAt: '2024-01-15T10:00:00Z',
-    expiresAt: '2024-02-15T10:00:00Z',
-    price: 100,
-    perUnitType: 'item'
-  }
-];
+// No mock data - return empty array when API fails or returns no results
 
 export const fetchClassifieds = async (filters: ClassifiedFilters, apiClient: any): Promise<Classified[]> => {
   console.log('Fetching classifieds with filters:', filters);
@@ -63,8 +43,8 @@ export const fetchClassifieds = async (filters: ClassifiedFilters, apiClient: an
       console.log('No classifieds found from search API');
       return [];
     } catch (error) {
-      console.log('Search API error, showing mock data:', error);
-      return mockClassifieds;
+      console.log('Search API error, returning empty array:', error);
+      return [];
     }
   }
   
@@ -89,11 +69,11 @@ export const fetchClassifieds = async (filters: ClassifiedFilters, apiClient: an
       return response.response.map(convertToClassified);
     }
     
-    // If API returns no data, show mock data
-    console.log('No recent classifieds found from API, showing mock data');
-    return mockClassifieds;
+    // If API returns no data, return empty array
+    console.log('No recent classifieds found from API, returning empty array');
+    return [];
   } catch (error) {
-    console.log('API error, showing mock data:', error);
-    return mockClassifieds;
+    console.log('API error, returning empty array:', error);
+    return [];
   }
 };
