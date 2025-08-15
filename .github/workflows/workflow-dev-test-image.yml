@@ -72,6 +72,7 @@ jobs:
       - name: Tag Docker image for ECR
         run: |
           docker tag $IMAGE_NAME:${{ env.VERSION }} $ECR_REPO/$IMAGE_NAME:${{ env.VERSION }}
+          docker tag $IMAGE_NAME:${{ env.VERSION }} $ECR_REPO/$IMAGE_NAME:latest
 
       - name: Push Docker image to ECR
         run: |
