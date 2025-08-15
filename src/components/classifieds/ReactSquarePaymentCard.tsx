@@ -150,7 +150,6 @@ const ReactSquarePaymentCard = ({
       isProcessing={isProcessing}
       disabled={!emailValidationToken}
       error={error}
-      buttonText="Process Payment"
     />
   );
 };

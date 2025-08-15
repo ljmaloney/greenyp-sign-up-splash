@@ -33,7 +33,8 @@ const DiscontinueProductDialog = ({
     setIsLoading(true);
     
     try {
-      await discontinueProduct(productId, {
+      await discontinueProduct({
+        productId,
         discontinueDate,
         lastOrderDate
       });
