@@ -31,7 +31,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Bump version (main/master only)
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads//lovable-dev-branch'
         run: |
           FILE=version.properties
 
