@@ -30,7 +30,8 @@ const EditProductDialog = ({ isOpen, onClose, product, onProductUpdated }: EditP
     try {
       if (formData.discontinued && formData.discontinueDate && formData.lastOrderDate) {
         // If product is being discontinued with dates, use the discontinue endpoint
-        await discontinueProduct(apiClient, product.productId, {
+        await discontinueProduct(apiClient, {
+          productId: product.productId,
           discontinueDate: formData.discontinueDate,
           lastOrderDate: formData.lastOrderDate
         });
