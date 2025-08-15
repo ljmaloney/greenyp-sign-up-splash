@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useApiClient } from '@/hooks/useApiClient';
 import { createProduct, ProductCreateRequest } from '@/services/productService';
 import { useProductForm } from '@/hooks/useProductForm';
 import ProductFormFields from './ProductFormFields';
@@ -32,6 +33,7 @@ const AddProductDialog = ({
 }: AddProductDialogProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const apiClient = useApiClient();
   const { formData, handleChange, resetForm } = useProductForm(preSelectedLocationId);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -63,7 +65,7 @@ const AddProductDialog = ({
       };
 
       console.log('Creating product:', createRequest);
-      await createProduct(createRequest);
+      await createProduct(apiClient, createRequest);
       
       toast({
         title: "Product Created",

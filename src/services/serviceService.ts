@@ -1,3 +1,4 @@
+
 // Import the type returned by useApiClient hook
 type ApiClient = ReturnType<typeof import('@/hooks/useApiClient').useApiClient>;
 
@@ -23,7 +24,6 @@ export interface ServiceUpdateRequest {
 }
 
 export interface ServiceDiscontinueRequest {
-  serviceId: string;
   discontinueDate: string;
 }
 
@@ -60,10 +60,10 @@ export const deleteService = async (apiClient: ApiClient, serviceId: string): Pr
   return response.response;
 };
 
-export const discontinueService = async (apiClient: ApiClient, serviceData: ServiceDiscontinueRequest): Promise<any> => {
+export const discontinueService = async (apiClient: ApiClient, serviceId: string, serviceData: ServiceDiscontinueRequest): Promise<any> => {
   const response = await apiClient.delete('/producer/location/service/discontinue', { 
     requireAuth: true,
-    body: JSON.stringify(serviceData)
+    body: JSON.stringify({ serviceId, ...serviceData })
   } as any);
   
   if (response.error) {
