@@ -130,6 +130,32 @@ const PaymentLayout = ({ classified, customer, isSubscription = false, producerI
     });
   }, [isInitialized, isInitializing, card, payments, squareError, retryCount]);
 
+  // Prepare the initial billing info for PaymentInformationCard
+  const initialBillingInfo = {
+    firstName: customer?.firstName || '',
+    lastName: customer?.lastName || '',
+    email: customer?.emailAddress || '',
+    phone: customer?.phoneNumber || '',
+    address: customer?.address || '',
+    address2: '',
+    city: customer?.city || '',
+    state: customer?.state || '',
+    zipCode: customer?.postalCode || ''
+  };
+
+  // Prepare copy data for the "Copy from Ad" button
+  const copyFromAdData = {
+    firstName: customer?.firstName || '',
+    lastName: customer?.lastName || '',
+    email: customer?.emailAddress || '',
+    phone: customer?.phoneNumber || '',
+    address: customer?.address || '',
+    address2: '',
+    city: customer?.city || '',
+    state: customer?.state || '',
+    zipCode: customer?.postalCode || ''
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       {/* Left Column */}
@@ -154,11 +180,12 @@ const PaymentLayout = ({ classified, customer, isSubscription = false, producerI
         {/* Payment Information Card - Only enabled after email validation */}
         <div className={!isValidated ? 'opacity-50 pointer-events-none' : ''}>
           <PaymentInformationCard 
-            classified={classified}
-            customer={customer}
+            initialBillingInfo={initialBillingInfo}
             onBillingInfoChange={handleBillingInfoUpdate}
             emailValidationToken={billingInfo.emailValidationToken}
             isEmailValidated={isValidated}
+            copyFromAdData={copyFromAdData}
+            showCopyButton={true}
           />
         </div>
         
