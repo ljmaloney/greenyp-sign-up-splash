@@ -12,25 +12,32 @@ interface ClassifiedsListProps {
 const ClassifiedsList = ({ filters, categoryName }: ClassifiedsListProps) => {
   const { data: classifieds, isLoading, error } = useClassifieds(filters);
 
+  // Use consistent container with minimum height to prevent layout shifts
+  const containerClasses = "min-h-[400px]";
+  
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {[...Array(6)].map((_, i) => (
-          <div key={i} className="bg-white rounded-lg shadow-sm border p-6 animate-pulse">
-            <div className="h-4 bg-gray-200 rounded mb-4"></div>
-            <div className="h-3 bg-gray-200 rounded mb-2"></div>
-            <div className="h-3 bg-gray-200 rounded mb-4"></div>
-            <div className="h-8 bg-gray-200 rounded"></div>
-          </div>
-        ))}
+      <div className={containerClasses}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="bg-white rounded-lg shadow-sm border p-6 animate-pulse">
+              <div className="h-4 bg-gray-200 rounded mb-4"></div>
+              <div className="h-3 bg-gray-200 rounded mb-2"></div>
+              <div className="h-3 bg-gray-200 rounded mb-4"></div>
+              <div className="h-8 bg-gray-200 rounded"></div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="text-center py-12">
-        <p className="text-red-600">Error loading classifieds: {error.message}</p>
+      <div className={`${containerClasses} flex items-center justify-center`}>
+        <div className="text-center py-12">
+          <p className="text-red-600">Error loading classifieds: {error.message}</p>
+        </div>
       </div>
     );
   }
@@ -45,8 +52,8 @@ const ClassifiedsList = ({ filters, categoryName }: ClassifiedsListProps) => {
       : 'Check back soon or try adjusting your search filters.';
 
     return (
-      <div className="flex flex-col items-center justify-center py-16 px-4">
-        <div className="text-center max-w-md">
+      <div className={`${containerClasses} flex items-center justify-center`}>
+        <div className="text-center max-w-md px-4">
           <div className="mb-6">
             <svg className="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m13-8l-4 4m0 0l-4-4m4 4V3" />
