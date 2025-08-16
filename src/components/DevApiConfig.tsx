@@ -74,6 +74,13 @@ const DevApiConfig = () => {
   // Check if lovable should be hidden via environment variable
   const hideLovable = import.meta.env.VITE_HIDE_LOVABLE === 'true';
   
+  // Debug logging to see environment variable value
+  console.log('🔧 DevApiConfig Debug:', {
+    VITE_HIDE_LOVABLE: import.meta.env.VITE_HIDE_LOVABLE,
+    hideLovable,
+    willShow: !hideLovable
+  });
+  
   if (hideLovable) {
     return null;
   }

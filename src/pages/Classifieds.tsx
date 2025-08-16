@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
-import ClassifiedsHeader from '@/components/ClassifiedsHeader';
-import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
+import PublicHeader from '@/components/PublicHeader';
+import Footer from '@/components/Footer';
 import ClassifiedsFiltersLive from '@/components/classifieds/ClassifiedsFiltersLive';
 import ClassifiedsList from '@/components/classifieds/ClassifiedsList';
 import { ClassifiedFilters } from '@/types/classifieds';
@@ -11,7 +11,7 @@ const Classifieds = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <ClassifiedsHeader />
+      <PublicHeader />
       <main className="flex-grow bg-gray-50 py-8">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
@@ -23,7 +23,7 @@ const Classifieds = () => {
           <ClassifiedsList filters={filters} />
         </div>
       </main>
-      <ClassifiedsFooter />
+      <Footer />
     </div>
   );
 };

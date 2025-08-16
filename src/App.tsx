@@ -26,6 +26,7 @@ import SearchResultsClassifieds from '@/pages/classifieds/SearchResults';
 import ClassifiedDetail from '@/pages/classifieds/ClassifiedDetail';
 import CategoryDescriptions from '@/pages/classifieds/CategoryDescriptions';
 import ClassifiedCategoryPage from '@/pages/classifieds/ClassifiedCategoryPage';
+import OGImageGeneratorPage from '@/pages/OGImageGenerator';
 
 // Import subscriber pages
 import SubscribersIndex from '@/pages/subscribers/Index';
@@ -83,6 +84,7 @@ function App() {
               <Route path="/business/:businessId" element={<ProfilePage />} />
               <Route path="/profile/:producerId/:producerLocationId" element={<ProfilePage />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/og-generator" element={<OGImageGeneratorPage />} />
 
               {/* Authentication Routes */}
               <Route path="/auth/callback" element={<AuthCallback />} />
