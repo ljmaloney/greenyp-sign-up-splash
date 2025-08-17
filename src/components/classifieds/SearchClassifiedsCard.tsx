@@ -167,7 +167,7 @@ const SearchClassifiedsCard = ({ onSearch, initialFilters = {} }: SearchClassifi
         </div>
 
         {/* Buttons */}
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Button
             onClick={handleSearch}
             disabled={isSearchDisabled}
@@ -182,7 +182,7 @@ const SearchClassifiedsCard = ({ onSearch, initialFilters = {} }: SearchClassifi
             className="border-greenyp-600 text-greenyp-600 hover:bg-greenyp-50 flex items-center justify-center"
           >
             <RotateCcw className="w-4 h-4 mr-2" />
-            Reset
+            Clear Filters
           </Button>
         </div>
       </CardContent>
