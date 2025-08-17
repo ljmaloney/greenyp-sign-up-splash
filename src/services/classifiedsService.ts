@@ -1,6 +1,6 @@
 
 import { Classified, ClassifiedFilters } from '@/types/classifieds';
-import { ClassifiedSearchResponse, ApiResponse } from '@/types/api';
+import { ApiResponse } from '@/types/api';
 import { convertToClassified } from '@/utils/classifiedsConverter';
 
 // No mock data - return empty array when API fails or returns no results
@@ -53,9 +53,9 @@ export const fetchClassifieds = async (filters: ClassifiedFilters, apiClient: an
       console.log('Search API Response:', response);
       
       // Handle the wrapped API response
-      if (response.response && Array.isArray(response.response.searchResults) && response.response.searchResults.length > 0) {
-        console.log(`Found ${response.response.searchResults.length} classifieds from search API`);
-        return response.response.searchResults.map(convertToClassified);
+      if (response.response && Array.isArray(response.response.responseList) && response.response.responseList.length > 0) {
+        console.log(`Found ${response.response.responseList.length} classifieds from search API`);
+        return response.response.responseList.map(convertToClassified);
       }
       
       console.log('No classifieds found from search API, returning empty array');
