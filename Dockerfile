@@ -10,6 +10,8 @@ RUN npm ci
 # 4. Copy rest of app, including .env for dev
 COPY . .
 
+COPY .env.test .env
+
 # 5. Expose Vite default port
 EXPOSE 8080
 
