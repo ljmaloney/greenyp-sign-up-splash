@@ -1,7 +1,8 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ClassifiedFilters } from '@/types/classifieds';
 import ClassifiedCard from './ClassifiedCard';
+import SearchClassifiedsCard from './SearchClassifiedsCard';
 import { useClassifieds } from '@/hooks/useClassifieds';
 
 interface ClassifiedsListProps {
@@ -10,23 +11,40 @@ interface ClassifiedsListProps {
 }
 
 const ClassifiedsList = ({ filters, categoryName }: ClassifiedsListProps) => {
-  const { data: classifieds, isLoading, error } = useClassifieds(filters, categoryName);
+  const [currentFilters, setCurrentFilters] = useState<ClassifiedFilters>(filters);
+  const { data: classifieds, isLoading, error } = useClassifieds(currentFilters, categoryName);
+
+  // Update currentFilters when filters prop changes (e.g., navigation to category page)
+  useEffect(() => {
+    console.log('🔄 ClassifiedsList - filters prop changed:', filters);
+    setCurrentFilters(filters);
+  }, [filters]);
+
+  const handleSearch = (newFilters: ClassifiedFilters) => {
+    setCurrentFilters(newFilters);
+  };
 
   // Use consistent container with minimum height to prevent layout shifts
   const containerClasses = "min-h-[400px]";
   
   if (isLoading) {
     return (
-      <div className={containerClasses}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="bg-white rounded-lg shadow-sm border p-6 animate-pulse">
-              <div className="h-4 bg-gray-200 rounded mb-4"></div>
-              <div className="h-3 bg-gray-200 rounded mb-2"></div>
-              <div className="h-3 bg-gray-200 rounded mb-4"></div>
-              <div className="h-8 bg-gray-200 rounded"></div>
-            </div>
-          ))}
+      <div>
+        <SearchClassifiedsCard 
+          onSearch={handleSearch} 
+          initialFilters={currentFilters} 
+        />
+        <div className={containerClasses}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="bg-white rounded-lg shadow-sm border p-6 animate-pulse">
+                <div className="h-4 bg-gray-200 rounded mb-4"></div>
+                <div className="h-3 bg-gray-200 rounded mb-2"></div>
+                <div className="h-3 bg-gray-200 rounded mb-4"></div>
+                <div className="h-8 bg-gray-200 rounded"></div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -34,9 +52,15 @@ const ClassifiedsList = ({ filters, categoryName }: ClassifiedsListProps) => {
 
   if (error) {
     return (
-      <div className={`${containerClasses} flex items-center justify-center`}>
-        <div className="text-center py-12">
-          <p className="text-red-600">Error loading classifieds: {error.message}</p>
+      <div>
+        <SearchClassifiedsCard 
+          onSearch={handleSearch} 
+          initialFilters={currentFilters} 
+        />
+        <div className={`${containerClasses} flex items-center justify-center`}>
+          <div className="text-center py-12">
+            <p className="text-red-600">Error loading classifieds: {error?.message || 'An error occurred'}</p>
+          </div>
         </div>
       </div>
     );
@@ -52,29 +76,35 @@ const ClassifiedsList = ({ filters, categoryName }: ClassifiedsListProps) => {
       : 'Check back soon or try adjusting your search filters.';
 
     return (
-      <div className={`${containerClasses} flex items-center justify-center`}>
-        <div className="text-center max-w-md px-4">
-          <div className="mb-6">
-            <svg className="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m13-8l-4 4m0 0l-4-4m4 4V3" />
-            </svg>
-          </div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-3">
-            {contextMessage}
-          </h3>
-          <p className="text-gray-600 mb-6">
-            {encouragementMessage}
-          </p>
-          <div className="space-y-2">
-            <button 
-              onClick={() => window.location.href = '/classifieds/post'}
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-greenyp-600 hover:bg-greenyp-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-greenyp-500 transition-colors"
-            >
-              Post a Classified Ad
-            </button>
-            <p className="text-xs text-gray-500">
-              or browse other categories
+      <div>
+        <SearchClassifiedsCard 
+          onSearch={handleSearch} 
+          initialFilters={currentFilters} 
+        />
+        <div className={`${containerClasses} flex items-center justify-center`}>
+          <div className="text-center max-w-md px-4">
+            <div className="mb-6">
+              <svg className="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m13-8l-4 4m0 0l-4-4m4 4V3" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-3">
+              {contextMessage}
+            </h3>
+            <p className="text-gray-600 mb-6">
+              {encouragementMessage}
             </p>
+            <div className="space-y-2">
+              <button 
+                onClick={() => window.location.href = '/classifieds/post'}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-greenyp-600 hover:bg-greenyp-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-greenyp-500 transition-colors"
+              >
+                Post a Classified Ad
+              </button>
+              <p className="text-xs text-gray-500">
+                or browse other categories
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -82,18 +112,24 @@ const ClassifiedsList = ({ filters, categoryName }: ClassifiedsListProps) => {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-max">
-      {classifieds.map((classified) => (
-        <ClassifiedCard key={classified.id} classified={classified} />
-      ))}
-      {/* Add invisible placeholder cards to stabilize grid when fewer than 3 items on lg screens */}
-      {classifieds.length > 0 && classifieds.length < 3 && (
-        <>
-          {Array.from({ length: 3 - classifieds.length }).map((_, index) => (
-            <div key={`placeholder-${index}`} className="hidden lg:block" />
-          ))}
-        </>
-      )}
+    <div>
+      <SearchClassifiedsCard 
+        onSearch={handleSearch} 
+        initialFilters={currentFilters} 
+      />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-max">
+        {classifieds.map((classified) => (
+          <ClassifiedCard key={classified.id} classified={classified} />
+        ))}
+        {/* Add invisible placeholder cards to stabilize grid when fewer than 3 items on lg screens */}
+        {classifieds && classifieds.length > 0 && classifieds.length < 3 && (
+          <>
+            {Array.from({ length: 3 - classifieds.length }).map((_, index) => (
+              <div key={`placeholder-${index}`} className="hidden lg:block" />
+            ))}
+          </>
+        )}
+      </div>
     </div>
   );
 };

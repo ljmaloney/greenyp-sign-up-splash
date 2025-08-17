@@ -16,7 +16,6 @@ const Classifieds = () => {
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900">Classifieds</h1>
           </div>
-          
           <ClassifiedsList filters={filters} />
         </div>
       </main>
