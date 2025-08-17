@@ -10,7 +10,7 @@ interface ClassifiedsListProps {
 }
 
 const ClassifiedsList = ({ filters, categoryName }: ClassifiedsListProps) => {
-  const { data: classifieds, isLoading, error } = useClassifieds(filters);
+  const { data: classifieds, isLoading, error } = useClassifieds(filters, categoryName);
 
   // Use consistent container with minimum height to prevent layout shifts
   const containerClasses = "min-h-[400px]";
@@ -82,10 +82,18 @@ const ClassifiedsList = ({ filters, categoryName }: ClassifiedsListProps) => {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-max">
       {classifieds.map((classified) => (
         <ClassifiedCard key={classified.id} classified={classified} />
       ))}
+      {/* Add invisible placeholder cards to stabilize grid when fewer than 3 items on lg screens */}
+      {classifieds.length > 0 && classifieds.length < 3 && (
+        <>
+          {Array.from({ length: 3 - classifieds.length }).map((_, index) => (
+            <div key={`placeholder-${index}`} className="hidden lg:block" />
+          ))}
+        </>
+      )}
     </div>
   );
 };

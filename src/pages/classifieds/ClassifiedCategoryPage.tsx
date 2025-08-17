@@ -17,17 +17,20 @@ const ClassifiedCategoryPage = () => {
     
     // Initialize filters state
     const [filters, setFilters] = useState<ClassifiedFilters>({});
+    const [useSearchMode, setUseSearchMode] = useState(false);
     
-    // Update filters when categories data loads and currentCategory is found
+    // Simple setup: just set the category ID for the page
     useEffect(() => {
-        if (currentCategory?.categoryId) {
-            console.log('🎯 Setting selectedCategory:', currentCategory.categoryId, 'for category:', currentCategory.name);
-            setFilters(prev => ({
-                ...prev,
-                selectedCategory: currentCategory.categoryId
-            }));
+        if (currentCategory?.categoryId && currentCategory?.name) {
+            console.log('🎯 Setting category for page:', urlName, 'categoryName:', currentCategory.name);
+            setFilters({
+                selectedCategory: currentCategory.categoryId,
+                category: currentCategory.name // This will preselect the dropdown
+                // Leave zipCode, keyword, maxMiles undefined to trigger mostRecent API
+            });
+            console.log('🎯 Filters set with category:', currentCategory.name);
         }
-    }, [currentCategory?.categoryId]);
+    }, [currentCategory?.categoryId, currentCategory?.name, urlName]);
     
     console.log('🎯 Category page loaded - urlName:', urlName, 'categoryId:', currentCategory?.categoryId);
     console.log('🎯 Filters state:', filters);
@@ -48,7 +51,7 @@ const ClassifiedCategoryPage = () => {
 
                     <ClassifiedsFiltersLive filters={filters} onFiltersChange={setFilters} />
 
-                    <ClassifiedsList filters={filters} categoryName={currentCategory?.name} />
+                    <ClassifiedsList filters={filters} categoryName={urlName} />
                 </div>
             </main>
             <ClassifiedsFooter />

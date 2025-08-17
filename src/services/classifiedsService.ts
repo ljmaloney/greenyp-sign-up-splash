@@ -5,42 +5,60 @@ import { convertToClassified } from '@/utils/classifiedsConverter';
 
 // No mock data - return empty array when API fails or returns no results
 
-export const fetchClassifieds = async (filters: ClassifiedFilters, apiClient: any): Promise<Classified[]> => {
-  console.log('Fetching classifieds with filters:', filters);
+export const fetchClassifieds = async (filters: ClassifiedFilters, apiClient: any, categoryName?: string): Promise<Classified[]> => {
+  console.log('Fetching classifieds with filters:', filters, 'categoryName:', categoryName);
   
-  // Check if we have any search filters that require the search endpoint
-  const hasSearchFilters = filters.category || filters.zipCode || filters.keyword || filters.maxMiles;
+  // If we have a categoryName (from category page) and no search filters, use mostRecent
+  const hasSearchFilters = filters.zipCode || filters.keyword || filters.maxMiles;
   
+  if (!hasSearchFilters && categoryName) {
+    console.log('🔥 Using mostRecent API for category:', categoryName);
+    try {
+      const params = new URLSearchParams();
+      params.set('number', '9');
+      params.set('categoryName', categoryName);
+      
+      console.log('🔥 mostRecent API URL:', `/classified/mostRecent?${params.toString()}`);
+      const response: ApiResponse = await apiClient.get(`/classified/mostRecent?${params.toString()}`);
+      
+      console.log('mostRecent API Response:', response);
+      
+      if (response.response && Array.isArray(response.response) && response.response.length > 0) {
+        console.log(`Found ${response.response.length} recent classifieds from API`);
+        return response.response.map(convertToClassified);
+      }
+      
+      console.log('No recent classifieds found from API, returning empty array');
+      return [];
+    } catch (error) {
+      console.log('mostRecent API error, returning empty array:', error);
+      return [];
+    }
+  }
+  
+  // If we have search filters, use search API
   if (hasSearchFilters) {
     try {
-      // Build search query parameters
       const searchParams = new URLSearchParams();
       if (filters.zipCode) searchParams.set('postalCode', filters.zipCode);
       if (filters.maxMiles) searchParams.set('distance', filters.maxMiles.toString());
-      if (filters.category) searchParams.set('category', filters.category);
+      if (filters.selectedCategory) searchParams.set('category', filters.selectedCategory);
       if (filters.keyword) searchParams.set('keywords', filters.keyword);
       searchParams.set('page', '0');
       searchParams.set('limit', '15');
 
-      console.log('Making search API call with params:', searchParams.toString());
+      console.log('🔥 Using search API with params:', searchParams.toString());
+      const response: any = await apiClient.get(`/classified/search?${searchParams.toString()}`);
       
-      // The apiClient.get() returns a wrapped response: { response: actualData, status, success }
-      const apiResponse = await apiClient.get(`/classified/search?${searchParams.toString()}`);
+      console.log('Search API Response:', response);
       
-      console.log('Raw API Response wrapper:', apiResponse);
-      console.log('Actual search response data:', apiResponse.response);
-      
-      // Access the actual search response data from the wrapper
-      const searchResponse: ClassifiedSearchResponse = apiResponse.response;
-      
-      // Now check for responseList in the actual search response
-      if (searchResponse && searchResponse.responseList && Array.isArray(searchResponse.responseList) && searchResponse.responseList.length > 0) {
-        console.log(`Found ${searchResponse.responseList.length} classifieds from search API`);
-        return searchResponse.responseList.map(convertToClassified);
+      // Handle the wrapped API response
+      if (response.response && Array.isArray(response.response.searchResults) && response.response.searchResults.length > 0) {
+        console.log(`Found ${response.response.searchResults.length} classifieds from search API`);
+        return response.response.searchResults.map(convertToClassified);
       }
       
-      // If search API returns no data, return empty array
-      console.log('No classifieds found from search API');
+      console.log('No classifieds found from search API, returning empty array');
       return [];
     } catch (error) {
       console.log('Search API error, returning empty array:', error);
@@ -48,32 +66,27 @@ export const fetchClassifieds = async (filters: ClassifiedFilters, apiClient: an
     }
   }
   
-  // If no search filters, get recent classifieds from API
+  // Fallback: if no filters and no categoryName, get all recent classifieds
+  console.log('🔥 No search filters or categoryName - calling mostRecent for all categories');
   try {
-    const params = new URLSearchParams('number=9');
-    console.log('🔥 DEBUG - filters.selectedCategory:', filters.selectedCategory);
-    if (filters.selectedCategory) {
-      console.log('🔥 DEBUG - Adding category parameter:', filters.selectedCategory);
-      params.set('categoryId', filters.selectedCategory);
-    } else {
-      console.log('🔥 DEBUG - No selectedCategory found in filters');
-    }
-    console.log('🔥 DEBUG - Final API URL:', `/classified/mostRecent?${params.toString()}`);
+    const params = new URLSearchParams();
+    params.set('number', '9');
+    // No categoryName parameter = get from all categories
+    
+    console.log('🔥 mostRecent API URL (all categories):', `/classified/mostRecent?${params.toString()}`);
     const response: ApiResponse = await apiClient.get(`/classified/mostRecent?${params.toString()}`);
     
-    console.log('API Response for recent classifieds:', response);
+    console.log('mostRecent API Response (all categories):', response);
     
-    // Check if we have a successful response with data
     if (response.response && Array.isArray(response.response) && response.response.length > 0) {
-      console.log(`Found ${response.response.length} recent classifieds from API`);
+      console.log(`Found ${response.response.length} recent classifieds from all categories`);
       return response.response.map(convertToClassified);
     }
     
-    // If API returns no data, return empty array
     console.log('No recent classifieds found from API, returning empty array');
     return [];
   } catch (error) {
-    console.log('API error, returning empty array:', error);
+    console.log('mostRecent API error (all categories), returning empty array:', error);
     return [];
   }
 };
