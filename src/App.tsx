@@ -22,7 +22,6 @@ import Classifieds from '@/pages/Classifieds';
 import Samples from '@/pages/classifieds/Samples.tsx';
 import CreateAd from '@/pages/classifieds/CreateAd';
 import UploadImages from '@/pages/classifieds/UploadImages';
-import SearchResultsClassifieds from '@/pages/classifieds/SearchResults';
 import ClassifiedDetail from '@/pages/classifieds/ClassifiedDetail';
 import CategoryDescriptions from '@/pages/classifieds/CategoryDescriptions';
 import ClassifiedCategoryPage from '@/pages/classifieds/ClassifiedCategoryPage';
@@ -205,7 +204,6 @@ function App() {
               <Route path="/classifieds/uploadimages/:classifiedId" element={<UploadImages />} />
               <Route path="/classifieds/payment/:classifiedId" element={<ClassifiedPayment />} />
               <Route path="/classifieds/payment/confirmation/:classifiedId" element={<ClassifiedPaymentConfirmation />} />
-              <Route path="/classifieds/search" element={<SearchResultsClassifieds />} />
               <Route path="/classifieds/categories" element={<CategoryDescriptions />} />
               <Route path="/classifieds/detail/:id" element={<ClassifiedDetail />} />
             </Routes>

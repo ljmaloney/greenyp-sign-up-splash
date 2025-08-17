@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useClassifiedCategories } from '@/hooks/useClassifiedCategories';
 import ClassifiedsHeader from '@/components/ClassifiedsHeader';
 import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
-import ClassifiedsFiltersLive from '@/components/classifieds/ClassifiedsFiltersLive';
 import ClassifiedsList from '@/components/classifieds/ClassifiedsList';
 import { ClassifiedFilters } from '@/types/classifieds';
 
 const ClassifiedCategoryPage = () => {
     const { urlName } = useParams<{ urlName: string }>();
-    const navigate = useNavigate();
     const { data: categoriesData } = useClassifiedCategories();
     
     // Find the current category to display its name
@@ -17,8 +15,6 @@ const ClassifiedCategoryPage = () => {
     
     // Initialize filters state
     const [filters, setFilters] = useState<ClassifiedFilters>({});
-    const [useSearchMode, setUseSearchMode] = useState(false);
-    
     // Simple setup: just set the category ID for the page
     useEffect(() => {
         if (currentCategory?.categoryId && currentCategory?.name) {
@@ -44,12 +40,10 @@ const ClassifiedCategoryPage = () => {
                         <h1 className="text-3xl font-bold text-gray-900 mb-2">
                             {currentCategory?.name || 'Category'}
                             <span className="text-gray-600 text-base font-normal ml-2">
-                                --- {currentCategory?.shortDescription || `Browse classifieds in the ${urlName} category`}
+                                - {currentCategory?.shortDescription || `Browse classifieds in the ${urlName} category`}
                             </span>
                         </h1>
                     </div>
-
-                    <ClassifiedsFiltersLive filters={filters} onFiltersChange={setFilters} />
 
                     <ClassifiedsList filters={filters} categoryName={urlName} />
                 </div>
