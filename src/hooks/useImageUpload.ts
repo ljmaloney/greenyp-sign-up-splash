@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useApiClient } from '@/hooks/useApiClient';
+import { useApiFileClient } from '@/hooks/useApiFileClient';
 import { useToast } from '@/hooks/use-toast';
 
 interface FileWithCustomName {
@@ -12,7 +12,7 @@ interface FileWithCustomName {
 export const useImageUpload = (classifiedData: any, packageData: any, maxImages: number) => {
   const { classifiedId } = useParams();
   const navigate = useNavigate();
-  const apiClient = useApiClient();
+  const apiFileClient = useApiFileClient();
   const { toast } = useToast();
 
   const [filesWithNames, setFilesWithNames] = useState<FileWithCustomName[]>([]);
@@ -149,11 +149,8 @@ export const useImageUpload = (classifiedData: any, packageData: any, maxImages:
           fileType: fileToUpload.type
         });
         
-        await apiClient.request(`/classified/images/${classifiedId}/gallery?imageFilename=${encodeURIComponent(fileToUpload.name)}&imageDescription=${encodeURIComponent(description)}`, {
-          method: 'POST',
-          body: formData,
-          requireAuth: false,
-          headers: {}
+        await apiFileClient.uploadFile(`/classified/images/${classifiedId}/gallery?imageFilename=${encodeURIComponent(fileToUpload.name)}&imageDescription=${encodeURIComponent(description)}`, formData, {
+          requireAuth: false
         });
       }
 
