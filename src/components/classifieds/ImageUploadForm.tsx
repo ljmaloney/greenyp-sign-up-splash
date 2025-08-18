@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useImageUpload } from '@/hooks/useImageUpload';
+import { useImageUpload } from '@/hooks/classifieds/useImageUpload';
 import ImagePreview from './ImagePreview';
 import ImageUploadZone from './ImageUploadZone';
 import ImageUploadActions from './ImageUploadActions';

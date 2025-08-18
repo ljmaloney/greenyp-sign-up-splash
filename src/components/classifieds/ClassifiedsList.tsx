@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { ClassifiedFilters } from '@/types/classifieds';
 import ClassifiedCard from './ClassifiedCard';
 import SearchClassifiedsCard from './SearchClassifiedsCard';
-import { useClassifieds } from '@/hooks/useClassifieds';
+import { useClassifieds } from '@/hooks/classifieds/useClassifieds';
 
 interface ClassifiedsListProps {
   filters: ClassifiedFilters;

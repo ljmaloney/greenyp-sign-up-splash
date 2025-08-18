@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useClassifiedCategories } from '@/hooks/useClassifiedCategories';
+import { useClassifiedCategories } from '@/hooks/classifieds/useClassifiedCategories';
 import ClassifiedsHeader from '@/components/ClassifiedsHeader';
 import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
 import ClassifiedsList from '@/components/classifieds/ClassifiedsList';

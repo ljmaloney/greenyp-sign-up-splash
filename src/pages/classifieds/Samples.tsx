@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Classified } from '@/types/classifieds';
-import { useAdPackages } from '@/hooks/useAdPackages';
+import { useAdPackages } from '@/hooks/classifieds/useAdPackages';
 
 const Samples = () => {
   const navigate = useNavigate();

@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Search, RotateCcw } from 'lucide-react';
-import { useClassifiedCategories } from '@/hooks/useClassifiedCategories';
+import { useClassifiedCategories } from '@/hooks/classifieds/useClassifiedCategories';
 import { ClassifiedFilters } from '@/types/classifieds';
 
 interface SearchClassifiedsCardProps {

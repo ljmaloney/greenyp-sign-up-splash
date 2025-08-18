@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
-import { useClassifiedImages } from '@/hooks/useClassifiedImages';
+import { useClassifiedImages } from '@/hooks/classifieds/useClassifiedImages';
 
 interface ClassifiedData {
   classifiedId: string;

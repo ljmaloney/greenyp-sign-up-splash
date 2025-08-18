@@ -11,10 +11,10 @@ import ClassifiedDescription from '@/components/classifieds/ClassifiedDescriptio
 import ClassifiedContactInfo from '@/components/classifieds/ClassifiedContactInfo';
 import ClassifiedDetailLoading from '@/components/classifieds/ClassifiedDetailLoading';
 import ClassifiedDetailError from '@/components/classifieds/ClassifiedDetailError';
-import { useClassifiedDetail } from '@/hooks/useClassifiedDetail';
-import { useClassifiedImages } from '@/hooks/useClassifiedImages';
-import { useAdPackages } from '@/hooks/useAdPackages';
-import { useClassifiedCategories } from '@/hooks/useClassifiedCategories';
+import { useClassifiedDetail } from '@/hooks/classifieds/useClassifiedDetail';
+import { useClassifiedImages } from '@/hooks/classifieds/useClassifiedImages';
+import { useAdPackages } from '@/hooks/classifieds/useAdPackages';
+import { useClassifiedCategories } from '@/hooks/classifieds/useClassifiedCategories';
 
 const ClassifiedDetail = () => {
   const { id } = useParams<{ id: string }>();

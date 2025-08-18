@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useAdPackages } from '@/hooks/useAdPackages';
+import { useAdPackages } from '@/hooks/classifieds/useAdPackages';
 import { ExtendedClassifiedFormData, Step } from '@/types/extendedClassifiedForm';
 
 export const useMultiStepAdForm = () => {

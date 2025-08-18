@@ -40,11 +40,6 @@ export const useImageUpload = (classifiedData: any, packageData: any, maxImages:
     return `image-${paddedIndex}${extension}`;
   };
 
-  const getFileExtension = (fileName: string) => {
-    const lastDotIndex = fileName.lastIndexOf('.');
-    return lastDotIndex > 0 ? fileName.substring(lastDotIndex) : '';
-  };
-
   const getFileNameWithoutExtension = (fileName: string) => {
     const lastDotIndex = fileName.lastIndexOf('.');
     return lastDotIndex > 0 ? fileName.substring(0, lastDotIndex) : fileName;
@@ -149,7 +144,7 @@ export const useImageUpload = (classifiedData: any, packageData: any, maxImages:
           fileType: fileToUpload.type
         });
         
-        await apiFileClient.uploadFile(`/classified/images/${classifiedId}/gallery?imageFilename=${encodeURIComponent(fileToUpload.name)}&imageDescription=${encodeURIComponent(description)}`, formData, {
+        await apiFileClient.uploadFile(`/classified/${classifiedId}/image/gallery?imageFilename=${encodeURIComponent(fileToUpload.name)}&imageDescription=${encodeURIComponent(description)}`, formData, {
           requireAuth: false
         });
       }

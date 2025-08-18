@@ -2,8 +2,8 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useClassifiedsNavigation } from "@/hooks/useClassifiedsNavigation";
-import { useClassifiedCategories } from "@/hooks/useClassifiedCategories";
+import { useClassifiedsNavigation } from "@/hooks/classifieds/useClassifiedsNavigation";
+import { useClassifiedCategories } from "@/hooks/classifieds/useClassifiedCategories";
 import {Leaf, ArrowLeft, Eye, Plus, ChevronLeft, ChevronRight} from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 

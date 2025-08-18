@@ -7,7 +7,7 @@ import { MapPin, Calendar, Mail, Phone, Eye } from 'lucide-react';
 import { Classified } from '@/types/classifieds';
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
-import { useAdPackages } from '@/hooks/useAdPackages';
+import { useAdPackages } from '@/hooks/classifieds/useAdPackages';
 import ContactSellerDialog from './ContactSellerDialog';
 
 interface ClassifiedCardProps {
