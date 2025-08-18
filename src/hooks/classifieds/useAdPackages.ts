@@ -1,6 +1,6 @@
 
 import { useQuery } from '@tanstack/react-query';
-import { useApiClient } from './useApiClient';
+import { useApiClient } from '@/hooks/useApiClient';
 import { AdPackagesResponse } from '@/types/adPackages';
 
 // Dummy/demo data that matches the expected API response format

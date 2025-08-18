@@ -1,6 +1,6 @@
 
 import { useQuery } from '@tanstack/react-query';
-import { useApiClient } from './useApiClient';
+import { useApiClient } from '@/hooks/useApiClient';
 
 interface ClassifiedImage {
   url: string;

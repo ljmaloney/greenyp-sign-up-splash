@@ -1,7 +1,7 @@
 // src/hooks/useCategoryClassifieds.ts
 
 import { useQuery } from '@tanstack/react-query';
-import { useApiClient } from './useApiClient';
+import { useApiClient } from '@/hooks/useApiClient';
 
 interface CategoryClassifiedResponse {
   classifiedId: string;
