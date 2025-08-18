@@ -2,8 +2,8 @@
 import { useState } from 'react';
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAdPackages } from '@/hooks/useAdPackages';
-import { useClassifiedCategories } from '@/hooks/useClassifiedCategories';
+import { useAdPackages } from '@/hooks/classifieds/useAdPackages';
+import { useClassifiedCategories } from '@/hooks/classifieds/useClassifiedCategories';
 import { useApiClient } from '@/hooks/useApiClient';
 import { useToast } from '@/hooks/use-toast';
 import { ClassifiedCreationApiResponse } from '@/types/classifiedCreation';

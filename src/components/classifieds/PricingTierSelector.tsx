@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckIcon } from 'lucide-react';
-import { useAdPackages } from '@/hooks/useAdPackages';
+import { useAdPackages } from '@/hooks/classifieds/useAdPackages';
 import { AdPackage } from '@/types/adPackages';
 import PrototypeAdPopup from './PrototypeAdPopup';
 

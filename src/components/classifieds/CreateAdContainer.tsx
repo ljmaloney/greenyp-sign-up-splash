@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useCreateAdForm } from '@/hooks/useCreateAdForm';
+import { useCreateAdForm } from '@/hooks/classifieds/useCreateAdForm';
 import AdPackageSelector from './AdPackageSelector';
 import AdDetailsFormCard from './AdDetailsFormCard';
 import AdLocationFormCard from './AdLocationFormCard';

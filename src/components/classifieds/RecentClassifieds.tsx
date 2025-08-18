@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useRecentClassifieds } from '@/hooks/useRecentClassifieds';
+import { useRecentClassifieds } from '@/hooks/classifieds/useRecentClassifieds';
 import ClassifiedCard from './ClassifiedCard';
 
 const RecentClassifieds = () => {

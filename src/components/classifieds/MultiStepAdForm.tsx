@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { useMultiStepAdForm } from '@/hooks/useMultiStepAdForm';
-import { useAdFormSubmission } from '@/hooks/useAdFormSubmission';
+import { useMultiStepAdForm } from '@/hooks/classifieds/useMultiStepAdForm';
+import { useAdFormSubmission } from '@/hooks/classifieds/useAdFormSubmission';
 import AdBasicDetailsStep from './AdBasicDetailsStep';
 import AdImageUploadStep from './AdImageUploadStep';
 import AdPaymentStep from './AdPaymentStep';

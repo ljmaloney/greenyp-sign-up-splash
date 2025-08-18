@@ -7,7 +7,7 @@ import { MapPin, Calendar, Mail, Phone, Eye } from 'lucide-react';
 import { Classified } from '@/types/classifieds';
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
-import { useAdPackages } from '@/hooks/useAdPackages';
+import { useAdPackages } from '@/hooks/classifieds/useAdPackages';
 import ContactSellerDialog from './ContactSellerDialog';
 
 interface ClassifiedCardProps {
@@ -108,7 +108,7 @@ const ClassifiedCard = ({ classified }: ClassifiedCardProps) => {
           <div className="mt-auto pt-4 space-y-2">
             <Link 
               to={`/classifieds/detail/${classified.id}`}
-              state={{ fromSearch: window.location.pathname.includes('/search') }}
+              state={{ from: window.location.pathname + window.location.search }}
             >
               <Button 
                 variant="outline" 

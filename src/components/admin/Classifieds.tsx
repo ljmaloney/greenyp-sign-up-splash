@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Search, Eye, Users, Calendar, TrendingUp } from 'lucide-react';
-import { useRecentClassifieds } from '@/hooks/useRecentClassifieds';
+import { useRecentClassifieds } from '@/hooks/classifieds/useRecentClassifieds';
 import { format } from 'date-fns';
 
 const AdminClassifieds = () => {

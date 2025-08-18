@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ChevronDown, ChevronUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useClassifiedCategories } from '@/hooks/useClassifiedCategories';
+import { useClassifiedCategories } from '@/hooks/classifieds/useClassifiedCategories';
 
 const CategoryDescriptions = () => {
   const { data: categoriesData, isLoading, error } = useClassifiedCategories();

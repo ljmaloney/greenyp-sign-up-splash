@@ -3,7 +3,7 @@ import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Info, Check } from 'lucide-react';
-import { useClassifiedCategories } from '@/hooks/useClassifiedCategories';
+import { useClassifiedCategories } from '@/hooks/classifieds/useClassifiedCategories';
 
 const CategoryDescriptionsDialog = () => {
   const { data: categoriesData, isLoading, error } = useClassifiedCategories();
