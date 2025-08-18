@@ -133,9 +133,9 @@ const SearchResultCard = ({ result, isNarrativeExpanded, onToggleNarrative }: Se
           <div className="flex-1">
             <div className="mb-4">
               <div className="flex items-center gap-3 mb-2">
-                {result.businessIconUrl || result.imageUrl ? (
+                {result.businessIconUrl ? (
                   <img 
-                    src={result.businessIconUrl || result.imageUrl || ''} 
+                    src={result.businessIconUrl || ''} 
                     alt={`${result.businessName || result.title} icon`}
                     className="w-8 h-8 rounded-lg object-cover"
                     onError={(e) => {
@@ -147,16 +147,16 @@ const SearchResultCard = ({ result, isNarrativeExpanded, onToggleNarrative }: Se
                       }
                     }}
                   />
-                ) : (
-                  result.recordType === RecordType.CLASSIFIED ? (
-                    <Newspaper className="w-8 h-8 text-greenyp-600" />
+                ) : (result.recordType === RecordType.CLASSIFIED ? (
+                    <Tag className="w-8 h-8 text-greenyp-600" />
                   ) : (
                     <Building2 className="w-8 h-8 text-greenyp-600" />
                   )
                 )}
-                {(result.businessIconUrl || result.imageUrl) && (
+                {/* Hidden fallback icons for error handling */}
+                {result.businessIconUrl && (
                   result.recordType === RecordType.CLASSIFIED ? (
-                    <Newspaper className="w-8 h-8 text-greenyp-600 hidden" />
+                    <Tag className="w-8 h-8 text-greenyp-600 hidden" />
                   ) : (
                     <Building2 className="w-8 h-8 text-greenyp-600 hidden" />
                   )
