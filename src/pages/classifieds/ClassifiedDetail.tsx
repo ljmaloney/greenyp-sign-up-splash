@@ -1,6 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams, useLocation, useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 import ClassifiedsHeader from '@/components/ClassifiedsHeader';
 import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
 import ContactSellerDialog from '@/components/classifieds/ContactSellerDialog';
@@ -19,6 +21,8 @@ import { useClassifiedCategories } from '@/hooks/classifieds/useClassifiedCatego
 const ClassifiedDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
+  const navigate = useNavigate();
   const { data: classified, isLoading, error } = useClassifiedDetail(id!);
   const { data: classifiedImages = [], isLoading: imagesLoading } = useClassifiedImages(id!, !!classified);
   const [showContactDialog, setShowContactDialog] = useState(false);
@@ -127,6 +131,17 @@ const ClassifiedDetail = () => {
     setShowSuccessBanner(false);
   };
 
+  const handleBackClick = () => {
+    const fromPath = (location.state as any)?.from;
+    if (fromPath) {
+      console.log('🔙 Navigating back to source page:', fromPath);
+      navigate(fromPath);
+    } else {
+      console.log('🔙 No source page found, navigating to /classifieds');
+      navigate('/classifieds');
+    }
+  };
+
   if (isLoading) {
     return <ClassifiedDetailLoading />;
   }
@@ -146,6 +161,18 @@ const ClassifiedDetail = () => {
         <ClassifiedsHeader />
         <main className="flex-grow bg-gray-50 py-8">
           <div className="container mx-auto px-4 max-w-4xl">
+            {/* Back Button */}
+            <div className="mb-4">
+              <Button 
+                variant="ghost" 
+                onClick={handleBackClick}
+                className="flex items-center text-greenyp-600 hover:text-greenyp-700 hover:bg-greenyp-50 p-2"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back
+              </Button>
+            </div>
+
             {showSuccessBanner && (
               <PaymentSuccessBanner onDismiss={handleDismissSuccessBanner} />
             )}

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Phone, Globe, ChevronDown, ChevronUp, Building2, Store, Package, Wrench, Tag, Eye } from 'lucide-react';
+import { MapPin, Phone, Globe, ChevronDown, ChevronUp, Building2, Store, Package, Wrench, Tag, Eye, Newspaper } from 'lucide-react';
 import type { SearchResult } from '../types/search';
 import { RecordType } from '../types/search';
 import LocationMap from './LocationMap';
@@ -131,45 +131,54 @@ const SearchResultCard = ({ result, isNarrativeExpanded, onToggleNarrative }: Se
         <div className="flex gap-6">
           {/* Main Content Column */}
           <div className="flex-1">
-            <div className="flex items-start mb-4">
-              {result.businessIconUrl || result.imageUrl ? (
-                <img 
-                  src={result.businessIconUrl || result.imageUrl || ''} 
-                  alt={`${result.businessName || result.title} icon`}
-                  className="w-12 h-12 mr-4 rounded-lg object-cover"
-                  onError={(e) => {
-                    const target = e.currentTarget as HTMLImageElement;
-                    target.style.display = 'none';
-                    const fallback = target.nextElementSibling as HTMLElement;
-                    if (fallback) {
-                      fallback.style.display = 'block';
-                    }
-                  }}
-                />
-              ) : (
-                <Building2 className="w-12 h-12 mr-4 text-greenyp-600" />
-              )}
-              {(result.businessIconUrl || result.imageUrl) && (
-                <Building2 className="w-12 h-12 mr-4 text-greenyp-600 hidden" />
-              )}
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
+            <div className="mb-4">
+              <div className="flex items-center gap-3 mb-2">
+                {result.businessIconUrl || result.imageUrl ? (
+                  <img 
+                    src={result.businessIconUrl || result.imageUrl || ''} 
+                    alt={`${result.businessName || result.title} icon`}
+                    className="w-8 h-8 rounded-lg object-cover"
+                    onError={(e) => {
+                      const target = e.currentTarget as HTMLImageElement;
+                      target.style.display = 'none';
+                      const fallback = target.nextElementSibling as HTMLElement;
+                      if (fallback) {
+                        fallback.style.display = 'block';
+                      }
+                    }}
+                  />
+                ) : (
+                  result.recordType === RecordType.CLASSIFIED ? (
+                    <Newspaper className="w-8 h-8 text-greenyp-600" />
+                  ) : (
+                    <Building2 className="w-8 h-8 text-greenyp-600" />
+                  )
+                )}
+                {(result.businessIconUrl || result.imageUrl) && (
+                  result.recordType === RecordType.CLASSIFIED ? (
+                    <Newspaper className="w-8 h-8 text-greenyp-600 hidden" />
+                  ) : (
+                    <Building2 className="w-8 h-8 text-greenyp-600 hidden" />
+                  )
+                )}
+                {result.recordType === RecordType.CLASSIFIED ? (
+                  <Link 
+                    to={`/classifieds/detail/${result.externId}`}
+                    state={{ from: window.location.pathname + window.location.search }}
+                    className="text-xl font-semibold text-gray-900 hover:text-greenyp-600 transition-colors duration-200"
+                  >
+                    {result.title}
+                  </Link>
+                ) : (
                   <h3 className="text-xl font-semibold text-gray-900">
-                    {result.recordType === RecordType.CLASSIFIED ? result.title : (result.businessName || result.title)}
+                    {result.businessName || result.title}
                   </h3>
+                )}
                   <Badge className={`${badge.className} flex items-center gap-1`}>
                     {badge.icon}
                     {badge.label}
                   </Badge>
-                  {result.recordType === RecordType.CLASSIFIED ? (
-                    <Link 
-                      to={`/classifieds/detail/${result.externId}`}
-                      className="flex items-center text-greenyp-600 hover:text-greenyp-700"
-                    >
-                      <Eye className="w-4 h-4 mr-1" />
-                      <span className="text-sm">View Details</span>
-                    </Link>
-                  ) : result.businessUrl && (
+                  {result.recordType !== RecordType.CLASSIFIED && result.businessUrl && (
                     <a 
                       href={result.businessUrl} 
                       target="_blank" 
@@ -180,36 +189,37 @@ const SearchResultCard = ({ result, isNarrativeExpanded, onToggleNarrative }: Se
                       <span className="text-sm">Visit Website</span>
                     </a>
                   )}
+              </div>
+              {result.recordType !== RecordType.CLASSIFIED && result.title !== result.businessName && result.businessName && (
+                <div className="text-lg font-medium text-gray-800 mb-1">
+                  {result.title}
                 </div>
-                {result.recordType !== RecordType.CLASSIFIED && result.title !== result.businessName && result.businessName && (
-                  <div className="text-lg font-medium text-gray-800 mb-1">
-                    {result.title}
-                  </div>
-                )}
-                {priceDisplay && (
-                  <div className="text-lg font-semibold text-green-600 mb-2">
-                    {priceDisplay}
-                  </div>
-                )}
-                <div className="flex items-center text-gray-600 mb-2">
+              )}
+              {priceDisplay && (
+                <div className="text-lg font-semibold text-green-600 mb-2">
+                  {priceDisplay}
+                </div>
+              )}
+              <div className="text-gray-600 mb-2">
+                <div className="flex items-center">
                   <MapPin className="w-4 h-4 mr-1 text-greenyp-600" />
                   <span className="text-sm">{fullAddress}</span>
-                  {result.phoneNumber && (
-                    <div className="flex items-center text-gray-600 ml-4">
-                      <Phone className="w-4 h-4 mr-2 text-greenyp-600" />
+                </div>
+                {result.phoneNumber && (
+                  <div className="flex items-center text-gray-600 mt-1">
+                    <Phone className="w-4 h-4 mr-1 text-greenyp-600" />
                       <span className="text-sm">
                         {result.recordType === RecordType.CLASSIFIED 
                           ? maskPhoneNumber(result.phoneNumber) 
                           : result.phoneNumber
                         }
                       </span>
-                    </div>
-                  )}
-                </div>
+                  </div>
+                )}
+              </div>
                 <div className="text-sm text-gray-500 mb-3">
                   {result.distance} miles away
                 </div>
-              </div>
             </div>
 
             {displayNarrative && (
@@ -240,10 +250,17 @@ const SearchResultCard = ({ result, isNarrativeExpanded, onToggleNarrative }: Se
 
             {result.recordType === RecordType.CLASSIFIED ? (
               <div className="flex gap-3">
+                <Link 
+                  to={`/classifieds/detail/${result.externId}`}
+                  state={{ from: window.location.pathname + window.location.search }}
+                  className="inline-block bg-greenyp-600 hover:bg-greenyp-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors duration-200"
+                >
+                  View Details
+                </Link>
                 {result.emailAddress && (
                   <Button 
                     onClick={() => setShowContactDialog(true)}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors duration-200"
+                    className="bg-greenyp-600 hover:bg-greenyp-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors duration-200"
                   >
                     Contact Seller
                   </Button>
