@@ -4,6 +4,7 @@ export interface PaymentResponse {
   orderRef?: string;
   paymentRef?: string;
   receiptNumber?: string;
+  referenceId?: string;
 }
 
 export interface ProcessPaymentResult {
@@ -94,10 +95,11 @@ export const processReactSquarePayment = async (
 
         return {
           response: {
-            paymentStatus: response?.paymentStatus || 'COMPLETED',
+            paymentStatus: response?.response?.success ? 'COMPLETED' : 'FAILED',
             orderRef: response?.orderRef || `order_${Date.now()}`,
             paymentRef: response?.paymentRef || `payment_${Date.now()}`,
-            receiptNumber: response?.receiptNumber || `receipt_${Date.now()}`
+            receiptNumber: response?.receiptNumber || `receipt_${Date.now()}`,
+            referenceId: response?.response?.referenceId || ''
           }
         };
 

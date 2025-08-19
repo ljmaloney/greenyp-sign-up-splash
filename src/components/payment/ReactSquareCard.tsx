@@ -41,7 +41,8 @@ const ReactSquareCard: React.FC<ReactSquareCardProps> = ({
         token: result.token,
         verificationToken: verifiedBuyer?.token || '',
         details: result.details,
-        billingContact,
+          sellerKeyedIn: Boolean(false),
+          billingContact,
         billingAddress
       };
       onPaymentSuccess(tokenData);
@@ -70,7 +71,8 @@ const ReactSquareCard: React.FC<ReactSquareCardProps> = ({
     },
     amount: '1.00',
     currencyCode: 'USD',
-    intent: paymentType === 'CLASSIFIED' ? 'CHARGE' as const : 'STORE' as const,
+    sellerKeyedIn: false,  // Customer entered their own payment info
+    intent: paymentType === 'CLASSIFIED' ? 'CHARGE' as const : 'CHARGE_AND_STORE' as const,
   }), [billingContact, billingAddress, paymentType]);
 
   return (

@@ -91,8 +91,14 @@ const ReactSquareSubscriptionCard: React.FC<ReactSquareSubscriptionCardProps> = 
             description: "Your subscription payment has been processed successfully.",
           });
 
-          // Navigate to subscription confirmation - using the correct path defined in App.tsx
-          navigate('/subscribers/signup/confirmation');
+          // Navigate to subscription confirmation with referenceId from API response
+          const referenceId = paymentResponse.response?.referenceId;
+          if (referenceId) {
+            navigate(`/subscribers/signup/confirmation?referenceId=${referenceId}`);
+          } else {
+            // Fallback to old behavior if referenceId not available
+            navigate(`/subscribers/signup/confirmation?producerId=${producerId}`);
+          }
         }
         else if ( paymentType === 'PAYMENT_UPDATE' ) {
           console.log('Subscription payment method successfully updated');

@@ -23,7 +23,7 @@ const ListingEmptyState = ({ categoryName }: ListingEmptyStateProps) => {
       
       <div className="mt-6">
         <Button asChild className="bg-greenyp-600 hover:bg-greenyp-700 text-white">
-          <Link to="/subscriber/signup" onClick={handleListBusinessClick}>
+          <Link to="/subscribers/signup" onClick={handleListBusinessClick}>
             List Your Business
           </Link>
         </Button>
