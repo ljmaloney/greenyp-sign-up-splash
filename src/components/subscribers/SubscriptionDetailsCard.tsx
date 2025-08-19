@@ -78,10 +78,10 @@ const SubscriptionDetailsCard = ({ subscription, isLoading }: SubscriptionDetail
             <span className="text-2xl font-bold text-green-600">
               {subscription.formattedMonthlyPrice}
             </span>
-            <span className="text-gray-500">/month</span>
+            <span className="text-gray-500"> per month</span>
             {subscription.formattedYearlyPrice && (
               <span className="text-sm text-gray-500">
-                (${subscription.formattedYearlyPrice}/year)
+                ({subscription.formattedYearlyPrice} per year)
               </span>
             )}
           </div>

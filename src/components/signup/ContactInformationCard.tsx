@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { SignUpFormSchema, formatPhoneNumber } from '@/utils/signUpValidation';
+import { SignUpFormSchema, formatPhoneNumberOnBlur } from '@/utils/signUpValidation';
 
 interface ContactInformationCardProps {
   control: Control<SignUpFormSchema>;
@@ -157,8 +157,8 @@ const ContactInformationCard = ({ control }: ContactInformationCardProps) => {
                   <Input 
                     placeholder="(555) 123-4567" 
                     {...field}
-                    onChange={(e) => {
-                      const formatted = formatPhoneNumber(e.target.value);
+                    onBlur={(e) => {
+                      const formatted = formatPhoneNumberOnBlur(e.target.value);
                       field.onChange(formatted);
                     }}
                     required 
@@ -179,8 +179,8 @@ const ContactInformationCard = ({ control }: ContactInformationCardProps) => {
                   <Input 
                     placeholder="(555) 123-4567" 
                     {...field}
-                    onChange={(e) => {
-                      const formatted = formatPhoneNumber(e.target.value);
+                    onBlur={(e) => {
+                      const formatted = formatPhoneNumberOnBlur(e.target.value);
                       field.onChange(formatted);
                     }}
                   />

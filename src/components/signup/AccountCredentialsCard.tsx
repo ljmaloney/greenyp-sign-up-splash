@@ -3,7 +3,7 @@ import { Control, useWatch } from 'react-hook-form';
 import { Input } from "@/components/ui/input";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { SignUpFormSchema, formatPhoneNumber } from '@/utils/signUpValidation';
+import { SignUpFormSchema, formatPhoneNumberOnBlur } from '@/utils/signUpValidation';
 
 interface AccountCredentialsCardProps {
   control: Control<SignUpFormSchema>;
@@ -65,8 +65,8 @@ const AccountCredentialsCard = ({ control }: AccountCredentialsCardProps) => {
                   <Input
                     placeholder="(555) 123-4567"
                     {...field}
-                    onChange={(e) => {
-                      const formatted = formatPhoneNumber(e.target.value);
+                    onBlur={(e) => {
+                      const formatted = formatPhoneNumberOnBlur(e.target.value);
                       field.onChange(formatted);
                     }}
                     required
@@ -87,8 +87,8 @@ const AccountCredentialsCard = ({ control }: AccountCredentialsCardProps) => {
                   <Input
                     placeholder="(555) 123-4567"
                     {...field}
-                    onChange={(e) => {
-                      const formatted = formatPhoneNumber(e.target.value);
+                    onBlur={(e) => {
+                      const formatted = formatPhoneNumberOnBlur(e.target.value);
                       field.onChange(formatted);
                     }}
                     required
