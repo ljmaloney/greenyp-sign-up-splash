@@ -128,7 +128,7 @@ const SignUpPaymentContainer = () => {
     };
     
     fetchProducerData();
-  }, [producerId, toast]);
+  }, [producerId]);
 
   // Updated handler to work with new PaymentInformationCard interface
   const handleBillingInfoChange = (updatedBillingInfo: BillingInformation, emailToken: string) => {

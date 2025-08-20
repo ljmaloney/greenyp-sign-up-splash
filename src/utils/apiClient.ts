@@ -59,10 +59,15 @@ class ApiClient {
       }
     }
 
+    // Initialize headers without Content-Type first
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
       ...((fetchOptions.headers as Record<string, string>) || {})
     };
+    
+    // Only set Content-Type to application/json if body is not FormData
+    if (!(fetchOptions.body instanceof FormData)) {
+      headers['Content-Type'] = 'application/json';
+    }
 
     // Add authorization header if required
     if (requireAuth && this.getAccessToken) {
