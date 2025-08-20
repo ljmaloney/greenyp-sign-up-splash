@@ -28,7 +28,28 @@ export const fetchProducerProfiles = async (lineOfBusinessId: string): Promise<P
     throw new Error(`Failed to fetch producer profiles: ${response.status}`);
   }
   
-  return response.json();
+  const data = await response.json();
+  
+  // Transform the API response to match the expected ProducerListing type
+  if (data.response && Array.isArray(data.response)) {
+    const transformedResponse = data.response.map((producer: any) => ({
+      producerId: producer.producerId || '',
+      producerLocationId: producer.producerLocationId || '',
+      businessName: producer.businessName || 'Business Name Not Available',
+      phone: producer.phone || '',
+      city: producer.city || '',
+      state: producer.state || '',
+      websiteUrl: producer.websiteUrl || '',
+      iconLink: producer.iconLink || '/placeholder-logo.png' // Default placeholder if no icon
+    }));
+    
+    return {
+      ...data,
+      response: transformedResponse
+    };
+  }
+  
+  return data;
 };
 
 export const fetchProducerProfilesByLobUrl = async (lobUrl: string, mostRecent: boolean = true, number: number = 6): Promise<ProducerListingsResponse> => {
@@ -38,5 +59,26 @@ export const fetchProducerProfilesByLobUrl = async (lobUrl: string, mostRecent: 
     throw new Error(`Failed to fetch producer profiles: ${response.status}`);
   }
   
-  return response.json();
+  const data = await response.json();
+  
+  // Transform the API response to match the expected ProducerListing type
+  if (data.response && Array.isArray(data.response)) {
+    const transformedResponse = data.response.map((producer: any) => ({
+      producerId: producer.producerId || '',
+      producerLocationId: producer.producerLocationId || '',
+      businessName: producer.businessName || 'Business Name Not Available',
+      phone: producer.phone || '',
+      city: producer.city || '',
+      state: producer.state || '',
+      websiteUrl: producer.websiteUrl || '',
+      iconLink: producer.iconLink || '/placeholder-logo.png' // Default placeholder if no icon
+    }));
+    
+    return {
+      ...data,
+      response: transformedResponse
+    };
+  }
+  
+  return data;
 };
