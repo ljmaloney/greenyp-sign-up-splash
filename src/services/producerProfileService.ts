@@ -8,8 +8,9 @@ export interface ProducerListing {
   phone: string;
   city: string;
   state: string;
-  websiteUrl: string;
-  iconLink: string;
+  postalCode: string;
+  websiteUrl?: string;
+  iconLink?: string;
 }
 
 export interface ProducerListingsResponse {
@@ -32,16 +33,22 @@ export const fetchProducerProfiles = async (lineOfBusinessId: string): Promise<P
   
   // Transform the API response to match the expected ProducerListing type
   if (data.response && Array.isArray(data.response)) {
-    const transformedResponse = data.response.map((producer: any) => ({
-      producerId: producer.producerId || '',
-      producerLocationId: producer.producerLocationId || '',
-      businessName: producer.businessName || 'Business Name Not Available',
-      phone: producer.phone || '',
-      city: producer.city || '',
-      state: producer.state || '',
-      websiteUrl: producer.websiteUrl || '',
-      iconLink: producer.iconLink || '/placeholder-logo.png' // Default placeholder if no icon
-    }));
+    const transformedResponse = data.response.map((producer: any) => {
+      // Ensure all required fields are present with proper defaults
+      const transformed: ProducerListing = {
+        producerId: producer.producerId || '',
+        producerLocationId: producer.producerLocationId || '',
+        businessName: producer.businessName || 'Business Name Not Available',
+        phone: producer.phone || '',
+        city: producer.city || '',
+        state: producer.state || '',
+        postalCode: producer.postalCode || '',
+        websiteUrl: producer.websiteUrl,
+        iconLink: producer.iconLink
+      };
+      
+      return transformed;
+    });
     
     return {
       ...data,
@@ -63,16 +70,22 @@ export const fetchProducerProfilesByLobUrl = async (lobUrl: string, mostRecent: 
   
   // Transform the API response to match the expected ProducerListing type
   if (data.response && Array.isArray(data.response)) {
-    const transformedResponse = data.response.map((producer: any) => ({
-      producerId: producer.producerId || '',
-      producerLocationId: producer.producerLocationId || '',
-      businessName: producer.businessName || 'Business Name Not Available',
-      phone: producer.phone || '',
-      city: producer.city || '',
-      state: producer.state || '',
-      websiteUrl: producer.websiteUrl || '',
-      iconLink: producer.iconLink || '/placeholder-logo.png' // Default placeholder if no icon
-    }));
+    const transformedResponse = data.response.map((producer: any) => {
+      // Ensure all required fields are present with proper defaults
+      const transformed: ProducerListing = {
+        producerId: producer.producerId || '',
+        producerLocationId: producer.producerLocationId || '',
+        businessName: producer.businessName || 'Business Name Not Available',
+        phone: producer.phone || '',
+        city: producer.city || '',
+        state: producer.state || '',
+        postalCode: producer.postalCode || '',
+        websiteUrl: producer.websiteUrl,
+        iconLink: producer.iconLink
+      };
+      
+      return transformed;
+    });
     
     return {
       ...data,
