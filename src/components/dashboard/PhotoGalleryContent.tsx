@@ -56,20 +56,13 @@ const PhotoGalleryContent = () => {
     }
   };
 
-  const handleImageDelete = async (imageId: string, images: GalleryImage[]) => {
-    // Find the image to get its filename
-    const imageToDelete = images.find(img => img.id === imageId);
-    if (!imageToDelete) {
-      toast({
-        title: "Delete Failed",
-        description: "Image not found",
-        variant: "destructive",
-      });
-      return;
-    }
-
+  const handleImageDelete = async (image: GalleryImage) => {
     try {
-      await deleteImageMutation.mutateAsync(imageToDelete.title);
+      // Extract filename from URL (last part after /)
+      const imageUrl = image.url || image.thumbnail;
+      const filename = imageUrl.split('/').pop() || '';
+      
+      await deleteImageMutation.mutateAsync(filename);
       toast({
         title: "Image Deleted",
         description: "Image has been successfully deleted",
@@ -128,7 +121,7 @@ const PhotoGalleryContent = () => {
                     <GalleryGrid
                       images={images}
                       onImageClick={setEnlargedImage}
-                      onImageDelete={(imageId) => handleImageDelete(imageId, images)}
+                      onImageDelete={handleImageDelete}
                       isDeleting={deleteImageMutation.isPending}
                     />
                   )}

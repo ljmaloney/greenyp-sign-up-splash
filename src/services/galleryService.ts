@@ -54,16 +54,17 @@ export const deleteGalleryImage = async (
   producerId: string, 
   imageFilename: string
 ): Promise<UploadImageResponse> => {
-  const endpoint = `/producer/${producerId}/gallery`;
-  const params = new URLSearchParams({
-    imageFilename: imageFilename
-  });
+  // Ensure we have a valid filename
+  if (!imageFilename) {
+    throw new Error('No filename provided for deletion');
+  }
+
+  const endpoint = `/producer/${producerId}/gallery?imageFilename=${encodeURIComponent(imageFilename)}`;
 
   try {
-    const fullEndpoint = `${endpoint}?${params.toString()}`;
-    console.log('Deleting gallery image with authentication:', { endpoint: fullEndpoint });
+    console.log('Deleting gallery image with authentication:', { endpoint });
     
-    const response = await apiClient.request(fullEndpoint, {
+    const response = await apiClient.request(endpoint, {
       method: 'DELETE',
       requireAuth: true,
       headers: {
