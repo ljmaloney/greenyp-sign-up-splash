@@ -24,8 +24,13 @@ const SignUpConfirmation = () => {
   const paymentRef = searchParams.get('paymentRef');
   const receiptNumber = searchParams.get('receiptNumber');
   
-  // Get the producer ID from the URL params
+  // Get the referenceId from the URL params (from POST /account/applyInitialPayment response)
+  const referenceId = searchParams.get('referenceId');
+  // Fallback to producerId for backward compatibility
   const producerId = searchParams.get('producerId');
+  
+  // Use referenceId if available, otherwise fall back to producerId
+  const accountId = referenceId || producerId;
   
   // State for account data
   const [isLoading, setIsLoading] = useState(true);
@@ -55,22 +60,22 @@ const SignUpConfirmation = () => {
   
   const adminContact = getAdminContact();
   
-  // Fetch producer data using producerId
+  // Fetch producer data using accountId (referenceId from payment response or fallback to producerId)
   useEffect(() => {
     const fetchProducerData = async () => {
-      if (!producerId) {
+      if (!accountId) {
         setIsLoading(false);
         toast({
-          title: "Missing Producer ID",
-          description: "Cannot load account details without a producer ID.",
+          title: "Missing Account ID",
+          description: "Cannot load account details without a reference ID or producer ID.",
           variant: "destructive",
         });
         return;
       }
 
       try {
-        console.log('🔍 Fetching producer data for ID:', producerId);
-        const response = await fetch(getApiUrl(`/account/${producerId}`));
+        console.log('🔍 Fetching account data for ID:', accountId, referenceId ? '(using referenceId from payment)' : '(using producerId fallback)');
+        const response = await fetch(getApiUrl(`/account/${accountId}`));
         
         if (!response.ok) {
           throw new Error(`Failed to fetch producer data: ${response.status}`);
@@ -103,7 +108,7 @@ const SignUpConfirmation = () => {
     };
     
     fetchProducerData();
-  }, [producerId, toast]);
+  }, [accountId, toast]);
   
   // Get subscription price directly from API response
   const getSubscriptionPrice = () => {
@@ -144,7 +149,7 @@ const SignUpConfirmation = () => {
     phone: adminContact?.phoneNumber || 'Not provided',
     location: primaryLocation ? `${primaryLocation.city}, ${primaryLocation.state}` : 'Not provided',
     website: producer?.websiteUrl || '',
-    producerId: producer?.producerId || producerId || '',
+    producerId: producer?.producerId || accountId || '',
     // Location details from API response
     locationName: primaryLocation?.locationName || '',
     addressLine1: primaryLocation?.addressLine1 || '',

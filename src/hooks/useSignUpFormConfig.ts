@@ -35,15 +35,7 @@ export const useSignUpFormConfig = (selectedPlan: string) => {
     }
   });
 
-  // Watch for email address changes and update userName accordingly
-  const emailAddress = form.watch('emailAddress');
-  const userName = form.watch('userName');
-  
-  useEffect(() => {
-    if (emailAddress && (!userName || userName === '')) {
-      form.setValue('userName', emailAddress, { shouldValidate: true });
-    }
-  }, [emailAddress, userName, form]);
+  // Removed auto-population of userName field
 
   return form;
 };

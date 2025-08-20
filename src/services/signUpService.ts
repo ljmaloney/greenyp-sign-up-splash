@@ -24,6 +24,7 @@ export interface SignUpPayload {
     phoneNumber: string;
     cellPhoneNumber: string;
     emailAddress: string;
+    importFlag: false;
   };
   primaryLocation: {
     locationName: string;
@@ -73,7 +74,8 @@ export const createSignUpPayload = (data: SignUpFormSchema): SignUpPayload => {
       title: data.title,
       phoneNumber: data.phoneNumber,
       cellPhoneNumber: data.cellPhoneNumber,
-      emailAddress: data.emailAddress
+      emailAddress: data.emailAddress,
+        importFlag: false
     },
     primaryLocation: {
       locationName: data.locationName,

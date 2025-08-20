@@ -36,15 +36,8 @@ const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
 
   const handleSubmit = (data: any) => {
     console.log('📋 SignUpForm: Form submission triggered');
-    
-    // Default username to email address if username is empty/null
-    const processedData = {
-      ...data,
-      userName: data.userName && data.userName.trim() !== '' ? data.userName : data.emailAddress
-    };
-    
     console.log('📝 SignUpForm: Form data processed, calling onSubmit');
-    onSubmit(processedData, selectedSubscription, categories);
+    onSubmit(data, selectedSubscription, categories);
   };
 
   const handleRetry = () => {

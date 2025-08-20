@@ -1,7 +1,7 @@
 
 import { z } from 'zod';
 
-// Phone number formatting utility
+// Phone number formatting utility (for real-time onChange formatting)
 export const formatPhoneNumber = (value: string): string => {
   // Remove all non-numeric characters
   const phoneNumber = value.replace(/\D/g, '');
@@ -14,6 +14,22 @@ export const formatPhoneNumber = (value: string): string => {
   }
   
   return phoneNumber;
+};
+
+// Phone number formatting utility for onBlur - handles various input formats
+export const formatPhoneNumberOnBlur = (value: string): string => {
+  if (!value || value.trim() === '') return value;
+  
+  // Remove all non-numeric characters
+  const digits = value.replace(/\D/g, '');
+  
+  // Only format if we have exactly 10 digits
+  if (digits.length === 10) {
+    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+  }
+  
+  // Return original value if not 10 digits (let validation handle the error)
+  return value;
 };
 
 // Validation schema
@@ -37,10 +53,16 @@ export const signUpFormSchema = z.object({
   lastName: z.string().optional(),
   phoneNumber: z.string()
     .min(1, 'Business phone is required')
-    .regex(/^\(\d{3}\) \d{3}-\d{4}$/, 'Please enter a valid US phone number'),
+    .refine((val) => {
+      const digits = val.replace(/\D/g, '');
+      return digits.length === 10;
+    }, 'Please enter a valid 10-digit US phone number'),
   cellPhoneNumber: z.string()
     .min(1, 'Cell phone is required')
-    .regex(/^\(\d{3}\) \d{3}-\d{4}$/, 'Please enter a valid US phone number'),
+    .refine((val) => {
+      const digits = val.replace(/\D/g, '');
+      return digits.length === 10;
+    }, 'Please enter a valid 10-digit US phone number'),
   emailAddress: z.string()
     .min(1, 'Email address is required')
     .email('Please enter a valid email address'),
