@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button.tsx";
 import { TimePicker } from "@/components/ui/time-picker.tsx";
 import { Edit, Trash2 } from 'lucide-react';
@@ -30,8 +30,14 @@ const LocationHourRow = ({
   onCancel, 
   formatDayName 
 }: LocationHourRowProps) => {
-  const [openTime, setOpenTime] = useState(hour.openTime);
-  const [closeTime, setCloseTime] = useState(hour.closeTime);
+  const [openTime, setOpenTime] = useState(hour.openTime || '9:00 AM');
+  const [closeTime, setCloseTime] = useState(hour.closeTime || '5:00 PM');
+
+  // Update local state when hour prop changes (e.g., when editing starts)
+  useEffect(() => {
+    if (hour.openTime) setOpenTime(hour.openTime);
+    if (hour.closeTime) setCloseTime(hour.closeTime);
+  }, [hour.openTime, hour.closeTime]);
 
   if (isEditing) {
     return (
