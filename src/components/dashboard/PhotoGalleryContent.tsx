@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useGalleryImages, useUploadGalleryImage, useDeleteGalleryImage } from '@/hooks/useGalleryImages';
@@ -28,7 +28,7 @@ const PhotoGalleryContent = () => {
   const deleteImageMutation = useDeleteGalleryImage();
   
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
-  const [enlargedImage, setEnlargedImage] = useState<GalleryImage | null>(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
 
   const handleImageUpload = async (newImages: File[], descriptions: string[]) => {
     try {
@@ -77,25 +77,56 @@ const PhotoGalleryContent = () => {
     }
   };
 
+  // Convert API images to display format
+  const images: GalleryImage[] = useMemo(() => 
+    galleryImages?.map((img, index) => ({
+      id: img.imageName || `image-${index}`,
+      url: img.url,
+      thumbnail: img.url,
+      title: img.imageName || `Image ${index + 1}`,
+      description: img.description,
+      uploadDate: new Date().toISOString().split('T')[0] // API doesn't provide upload date
+    })) || [],
+    [galleryImages]
+  );
+
+  // Navigation handlers
+  const handleImageClick = useCallback((image: GalleryImage) => {
+    const index = images.findIndex(img => img.id === image.id);
+    if (index !== -1) {
+      setSelectedImageIndex(index);
+    }
+  }, [images]);
+
+  const handleNextImage = useCallback(() => {
+    if (selectedImageIndex !== null && selectedImageIndex < images.length - 1) {
+      setSelectedImageIndex(selectedImageIndex + 1);
+    }
+  }, [selectedImageIndex, images.length]);
+
+  const handlePrevImage = useCallback(() => {
+    if (selectedImageIndex !== null && selectedImageIndex > 0) {
+      setSelectedImageIndex(selectedImageIndex - 1);
+    }
+  }, [selectedImageIndex]);
+
+  const handleCloseEnlarged = useCallback(() => {
+    setSelectedImageIndex(null);
+  }, []);
+
+  const selectedImage = selectedImageIndex !== null ? images[selectedImageIndex] : null;
+  const hasNext = selectedImageIndex !== null && selectedImageIndex < images.length - 1;
+  const hasPrev = selectedImageIndex !== null && selectedImageIndex > 0;
+
   return (
     <GalleryFeatureChecker>
       {({ maxGalleryCount, hasGalleryFeature, isLoading: featureLoading }) => {
-        // Convert API images to display format
-        const images: GalleryImage[] = galleryImages?.map((img, index) => ({
-          id: `api-${index}`,
-          url: img.url,
-          thumbnail: img.url,
-          title: img.imageName,
-          description: img.description,
-          uploadDate: new Date().toISOString().split('T')[0] // API doesn't provide upload date
-        })) || [];
-
         const canAddMore = images.length < maxGalleryCount;
-
+        
         if (imagesLoading || featureLoading) {
           return <GalleryLoadingState />;
         }
-
+        
         return (
           <div className="space-y-6">
             <Card>
@@ -120,7 +151,7 @@ const PhotoGalleryContent = () => {
                   ) : (
                     <GalleryGrid
                       images={images}
-                      onImageClick={setEnlargedImage}
+                      onImageClick={handleImageClick}
                       onImageDelete={handleImageDelete}
                       isDeleting={deleteImageMutation.isPending}
                     />
@@ -139,13 +170,16 @@ const PhotoGalleryContent = () => {
             />
 
             {/* Enlarge Dialog */}
-            {enlargedImage && (
-              <ImageEnlargeDialog
-                image={enlargedImage}
-                isOpen={true}
-                onClose={() => setEnlargedImage(null)}
-              />
-            )}
+            <ImageEnlargeDialog
+              image={selectedImage}
+              images={images}
+              isOpen={selectedImageIndex !== null}
+              onClose={handleCloseEnlarged}
+              onNext={handleNextImage}
+              onPrev={handlePrevImage}
+              hasNext={hasNext}
+              hasPrev={hasPrev}
+            />
           </div>
         );
       }}
