@@ -30,10 +30,9 @@ interface ListingCardProps {
 
 const ListingCard = ({ producer, categoryName }: ListingCardProps) => {
   const fullAddress = [
-    producer.addressLine1,
-    producer.addressLine2,
-    producer.addressLine3,
-    `${producer.city}, ${producer.state} ${producer.postalCode}`
+    producer.city,
+    producer.state,
+    producer.postalCode
   ].filter(Boolean).join(', ');
 
   const truncateText = (text: string, maxLength: number) => {

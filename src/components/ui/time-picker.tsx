@@ -41,8 +41,17 @@ const TimePicker = ({ value, onChange, placeholder = "Select time", className, d
       const formattedTime = `${hour.padStart(2, '0')}:${minute.padStart(2, '0')} ${period}`;
       console.log('TimePicker: Sending formatted time:', formattedTime, { hour, minute, period });
       onChange(formattedTime);
+    } else if (value) {
+      // If we have a value but are missing parts, keep the existing value
+      const match = value.match(/^(\d{1,2}):(\d{2})\s?(AM|PM)?$/i);
+      if (match) {
+        const [, h, m, p] = match;
+        if (!hour && h) setHour(h);
+        if (!minute && m) setMinute(m);
+        if (!period && p) setPeriod(p.toUpperCase());
+      }
     }
-  }, [hour, minute, period, onChange]);
+  }, [hour, minute, period, onChange, value]);
 
   const handleHourChange = (newHour: string) => {
     console.log('TimePicker: Hour changed to:', newHour, 'Current state:', { hour, minute, period });

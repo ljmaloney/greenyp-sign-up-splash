@@ -7,7 +7,7 @@ import { GalleryImage } from './PhotoGalleryContent';
 interface GalleryGridProps {
   images: GalleryImage[];
   onImageClick: (image: GalleryImage) => void;
-  onImageDelete: (imageId: string) => void;
+  onImageDelete: (image: GalleryImage) => void;
   isDeleting?: boolean;
 }
 
@@ -35,7 +35,7 @@ const GalleryGrid = ({ images, onImageClick, onImageDelete, isDeleting }: Galler
                 size="sm"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onImageDelete(image.id);
+                  onImageDelete(image);
                 }}
                 disabled={isDeleting}
                 className="h-8 w-8 p-0"

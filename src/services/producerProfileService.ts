@@ -8,8 +8,9 @@ export interface ProducerListing {
   phone: string;
   city: string;
   state: string;
-  websiteUrl: string;
-  iconLink: string;
+  postalCode: string;
+  websiteUrl?: string;
+  iconLink?: string;
 }
 
 export interface ProducerListingsResponse {
@@ -28,7 +29,34 @@ export const fetchProducerProfiles = async (lineOfBusinessId: string): Promise<P
     throw new Error(`Failed to fetch producer profiles: ${response.status}`);
   }
   
-  return response.json();
+  const data = await response.json();
+  
+  // Transform the API response to match the expected ProducerListing type
+  if (data.response && Array.isArray(data.response)) {
+    const transformedResponse = data.response.map((producer: any) => {
+      // Ensure all required fields are present with proper defaults
+      const transformed: ProducerListing = {
+        producerId: producer.producerId || '',
+        producerLocationId: producer.producerLocationId || '',
+        businessName: producer.businessName || 'Business Name Not Available',
+        phone: producer.phone || '',
+        city: producer.city || '',
+        state: producer.state || '',
+        postalCode: producer.postalCode || '',
+        websiteUrl: producer.websiteUrl,
+        iconLink: producer.iconLink
+      };
+      
+      return transformed;
+    });
+    
+    return {
+      ...data,
+      response: transformedResponse
+    };
+  }
+  
+  return data;
 };
 
 export const fetchProducerProfilesByLobUrl = async (lobUrl: string, mostRecent: boolean = true, number: number = 6): Promise<ProducerListingsResponse> => {
@@ -38,5 +66,32 @@ export const fetchProducerProfilesByLobUrl = async (lobUrl: string, mostRecent: 
     throw new Error(`Failed to fetch producer profiles: ${response.status}`);
   }
   
-  return response.json();
+  const data = await response.json();
+  
+  // Transform the API response to match the expected ProducerListing type
+  if (data.response && Array.isArray(data.response)) {
+    const transformedResponse = data.response.map((producer: any) => {
+      // Ensure all required fields are present with proper defaults
+      const transformed: ProducerListing = {
+        producerId: producer.producerId || '',
+        producerLocationId: producer.producerLocationId || '',
+        businessName: producer.businessName || 'Business Name Not Available',
+        phone: producer.phone || '',
+        city: producer.city || '',
+        state: producer.state || '',
+        postalCode: producer.postalCode || '',
+        websiteUrl: producer.websiteUrl,
+        iconLink: producer.iconLink
+      };
+      
+      return transformed;
+    });
+    
+    return {
+      ...data,
+      response: transformedResponse
+    };
+  }
+  
+  return data;
 };

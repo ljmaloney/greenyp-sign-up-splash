@@ -2,8 +2,8 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useToast } from "@/hooks/use-toast";
-import { getApiUrl } from "@/config/api";
 import { useLocations } from "@/hooks/useLocations";
+import { apiClient } from "@/utils/apiClient";
 
 interface LocationHour {
   locationHoursId?: string;
@@ -46,15 +46,16 @@ export const useLocationHours = (locationId: string) => {
       
       console.log(`${isUpdate ? 'Updating' : 'Adding'} location hours:`, payload);
       
-      const response = await fetch(getApiUrl('/producer/location/hours'), {
+      const response = await apiClient.request('/producer/location/hours', {
         method: isUpdate ? 'PUT' : 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload),
+        requireAuth: true
       });
 
-      if (!response.ok) {
+      if (!response.success) {
         throw new Error(`Failed to ${isUpdate ? 'update' : 'add'} location hours: ${response.status}`);
       }
 
@@ -79,15 +80,13 @@ export const useLocationHours = (locationId: string) => {
     try {
       console.log('Deleting location hours for:', dayOfWeek, 'with ID:', locationHoursId);
       
-      const response = await fetch(getApiUrl(`/producer/location/hours/${locationHoursId}`), {
+      const response = await apiClient.request(`/producer/location/hours/${locationHoursId}`, {
         method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        requireAuth: true
       });
 
-      if (!response.ok) {
-        throw new Error(`Failed to delete location hours: ${response.status}`);
+      if (!response.success) {
+        throw new Error(`Failed to delete hours for ${dayOfWeek}: ${response.status}`);
       }
 
       setHours(prev => prev.filter(h => h.dayOfWeek !== dayOfWeek));

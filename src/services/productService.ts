@@ -1,7 +1,6 @@
 
-import { ProductsResponse } from '@/types/profile';
-// Import the type returned by useApiClient hook
-type ApiClient = ReturnType<typeof import('@/hooks/useApiClient').useApiClient>;
+import { ProductsResponse, Product } from '@/types/profile';
+import { apiClient } from '@/utils/apiClient';
 
 export interface ProductCreateRequest {
   producerId: string;
@@ -37,22 +36,22 @@ export interface ProductDiscontinueRequest {
   lastOrderDate: string;
 }
 
-export const fetchProducts = async (apiClient: ApiClient, producerId: string, locationId: string): Promise<ProductsResponse> => {
+export const fetchProducts = async (producerId: string, locationId: string): Promise<ProductsResponse> => {
   const endpoint = `/producer/${producerId}/location/${locationId}/products`;
   console.log('Fetching products from endpoint:', endpoint);
   console.log('Producer ID:', producerId, 'Location ID:', locationId);
   
-  const response = await apiClient.get(endpoint, { requireAuth: true });
+  const response = await apiClient.get<{ response: Product[] }>(endpoint, { requireAuth: true });
   
   if (response.error) {
     throw new Error(`Failed to fetch products: ${response.error}`);
   }
   
-  // Fix: Return the full API response structure, not just the array
-  return response as ProductsResponse;
+  // The API response is already in the correct format
+  return response as unknown as ProductsResponse;
 };
 
-export const createProduct = async (apiClient: ApiClient, productData: ProductCreateRequest): Promise<any> => {
+export const createProduct = async (productData: ProductCreateRequest): Promise<any> => {
   const response = await apiClient.post('/producer/location/product', productData, { requireAuth: true });
   
   if (response.error) {
@@ -62,7 +61,7 @@ export const createProduct = async (apiClient: ApiClient, productData: ProductCr
   return response.response;
 };
 
-export const updateProduct = async (apiClient: ApiClient, productData: ProductUpdateRequest): Promise<any> => {
+export const updateProduct = async (productData: ProductUpdateRequest): Promise<any> => {
   const response = await apiClient.put('/producer/location/product', productData, { requireAuth: true });
   
   if (response.error) {
@@ -72,7 +71,7 @@ export const updateProduct = async (apiClient: ApiClient, productData: ProductUp
   return response.response;
 };
 
-export const deleteProduct = async (apiClient: ApiClient, productId: string): Promise<any> => {
+export const deleteProduct = async (productId: string): Promise<any> => {
   const response = await apiClient.delete('/producer/product', { 
     requireAuth: true,
     body: JSON.stringify({ productId })
@@ -85,7 +84,7 @@ export const deleteProduct = async (apiClient: ApiClient, productId: string): Pr
   return response.response;
 };
 
-export const discontinueProduct = async (apiClient: ApiClient, productData: ProductDiscontinueRequest): Promise<any> => {
+export const discontinueProduct = async (productData: ProductDiscontinueRequest): Promise<any> => {
   const response = await apiClient.delete('/producer/location/product/discontinue', { 
     requireAuth: true,
     body: JSON.stringify(productData)
