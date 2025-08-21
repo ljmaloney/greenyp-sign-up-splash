@@ -1,5 +1,6 @@
 import { getApiUrl } from '@/config/api';
 import { SignUpFormSchema } from '@/utils/signUpValidation';
+import { cleanKeywords, cleanNarrative } from "@/utils/stringUtils.ts";
 import { APIResponse } from '@/types/responseBody';
 
 export interface SignUpPayload {
@@ -61,8 +62,8 @@ export const createSignUpPayload = (data: SignUpFormSchema): SignUpPayload => {
       subscriptionType: "LIVE_UNPAID",
       invoiceCycleType: "MONTHLY",
       websiteUrl: data.websiteUrl,
-      keywords: data.keywords || "",
-      narrative: data.narrative,
+      keywords: cleanKeywords(data.keywords || ""),
+      narrative: cleanNarrative(data.narrative),
       signupCode: data.signupCode
     },
     primaryContact: {

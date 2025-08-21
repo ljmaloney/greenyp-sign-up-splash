@@ -62,11 +62,12 @@ const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
     errorMessage: error,
     isSystemError,
     isDuplicateEmail,
-    errorLength: error?.length
+    errorLength: error?.length,
+    loading
   });
 
   // Show system error page for 500-series errors
-  if (isSystemError && !error) {
+  if (isSystemError && error) { // Changed from !error to error
     console.log('🔥 SignUpForm: Showing system error page');
     return (
       <div className="bg-white rounded-lg shadow-lg p-8">
@@ -79,15 +80,20 @@ const SignUpForm = ({ selectedPlan }: SignUpFormProps) => {
     <div className="bg-white rounded-lg shadow-lg p-8">
       <SignUpFormHeader selectedSubscription={selectedSubscription} />
 
-      {/* Improved error display */}
+      {/* Improved error display with additional debugging */}
       {error && (
-        <SignUpErrorHandler 
-          error={error}
-          isSystemError={isSystemError}
-          isDuplicateEmail={isDuplicateEmail}
-          onRetry={handleRetry}
-          onEmailChange={handleEmailChange}
-        />
+        <>
+          <div className="text-red-500 text-xs mb-2">
+            DEBUG: Error={error}, isSystem={isSystemError}, isDup={isDuplicateEmail}
+          </div>
+          <SignUpErrorHandler 
+            error={error}
+            isSystemError={isSystemError}
+            isDuplicateEmail={isDuplicateEmail}
+            onRetry={handleRetry}
+            onEmailChange={handleEmailChange}
+          />
+        </>
       )}
 
       <Form {...form}>
