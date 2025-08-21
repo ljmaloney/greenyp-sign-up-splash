@@ -97,31 +97,84 @@ const EditBusinessProfileDialog = ({ isOpen, onClose, producer, lineOfBusinessOp
 
 
 
+  // Validate website URL format
+  const isValidUrl = (url: string): boolean => {
+    if (!url) return true; // Empty is valid (optional field)
+    try {
+      new URL(url.startsWith('http') ? url : `https://${url}`);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  // Clean and validate business narrative (remove quotes)
+  const cleanNarrative = (text: string | null | undefined): string => {
+    if (!text) return '';
+    return text
+      .replace(/"/g, '') // Remove all double quotes
+      .replace(/[\n\r\t]/g, ' ') // Replace newlines and tabs with spaces
+      .replace(/[\u0000-\u001F]/g, '') // Remove control characters
+      .replace(/\s+/g, ' ') // Multiple spaces to single space
+      .trim();
+  };
+
+  // Clean and validate keywords
+  const cleanKeywords = (text: string | null | undefined): string => {
+    if (!text) return '';
+    return text
+      .replace(/[^a-zA-Z0-9,\s]/g, '') // Only allow a-z, A-Z, 0-9, space, comma
+      .replace(/\s*,\s*/g, ', ') // Standardize comma+space separation
+      .replace(/\s+/g, ' ') // Multiple spaces to single space
+      .trim()
+      .replace(/,\s*$/, ''); // Remove trailing comma if any
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData) return;
     
+    // Validate website URL
+    if (formData.websiteUrl && !isValidUrl(formData.websiteUrl)) {
+      toast({
+        title: 'Validation Error',
+        description: 'Please enter a valid website URL (e.g., example.com or http://example.com)',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
     setIsSubmitting(true);
     try {
-      const payload = {
+      // Create a clean copy of the form data with validations
+      const cleanData = {
         producerId: formData.producerId,
-        producerRequest: {
-          producerId: formData.producerId,
-          businessName: formData.businessName,
-          lineOfBusinessId: formData.lineOfBusinessId,
-          subscriptionId: formData.subscriptionId,
-          subscriptionType: formData.subscriptionType,
-          invoiceCycleType: formData.invoiceCycleType,
-          websiteUrl: formData.websiteUrl,
-          keywords: formData.keywords,
-          narrative: formData.narrative
-        }
+        businessName: formData.businessName?.trim() || '',
+        lineOfBusinessId: formData.lineOfBusinessId,
+        subscriptionId: formData.subscriptionId,
+        subscriptionType: formData.subscriptionType,
+        invoiceCycleType: formData.invoiceCycleType,
+        websiteUrl: formData.websiteUrl?.trim() || '',
+        keywords: cleanKeywords(formData.keywords),
+        narrative: cleanNarrative(formData.narrative)
       };
 
-      const response = await apiClient.put('/account', payload, { requireAuth: true });
+      // Log the data being sent (for debugging)
+      console.log('Sending update with data:', cleanData);
+      
+      // Make the API call with the properly structured payload
+      const response = await apiClient.put(`/account/${formData.producerId}`, {
+        producerId: formData.producerId,
+        producerRequest: cleanData
+      }, { 
+        requireAuth: true 
+      });
       
       if (response.error) {
-        throw new Error('Failed to update business profile');
+        const errorMessage = typeof response.error === 'string' 
+          ? response.error 
+          : 'Failed to update business profile';
+        throw new Error(errorMessage);
       }
 
       toast({

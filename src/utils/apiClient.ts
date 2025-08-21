@@ -48,17 +48,6 @@ class ApiClient {
       bodyLength: fetchOptions.body ? String(fetchOptions.body).length : 0
     });
 
-    // Log the exact body being sent for POST requests
-    if (fetchOptions.body && fetchOptions.method === 'POST') {
-      console.log('🌐 API CLIENT - POST body:', fetchOptions.body);
-      try {
-        const parsedBody = JSON.parse(String(fetchOptions.body));
-        console.log('🌐 API CLIENT - Parsed POST body:', parsedBody);
-      } catch (e) {
-        console.log('🌐 API CLIENT - Could not parse POST body as JSON');
-      }
-    }
-
     // Initialize headers without Content-Type first
     const headers: Record<string, string> = {
       ...((fetchOptions.headers as Record<string, string>) || {})

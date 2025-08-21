@@ -349,7 +349,7 @@ const Payment = () => {
         firstName: billingInfo.firstName,
         lastName: billingInfo.lastName,
         emailAddress: billingInfo.email,
-        phoneNumber: billingInfo.phone,
+        phoneNumber: normalizePhoneForSquare(billingInfo.phone),
         
         // Address information
         addressLine1: billingInfo.address,
@@ -502,7 +502,7 @@ const Payment = () => {
                     firstName: billingInfo.firstName,
                     lastName: billingInfo.lastName,
                     email: billingInfo.email,
-                    phone: billingInfo.phone
+                    phone: normalizePhoneForSquare(billingInfo.phone)
                   }}
                   billingAddress={{
                     address: billingInfo.address,
