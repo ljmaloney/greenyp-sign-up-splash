@@ -319,7 +319,7 @@ const SignUpPaymentContainer = () => {
               firstName: billingInfo.firstName || '',
               lastName: billingInfo.lastName || '',
               email: billingInfo.email || '',
-              phone: billingInfo.phone || ''
+              phone: normalizePhoneForSquare(billingInfo.phone) || ''
             }}
             billingAddress={{
               address: billingInfo.address || '',
