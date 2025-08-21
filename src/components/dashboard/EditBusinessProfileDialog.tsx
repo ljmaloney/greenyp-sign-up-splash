@@ -97,28 +97,40 @@ const EditBusinessProfileDialog = ({ isOpen, onClose, producer, lineOfBusinessOp
 
 
 
+  // Helper function to clean text for JSON
+  const cleanTextForJson = (text: string | null | undefined): string | null => {
+    if (!text) return null;
+    // Replace newlines with spaces and trim extra whitespace
+    return text.replace(/\s+/g, ' ').trim();
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData) return;
     
     setIsSubmitting(true);
     try {
+      // Prepare the payload according to the API's expected structure
       const payload = {
         producerId: formData.producerId,
         producerRequest: {
           producerId: formData.producerId,
-          businessName: formData.businessName,
+          businessName: cleanTextForJson(formData.businessName) || '',
           lineOfBusinessId: formData.lineOfBusinessId,
           subscriptionId: formData.subscriptionId,
           subscriptionType: formData.subscriptionType,
           invoiceCycleType: formData.invoiceCycleType,
-          websiteUrl: formData.websiteUrl,
-          keywords: formData.keywords,
-          narrative: formData.narrative
+          websiteUrl: cleanTextForJson(formData.websiteUrl) || '',
+          keywords: cleanTextForJson(formData.keywords) || '',
+          narrative: cleanTextForJson(formData.narrative) || ''
         }
       };
 
-      const response = await apiClient.put('/account', payload, { requireAuth: true });
+      console.log('Sending update with payload:', JSON.stringify(payload, null, 2));
+      
+      const response = await apiClient.put(`/account/${formData.producerId}`, payload, { 
+        requireAuth: true 
+      });
       
       if (response.error) {
         throw new Error('Failed to update business profile');
