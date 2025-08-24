@@ -41,6 +41,8 @@ export interface ServiceResponse {
   shortDescription: string;
   description: string;
   serviceTerms: string;
+  discontinued: boolean;
+  discontinueDate?: string;
 }
 
 export interface ServicesResponse {
