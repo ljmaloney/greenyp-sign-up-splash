@@ -98,7 +98,9 @@ export const useContactFormSubmission = (form: UseFormReturn<ContactFormData>) =
         }
       }
 
-      toast.success("Message sent successfully! We'll get back to you soon.");
+      toast.success("Message sent successfully! We'll get back to you soon.", {
+        duration: 10000
+      });
       form.reset();
       
     } catch (error) {
