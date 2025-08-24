@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { MapPin, ChevronDown, ChevronUp, Plus, Edit, Trash2 } from 'lucide-react';
 import { ServiceResponse } from '@/services/servicesService';
@@ -88,7 +89,14 @@ const ServiceLocationGroup = ({
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <div className="flex justify-between items-start mb-2">
-                        <h4 className="font-medium text-gray-900">{service.shortDescription}</h4>
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-medium text-gray-900">{service.shortDescription}</h4>
+                          {service.discontinued && (
+                            <Badge variant="destructive">
+                              Discontinued
+                            </Badge>
+                          )}
+                        </div>
                         <div className="text-right">
                           {service.minServicePrice === service.maxServicePrice ? (
                             <span className="text-lg font-semibold text-greenyp-600">
@@ -99,9 +107,9 @@ const ServiceLocationGroup = ({
                               ${service.minServicePrice} - ${service.maxServicePrice}
                             </span>
                           )}
-                          <div className="text-xs text-gray-500 mt-1">
-                            {getPriceUnitsDisplay(service.priceUnitsType)}
-                          </div>
+                          <span className="text-xs text-gray-500 mt-1">
+                            &nbsp;{getPriceUnitsDisplay(service.priceUnitsType)}
+                          </span>
                         </div>
                       </div>
                       {service.description && (
