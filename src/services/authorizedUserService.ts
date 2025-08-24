@@ -1,8 +1,11 @@
 
 import { getApiUrl } from '@/config/api';
 
+// Import the type returned by useApiClient hook
+type ApiClient = ReturnType<typeof import('@/hooks/useApiClient').useApiClient>;
+
 interface AuthorizedUser {
-  id: string;
+  credentialsId: string;
   firstName: string;
   lastName: string;
   businessPhone: string;
@@ -47,31 +50,29 @@ export const createAuthorizedUser = async (userData: CreateUserData, password: s
   return await response.json();
 };
 
-export const updateAuthorizedUser = async (user: AuthorizedUser, password: string, producerId: string) => {
+export const updateAuthorizedUser = async (apiClient: ApiClient, user: AuthorizedUser, password: string, producerId: string) => {
   console.log('Updating authorized user:', user);
-  
-  const credentialsId = user.id;
-  
-  const response = await fetch(getApiUrl(`/producer/${producerId}/authorize/user/${credentialsId}`), {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      producerContactId: null,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      businessPhone: user.businessPhone,
-      cellPhone: user.cellPhone,
-      emailAddress: user.emailAddress,
-      userName: user.userName,
-      credentials: password
-    }),
+
+  const credentialsId = user.credentialsId;
+
+  const userData = {
+    producerContactId: null,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    businessPhone: user.businessPhone,
+    cellPhone: user.cellPhone,
+    emailAddress: user.emailAddress,
+    userName: user.userName,
+    credentials: password
+  };
+
+  const response = await apiClient.put(`/producer/${producerId}/authorize/user/${credentialsId}`, userData, { 
+    requireAuth: true 
   });
 
-  if (!response.ok) {
-    throw new Error(`Failed to update authorized user: ${response.status}`);
+  if (response.error) {
+    throw new Error(`Failed to update authorized user: ${response.error}`);
   }
 
-  return await response.json();
+  return response.response;
 };
