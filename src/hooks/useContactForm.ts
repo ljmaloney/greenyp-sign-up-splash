@@ -25,7 +25,8 @@ export const useContactForm = (
     title: '',
     phoneNumber: '',
     cellPhoneNumber: '',
-    emailAddress: ''
+    emailAddress: '',
+      importFlag: false,
   });
   
   const { toast } = useToast();
@@ -61,7 +62,8 @@ export const useContactForm = (
       title: '',
       phoneNumber: '',
       cellPhoneNumber: '',
-      emailAddress: ''
+      emailAddress: '',
+        importFlag: false,
     });
   };
 
@@ -85,7 +87,8 @@ export const useContactForm = (
       const submissionData = {
         ...formData,
         phoneNumber: formData.phoneNumber.trim() ? normalizePhoneNumber(formData.phoneNumber) : null,
-        cellPhoneNumber: formData.cellPhoneNumber.trim() ? normalizePhoneNumber(formData.cellPhoneNumber) : null
+        cellPhoneNumber: formData.cellPhoneNumber.trim() ? normalizePhoneNumber(formData.cellPhoneNumber) : null,
+        importFlag: false
       };
       
       const response = await apiClient.post(`/producer/location/${formData.producerLocationId}/contact`, submissionData, {

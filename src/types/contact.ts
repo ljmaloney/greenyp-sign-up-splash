@@ -10,6 +10,7 @@ export interface ContactFormData {
   phoneNumber: string;
   cellPhoneNumber: string;
   emailAddress: string;
+  importFlag?: boolean; // Optional flag to indicate if the contact is being imported
 }
 
 export interface Contact {
