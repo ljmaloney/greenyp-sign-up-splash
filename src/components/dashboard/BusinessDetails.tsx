@@ -43,15 +43,32 @@ const BusinessDetails = ({ producer, lineOfBusinessName }: BusinessDetailsProps)
     return formatDate(dateString);
   };
 
+  const truncateUrl = (url: string, maxLength: number = 40) => {
+    if (url.length <= maxLength) return url;
+    return `${url.substring(0, maxLength)}...`;
+  };
+
   return (
     <div className="grid gap-4 md:grid-cols-2">
       <div className="space-y-3">
         <div className="flex items-center gap-2 text-sm">
           <Globe className="h-4 w-4 text-gray-500" />
           <span className="text-gray-600">Website:</span>
-          <span className="text-gray-900">
-            {producer.websiteUrl || 'Not provided'}
-          </span>
+          <div className="text-gray-900">
+            {producer.websiteUrl ? (
+              <a
+                href={producer.websiteUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-greenyp-600 hover:text-greenyp-700 underline"
+                title={producer.websiteUrl}
+              >
+                {truncateUrl(producer.websiteUrl)}
+              </a>
+            ) : (
+              <span className="text-gray-400 italic">Not provided</span>
+            )}
+          </div>
         </div>
         
         <div className="flex items-center gap-2 text-sm">

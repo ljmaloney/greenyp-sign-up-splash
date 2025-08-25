@@ -12,7 +12,7 @@ import type { Contact as ServiceContact } from '@/services/contactService.ts';
 const ContactsListContainer = () => {
   const [searchParams] = useSearchParams();
   const producerId = searchParams.get('producerId');
-  const [activeOnly, setActiveOnly] = useState(false);
+  const [activeOnly, setActiveOnly] = useState(true);
   
   const { data: contacts, isLoading, error, refetch } = useContacts(producerId, activeOnly);
   const { data: locations } = useLocations(producerId);
