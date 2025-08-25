@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import MDEditor from '@uiw/react-md-editor';
 
 interface BusinessDescriptionProps {
   narrative: string;
@@ -14,20 +15,34 @@ const BusinessDescription = ({ narrative, maxLength = 150 }: BusinessDescription
   }
 
   const shouldTruncateNarrative = narrative.length > maxLength;
-  const displayedNarrative = shouldTruncateNarrative && !isNarrativeExpanded 
-    ? narrative.substring(0, maxLength) + '...'
-    : narrative;
 
   return (
-    <div className="text-gray-600 mt-2">
-      <p>{displayedNarrative}</p>
-      {shouldTruncateNarrative && (
-        <button
-          onClick={() => setIsNarrativeExpanded(!isNarrativeExpanded)}
-          className="text-greenyp-600 hover:text-greenyp-700 text-sm mt-1"
-        >
-          {isNarrativeExpanded ? 'Show less' : 'more'}
-        </button>
+    <div className="text-gray-600 mt-2" data-color-mode="light">
+      {shouldTruncateNarrative && !isNarrativeExpanded ? (
+        <p>
+          {narrative.substring(0, maxLength)}...{' '}
+          <button
+            onClick={() => setIsNarrativeExpanded(!isNarrativeExpanded)}
+            className="text-greenyp-600 hover:text-greenyp-700 text-sm underline"
+          >
+            more
+          </button>
+        </p>
+      ) : (
+        <>
+          <MDEditor.Markdown 
+            source={narrative} 
+            style={{ backgroundColor: 'transparent' }}
+          />
+          {shouldTruncateNarrative && (
+            <button
+              onClick={() => setIsNarrativeExpanded(!isNarrativeExpanded)}
+              className="text-greenyp-600 hover:text-greenyp-700 text-sm mt-1"
+            >
+              Show less
+            </button>
+          )}
+        </>
       )}
     </div>
   );
