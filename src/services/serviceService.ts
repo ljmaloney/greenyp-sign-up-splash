@@ -61,10 +61,9 @@ export const deleteService = async (apiClient: ApiClient, serviceId: string): Pr
 };
 
 export const discontinueService = async (apiClient: ApiClient, serviceData: ServiceDiscontinueRequest): Promise<any> => {
-  const response = await apiClient.delete('/producer/location/service/discontinue', { 
-    requireAuth: true,
-    body: JSON.stringify(serviceData)
-  } as any);
+  const response = await apiClient.delete('/producer/location/service/discontinue', serviceData, { 
+    requireAuth: true
+  });
   
   if (response.error) {
     throw new Error(`Failed to discontinue service: ${response.error}`);

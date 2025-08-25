@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import ServiceLocationGroup from './ServiceLocationGroup';
 import { ServiceResponse } from '@/services/servicesService';
 
@@ -22,6 +22,14 @@ const ServicesContent = ({
   onDeleteService,
   onAddService
 }: ServicesContentProps) => {
+  const [showDisabledServices, setShowDisabledServices] = useState<Record<string, boolean>>({});
+
+  const handleToggleShowDisabled = (locationId: string) => {
+    setShowDisabledServices(prev => ({
+      ...prev,
+      [locationId]: !prev[locationId]
+    }));
+  };
   if (locations.length === 0) {
     return (
       <div className="text-center py-12">
@@ -51,6 +59,8 @@ const ServicesContent = ({
             onDeleteService={onDeleteService}
             onAddService={onAddService}
             hasServices={hasServices}
+            showDisabled={showDisabledServices[location.id] || false}
+            onToggleShowDisabled={() => handleToggleShowDisabled(location.id)}
           />
         );
       })}

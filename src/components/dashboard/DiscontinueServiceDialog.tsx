@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { discontinueService } from '@/services/serviceService';
+import { apiClient } from '@/utils/apiClient';
+
 
 interface DiscontinueServiceDialogProps {
   isOpen: boolean;
@@ -36,7 +38,7 @@ const DiscontinueServiceDialog = ({
     setIsLoading(true);
     
     try {
-      await discontinueService({
+      await discontinueService(apiClient, {
         serviceId,
         discontinueDate
       });

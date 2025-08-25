@@ -115,10 +115,12 @@ const ContactCard = ({ contact, onEdit, onDelete, getLocationName }: ContactCard
                   </div>
                 )}
                 
-                <div className="flex items-center gap-2 text-sm">
-                  <Mail className="h-4 w-4 text-gray-500" />
-                  <span>{contact.emailAddress}</span>
-                </div>
+                {contact.emailAddress && (
+                  <div className="flex items-center gap-2 text-sm">
+                    <Mail className="h-4 w-4 text-gray-500" />
+                    <span>{contact.emailAddress}</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>

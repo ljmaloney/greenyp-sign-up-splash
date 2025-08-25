@@ -2,6 +2,8 @@
 import { useState, useMemo } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { deleteService } from '@/services/serviceService';
+import { apiClient } from '@/utils/apiClient';
+
 
 export const useServicesData = () => {
   const [editingService, setEditingService] = useState(null);
@@ -91,7 +93,7 @@ export const useServicesData = () => {
     
     try {
       console.log('Deleting service:', serviceId);
-      await deleteService(serviceId);
+      await deleteService(apiClient, serviceId);
       
       toast({
         title: "Service Deleted",

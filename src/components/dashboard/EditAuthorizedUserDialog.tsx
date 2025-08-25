@@ -4,13 +4,14 @@ import { useSearchParams } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useApiClient } from "@/hooks/useApiClient";
 import UserFormFields from './UserFormFields';
 import PasswordFields from './PasswordFields';
 import { validatePasswords } from '@/utils/userFormValidation';
 import { updateAuthorizedUser } from '@/services/authorizedUserService';
 
 interface AuthorizedUser {
-  id: string;
+  credentialsId: string;
   firstName: string;
   lastName: string;
   businessPhone: string;
@@ -29,6 +30,7 @@ interface EditAuthorizedUserDialogProps {
 const EditAuthorizedUserDialog = ({ isOpen, onClose, user, onUserUpdated }: EditAuthorizedUserDialogProps) => {
   const [searchParams] = useSearchParams();
   const producerId = searchParams.get('producerId');
+  const apiClient = useApiClient();
   
   const [formData, setFormData] = useState<AuthorizedUser>(user);
   const [password, setPassword] = useState('');
@@ -62,7 +64,7 @@ const EditAuthorizedUserDialog = ({ isOpen, onClose, user, onUserUpdated }: Edit
     }
     
     try {
-      await updateAuthorizedUser(formData, password, producerId);
+      await updateAuthorizedUser(apiClient, formData, password, producerId);
       
       toast({
         title: "User Updated",

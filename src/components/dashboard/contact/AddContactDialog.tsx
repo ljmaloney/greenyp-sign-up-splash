@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button.tsx";
 import { ContactFormData, Location, Contact } from "@/types/contact.ts";
 import { useContactForm } from "@/hooks/useContactForm.ts";
+import { useApiClient } from "@/hooks/useApiClient";
 import ContactFormFields from "./ContactFormFields.tsx";
 
 interface AddContactDialogProps {
@@ -25,7 +26,9 @@ const AddContactDialog = ({
   existingContacts,
   isDashboardEdit = false
 }: AddContactDialogProps) => {
+  const apiClient = useApiClient();
   const { formData, handleChange, handleSubmit } = useContactForm(
+    apiClient,
     onContactAdded, 
     onClose, 
     preSelectedLocationId,

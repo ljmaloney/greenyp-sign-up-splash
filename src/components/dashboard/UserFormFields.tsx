@@ -17,7 +17,26 @@ interface UserFormFieldsProps {
   onFieldChange: (field: keyof AuthorizedUser, value: string) => void;
 }
 
+const normalizePhoneNumber = (phoneNumber: string): string => {
+  // Remove all non-digit characters
+  const digits = phoneNumber.replace(/\D/g, '');
+
+  // If exactly 10 digits, format as (AAA) XXX-NNNN
+  if (digits.length === 10) {
+    return `(${digits.substring(0, 3)}) ${digits.substring(3, 6)}-${digits.substring(6)}`;
+  }
+
+  // Return original value if not 10 digits
+  return phoneNumber;
+};
+
 const UserFormFields = ({ formData, onFieldChange }: UserFormFieldsProps) => {
+  const handlePhoneBlur = (field: 'businessPhone' | 'cellPhone', value: string) => {
+    const normalized = normalizePhoneNumber(value);
+    if (normalized !== value) {
+      onFieldChange(field, normalized);
+    }
+  };
   return (
     <>
       <div className="grid gap-4 md:grid-cols-2">
@@ -50,6 +69,7 @@ const UserFormFields = ({ formData, onFieldChange }: UserFormFieldsProps) => {
           <Input
             value={formData.businessPhone}
             onChange={(e) => onFieldChange('businessPhone', e.target.value)}
+            onBlur={(e) => handlePhoneBlur('businessPhone', e.target.value)}
             placeholder="(555) 123-4567"
           />
         </div>
@@ -61,6 +81,7 @@ const UserFormFields = ({ formData, onFieldChange }: UserFormFieldsProps) => {
           <Input
             value={formData.cellPhone}
             onChange={(e) => onFieldChange('cellPhone', e.target.value)}
+            onBlur={(e) => handlePhoneBlur('cellPhone', e.target.value)}
             placeholder="(555) 123-4567"
           />
         </div>

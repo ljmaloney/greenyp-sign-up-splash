@@ -2,11 +2,14 @@
 import { useState, useEffect } from 'react';
 import { ContactFormData, Contact } from "@/types/contact";
 import { useToast } from "@/hooks/use-toast";
-import { getApiUrl } from "@/config/api";
 import { validateContactForm } from "@/utils/contactValidation";
 import { normalizePhoneNumber } from "@/utils/phoneUtils";
 
+// Import the type returned by useApiClient hook
+type ApiClient = ReturnType<typeof import('@/hooks/useApiClient').useApiClient>;
+
 export const useContactForm = (
+  apiClient: ApiClient,
   onSuccess: (contact: ContactFormData) => void, 
   onClose: () => void, 
   preSelectedLocationId?: string,
@@ -22,7 +25,8 @@ export const useContactForm = (
     title: '',
     phoneNumber: '',
     cellPhoneNumber: '',
-    emailAddress: ''
+    emailAddress: '',
+      importFlag: false,
   });
   
   const { toast } = useToast();
@@ -58,7 +62,8 @@ export const useContactForm = (
       title: '',
       phoneNumber: '',
       cellPhoneNumber: '',
-      emailAddress: ''
+      emailAddress: '',
+        importFlag: false,
     });
   };
 
@@ -82,22 +87,19 @@ export const useContactForm = (
       const submissionData = {
         ...formData,
         phoneNumber: formData.phoneNumber.trim() ? normalizePhoneNumber(formData.phoneNumber) : null,
-        cellPhoneNumber: formData.cellPhoneNumber.trim() ? normalizePhoneNumber(formData.cellPhoneNumber) : null
+        cellPhoneNumber: formData.cellPhoneNumber.trim() ? normalizePhoneNumber(formData.cellPhoneNumber) : null,
+        importFlag: false
       };
       
-      const response = await fetch(getApiUrl(`/producer/location/${formData.producerLocationId}/contact`), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(submissionData),
+      const response = await apiClient.post(`/producer/location/${formData.producerLocationId}/contact`, submissionData, {
+        requireAuth: true
       });
 
-      if (!response.ok) {
-        throw new Error(`Failed to add contact: ${response.status}`);
+      if (response.error) {
+        throw new Error(`Failed to add contact: ${response.error}`);
       }
 
-      const result = await response.json();
+      const result = response.response;
       
       toast({
         title: "Contact Added",

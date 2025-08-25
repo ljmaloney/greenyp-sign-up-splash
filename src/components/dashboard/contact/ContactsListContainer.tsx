@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useContacts } from '@/hooks/useContacts.ts';
 import { useLocations } from '@/hooks/useLocations.ts';
+import { Switch } from '@/components/ui/switch.tsx';
 import ContactsHeader from './ContactsHeader.tsx';
 import ContactsListContent from './ContactsListContent.tsx';
 import ContactsDialogManager from './ContactsDialogManager.tsx';
@@ -11,7 +12,7 @@ import type { Contact as ServiceContact } from '@/services/contactService.ts';
 const ContactsListContainer = () => {
   const [searchParams] = useSearchParams();
   const producerId = searchParams.get('producerId');
-  const [activeOnly, setActiveOnly] = useState(false);
+  const [activeOnly, setActiveOnly] = useState(true);
   
   const { data: contacts, isLoading, error, refetch } = useContacts(producerId, activeOnly);
   const { data: locations } = useLocations(producerId);
@@ -20,7 +21,7 @@ const ContactsListContainer = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedContact, setSelectedContact] = useState<ServiceContact | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [isDeleting] = useState(false);
 
   console.log('👥 ContactsList - producerId:', producerId);
   console.log('👥 ContactsList - contacts data:', contacts);
@@ -69,32 +70,12 @@ const ContactsListContainer = () => {
       
       {/* Contact Filter Controls */}
       <div className="bg-white p-4 rounded-lg border border-gray-200">
-        <div className="flex items-center space-x-6">
-          <span className="text-sm font-medium text-gray-700">Show contacts:</span>
-          <div className="flex items-center space-x-4">
-            <label className="flex items-center">
-              <input
-                type="radio"
-                name="contactFilter"
-                value="all"
-                checked={!activeOnly}
-                onChange={() => setActiveOnly(false)}
-                className="mr-2 text-greenyp-600 focus:ring-greenyp-500"
-              />
-              <span className="text-sm text-gray-700">All contacts (including disabled)</span>
-            </label>
-            <label className="flex items-center">
-              <input
-                type="radio"
-                name="contactFilter"
-                value="active"
-                checked={activeOnly}
-                onChange={() => setActiveOnly(true)}
-                className="mr-2 text-greenyp-600 focus:ring-greenyp-500"
-              />
-              <span className="text-sm text-gray-700">Active contacts only</span>
-            </label>
-          </div>
+        <div className="flex items-center gap-3">
+          <span className="text-sm font-medium text-gray-700">Show disabled contacts:</span>
+          <Switch
+            checked={!activeOnly}
+            onCheckedChange={(checked) => setActiveOnly(!checked)}
+          />
         </div>
       </div>
 
