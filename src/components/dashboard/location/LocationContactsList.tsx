@@ -28,6 +28,9 @@ const LocationContactsList = ({
     return `${contact.lastName}, ${contact.firstName}`;
   };
 
+  // Filter out disabled contacts
+  const activeContacts = contacts?.filter(contact => contact.producerContactType !== 'DISABLED') || [];
+
   if (isLoading) {
     return (
       <div className="mt-6 pt-6 border-t">
@@ -56,7 +59,7 @@ const LocationContactsList = ({
     );
   }
 
-  const contactCount = contacts?.length || 0;
+  const contactCount = activeContacts.length;
 
   return (
     <div className="mt-6 pt-6 border-t">
@@ -84,13 +87,13 @@ const LocationContactsList = ({
 
         {contactCount === 0 ? (
           <div className="px-4 pb-4 border-t border-gray-200">
-            <p className="text-gray-600 text-sm pt-4">No contacts assigned to this location.</p>
+            <p className="text-gray-600 text-sm pt-4">No active contacts assigned to this location.</p>
           </div>
         ) : (
           isExpanded && (
             <div className="px-4 pb-4 border-t border-gray-200">
               <div className="space-y-2 pt-4">
-                {contacts?.map((contact) => (
+                {activeContacts.map((contact) => (
                   <div 
                     key={contact.contactId} 
                     className="flex items-center justify-between py-2 px-3 bg-white rounded-lg border hover:border-gray-300 transition-colors"
