@@ -73,9 +73,9 @@ const PrimaryLocationCard = ({ primaryLocation, producer }: PrimaryLocationCardP
 
             <div className="grid gap-3 md:grid-cols-2">
               <div className="flex items-start gap-2">
-                <Building2 className="h-4 w-4 text-gray-500 mt-0.5" />
+                <Building2 className="h-4 w-4 text-greenyp-600 mt-0.5" />
                 <div>
-                  <span className="text-sm text-gray-600">Location Type:</span>
+                  <span className="text-sm text-gray-600 font-semibold">Location Type:</span>
                   <p className="text-sm font-medium">
                     {getLocationTypeLabel(primaryLocation.locationType)}
                   </p>
@@ -83,9 +83,9 @@ const PrimaryLocationCard = ({ primaryLocation, producer }: PrimaryLocationCardP
               </div>
 
               <div className="flex items-start gap-2">
-                <Eye className="h-4 w-4 text-gray-500 mt-0.5" />
+                <Eye className="h-4 w-4 text-greenyp-600 mt-0.5" />
                 <div>
-                  <span className="text-sm text-gray-600">Display Type:</span>
+                  <span className="text-sm text-gray-600 font-semibold">Display Type:</span>
                   <p className="text-sm font-medium">
                     {getLocationDisplayTypeLabel(primaryLocation.locationDisplayType)}
                   </p>

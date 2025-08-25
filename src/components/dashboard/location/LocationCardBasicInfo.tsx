@@ -20,54 +20,44 @@ const LocationCardBasicInfo = ({ location }: LocationCardBasicInfoProps) => {
 
   return (
     <div className="space-y-3">
-      <div className="flex text-sm">
-        <div className="flex items-center gap-2 min-w-0 flex-1">
-          <MapPin className="h-4 w-4 text-gray-500 flex-shrink-0" />
-          <span className="text-gray-600 flex-shrink-0">Address:</span>
-        </div>
-        <span className="text-gray-900 ml-2">{formatAddress(location)}</span>
+      <div className="flex items-center gap-2 text-sm">
+        <MapPin className="h-4 w-4 text-greenyp-600 flex-shrink-0" />
+        <span className="text-gray-600 flex-shrink-0 font-semibold">Address:</span>
+        <span className="text-gray-900">{formatAddress(location)}</span>
       </div>
       
-      <div className="flex text-sm">
-        <div className="flex items-center gap-2 min-w-0 flex-1">
-          <Globe className="h-4 w-4 text-gray-500 flex-shrink-0" />
-          <span className="text-gray-600 flex-shrink-0">Website:</span>
-        </div>
-        <div className="ml-2">
-          {location.websiteUrl ? (
-            <a 
-              href={location.websiteUrl} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-greenyp-600 hover:text-greenyp-700 underline"
-            >
-              {location.websiteUrl}
-            </a>
-          ) : (
-            <span className="text-gray-400 italic">No website provided</span>
-          )}
-        </div>
+      <div className="flex items-center gap-2 text-sm">
+        <Globe className="h-4 w-4 text-greenyp-600 flex-shrink-0" />
+        <span className="text-gray-600 flex-shrink-0 font-semibold">Website:</span>
+        {location.websiteUrl ? (
+          <a 
+            href={location.websiteUrl} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-greenyp-600 hover:text-greenyp-700 underline"
+          >
+            {location.websiteUrl}
+          </a>
+        ) : (
+          <span className="text-gray-400 italic">No website provided</span>
+        )}
       </div>
 
       {location.latitude && location.longitude && (
-        <div className="flex text-sm">
-          <div className="flex items-center gap-2 min-w-0 flex-1">
-            <MapPin className="h-4 w-4 text-gray-500 flex-shrink-0" />
-            <span className="text-gray-600 flex-shrink-0">Coordinates:</span>
-          </div>
-          <div className="ml-2 flex items-center gap-2">
-            <span className="text-gray-900">
-              {location.latitude}, {location.longitude}
-            </span>
-            <a
-              href={`https://maps.google.com/?q=${location.latitude},${location.longitude}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-greenyp-600 hover:text-greenyp-700 underline text-xs"
-            >
-              View on Google Maps
-            </a>
-          </div>
+        <div className="flex items-center gap-2 text-sm">
+          <MapPin className="h-4 w-4 text-greenyp-600 flex-shrink-0" />
+          <span className="text-gray-600 flex-shrink-0 font-semibold">Coordinates:</span>
+          <span className="text-gray-900">
+            {location.latitude}, {location.longitude}
+          </span>
+          <a
+            href={`https://maps.google.com/?q=${location.latitude},${location.longitude}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-greenyp-600 hover:text-greenyp-700 underline text-xs"
+          >
+            View on Google Maps
+          </a>
         </div>
       )}
     </div>

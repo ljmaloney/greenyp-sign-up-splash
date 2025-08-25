@@ -104,20 +104,20 @@ const ContactCard = ({ contact, onEdit, onDelete, getLocationName }: ContactCard
                 )}
                 
                 <div className="flex items-center gap-2 text-sm">
-                  <Phone className="h-4 w-4 text-gray-500" />
+                  <Phone className="h-4 w-4 text-greenyp-600" />
                   <span>{contact.phoneNumber}</span>
                 </div>
-                
+
                 {contact.cellPhoneNumber && contact.cellPhoneNumber !== contact.phoneNumber && (
                   <div className="flex items-center gap-2 text-sm">
-                    <Phone className="h-4 w-4 text-gray-500" />
+                    <Phone className="h-4 w-4 text-greenyp-600" />
                     <span>{contact.cellPhoneNumber}</span>
                   </div>
                 )}
-                
+
                 {contact.emailAddress && (
                   <div className="flex items-center gap-2 text-sm">
-                    <Mail className="h-4 w-4 text-gray-500" />
+                    <Mail className="h-4 w-4 text-greenyp-600" />
                     <span>{contact.emailAddress}</span>
                   </div>
                 )}
@@ -130,11 +130,11 @@ const ContactCard = ({ contact, onEdit, onDelete, getLocationName }: ContactCard
               <h4 className="font-semibold text-gray-700 mb-2">Location & Display Settings</h4>
               <div className="text-sm space-y-1">
                 <p>
-                  <span className="text-gray-600">Location:</span>{' '}
+                  <span className="text-gray-600 font-semibold">Location:</span>{' '}
                   <span className="text-gray-900">{getLocationName(contact.producerLocationId)}</span>
                 </p>
                 <p>
-                  <span className="text-gray-600">Display Type:</span>{' '}
+                  <span className="text-gray-600 font-semibold">Display Type:</span>{' '}
                   <span className="text-gray-900">{getDisplayTypeDisplay(contact.displayContactType)}</span>
                 </p>
               </div>
