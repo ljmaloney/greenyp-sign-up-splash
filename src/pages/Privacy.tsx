@@ -1,11 +1,11 @@
 import React from 'react';
-import PublicHeader from '@/components/PublicHeader';
+import NoNavBarPublicHeader from '@/components/NoNavBarPublicHeader';
 import Footer from '@/components/Footer';
 
 const Privacy = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <PublicHeader />
+      <NoNavBarPublicHeader />
       <main className="flex-grow bg-gray-50 py-12">
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="bg-white rounded-lg shadow-sm p-8">

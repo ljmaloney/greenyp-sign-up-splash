@@ -1,13 +1,9 @@
 
 import React from 'react';
-import { useIsMobile } from "@/hooks/use-mobile";
 import { Leaf } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import CategoryNavigationBar from './CategoryNavigationBar';
 
-const PublicHeader = () => {
-  const isMobile = useIsMobile();
-  
+const NoNavBarPublicHeader = () => {
   return (
     <>
       <header className="py-4 px-6 md:px-8 lg:px-12 flex justify-between items-center border-b">
@@ -23,9 +19,8 @@ const PublicHeader = () => {
       </header>
       
       {/* Amazon-style scrollable category navigation */}
-      <CategoryNavigationBar />
     </>
   );
 };
 
-export default PublicHeader;
+export default NoNavBarPublicHeader;
