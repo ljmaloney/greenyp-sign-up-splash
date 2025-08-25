@@ -2,9 +2,9 @@
 import { useState } from 'react';
 import { ContactFormData, Contact } from "@/types/contact";
 import { useToast } from "@/hooks/use-toast";
-import { getApiUrl } from "@/config/api";
 import { validateContactForm } from "@/utils/contactValidation";
 import { normalizePhoneNumber } from "@/utils/phoneUtils";
+import { useApiClient } from "@/hooks/useApiClient";
 
 export const useEditContactForm = (
   contact: Contact,
@@ -26,6 +26,7 @@ export const useEditContactForm = (
   });
   
   const { toast } = useToast();
+  const apiClient = useApiClient();
 
   const handleChange = (field: keyof ContactFormData, value: string) => {
     setFormData(prev => {
@@ -63,22 +64,10 @@ export const useEditContactForm = (
         cellPhoneNumber: formData.cellPhoneNumber.trim() ? normalizePhoneNumber(formData.cellPhoneNumber) : null
       };
       
-      const response = await fetch(getApiUrl('/producer/contact'), {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...submissionData,
-          contactId: contact.id
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to update contact: ${response.status}`);
-      }
-
-      const result = await response.json();
+      const response = await apiClient.put('/producer/contact', {
+        ...submissionData,
+        contactId: contact.id
+      }, { requireAuth: true });
       
       toast({
         title: "Contact Updated",
