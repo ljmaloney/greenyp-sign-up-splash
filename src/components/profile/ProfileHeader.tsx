@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { MapPin, Phone, Globe, ExternalLink, Building2, ArrowLeft } from 'lucide-react';
+import { Building2, ArrowLeft } from 'lucide-react';
+import MDEditor from '@uiw/react-md-editor';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import LocationMap from '@/components/LocationMap';
@@ -68,7 +69,12 @@ const ProfileHeader = ({ profile }: ProfileHeaderProps) => {
                   )}
                 </div>
                 <div>
-                      <p className="text-sm text-gray-600 mb-2 text-left">{profile.businessNarrative}</p>
+                      <p className="text-sm text-gray-600 mb-2 text-left">
+                          <MDEditor.Markdown
+                              source={profile.businessNarrative}
+                              style={{ backgroundColor: 'transparent' }}
+                          />
+                      </p>
                 </div>
               </div>
             </div>
