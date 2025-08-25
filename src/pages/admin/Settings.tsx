@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import MDEditor from '@uiw/react-md-editor';
+import '@uiw/react-md-editor/markdown-editor.css';
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { 
@@ -14,9 +15,7 @@ import {
   Bell, 
   Shield, 
   Database, 
-  Mail,
-  Globe,
-  Palette
+  Mail
 } from 'lucide-react';
 
 const Settings = () => {
@@ -58,9 +57,13 @@ const Settings = () => {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="site-description">Site Description</Label>
-                <Textarea 
-                  id="site-description" 
-                  defaultValue="Administrative dashboard for managing users, subscribers, and system operations."
+                <MDEditor
+                  value="Administrative dashboard for managing users, subscribers, and system operations."
+                  data-color-mode="light"
+                  height={100}
+                  preview="edit"
+                  hideToolbar={false}
+                  visibleDragbar={false}
                 />
               </div>
             </CardContent>

@@ -2,7 +2,8 @@
 import React, { useEffect, useRef } from 'react';
 import { Control } from 'react-hook-form';
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import MDEditor from '@uiw/react-md-editor';
+import '@uiw/react-md-editor/markdown-editor.css';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -169,10 +170,14 @@ const BusinessInformationCard = ({ control }: BusinessInformationCardProps) => {
             <FormItem>
               <FormLabel>Business Description</FormLabel>
               <FormControl>
-                <Textarea 
-                  placeholder="Tell us about your business, services, and what makes you unique..."
-                  className="min-h-[100px]"
-                  {...field}
+                <MDEditor
+                  value={field.value}
+                  onChange={(val) => field.onChange(val || '')}
+                  data-color-mode="light"
+                  height={120}
+                  preview="edit"
+                  hideToolbar={false}
+                  visibleDragbar={false}
                 />
               </FormControl>
               <FormMessage />

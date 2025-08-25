@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import MDEditor from '@uiw/react-md-editor';
+import '@uiw/react-md-editor/markdown-editor.css';
 import { Download, Image, Key, Loader2 } from 'lucide-react';
 import { RunwareService, GeneratedImage } from '@/services/runwareService';
 import { toast } from 'sonner';
@@ -122,12 +123,14 @@ const OGImageGenerator = () => {
           <div className="space-y-4">
             <div>
               <Label htmlFor="prompt">Custom Prompt (optional)</Label>
-              <Textarea
-                id="prompt"
-                placeholder={defaultPrompt}
+              <MDEditor
                 value={customPrompt}
-                onChange={(e) => setCustomPrompt(e.target.value)}
-                className="mt-1 min-h-[100px]"
+                onChange={(val) => setCustomPrompt(val || '')}
+                data-color-mode="light"
+                height={120}
+                preview="edit"
+                hideToolbar={false}
+                visibleDragbar={false}
               />
               <p className="text-sm text-gray-500 mt-1">
                 Leave empty to use the default GreenYP-optimized prompt

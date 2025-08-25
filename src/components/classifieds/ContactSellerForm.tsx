@@ -2,7 +2,8 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import MDEditor from '@uiw/react-md-editor';
+import '@uiw/react-md-editor/markdown-editor.css';
 import { Label } from '@/components/ui/label';
 import { Mail, Loader2, CheckCircle } from 'lucide-react';
 
@@ -98,13 +99,14 @@ const ContactSellerForm = ({
 
       <div>
         <Label htmlFor="message">Message *</Label>
-        <Textarea
-          id="message"
+        <MDEditor
           value={formData.message}
-          onChange={(e) => onFormDataChange({ ...formData, message: e.target.value })}
-          placeholder="I'm interested in your listing..."
-          rows={4}
-          required
+          onChange={(val) => onFormDataChange({ ...formData, message: val || '' })}
+          data-color-mode="light"
+          height={150}
+          preview="edit"
+          hideToolbar={false}
+          visibleDragbar={false}
         />
       </div>
 

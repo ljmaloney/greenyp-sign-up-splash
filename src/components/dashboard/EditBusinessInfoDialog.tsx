@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import MDEditor from '@uiw/react-md-editor';
+import '@uiw/react-md-editor/markdown-editor.css';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useLineOfBusiness } from '@/hooks/useLineOfBusiness';
@@ -37,7 +38,6 @@ const EditBusinessInfoDialog = ({ isOpen, onClose, businessData }: EditBusinessI
   
   const { toast } = useToast();
   const { data: lineOfBusinessData } = useLineOfBusiness();
-  const { data: subscriptions } = useSubscriptions();
   const { data: accountData } = useAccountData();
   const queryClient = useQueryClient();
 
@@ -158,11 +158,14 @@ const EditBusinessInfoDialog = ({ isOpen, onClose, businessData }: EditBusinessI
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Business Description
             </label>
-            <Textarea
-              className="min-h-[100px]"
+            <MDEditor
               value={formData.narrative}
-              onChange={(e) => handleChange('narrative', e.target.value)}
-              placeholder="Tell us about your business, services, and what makes you unique..."
+              onChange={(val) => handleChange('narrative', val || '')}
+              data-color-mode="light"
+              height={150}
+              preview="edit"
+              hideToolbar={false}
+              visibleDragbar={false}
             />
           </div>
           

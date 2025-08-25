@@ -3,7 +3,8 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import MDEditor from '@uiw/react-md-editor';
+import '@uiw/react-md-editor/markdown-editor.css';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface Category {
@@ -101,13 +102,14 @@ const AdDetailsFormCard = ({ formData, categories, onFieldChange }: AdDetailsFor
 
         <div>
           <Label htmlFor="description">Description *</Label>
-          <Textarea
-            id="description"
+          <MDEditor
             value={formData.description}
-            onChange={(e) => onFieldChange('description', e.target.value)}
-            placeholder="Describe your item or service"
-            rows={4}
-            required
+            onChange={(val) => onFieldChange('description', val || '')}
+            data-color-mode="light"
+            height={150}
+            preview="edit"
+            hideToolbar={false}
+            visibleDragbar={false}
           />
         </div>
       </CardContent>

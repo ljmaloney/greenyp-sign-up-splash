@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import MDEditor from '@uiw/react-md-editor';
+import '@uiw/react-md-editor/markdown-editor.css';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ServiceFormData } from '@/hooks/useServiceForm';
 
@@ -56,11 +57,14 @@ const ServiceFormFields = ({ formData, onFieldChange, locations }: ServiceFormFi
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Description *
         </label>
-        <Textarea
+        <MDEditor
           value={formData.description}
-          onChange={(e) => onFieldChange('description', e.target.value)}
-          rows={3}
-          required
+          onChange={(val) => onFieldChange('description', val || '')}
+          data-color-mode="light"
+          height={120}
+          preview="edit"
+          hideToolbar={false}
+          visibleDragbar={false}
         />
       </div>
       
@@ -141,11 +145,14 @@ const ServiceFormFields = ({ formData, onFieldChange, locations }: ServiceFormFi
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Service Terms
         </label>
-        <Textarea
+        <MDEditor
           value={formData.serviceTerms}
-          onChange={(e) => onFieldChange('serviceTerms', e.target.value)}
-          rows={2}
-          placeholder="Terms and conditions for this service"
+          onChange={(val) => onFieldChange('serviceTerms', val || '')}
+          data-color-mode="light"
+          height={100}
+          preview="edit"
+          hideToolbar={false}
+          visibleDragbar={false}
         />
       </div>
     </div>
