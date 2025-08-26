@@ -1,5 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
+import MDEditor from '@uiw/react-md-editor';
+import '@uiw/react-md-editor/markdown-editor.css';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -282,13 +284,15 @@ const EditBusinessProfileDialog = ({ isOpen, onClose, producer, lineOfBusinessOp
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Business Narrative
             </label>
-            <textarea
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-greenyp-600"
-              rows={4}
-              value={formData.narrative}
-              onChange={(e) => handleChange('narrative', e.target.value)}
-              placeholder="Describe your business, services, and what makes you unique..."
-            />
+              <MDEditor
+                  value={formData.narrative}
+                  onChange={(val) => handleChange('narrative', val || '')}
+                  data-color-mode="light"
+                  height={300}
+                  preview="edit"
+                  hideToolbar={false}
+                  visibleDragbar={false}
+              />
           </div>
           
           <div className="flex justify-end space-x-2 pt-4">

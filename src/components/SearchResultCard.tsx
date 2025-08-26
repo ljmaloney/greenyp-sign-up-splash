@@ -4,9 +4,10 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Phone, Globe, ChevronDown, ChevronUp, Building2, Store, Package, Wrench, Tag, Eye } from 'lucide-react';
+import { MapPin, Phone, Globe, ChevronDown, ChevronUp, Building2, Store, Package, Wrench, Tag } from 'lucide-react';
 import type { SearchResult } from '../types/search';
 import { RecordType } from '../types/search';
+import MDEditor from '@uiw/react-md-editor';
 import LocationMap from './LocationMap';
 import ContactSellerDialog from '@/components/classifieds/ContactSellerDialog';
 
@@ -222,7 +223,10 @@ const SearchResultCard = ({ result, isNarrativeExpanded, onToggleNarrative }: Se
                                     {displayNarrative && (
                                         <div className="mb-4">
                                             <p className="text-gray-700 text-sm leading-relaxed">
-                                                {displayNarrative}
+                                                <MDEditor.Markdown
+                                                    source={displayNarrative}
+                                                    style={{ backgroundColor: 'transparent' }}
+                                                />
                                             </p>
                                             {shouldTruncateNarrative && (
                                                 <Button
@@ -396,7 +400,10 @@ const SearchResultCard = ({ result, isNarrativeExpanded, onToggleNarrative }: Se
                                     {displayNarrative && (
                                         <div className="mb-4">
                                             <p className="text-gray-700 text-sm leading-relaxed">
-                                                {displayNarrative}
+                                                <MDEditor.Markdown
+                                                    source={displayNarrative}
+                                                    style={{ backgroundColor: 'transparent' }}
+                                                />
                                             </p>
                                             {shouldTruncateNarrative && (
                                                 <Button
@@ -555,7 +562,10 @@ const SearchResultCard = ({ result, isNarrativeExpanded, onToggleNarrative }: Se
                                 {displayNarrative && (
                                     <div className="mb-4">
                                         <p className="text-gray-700 text-sm leading-relaxed">
-                                            {displayNarrative}
+                                            <MDEditor.Markdown
+                                                source={displayNarrative}
+                                                style={{ backgroundColor: 'transparent' }}
+                                            />
                                         </p>
                                         {shouldTruncateNarrative && (
                                             <Button

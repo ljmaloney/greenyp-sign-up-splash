@@ -52,8 +52,8 @@ const BusinessDetails = ({ producer, lineOfBusinessName }: BusinessDetailsProps)
     <div className="grid gap-4 md:grid-cols-2">
       <div className="space-y-3">
         <div className="flex items-center gap-2 text-sm">
-          <Globe className="h-4 w-4 text-gray-500" />
-          <span className="text-gray-600">Website:</span>
+          <Globe className="h-4 w-4 text-greenyp-600" />
+          <span className="text-gray-600 font-semibold">Website:</span>
           <div className="text-gray-900">
             {producer.websiteUrl ? (
               <a
@@ -70,26 +70,26 @@ const BusinessDetails = ({ producer, lineOfBusinessName }: BusinessDetailsProps)
             )}
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2 text-sm">
-          <Building className="h-4 w-4 text-gray-500" />
-          <span className="text-gray-600">Line of Business:</span>
+          <Building className="h-4 w-4 text-greenyp-600" />
+          <span className="text-gray-600 font-semibold">Line of Business:</span>
           <span className="text-gray-900">
             {lineOfBusinessName}
           </span>
         </div>
 
         <div className="flex items-start gap-2 text-sm">
-          <Hash className="h-4 w-4 text-gray-500 mt-0.5" />
-          <span className="text-gray-600">Keywords:</span>
+          <Hash className="h-4 w-4 text-greenyp-600 mt-0.5" />
+          <span className="text-gray-600 font-semibold">Keywords:</span>
           <span className="text-gray-900">
             {producer.keywords || ''}
           </span>
         </div>
 
         <div className="flex items-center gap-2 text-sm">
-          <CreditCard className="h-4 w-4 text-gray-500" />
-          <span className="text-gray-600">Invoice Cycle:</span>
+          <CreditCard className="h-4 w-4 text-greenyp-600" />
+          <span className="text-gray-600 font-semibold">Invoice Cycle:</span>
           <span className="text-gray-900">
             {getInvoiceCycleTypeDisplay(producer.invoiceCycleType || '')}
           </span>
@@ -98,32 +98,32 @@ const BusinessDetails = ({ producer, lineOfBusinessName }: BusinessDetailsProps)
       
       <div className="space-y-3">
         <div className="flex items-center gap-2 text-sm">
-          <Calendar className="h-4 w-4 text-gray-500" />
-          <span className="text-gray-600">Profile Created:</span>
+          <Calendar className="h-4 w-4 text-greenyp-600" />
+          <span className="text-gray-600 font-semibold">Profile Created:</span>
           <span className="text-gray-900">
             {formatDate(producer.createDate)}
           </span>
         </div>
-        
+
         <div className="flex items-center gap-2 text-sm">
-          <Calendar className="h-4 w-4 text-gray-500" />
-          <span className="text-gray-600">Last Updated:</span>
+          <Calendar className="h-4 w-4 text-greenyp-600" />
+          <span className="text-gray-600 font-semibold">Last Updated:</span>
           <span className="text-gray-900">
             {formatDate(producer.lastUpdateDate)}
           </span>
         </div>
 
         <div className="flex items-center gap-2 text-sm">
-          <Calendar className="h-4 w-4 text-gray-500" />
-          <span className="text-gray-600">Last Bill Date:</span>
+          <Calendar className="h-4 w-4 text-greenyp-600" />
+          <span className="text-gray-600 font-semibold">Last Bill Date:</span>
           <span className="text-gray-900">
             {formatBillingDate(producer.lastBillDate || '')}
           </span>
         </div>
 
         <div className="flex items-center gap-2 text-sm">
-          <Calendar className="h-4 w-4 text-gray-500" />
-          <span className="text-gray-600">Last Bill Paid:</span>
+          <Calendar className="h-4 w-4 text-greenyp-600" />
+          <span className="text-gray-600 font-semibold">Last Bill Paid:</span>
           <span className="text-gray-900">
             {formatBillingDate(producer.lastBillPaidDate || '')}
           </span>

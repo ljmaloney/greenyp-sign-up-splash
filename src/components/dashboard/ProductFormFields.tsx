@@ -1,7 +1,7 @@
-
 import React from 'react';
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import MDEditor from '@uiw/react-md-editor';
+import '@uiw/react-md-editor/markdown-editor.css';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ProductFormData } from '@/types/productForm';
 
@@ -87,11 +87,14 @@ const ProductFormFields = ({ formData, onFieldChange, locations }: ProductFormFi
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Description *
         </label>
-        <Textarea
+        <MDEditor
           value={formData.description}
-          onChange={(e) => onFieldChange('description', e.target.value)}
-          rows={3}
-          required
+          onChange={(val) => onFieldChange('description', val || '')}
+          data-color-mode="light"
+          height={120}
+          preview="edit"
+          hideToolbar={false}
+          visibleDragbar={false}
         />
       </div>
 

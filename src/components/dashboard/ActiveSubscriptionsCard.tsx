@@ -94,35 +94,35 @@ const ActiveSubscriptionsCard = ({ subscriptions, producerSubscriptionType }: Ac
                   <div className="grid gap-3 md:grid-cols-2">
                     <div className="space-y-2">
                       <div className="flex items-center gap-2 text-sm">
-                        <DollarSign className="h-4 w-4 text-gray-500" />
-                        <span className="text-gray-600">Amount:</span>
+                        <DollarSign className="h-4 w-4 text-greenyp-600" />
+                        <span className="text-gray-600 font-semibold">Amount:</span>
                         <span className="font-medium">{formatCurrency(subscription.subscriptionAmount)}</span>
                       </div>
-                      
+
                       <div className="flex items-center gap-2 text-sm">
-                        <Calendar className="h-4 w-4 text-gray-500" />
-                        <span className="text-gray-600">Billing:</span>
+                        <Calendar className="h-4 w-4 text-greenyp-600" />
+                        <span className="text-gray-600 font-semibold">Billing:</span>
                         <span className="font-medium">{subscription.invoiceCycleType}</span>
                       </div>
                     </div>
-                    
+
                     <div className="space-y-2">
                       <div className="flex items-center gap-2 text-sm">
-                        <Calendar className="h-4 w-4 text-gray-500" />
-                        <span className="text-gray-600">Start Date:</span>
+                        <Calendar className="h-4 w-4 text-greenyp-600" />
+                        <span className="text-gray-600 font-semibold">Start Date:</span>
                         <span className="font-medium">{formatDate(subscription.startDate)}</span>
                       </div>
-                      
+
                       <div className="flex items-center gap-2 text-sm">
-                        <Calendar className="h-4 w-4 text-gray-500" />
-                        <span className="text-gray-600">End Date:</span>
+                        <Calendar className="h-4 w-4 text-greenyp-600" />
+                        <span className="text-gray-600 font-semibold">End Date:</span>
                         <span className="font-medium">{formatDate(subscription.endDate)}</span>
                       </div>
-                      
+
                       {subscription.nextInvoiceDate && (
                         <div className="flex items-center gap-2 text-sm">
-                          <Calendar className="h-4 w-4 text-gray-500" />
-                          <span className="text-gray-600">Next Invoice:</span>
+                          <Calendar className="h-4 w-4 text-greenyp-600" />
+                          <span className="text-gray-600 font-semibold">Next Invoice:</span>
                           <span className="font-medium">{formatDate(subscription.nextInvoiceDate)}</span>
                         </div>
                       )}

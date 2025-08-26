@@ -166,21 +166,26 @@ const AuthorizedUsersList = () => {
                 <div className="space-y-4">
                   <div className="grid gap-4 md:grid-cols-2">
                     <div className="space-y-2">
-                      <p className="text-gray-600 font-medium">Username: {user.userName}</p>
+                      <p className="text-gray-600">
+                        <span className="font-semibold">Username:</span> {user.userName}
+                      </p>
                       <div className="flex items-center space-x-2">
-                        <Mail className="w-4 h-4 text-gray-500" />
+                        <Mail className="w-4 h-4 text-greenyp-600" />
+                        <span className="font-semibold text-gray-600">Email:</span>
                         <span>{user.emailAddress}</span>
                       </div>
                     </div>
-                    
+
                     <div className="space-y-2">
                       <div className="flex items-center space-x-2 text-sm text-gray-600">
-                        <Clock className="w-4 h-4" />
-                        <span>Created: {formatDate(user.createDate)}</span>
+                        <Clock className="w-4 h-4 text-greenyp-600" />
+                        <span className="font-semibold">Created:</span>
+                        <span>{formatDate(user.createDate)}</span>
                       </div>
                       <div className="flex items-center space-x-2 text-sm text-gray-600">
-                        <Clock className="w-4 h-4" />
-                        <span>Last Updated: {formatDate(user.lastUpdateDate)}</span>
+                        <Clock className="w-4 h-4 text-greenyp-600" />
+                        <span className="font-semibold">Last Updated:</span>
+                        <span>{formatDate(user.lastUpdateDate)}</span>
                       </div>
                     </div>
                   </div>

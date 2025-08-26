@@ -3,12 +3,12 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MapPin, Calendar, Mail, Phone, Eye } from 'lucide-react';
+import { MapPin, Mail, Phone, Eye } from 'lucide-react';
 import { Classified } from '@/types/classifieds';
-import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
 import { useAdPackages } from '@/hooks/classifieds/useAdPackages';
 import ContactSellerDialog from './ContactSellerDialog';
+import MDEditor from '@uiw/react-md-editor';
 
 interface ClassifiedCardProps {
   classified: Classified;
@@ -87,7 +87,10 @@ const ClassifiedCard = ({ classified }: ClassifiedCardProps) => {
           )}
 
           <p className="text-gray-700 text-sm line-clamp-3 flex-grow text-left">
-            {truncateDescription(classified.description)}
+              <MDEditor.Markdown
+                  source={truncateDescription(classified.description)}
+                  style={{ backgroundColor: 'transparent' }}
+              />
           </p>
 
           <div className="space-y-2">

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Classified } from '@/types/classifieds';
 import { useContactSellerForm } from '@/hooks/useContactSellerForm';
@@ -23,6 +23,23 @@ const ContactSellerDialog = ({ isOpen, onOpenChange, classified }: ContactSeller
     handlePhoneChange,
     handleSubmit
   } = useContactSellerForm(classified, () => onOpenChange(false));
+
+  // Ensure body scroll is restored when dialog closes
+  useEffect(() => {
+    if (!isOpen) {
+      // Force restore body scroll when dialog closes
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    }
+  }, [isOpen]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    };
+  }, []);
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>

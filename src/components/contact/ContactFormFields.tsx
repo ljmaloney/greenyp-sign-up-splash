@@ -2,7 +2,8 @@
 import React from 'react';
 import { Control } from 'react-hook-form';
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import MDEditor from '@uiw/react-md-editor';
+import '@uiw/react-md-editor/markdown-editor.css';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -132,11 +133,14 @@ export const MessageField = ({ control }: ContactFormFieldsProps) => (
       <FormItem>
         <FormLabel className="text-left block">Message *</FormLabel>
         <FormControl>
-          <Textarea 
-            placeholder="Tell us how we can help you..."
-            className="min-h-[120px]"
-            {...field}
-            required
+          <MDEditor
+            value={field.value}
+            onChange={(val) => field.onChange(val || '')}
+            data-color-mode="light"
+            height={120}
+            preview="edit"
+            hideToolbar={false}
+            visibleDragbar={false}
           />
         </FormControl>
         <FormMessage />
