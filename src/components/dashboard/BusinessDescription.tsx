@@ -9,6 +9,7 @@ interface BusinessDescriptionProps {
 
 const BusinessDescription = ({ narrative, maxLength = 150 }: BusinessDescriptionProps) => {
   const [isNarrativeExpanded, setIsNarrativeExpanded] = useState(false);
+  const shortNarrative = narrative.substring(0, maxLength)+"..."||' ';
 
   if (!narrative) {
     return null;
@@ -20,7 +21,10 @@ const BusinessDescription = ({ narrative, maxLength = 150 }: BusinessDescription
     <div className="text-gray-600 mt-2" data-color-mode="light">
       {shouldTruncateNarrative && !isNarrativeExpanded ? (
         <p>
-          {narrative.substring(0, maxLength)}...{' '}
+            <MDEditor.Markdown
+                source={shortNarrative}
+                style={{ backgroundColor: 'transparent' }}
+            />
           <button
             onClick={() => setIsNarrativeExpanded(!isNarrativeExpanded)}
             className="text-greenyp-600 hover:text-greenyp-700 text-sm underline"

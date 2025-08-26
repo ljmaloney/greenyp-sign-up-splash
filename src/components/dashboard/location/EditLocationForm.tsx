@@ -2,9 +2,8 @@
 import React from 'react';
 import { useToast } from "@/hooks/use-toast.ts";
 import { useApiClient } from '@/hooks/useApiClient';
-import { createLocationService } from '@/services/locationService.ts';
 import { FULL_NAME_TO_ABBREVIATION } from "@/constants/usStates.ts";
-import LocationFormFields from "./LocationFormFields.tsx";
+import EditLocationFormFields from "./EditLocationFormFields.tsx";
 import { Location } from "@/services/locationService.ts";
 import { LocationFormData } from "@/types/location.ts";
 
@@ -27,17 +26,16 @@ const EditLocationForm = ({
 }: EditLocationFormProps) => {
   const { toast } = useToast();
   const apiClient = useApiClient();
-  const locationService = createLocationService(apiClient);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       console.log('Updating location:', formData);
-      
+
       // Convert full state name back to abbreviation for API
       const stateAbbreviation = FULL_NAME_TO_ABBREVIATION[formData.state] || formData.state;
-      
+
       // Prepare payload matching API specification
       const payload = {
         locationId: formData.locationId,
@@ -55,8 +53,8 @@ const EditLocationForm = ({
         longitude: parseFloat(formData.longitude) || 0,
         websiteUrl: formData.websiteUrl
       };
-      
-      const result = await locationService.updateLocation(payload);
+
+      const result = await apiClient.put('/producer/location', payload);
       
       toast({
         title: "Location Updated",
@@ -77,7 +75,7 @@ const EditLocationForm = ({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <LocationFormFields
+      <EditLocationFormFields
         formData={formData}
         onFieldChange={onFieldChange}
       />

@@ -1,5 +1,13 @@
 
 export interface LocationFormData {
+    emailAddress: any;
+    cellPhoneNumber: string;
+    phoneNumber: any;
+    title: string;
+    lastName: any;
+    firstName: any;
+    genericContactName: string;
+    displayContactType: string;
   locationId?: string;
   locationName: string;
   locationType: string;
