@@ -76,7 +76,7 @@ const SearchForm = ({ showHeading = true }: SearchFormProps) => {
   };
 
   return (
-    <section className="pt-0 pb-6 px-4 md:px-8 bg-gray-50">
+    <section className="py-2 px-4 md:px-8 bg-gray-50">
       <div className="container mx-auto max-w-4xl">
         {showHeading && (
           <div className="text-center mb-8">
