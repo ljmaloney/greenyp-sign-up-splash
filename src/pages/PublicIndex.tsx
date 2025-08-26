@@ -27,6 +27,8 @@ const PublicIndex = () => {
     <div className="min-h-screen flex flex-col">
       <PublicHeader />
       <main className="flex-grow">
+        <SearchForm />
+        
         {/* Hero Section without business dashboard */}
         <section className="relative hero-pattern py-16 md:py-24">
           <div className="container mx-auto px-4 md:px-8 flex flex-col items-center justify-center text-center">
@@ -57,7 +59,6 @@ const PublicIndex = () => {
           </div>
         </section>
         
-        <SearchForm />
         <CategorySection />
         {/* <FeaturesSection /> */}
       </main>
