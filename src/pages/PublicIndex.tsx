@@ -1,16 +1,19 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PublicHeader from '@/components/PublicHeader';
 import SearchForm from '@/components/SearchForm';
 import CategorySection from '@/components/CategorySection';
 import FeaturesSection from '@/components/FeaturesSection';
 import Footer from '@/components/Footer';
 import DevApiConfig from '@/components/DevApiConfig';
+import GreenIndustryDialog from '@/components/GreenIndustryDialog';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { API_CONFIG, isUsingLocalApi } from '@/config/api';
 
 const PublicIndex = () => {
+  const [isGreenIndustryDialogOpen, setIsGreenIndustryDialogOpen] = useState(false);
+
   // Log API configuration on page load
   useEffect(() => {
     console.log('🌐 Current API Configuration:', {
@@ -41,6 +44,15 @@ const PublicIndex = () => {
                 </svg>
                 <span>From seeds to full-service landscaping—find green industry pros for every outdoor need.</span>
               </div>
+              
+              <div className="mt-4">
+                <button
+                  onClick={() => setIsGreenIndustryDialogOpen(true)}
+                  className="text-greenyp-600 hover:text-greenyp-700 underline text-sm transition-colors"
+                >
+                  Find out more about the Green Industry
+                </button>
+              </div>
             </div>
           </div>
         </section>
@@ -52,6 +64,11 @@ const PublicIndex = () => {
       
       <Footer />
       <DevApiConfig />
+      
+      <GreenIndustryDialog 
+        isOpen={isGreenIndustryDialogOpen} 
+        onClose={() => setIsGreenIndustryDialogOpen(false)} 
+      />
     </div>
   );
 };
