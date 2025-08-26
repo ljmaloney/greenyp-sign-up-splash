@@ -56,7 +56,7 @@ const PricingSection = () => {
             Directory Listing Options
           </h2>
           <p className="text-xl text-gray-700 mb-8">
-            The basic listing is free for the first month and takes only a few minutes to set up. For enhanced visibility, consider our premium options.
+            The basic listing is available for minimal cost and takes only a few minutes to set up. For enhanced visibility, consider our premium options.
           </p>
           
           <BillingToggle 

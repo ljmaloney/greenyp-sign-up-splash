@@ -27,7 +27,8 @@ const BillingToggle = ({ billingPeriod, onBillingChange }: BillingToggleProps) =
         }`}
         onClick={() => onBillingChange('yearly')}
       >
-        Yearly <span className="text-xs text-greenyp-600 font-normal ml-1">Save up to 20%</span>
+          Yearly
+        {/*Yearly <span className="text-xs text-greenyp-600 font-normal ml-1">Save up to 20%</span>*/}
       </button>
     </div>
   );
