@@ -13,20 +13,20 @@ const About = () => {
           {/* Header */}
           <div className="text-center mb-16">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              🌱 The Green Industry: Definition & Economic Impact
+              About the Green Industry
             </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Understanding the scope, economic weight, and opportunities in America's Green Industry
-            </p>
+            {/*<p className="text-xl text-gray-600 max-w-3xl mx-auto">*/}
+            {/*  Understanding the scope, economic weight, and opportunities in America's Green Industry*/}
+            {/*</p>*/}
           </div>
 
           {/* Definition Section */}
           <div className="mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-8">Industry Definition</h2>
+            {/*<h2 className="text-3xl font-bold text-gray-900 mb-8">Industry Definition</h2>*/}
             <div className="bg-greenyp-50 border border-greenyp-200 rounded-lg p-8 mb-8">
               <p className="text-lg text-gray-700 leading-relaxed mb-6">
-                The Green Industry is the network of businesses and professionals who grow, design, build, and maintain 
-                the landscapes and outdoor environments that shape our daily lives. It spans a diverse range of sectors, including:
+                We are businesses and professionals who grow, design, build, and maintain
+                the landscapes and outdoor environments that shape our daily lives. Spanning a range of sectors, including:
               </p>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -80,7 +80,7 @@ const About = () => {
               </div>
               
               <p className="text-lg text-gray-700 leading-relaxed mt-6">
-                Together, these enterprises provide essential services that add value to properties, strengthen communities, 
+                Together, we provide essential services that add increase property value, strengthen communities,
                 and support environmental sustainability.
               </p>
             </div>
@@ -88,7 +88,7 @@ const About = () => {
 
           {/* Economic Impact Section */}
           <div className="mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-8">📊 National Economic Impact</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-8">Economic Impact</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
               <div className="bg-white border border-gray-200 rounded-lg p-6 text-center">
@@ -148,43 +148,43 @@ const About = () => {
           </div>
 
           {/* Why It Matters Section */}
-          <div className="mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-8">🚀 Why It Matters for Professionals</h2>
-            <div className="bg-greenyp-50 border border-greenyp-200 rounded-lg p-8">
-              <p className="text-lg text-gray-700 leading-relaxed mb-6">
-                For business leaders, the Green Industry offers:
-              </p>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">Scale and Diversity</h4>
-                  <p className="text-gray-600 mb-4">Multiple revenue streams across services, retail, and products.</p>
-                </div>
-                
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">Stability</h4>
-                  <p className="text-gray-600 mb-4">Essential maintenance and property care services ensure recurring demand.</p>
-                </div>
-                
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">Growth Potential</h4>
-                  <p className="text-gray-600 mb-4">Consumer investment in outdoor living and sustainable practices continues to rise.</p>
-                </div>
-                
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">Community Impact</h4>
-                  <p className="text-gray-600 mb-4">The sector drives profits while delivering measurable value through property enhancement, job creation, and environmental stewardship.</p>
-                </div>
-              </div>
-              
-              <div className="bg-white border border-greenyp-200 rounded-lg p-6 mt-8">
-                <p className="text-gray-700 leading-relaxed">
-                  <strong>This positions the Green Industry as both an economic powerhouse and a resilient, opportunity-rich sector</strong> — 
-                  appealing to business professionals considering engagement or investment in this growing market.
-                </p>
-              </div>
-            </div>
-          </div>
+          {/*<div className="mb-16">*/}
+          {/*  <h2 className="text-3xl font-bold text-gray-900 mb-8">🚀 Why It Matters for Professionals</h2>*/}
+          {/*  <div className="bg-greenyp-50 border border-greenyp-200 rounded-lg p-8">*/}
+          {/*    <p className="text-lg text-gray-700 leading-relaxed mb-6">*/}
+          {/*      For business leaders, the Green Industry offers:*/}
+          {/*    </p>*/}
+          {/*    */}
+          {/*    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">*/}
+          {/*      <div>*/}
+          {/*        <h4 className="font-semibold text-gray-900 mb-2">Scale and Diversity</h4>*/}
+          {/*        <p className="text-gray-600 mb-4">Multiple revenue streams across services, retail, and products.</p>*/}
+          {/*      </div>*/}
+          {/*      */}
+          {/*      <div>*/}
+          {/*        <h4 className="font-semibold text-gray-900 mb-2">Stability</h4>*/}
+          {/*        <p className="text-gray-600 mb-4">Essential maintenance and property care services ensure recurring demand.</p>*/}
+          {/*      </div>*/}
+          {/*      */}
+          {/*      <div>*/}
+          {/*        <h4 className="font-semibold text-gray-900 mb-2">Growth Potential</h4>*/}
+          {/*        <p className="text-gray-600 mb-4">Consumer investment in outdoor living and sustainable practices continues to rise.</p>*/}
+          {/*      </div>*/}
+          {/*      */}
+          {/*      <div>*/}
+          {/*        <h4 className="font-semibold text-gray-900 mb-2">Community Impact</h4>*/}
+          {/*        <p className="text-gray-600 mb-4">The sector drives profits while delivering measurable value through property enhancement, job creation, and environmental stewardship.</p>*/}
+          {/*      </div>*/}
+          {/*    </div>*/}
+          {/*    */}
+          {/*    <div className="bg-white border border-greenyp-200 rounded-lg p-6 mt-8">*/}
+          {/*      <p className="text-gray-700 leading-relaxed">*/}
+          {/*        <strong>This positions the Green Industry as both an economic powerhouse and a resilient, opportunity-rich sector</strong> — */}
+          {/*        appealing to business professionals considering engagement or investment in this growing market.*/}
+          {/*      </p>*/}
+          {/*    </div>*/}
+          {/*  </div>*/}
+          {/*</div>*/}
         </div>
       </main>
       <Footer />
