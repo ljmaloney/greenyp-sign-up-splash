@@ -8,6 +8,7 @@ import { useApiClient } from "@/hooks/useApiClient.ts";
 import { useLocationForm } from "@/hooks/useLocationForm.ts";
 import LocationFormFields from "./LocationFormFields.tsx";
 import { LocationFormData } from "@/types/location.ts";
+import { FULL_NAME_TO_ABBREVIATION } from "@/constants/usStates.ts";
 
 interface AddLocationDialogProps {
   isOpen: boolean;
@@ -96,6 +97,9 @@ const AddLocationDialog = ({ isOpen, onClose, onLocationAdded }: AddLocationDial
         return;
       }
 
+      // Convert full state name to abbreviation for API
+      const stateAbbreviation = FULL_NAME_TO_ABBREVIATION[formData.state] || formData.state;
+
       // Prepare payload matching new API specification
       const payload = {
         locationRequest: {
@@ -107,7 +111,7 @@ const AddLocationDialog = ({ isOpen, onClose, onLocationAdded }: AddLocationDial
           addressLine2: formData.addressLine2,
           addressLine3: formData.addressLine3,
           city: formData.city,
-          state: formData.state,
+          state: stateAbbreviation,
           postalCode: formData.postalCode,
           latitude: 0,
           longitude: 0,
