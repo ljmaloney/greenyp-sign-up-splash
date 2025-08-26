@@ -25,7 +25,8 @@ const GreenIndustryDialog = ({ isOpen, onClose }: GreenIndustryDialogProps) => {
           <DialogDescription asChild>
             <div className="space-y-6">
               <p className="text-lg text-gray-700 leading-relaxed">
-                The Green Industry is all about creating and caring for the outdoor spaces that make our homes, neighborhoods, and communities more beautiful, healthy, and enjoyable.
+                The Green Industry is all about creating and caring for the outdoor spaces that make our homes, neighborhoods,
+                  and communities more beautiful, healthy, and enjoyable.
               </p>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -33,7 +34,8 @@ const GreenIndustryDialog = ({ isOpen, onClose }: GreenIndustryDialogProps) => {
                   <TreeDeciduous className="w-8 h-8 text-greenyp-600 mt-1 flex-shrink-0" />
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-2">Landscaping & Design</h4>
-                    <p className="text-sm text-gray-600">Creating beautiful outdoor spaces through professional landscaping and garden design services.</p>
+                    <p className="text-sm text-gray-600">
+                        Create and maintain beautiful outdoor spaces through professional design, installation, and maintenance services.</p>
                   </div>
                 </div>
                 
@@ -49,7 +51,7 @@ const GreenIndustryDialog = ({ isOpen, onClose }: GreenIndustryDialogProps) => {
                   <Home className="w-8 h-8 text-greenyp-600 mt-1 flex-shrink-0" />
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-2">Garden Centers & Nurseries</h4>
-                    <p className="text-sm text-gray-600">Plants, supplies, and expertise from garden centers, nurseries, and greenhouses.</p>
+                    <p className="text-sm text-gray-600">Plants, gardening supplies, and expertise from garden centers, nurseries, and greenhouses.</p>
                   </div>
                 </div>
                 
@@ -64,7 +66,8 @@ const GreenIndustryDialog = ({ isOpen, onClose }: GreenIndustryDialogProps) => {
               
               <div className="bg-greenyp-50 p-4 rounded-lg border border-greenyp-100">
                 <p className="text-gray-700">
-                  Whether it's designing a backyard, maintaining a lawn, or building community spaces, the Green Industry helps people enjoy the outdoors while also supporting sustainability and property value.
+                  Whether it's designing a backyard, maintaining a lawn, building community spaces, or property maintenance,
+                    these businesses help you the outdoors while also maintaining and improving and property value.
                 </p>
               </div>
             </div>
