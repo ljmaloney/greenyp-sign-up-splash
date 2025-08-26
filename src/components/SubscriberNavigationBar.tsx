@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Home, Star, Grid3X3, Mail, LogIn, UserPlus, DollarSign } from 'lucide-react';
@@ -23,6 +24,12 @@ const SubscriberNavigationBar = () => {
 
         {/* Right-aligned navigation links and buttons */}
         <div className="flex-shrink-0 bg-gray-100 flex items-center space-x-1 px-3 py-1 border-l border-gray-200">
+          <Link
+            to="/subscribers/about"
+            className="text-sm font-medium text-gray-700 hover:text-greenyp-600 transition-colors duration-200 whitespace-nowrap py-1 px-2 rounded hover:bg-white/50"
+          >
+            About
+          </Link>
           <Link
             to="/subscribers/subscription-features"
             className="text-sm font-medium text-gray-700 hover:text-greenyp-600 transition-colors duration-200 whitespace-nowrap py-1 px-2 rounded hover:bg-white/50"
