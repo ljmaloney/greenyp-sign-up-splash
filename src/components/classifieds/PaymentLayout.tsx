@@ -156,7 +156,6 @@ const PaymentLayout = ({ classified, customer, isSubscription = false, producerI
         {/* Payment Information Card - Only enabled after email validation */}
         <div className={!isValidated ? 'opacity-50 pointer-events-none' : ''}>
           <PaymentInformationCard 
-            classified={classified}
             customer={customer}
             onBillingInfoChange={handleBillingInfoUpdate}
             emailValidationToken={billingInfo.emailValidationToken}
