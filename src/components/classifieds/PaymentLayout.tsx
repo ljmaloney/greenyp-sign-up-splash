@@ -3,11 +3,11 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, CreditCard, CheckCircle } from 'lucide-react';
-import { ClassifiedData, CustomerData } from '@/types/classifieds';
 
+// Using any for now since the proper types aren't exported
 interface PaymentLayoutProps {
-  classified: ClassifiedData;
-  customer: CustomerData;
+  classified: any;
+  customer: any;
   onBack: () => void;
   onSubmit: (paymentData: any) => void;
 }
