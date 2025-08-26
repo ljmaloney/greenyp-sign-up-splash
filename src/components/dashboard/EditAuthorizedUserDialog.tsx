@@ -18,6 +18,7 @@ interface AuthorizedUser {
   cellPhone: string;
   emailAddress: string;
   userName: string;
+  id: string; // Adding the missing id property
 }
 
 interface EditAuthorizedUserDialogProps {

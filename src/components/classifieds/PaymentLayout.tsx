@@ -93,9 +93,15 @@ const PaymentLayout = ({ classified, customer, isSubscription = false, producerI
     classifiedId: classifiedId
   });
 
-  const handleBillingInfoUpdate = React.useCallback((contact: any, address: any, emailValidationToken: string) => {
-    console.log('📝 PaymentLayout - Billing info updated', { contact, address, hasToken: !!emailValidationToken });
-    setBillingInfo({ contact, address, emailValidationToken });
+  // Fix the callback signature to match expected interface
+  const handleBillingInfoUpdate = React.useCallback((billingInfo: any, emailToken: string) => {
+    console.log('📝 PaymentLayout - Billing info updated', { billingInfo, hasToken: !!emailToken });
+    setBillingInfo(prev => ({ 
+      ...prev, 
+      contact: billingInfo.contact || prev.contact,
+      address: billingInfo.address || prev.address,
+      emailValidationToken: emailToken 
+    }));
   }, []);
 
   const handleEmailValidationTokenChange = (value: string) => {

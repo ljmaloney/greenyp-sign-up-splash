@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Input } from "@/components/ui/input";
 import MDEditor from '@uiw/react-md-editor';
@@ -95,7 +94,7 @@ const ProductFormFields = ({ formData, onFieldChange, locations }: ProductFormFi
           height={120}
           preview="edit"
           hideToolbar={false}
-          visibleDragBar={false}
+          visibleDragbar={false}
         />
       </div>
 
