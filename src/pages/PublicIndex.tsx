@@ -3,12 +3,9 @@ import React, { useEffect, useState } from 'react';
 import PublicHeader from '@/components/PublicHeader';
 import SearchForm from '@/components/SearchForm';
 import CategorySection from '@/components/CategorySection';
-import FeaturesSection from '@/components/FeaturesSection';
 import Footer from '@/components/Footer';
 import DevApiConfig from '@/components/DevApiConfig';
 import GreenIndustryDialog from '@/components/GreenIndustryDialog';
-import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
 import { API_CONFIG, isUsingLocalApi } from '@/config/api';
 
 const PublicIndex = () => {
@@ -27,10 +24,8 @@ const PublicIndex = () => {
     <div className="min-h-screen flex flex-col">
       <PublicHeader />
       <main className="flex-grow">
-        <SearchForm />
-        
         {/* Hero Section without business dashboard */}
-        <section className="relative hero-pattern py-16 md:py-24">
+        <section className="relative hero-pattern py-10 md:py-12">
           <div className="container mx-auto px-4 md:px-8 flex flex-col items-center justify-center text-center">
             <div className="max-w-4xl animate-fade-in">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-gray-900 leading-tight">
@@ -58,7 +53,7 @@ const PublicIndex = () => {
             </div>
           </div>
         </section>
-        
+          <SearchForm />
         <CategorySection />
         {/* <FeaturesSection /> */}
       </main>
