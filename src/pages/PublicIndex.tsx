@@ -48,7 +48,7 @@ const PublicIndex = () => {
               <div className="mt-4">
                 <button
                   onClick={() => setIsGreenIndustryDialogOpen(true)}
-                  className="text-greenyp-600 hover:text-greenyp-700 underline text-sm transition-colors"
+                  className="text-greenyp-600 hover:text-greenyp-700 underline text-lg font-bold transition-colors"
                 >
                   Find out more about the Green Industry
                 </button>
