@@ -81,7 +81,7 @@ function App() {
               <Route path="/categories/:urlLob" element={<CategoryPage />} />
               <Route path="/category/:lineOfBusinessId" element={<CategoryPage />} />
               <Route path="/business/:businessId" element={<ProfilePage />} />
-              <Route path="/profile/:producerId/:producerLocationId" element={<ProfilePage />} />
+              <Route path="/greenpro/profile/:producerId/:producerLocationId" element={<ProfilePage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/og-generator" element={<OGImageGeneratorPage />} />
 

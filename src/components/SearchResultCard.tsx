@@ -268,7 +268,7 @@ const SearchResultCard = ({ result, isNarrativeExpanded, onToggleNarrative }: Se
                                             )}
                                         </div>
                                     ) : <Link
-                                        to={`/profile/${result.producerId}/${result.locationId}`}
+                                        to={`/greenpro/profile/${result.producerId}/${result.locationId}`}
                                         state={{from: window.location.pathname + window.location.search}}
                                         className="inline-block bg-greenyp-600 hover:bg-greenyp-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors duration-200"
                                     >
@@ -608,7 +608,7 @@ const SearchResultCard = ({ result, isNarrativeExpanded, onToggleNarrative }: Se
                                     </div>
                                 ) : result.producerId && result.locationId ? (
                                     <Link
-                                        to={`/profile/${result.producerId}/${result.locationId}`}
+                                        to={`/greenpro/profile/${result.producerId}/${result.locationId}`}
                                         state={{from: window.location.pathname + window.location.search}}
                                         className="inline-block bg-greenyp-600 hover:bg-greenyp-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors duration-200"
                                     >
@@ -643,7 +643,7 @@ const SearchResultCard = ({ result, isNarrativeExpanded, onToggleNarrative }: Se
                     <ContactSellerDialog
                         isOpen={showContactDialog}
                         onOpenChange={setShowContactDialog}
-                        classified={getClassifiedForDialog()!}
+                        classified={getClassifiedForDialog()}
                     />
                 )}
             </>
