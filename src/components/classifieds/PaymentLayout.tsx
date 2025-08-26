@@ -1,87 +1,119 @@
-import React, { useState, useCallback } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useToast } from "@/components/ui/use-toast"
-import { Progress } from "@/components/ui/progress"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Button } from "@/components/ui/button"
-import { ArrowLeft } from "lucide-react"
-import PaymentInformationCard from './PaymentInformationCard';
-import Confirmation from './Confirmation';
-import { useSearchParams } from 'react-router-dom';
 
-interface FormData {
-  cardName: string;
-  cardNumber: string;
-  cardExpiry: string;
-  cardCVC: string;
-  billingAddress: string;
-  billingCity: string;
-  billingState: string;
-  billingZip: string;
+import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ArrowLeft, CreditCard, CheckCircle } from 'lucide-react';
+import { ClassifiedData, CustomerData } from '@/types/classifieds';
+
+interface PaymentLayoutProps {
+  classified: ClassifiedData;
+  customer: CustomerData;
+  onBack: () => void;
+  onSubmit: (paymentData: any) => void;
 }
 
-const PaymentLayout = () => {
-  const [searchParams] = useSearchParams();
-  const emailValidationToken = searchParams.get('token');
-  const isEmailValidated = searchParams.get('isValid') === 'true';
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [activeTab, setActiveTab] = useState("payment");
-  const [formData, setFormData] = useState<FormData>({
-    cardName: '',
-    cardNumber: '',
-    cardExpiry: '',
-    cardCVC: '',
-    billingAddress: '',
-    billingCity: '',
-    billingState: '',
-    billingZip: '',
-  });
-  const [progress, setProgress] = useState(50);
-  const { toast } = useToast()
+const PaymentLayout = ({ classified, customer, onBack, onSubmit }: PaymentLayoutProps) => {
+  const [step, setStep] = useState<'payment' | 'confirmation'>('payment');
+  const [billingInfo, setBillingInfo] = useState<any>(null);
+  const [emailValidationToken, setEmailValidationToken] = useState('');
+  const [isEmailValidated, setIsEmailValidated] = useState(false);
 
-  const handleBillingInfoChange = (newBillingInfo: any) => {
-    setFormData(prevData => ({ ...prevData, ...newBillingInfo }));
+  const handleBillingInfoChange = (info: any, token: string) => {
+    setBillingInfo(info);
+    setEmailValidationToken(token);
+    setIsEmailValidated(true);
   };
 
-  const handleSubmit = useCallback(() => {
-    // Here you would typically send the form data to your server
-    console.log("Form Data Submitted:", formData);
-
-    // Show a success toast
-    toast({
-      title: "Success!",
-      description: "Your payment information has been successfully submitted.",
-    })
-
-    // Navigate to the confirmation page
-    navigate('/classifieds/confirmation', { state: { formData } });
-  }, [navigate, formData, toast]);
+  const handlePaymentComplete = () => {
+    setStep('confirmation');
+    onSubmit({ billingInfo, classified, customer });
+  };
 
   return (
-    <div className="container mx-auto max-w-4xl mt-8">
-      <Button variant="ghost" onClick={() => navigate(-1)}><ArrowLeft className="mr-2 h-4 w-4" />Back</Button>
-      <Card>
-        <CardHeader>
-          <CardTitle>Payment</CardTitle>
-          <CardDescription>Enter your card details to complete your purchase</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="mb-4">
-            <p className="text-sm font-medium">Progress</p>
-            <Progress value={progress} />
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="container mx-auto px-4 max-w-4xl">
+        <div className="mb-6">
+          <Button
+            variant="ghost"
+            onClick={onBack}
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Preview
+          </Button>
+        </div>
+
+        {step === 'payment' && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Order Summary */}
+            <div className="lg:col-span-1">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <CreditCard className="w-5 h-5" />
+                    Order Summary
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <h3 className="font-semibold">{classified.title}</h3>
+                    <p className="text-sm text-gray-600">{classified.category}</p>
+                    <p className="text-sm text-gray-600">Duration: {classified.duration} days</p>
+                  </div>
+                  
+                  <hr />
+                  
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span>Listing Fee</span>
+                      <span>${classified.price}</span>
+                    </div>
+                    <div className="flex justify-between font-semibold">
+                      <span>Total</span>
+                      <span>${classified.price}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Payment Information */}
+            <div className="lg:col-span-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Payment Information</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center py-8">
+                    <p className="text-gray-600">Payment form component would go here</p>
+                    <Button 
+                      onClick={handlePaymentComplete}
+                      className="mt-4"
+                    >
+                      Complete Payment
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
+        )}
 
-          <PaymentInformationCard
-            onBillingInfoChange={handleBillingInfoChange}
-            emailValidationToken={emailValidationToken}
-            isEmailValidated={isEmailValidated}
-          />
-
-          <Button className="w-full mt-4" onClick={handleSubmit}>Submit Payment</Button>
-        </CardContent>
-      </Card>
+        {step === 'confirmation' && (
+          <Card className="max-w-2xl mx-auto">
+            <CardContent className="text-center p-8">
+              <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+              <h2 className="text-2xl font-bold mb-4">Payment Successful!</h2>
+              <p className="text-gray-600 mb-6">
+                Your classified ad has been submitted and will be reviewed shortly.
+              </p>
+              <Button onClick={() => window.location.href = '/'}>
+                Return to Home
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
 };

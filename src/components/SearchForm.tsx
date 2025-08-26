@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -75,7 +76,7 @@ const SearchForm = ({ showHeading = true }: SearchFormProps) => {
   };
 
   return (
-    <section className="py-6 px-4 md:px-8 bg-gray-50">
+    <section className="pt-2 pb-6 px-4 md:px-8 bg-gray-50">
       <div className="container mx-auto max-w-4xl">
         {showHeading && (
           <div className="text-center mb-8">
