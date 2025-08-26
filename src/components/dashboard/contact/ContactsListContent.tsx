@@ -55,6 +55,7 @@ const ContactsListContent = ({
         <ContactCard
           key={contact.contactId}
           contact={contact}
+          contacts={contacts}
           onEdit={onEditContact}
           onDelete={onDeleteContact}
           getLocationName={getLocationName}
