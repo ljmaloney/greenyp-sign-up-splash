@@ -1,6 +1,11 @@
 
 import React, { useState } from 'react';
 import MDEditor from '@uiw/react-md-editor';
+import remarkBreaks from "remark-breaks";
+import remarkGfm from "remark-gfm";
+import rehypeSlug from "rehype-slug";
+import rehypeRaw from "rehype-raw";
+import rehypeSanitize from "rehype-sanitize";
 
 interface BusinessDescriptionProps {
   narrative: string;
@@ -35,7 +40,9 @@ const BusinessDescription = ({ narrative, maxLength = 150 }: BusinessDescription
       ) : (
         <>
           <MDEditor.Markdown 
-            source={narrative} 
+            source={narrative}
+            remarkPlugins={[remarkGfm, remarkBreaks]}
+            rehypePlugins={[rehypeSlug, rehypeRaw, rehypeSanitize]}
             style={{ backgroundColor: 'transparent' }}
           />
           {shouldTruncateNarrative && (
