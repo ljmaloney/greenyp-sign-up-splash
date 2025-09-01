@@ -7,49 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useApiClient } from "@/hooks/useApiClient";
-
-// Custom styles for MDEditor toolbar
-const mdEditorStyles = `
-  .w-md-editor .w-md-editor-toolbar {
-    height: 48px !important;
-    background: #f3f4f6 !important;
-    border-bottom: 1px solid #cbd5e0 !important;
-    padding: 8px 12px !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
-  }
-
-  .w-md-editor .w-md-editor-toolbar ul li button {
-    height: 32px !important;
-    width: 32px !important;
-    background: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
-    border-radius: 6px !important;
-    margin: 0 2px !important;
-    color: #4a5568 !important;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
-    transition: all 0.2s ease !important;
-  }
-
-  .w-md-editor .w-md-editor-toolbar ul li button:hover {
-    background: #22c55e !important;
-    color: white !important;
-    border-color: #16a34a !important;
-    box-shadow: 0 2px 4px rgba(34, 197, 94, 0.2) !important;
-    transform: translateY(-1px) !important;
-  }
-
-  .w-md-editor .w-md-editor-toolbar ul li button.active {
-    background: #16a34a !important;
-    color: white !important;
-    border-color: #15803d !important;
-  }
-
-  .w-md-editor .w-md-editor-toolbar ul li.divider {
-    height: 24px !important;
-    margin: 4px 6px !important;
-    border-left: 1px solid #cbd5e0 !important;
-  }
-`;
+import { mdEditorStyles } from "@/services/mdEditorStyles";
 
 interface ProducerData {
   producerId: string;
@@ -338,20 +296,7 @@ const EditBusinessProfileDialog = ({ isOpen, onClose, producer, lineOfBusinessOp
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Business Narrative
             </label>
-              <style>
-                  {`
-                    .editor-wrapper .w-md-editor-toolbar {
-                        background-color: #f0f4f8 !important;
-                        border-radius: 12px 12px 0 0;
-                        padding: 0.5rem 1rem;
-                        width: 100%;                          /* full width */
-                        box-sizing: border-box;    
-                    }
-                    .editor-wrapper .w-md-editor-toolbar > button { color: #fff; }
-                    .editor-wrapper .w-md-editor-header { padding: 0;  }
-                `}
-              </style>
-            <div className="editor-wrapper focus-within:ring-2 focus-within:ring-greenyp-600 focus-within:border-greenyp-600 rounded-md">
+            <div className="focus-within:ring-2 focus-within:ring-greenyp-600 focus-within:border-greenyp-600 rounded-md">
               <MDEditor
                   value={htmlToMarkdown(formData.narrative)}
                   onChange={(val) => handleChange('narrative', val || '')}
@@ -361,9 +306,6 @@ const EditBusinessProfileDialog = ({ isOpen, onClose, producer, lineOfBusinessOp
                   preview="edit"
                   hideToolbar={false}
                   visibleDragbar={false}
-                  style={{
-                      borderRadius: 12, padding: 8, fontFamily: "Inter, sans-serif", overflow: "hidden",
-                  }}
               />
             </div>
           </div>

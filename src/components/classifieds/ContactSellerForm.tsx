@@ -2,10 +2,11 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import MDEditor from '@uiw/react-md-editor';
+import MDEditor, {commands} from '@uiw/react-md-editor';
 import '@uiw/react-md-editor/markdown-editor.css';
 import { Label } from '@/components/ui/label';
 import { Mail, Loader2, CheckCircle } from 'lucide-react';
+import {htmlToMarkdown, mdEditorStyles} from "@/services/mdEditorStyles.ts";
 
 interface ContactFormData {
   name: string;
@@ -96,18 +97,40 @@ const ContactSellerForm = ({
           required
         />
       </div>
-
+        <style>{mdEditorStyles}</style>
       <div>
+          <style>
+              {`
+                    .editor-wrapper .w-md-editor-toolbar {
+                        background-color: #f0f4f8 !important; border-radius: 12px 12px 0 0;
+                        padding: 0.5rem 1rem; width: 100%; box-sizing: border-box;    
+                    }
+                    .editor-wrapper .w-md-editor-toolbar > button { color: #fff; }
+                    .editor-wrapper .w-md-editor-header { padding: 0;  }
+                `}
+          </style>
         <Label htmlFor="message">Message *</Label>
+          <div className="editor-wrapper focus-within:ring-2 focus-within:ring-greenyp-600 focus-within:border-greenyp-600 rounded-md">
         <MDEditor
-          value={formData.message}
+          value={htmlToMarkdown(formData.message)}
           onChange={(val) => onFormDataChange({ ...formData, message: val || '' })}
           data-color-mode="light"
           height={150}
           preview="edit"
+          commands={[
+              commands.bold,
+              commands.italic,
+              commands.strikethrough,
+              commands.link
+          ]}
           hideToolbar={false}
+          className="w-full border border-gray-300 rounded-md"
           visibleDragbar={false}
+          style={{
+              borderRadius: 12, padding: 8, fontFamily: "Inter, sans-serif", overflow: "hidden",
+          }}
         />
+          </div>
       </div>
 
       {errors.submit && (
