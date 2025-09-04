@@ -83,6 +83,8 @@ const InvoiceList = ({
         onStartDateChange={setStartDate}
         onEndDateChange={setEndDate}
         onSearch={handleSearch}
+        onDirectSearch={setSearchDates}
+        producerId={producerId}
       />
 
       {/* Invoice History Table */}

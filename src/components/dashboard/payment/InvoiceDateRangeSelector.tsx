@@ -7,12 +7,17 @@ import { Calendar as CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
+import { useApiClient } from '@/hooks/useApiClient';
+import { createInvoiceService } from '@/services/invoiceService';
+
 interface InvoiceDateRangeSelectorProps {
   startDate: Date | undefined;
   endDate: Date | undefined;
   onStartDateChange: (date: Date | undefined) => void;
   onEndDateChange: (date: Date | undefined) => void;
   onSearch: () => void;
+  onDirectSearch: (dates: { startDate: string; endDate: string }) => void;
+  producerId: string;
 }
 
 const InvoiceDateRangeSelector = ({
@@ -20,15 +25,34 @@ const InvoiceDateRangeSelector = ({
   endDate,
   onStartDateChange,
   onEndDateChange,
-  onSearch
+  onSearch,
+  onDirectSearch,
+  producerId
 }: InvoiceDateRangeSelectorProps) => {
+
   const handleQuickRange = (months: number) => {
+    console.log(`BUTTON CLICKED: Last ${months} Months`);
+
     const end = new Date();
     const start = new Date();
     start.setMonth(start.getMonth() - months);
-    
+
+    const startDateStr = start.toISOString().split('T')[0];
+    const endDateStr = end.toISOString().split('T')[0];
+
+    console.log(`DATE RANGE SET: ${startDateStr} to ${endDateStr}`);
+    console.log(`CALLING API WITH PRODUCER ID: ${producerId}`);
+
     onStartDateChange(start);
     onEndDateChange(end);
+
+    // DIRECTLY CALL THE FUCKING ENDPOINT
+    onDirectSearch({
+      startDate: startDateStr,
+      endDate: endDateStr
+    });
+
+    console.log('API CALL TRIGGERED');
   };
 
   return (

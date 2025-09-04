@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -21,6 +21,22 @@ const EditServiceDialog = ({ isOpen, onClose, service, onServiceUpdated }: EditS
   const { toast } = useToast();
   const apiClient = useApiClient();
   const { formData, handleChange } = useEditServiceForm(service);
+
+  // Ensure body scroll is properly managed when dialog opens/closes
+  useEffect(() => {
+    if (isOpen) {
+      // Dialog is opening - prevent body scroll
+      document.body.style.overflow = 'hidden';
+    } else {
+      // Dialog is closing - restore body scroll
+      document.body.style.overflow = 'auto';
+    }
+
+    // Cleanup function to ensure scroll is restored if component unmounts
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isOpen]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
