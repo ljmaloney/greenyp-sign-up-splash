@@ -2,6 +2,8 @@
 import React from 'react';
 import { Building2, ArrowLeft } from 'lucide-react';
 import MDEditor from '@uiw/react-md-editor';
+import remarkBreaks from "remark-breaks";
+
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import LocationMap from '@/components/LocationMap';
@@ -72,6 +74,7 @@ const ProfileHeader = ({ profile }: ProfileHeaderProps) => {
                       <p className="text-sm text-gray-600 mb-2 text-left">
                           <MDEditor.Markdown
                               source={profile.businessNarrative}
+                              remarkPlugins={[remarkBreaks]}
                               style={{ backgroundColor: 'transparent' }}
                           />
                       </p>

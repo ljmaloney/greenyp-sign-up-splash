@@ -46,7 +46,7 @@ const BusinessProfileCard = ({
                 <CardContent>
                   <div className="space-y-4">
                     {producer.narrative && (
-                      <BusinessDescription narrative={producer.narrative} maxLength={80} />
+                      <BusinessDescription narrative={producer.narrative} maxLength={95} />
                     )}
 
                     <BusinessDetails 

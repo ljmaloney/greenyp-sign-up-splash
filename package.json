@@ -61,6 +61,8 @@
     "react-router-dom": "^6.26.2",
     "react-square-web-payments-sdk": "^3.2.3",
     "recharts": "^2.12.7",
+    "rehype-sanitize": "^6.0.0",
+    "remark-breaks": "^4.0.0",
     "sonner": "^1.5.0",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",

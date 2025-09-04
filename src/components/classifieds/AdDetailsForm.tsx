@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, {Fragment, useState} from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -7,6 +7,49 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import MDEditor from '@uiw/react-md-editor';
 import '@uiw/react-md-editor/markdown-editor.css';
 import { useClassifiedCategories } from '@/hooks/classifieds/useClassifiedCategories';
+
+// Custom styles for MDEditor toolbar - matching EditBusinessProfileDialog
+const mdEditorStyles = `
+  .ad-details-editor .w-md-editor .w-md-editor-toolbar {
+    height: 48px !important;
+    background: #f3f4f6 !important;
+    border-bottom: 1px solid #cbd5e0 !important;
+    padding: 8px 12px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .ad-details-editor .w-md-editor .w-md-editor-toolbar ul li button {
+    height: 32px !important;
+    width: 32px !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 6px !important;
+    margin: 0 2px !important;
+    color: #4a5568 !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+    transition: all 0.2s ease !important;
+  }
+
+  .ad-details-editor .w-md-editor .w-md-editor-toolbar ul li button:hover {
+    background: #22c55e !important;
+    color: white !important;
+    border-color: #16a34a !important;
+    box-shadow: 0 2px 4px rgba(34, 197, 94, 0.2) !important;
+    transform: translateY(-1px) !important;
+  }
+
+  .ad-details-editor .w-md-editor .w-md-editor-toolbar ul li button.active {
+    background: #16a34a !important;
+    color: white !important;
+    border-color: #15803d !important;
+  }
+
+  .ad-details-editor .w-md-editor .w-md-editor-toolbar ul li.divider {
+    height: 24px !important;
+    margin: 4px 6px !important;
+    border-left: 1px solid #cbd5e0 !important;
+  }
+`;
 
 interface AdDetailsFormProps {
   title: string;
@@ -47,6 +90,7 @@ const AdDetailsForm = ({
         <CardTitle className="text-center">Ad Details</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+          <style>{mdEditorStyles}</style>
         <div>
           <Label htmlFor="title">Title *</Label>
           <Input
@@ -60,6 +104,7 @@ const AdDetailsForm = ({
 
         <div>
           <Label htmlFor="description">Description *</Label>
+            <div className="ad-details-editor focus-within:ring-2 focus-within:ring-greenyp-600 focus-within:border-greenyp-600 rounded-md">
           <MDEditor
             value={description}
             onChange={(val) => onFieldChange('description', val || '')}
@@ -68,7 +113,8 @@ const AdDetailsForm = ({
             preview="edit"
             hideToolbar={false}
             visibleDragbar={false}
-          />
+            className="w-full border border-gray-300 rounded-md"/>
+            </div>
         </div>
 
         <div>

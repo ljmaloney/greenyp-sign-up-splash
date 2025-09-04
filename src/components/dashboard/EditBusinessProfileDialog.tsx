@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useApiClient } from "@/hooks/useApiClient";
+import { mdEditorStyles } from "@/services/mdEditorStyles";
 
 interface ProducerData {
   producerId: string;
@@ -114,13 +115,23 @@ const EditBusinessProfileDialog = ({ isOpen, onClose, producer, lineOfBusinessOp
   const cleanNarrative = (text: string | null | undefined): string => {
     if (!text) return '';
     return text
-      .replace(/"/g, '') // Remove all double quotes
-      .replace(/[\n\r\t]/g, ' ') // Replace newlines and tabs with spaces
-      .replace(/[\u0000-\u001F]/g, '') // Remove control characters
-      .replace(/\s+/g, ' ') // Multiple spaces to single space
+      .replace(/"/g, '')
+      .replace(/[\u2013\u2014]/g, "-")// Remove all double quotes
+      .replace(/[\u0000-\u001F]/g, c => c === '\n' ? '\n' : '') // Remove control characters
+      .replace(/[ \t]+/g, ' ') // Multiple spaces to single space
       .trim();
   };
 
+    const htmlToMarkdown = (html: string | null | undefined): string => {
+        if (!html) return '';
+        return html
+            .replace(/<br\s*\/?>/gi, '\n')  // convert <br> or <br/> to \n
+            .replace(/&nbsp;/gi, ' ')       // optional: decode non-breaking spaces
+            .replace(/&lt;/gi, '<')         // decode HTML entities
+            .replace(/&gt;/gi, '>')
+            .replace(/&amp;/gi, '&')
+            .trim();
+    };
   // Clean and validate keywords
   const cleanKeywords = (text: string | null | undefined): string => {
     if (!text) return '';
@@ -212,6 +223,7 @@ const EditBusinessProfileDialog = ({ isOpen, onClose, producer, lineOfBusinessOp
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl">
+        <style>{mdEditorStyles}</style>
         <DialogHeader>
           <DialogTitle>Edit Business Profile</DialogTitle>
         </DialogHeader>
@@ -284,15 +296,18 @@ const EditBusinessProfileDialog = ({ isOpen, onClose, producer, lineOfBusinessOp
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Business Narrative
             </label>
+            <div className="focus-within:ring-2 focus-within:ring-greenyp-600 focus-within:border-greenyp-600 rounded-md">
               <MDEditor
-                  value={formData.narrative}
+                  value={htmlToMarkdown(formData.narrative)}
                   onChange={(val) => handleChange('narrative', val || '')}
                   data-color-mode="light"
+                  className="w-full border border-gray-300 rounded-md"
                   height={300}
                   preview="edit"
                   hideToolbar={false}
                   visibleDragbar={false}
               />
+            </div>
           </div>
           
           <div className="flex justify-end space-x-2 pt-4">
@@ -312,5 +327,5 @@ const EditBusinessProfileDialog = ({ isOpen, onClose, producer, lineOfBusinessOp
     </Dialog>
   );
 };
-
+// @ts-ignore
 export default EditBusinessProfileDialog;

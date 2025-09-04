@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useProducerProfile } from '@/hooks/useProfile';
 import ProfilePageLayout from '@/components/profile/ProfilePageLayout';
@@ -20,6 +20,11 @@ const ProfilePage = () => {
   console.log('ProfilePage params:', { businessId, producerId, producerLocationId, profileId });
   
   const { data: profileResponse, isLoading, error } = useProducerProfile(profileId!);
+
+  // Scroll to top when component mounts or when profile data changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [profileId, profileResponse]);
 
   if (isLoading) {
     return <ProfileLoadingState />;

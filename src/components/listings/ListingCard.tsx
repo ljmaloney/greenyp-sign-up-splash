@@ -107,7 +107,7 @@ const ListingCard = ({ producer, categoryName }: ListingCardProps) => {
 
         <div className="mt-auto">
           <Link 
-            to={`/profile/${producer.producerId}/${producer.producerLocationId}`}
+            to={`/greenpro/profile/${producer.producerId}/${producer.producerLocationId}`}
             state={{ from: window.location.pathname }}
             className="inline-block w-full bg-greenyp-600 hover:bg-greenyp-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors duration-200 text-center"
           >

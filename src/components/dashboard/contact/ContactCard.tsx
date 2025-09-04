@@ -8,12 +8,13 @@ import type { Contact as ServiceContact } from '@/services/contactService.ts';
 
 interface ContactCardProps {
   contact: ServiceContact;
+  contacts: ServiceContact[];
   onEdit: (contact: ServiceContact) => void;
   onDelete: (contact: ServiceContact) => void;
   getLocationName: (locationId: string) => string;
 }
 
-const ContactCard = ({ contact, onEdit, onDelete, getLocationName }: ContactCardProps) => {
+const ContactCard = ({ contact, contacts, onEdit, onDelete, getLocationName }: ContactCardProps) => {
   const getContactTypeDisplay = (contactType: string) => {
     switch (contactType) {
       case 'PRIMARY':
@@ -47,6 +48,12 @@ const ContactCard = ({ contact, onEdit, onDelete, getLocationName }: ContactCard
   };
 
   const isDisabled = contact.producerContactType === 'DISABLED';
+
+  // Count PRIMARY contacts
+  const primaryContactsCount = contacts.filter(c => c.producerContactType === 'PRIMARY').length;
+
+  // Don't show delete button for PRIMARY contacts if there's only 1
+  const canDelete = !(contact.producerContactType === 'PRIMARY' && primaryContactsCount === 1);
 
   return (
     <Card key={contact.contactId} className={isDisabled ? 'opacity-75 bg-gray-50' : ''}>
@@ -82,14 +89,16 @@ const ContactCard = ({ contact, onEdit, onDelete, getLocationName }: ContactCard
             >
               <Edit className="h-4 w-4" />
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onDelete(contact)}
-              className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
+            {canDelete && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onDelete(contact)}
+                className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            )}
           </div>
         </div>
       </CardHeader>

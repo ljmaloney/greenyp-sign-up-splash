@@ -1,11 +1,4 @@
-
-import React from 'react';
-import ClassifiedsHeader from '@/components/ClassifiedsHeader';
-import ClassifiedsFooter from '@/components/classifieds/ClassifiedsFooter';
-import CreateAdContainer from '@/components/classifieds/CreateAdContainer';
-
-// Custom styles for MDEditor toolbar - matching EditBusinessProfileDialog
-const mdEditorStyles = `
+export const mdEditorStyles = `
   .w-md-editor .w-md-editor-toolbar {
     height: 48px !important;
     background: #f3f4f6 !important;
@@ -47,24 +40,23 @@ const mdEditorStyles = `
   }
 `;
 
-const CreateAd = () => {
-  return (
-    <div className="min-h-screen flex flex-col">
-      <style>{mdEditorStyles}</style>
-      <ClassifiedsHeader />
-      <main className="flex-grow bg-gray-50 py-8">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Post a Classified Ad</h1>
-            <p className="text-gray-600">Create your classified ad in just a few simple steps</p>
-          </div>
-
-          <CreateAdContainer />
-        </div>
-      </main>
-      <ClassifiedsFooter />
-    </div>
-  );
+export const htmlToMarkdown = (html: string | null | undefined): string => {
+    if (!html) return '';
+    return html
+        .replace(/<br\s*\/?>/gi, '\n')  // convert <br> or <br/> to \n
+        .replace(/&nbsp;/gi, ' ')       // optional: decode non-breaking spaces
+        .replace(/&lt;/gi, '<')         // decode HTML entities
+        .replace(/&gt;/gi, '>')
+        .replace(/&amp;/gi, '&')
+        .trim();
 };
 
-export default CreateAd;
+const cleanTextBox = (text: string | null | undefined): string => {
+    if (!text) return '';
+    return text
+        .replace(/"/g, '')
+        .replace(/[\u2013\u2014]/g, "-")// Remove all double quotes
+        .replace(/[\u0000-\u001F]/g, c => c === '\n' ? '\n' : '') // Remove control characters
+        .replace(/[ \t]+/g, ' ') // Multiple spaces to single space
+        .trim();
+};

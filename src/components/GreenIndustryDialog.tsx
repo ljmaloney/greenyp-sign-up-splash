@@ -25,7 +25,7 @@ const GreenIndustryDialog = ({ isOpen, onClose }: GreenIndustryDialogProps) => {
           <DialogDescription asChild>
             <div className="space-y-6">
               <p className="text-lg text-gray-700 leading-relaxed">
-                The Green Industry is all about creating and caring for the outdoor spaces that make our homes, neighborhoods,
+                It's all about creating and caring for the outdoor spaces that make our homes, neighborhoods,
                   and communities more beautiful, healthy, and enjoyable.
               </p>
               

@@ -1,7 +1,8 @@
 
 import React, { useState } from 'react';
-import { Users, ChevronDown, ChevronUp, Edit, Trash2 } from 'lucide-react';
+import { Users, ChevronDown, ChevronUp, Edit, Trash2, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button.tsx';
+import { Badge } from '@/components/ui/badge.tsx';
 import { useLocationContacts } from '@/hooks/useLocationContacts.ts';
 import { Contact } from '@/services/contactService.ts';
 
@@ -99,10 +100,16 @@ const LocationContactsList = ({
                     className="flex items-center justify-between py-2 px-3 bg-white rounded-lg border hover:border-gray-300 transition-colors"
                   >
                     <div className="flex-1 grid grid-cols-3 gap-4">
-                      <div>
+                      <div className="flex items-center gap-2">
                         <span className="text-sm font-medium text-gray-900">
                           {getDisplayName(contact)}
                         </span>
+                        {contact.producerContactType === 'PRIMARY' && (
+                          <Badge variant="default" className="bg-greenyp-100 text-greenyp-800 border-greenyp-200 text-xs px-1.5 py-0.5 flex items-center gap-1">
+                            <Star className="h-3 w-3" />
+                            Primary
+                          </Badge>
+                        )}
                       </div>
                       <div>
                         <span className="text-sm text-gray-600">{contact.emailAddress}</span>

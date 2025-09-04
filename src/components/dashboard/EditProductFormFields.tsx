@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { EditProductFormData } from '@/hooks/useEditProductForm';
+import MDEditor from "@uiw/react-md-editor";
 
 interface EditProductFormFieldsProps {
   formData: EditProductFormData;
@@ -61,12 +62,21 @@ const EditProductFormFields = ({ formData, onFieldChange }: EditProductFormField
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Description *
         </label>
-        <Textarea
-          value={formData.description}
-          onChange={(e) => onFieldChange('description', e.target.value)}
-          rows={3}
-          required
-        />
+          <MDEditor
+              value={formData.description}
+              onChange={(val) => onFieldChange('description', val || '')}
+              data-color-mode="light"
+              height={120}
+              preview="edit"
+              hideToolbar={false}
+              visibleDragbar={false}
+          />
+        {/*<Textarea*/}
+        {/*  value={formData.description}*/}
+        {/*  onChange={(e) => onFieldChange('description', e.target.value)}*/}
+        {/*  rows={3}*/}
+        {/*  required*/}
+        {/*/>*/}
       </div>
 
       <div>
