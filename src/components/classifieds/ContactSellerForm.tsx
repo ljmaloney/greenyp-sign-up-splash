@@ -157,16 +157,16 @@ const ContactSellerForm = ({
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
               Sending...
             </>
-          ) : isSuccess ? (
-            <>
-              <CheckCircle className="w-4 h-4 mr-2" />
-              Message Sent
-            </>
+          ) : !isSuccess ? (
+              <>
+                  <Mail className="w-4 h-4 mr-2"/>
+                  Send Message
+              </>
           ) : (
-            <>
-              <Mail className="w-4 h-4 mr-2" />
-              Send Message
-            </>
+              <>
+                  <CheckCircle className="w-4 h-4 mr-2"/>
+                  Message Sent
+              </>
           )}
         </Button>
         <Button 
