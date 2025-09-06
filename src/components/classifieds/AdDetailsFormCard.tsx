@@ -106,8 +106,8 @@ const AdDetailsFormCard = ({ formData, categories, onFieldChange }: AdDetailsFor
             value={formData.description}
             onChange={(val) => onFieldChange('description', val || '')}
             data-color-mode="light"
-            height={150}
-            preview="edit"
+            height={300}
+            preview="preview"
             hideToolbar={false}
             visibleDragbar={false}
           />
