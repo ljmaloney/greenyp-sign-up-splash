@@ -303,7 +303,7 @@ const EditBusinessProfileDialog = ({ isOpen, onClose, producer, lineOfBusinessOp
                   data-color-mode="light"
                   className="w-full border border-gray-300 rounded-md"
                   height={300}
-                  preview="edit"
+                  preview="preview"
                   hideToolbar={false}
                   visibleDragbar={false}
               />
