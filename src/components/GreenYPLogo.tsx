@@ -73,7 +73,7 @@ const GreenYPLogo: React.FC<GreenYPLogoProps> = ({
 
   // Full logo with text
   return (
-    <div className={`flex items-center gap-1 ${className}`}>
+    <div className={`flex items-center gap-0 ${className}`}>
       <svg 
         width={config.icon} 
         height={config.icon} 
