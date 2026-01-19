@@ -31,27 +31,40 @@ const GreenYPLogo: React.FC<GreenYPLogoProps> = ({
         xmlns="http://www.w3.org/2000/svg"
         className={className}
       >
-        {/* Book/Pages base shape */}
+        {/* Main leaf shape */}
         <path 
-          d="M5 10C5 7 7 5 10 5H35C38 5 40 7 40 10V40C40 43 38 45 35 45H10C7 45 5 43 5 40V10Z" 
-          fill="#22c55e"
+          d="M25 5C25 5 10 15 10 30C10 40 17 47 25 47C33 47 40 40 40 30C40 15 25 5 25 5Z" 
+          fill="url(#leafGradient)"
         />
-        {/* Page lines */}
+        {/* Center vein */}
         <path 
-          d="M12 15H33M12 23H33M12 31H28" 
+          d="M25 12V42" 
           stroke="white" 
-          strokeWidth="2.5" 
+          strokeWidth="2" 
           strokeLinecap="round"
+          opacity="0.6"
         />
-        {/* Leaf accent on top-right */}
+        {/* Side veins */}
         <path 
-          d="M32 3C32 3 44 1 48 10C48 10 45 5 38 5C38 5 41 12 36 17" 
-          stroke="#15803d" 
-          strokeWidth="3" 
-          strokeLinecap="round" 
-          fill="none"
+          d="M25 20L18 26M25 28L16 34M25 36L19 40" 
+          stroke="white" 
+          strokeWidth="1.5" 
+          strokeLinecap="round"
+          opacity="0.4"
         />
-        <circle cx="48" cy="10" r="2.5" fill="#15803d"/>
+        <path 
+          d="M25 20L32 26M25 28L34 34M25 36L31 40" 
+          stroke="white" 
+          strokeWidth="1.5" 
+          strokeLinecap="round"
+          opacity="0.4"
+        />
+        <defs>
+          <linearGradient id="leafGradient" x1="25" y1="5" x2="25" y2="47" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#22c55e"/>
+            <stop offset="1" stopColor="#15803d"/>
+          </linearGradient>
+        </defs>
       </svg>
     );
   }
@@ -66,27 +79,40 @@ const GreenYPLogo: React.FC<GreenYPLogoProps> = ({
         fill="none" 
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* Book/Pages base shape */}
+        {/* Main leaf shape */}
         <path 
-          d="M5 10C5 7 7 5 10 5H35C38 5 40 7 40 10V40C40 43 38 45 35 45H10C7 45 5 43 5 40V10Z" 
-          fill="#22c55e"
+          d="M25 5C25 5 10 15 10 30C10 40 17 47 25 47C33 47 40 40 40 30C40 15 25 5 25 5Z" 
+          fill="url(#leafGradientFull)"
         />
-        {/* Page lines */}
+        {/* Center vein */}
         <path 
-          d="M12 15H33M12 23H33M12 31H28" 
+          d="M25 12V42" 
           stroke="white" 
-          strokeWidth="2.5" 
+          strokeWidth="2" 
           strokeLinecap="round"
+          opacity="0.6"
         />
-        {/* Leaf accent on top-right */}
+        {/* Side veins */}
         <path 
-          d="M32 3C32 3 44 1 48 10C48 10 45 5 38 5C38 5 41 12 36 17" 
-          stroke="#15803d" 
-          strokeWidth="3" 
-          strokeLinecap="round" 
-          fill="none"
+          d="M25 20L18 26M25 28L16 34M25 36L19 40" 
+          stroke="white" 
+          strokeWidth="1.5" 
+          strokeLinecap="round"
+          opacity="0.4"
         />
-        <circle cx="48" cy="10" r="2.5" fill="#15803d"/>
+        <path 
+          d="M25 20L32 26M25 28L34 34M25 36L31 40" 
+          stroke="white" 
+          strokeWidth="1.5" 
+          strokeLinecap="round"
+          opacity="0.4"
+        />
+        <defs>
+          <linearGradient id="leafGradientFull" x1="25" y1="5" x2="25" y2="47" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#22c55e"/>
+            <stop offset="1" stopColor="#15803d"/>
+          </linearGradient>
+        </defs>
       </svg>
       <span 
         className="font-bold" 
