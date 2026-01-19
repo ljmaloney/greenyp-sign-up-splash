@@ -31,7 +31,7 @@ const GreenYPLogo: React.FC<GreenYPLogoProps> = ({
         xmlns="http://www.w3.org/2000/svg"
         className={className}
       >
-        <g transform="rotate(45, 25, 25)">
+        <g transform="rotate(135, 25, 25)">
           {/* Main leaf shape */}
           <path 
             d="M25 5C25 5 10 15 10 30C10 40 17 47 25 47C33 47 40 40 40 30C40 15 25 5 25 5Z" 
@@ -81,7 +81,7 @@ const GreenYPLogo: React.FC<GreenYPLogoProps> = ({
         fill="none" 
         xmlns="http://www.w3.org/2000/svg"
       >
-        <g transform="rotate(45, 25, 25)">
+        <g transform="rotate(135, 25, 25)">
           {/* Main leaf shape */}
           <path 
             d="M25 5C25 5 10 15 10 30C10 40 17 47 25 47C33 47 40 40 40 30C40 15 25 5 25 5Z" 
