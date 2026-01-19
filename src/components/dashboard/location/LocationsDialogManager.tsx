@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Location } from '@/services/locationService.ts';
-import { LocationFormData } from '@/types/location.ts';
 import AddLocationDialog from './AddLocationDialog.tsx';
 import EditLocationDialog from './EditLocationDialog.tsx';
 
@@ -11,7 +10,7 @@ interface LocationsDialogManagerProps {
   onCloseAddDialog: () => void;
   onCloseEditDialog: () => void;
   onLocationAdded: (newLocation: Location) => void;
-  onLocationUpdated: (updatedLocation: LocationFormData) => void;
+  onLocationUpdated: (updatedLocation: Location) => void;
 }
 
 const LocationsDialogManager = ({

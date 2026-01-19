@@ -31,45 +31,42 @@ const GreenYPLogo: React.FC<GreenYPLogoProps> = ({
         xmlns="http://www.w3.org/2000/svg"
         className={className}
       >
-        {/* Circular background */}
-        <circle cx="25" cy="25" r="24" fill="#134e2a"/>
-        <circle cx="25" cy="25" r="22" fill="#1a5c34" stroke="#0d3d20" strokeWidth="1"/>
-        
-        {/* Leaf shape - rotated 90 degrees pointing right */}
         <g transform="rotate(90, 25, 25)">
+          {/* Main leaf shape */}
           <path 
-            d="M25 10C25 10 14 18 14 29C14 37 19 42 25 42C31 42 36 37 36 29C36 18 25 10 25 10Z" 
-            fill="#2d8a4e"
-          />
-          {/* Leaf highlight */}
-          <path 
-            d="M25 12C25 12 17 19 17 28C17 34 20 38 25 38" 
-            fill="#3da864"
-            opacity="0.6"
+            d="M25 5C25 5 10 15 10 30C10 40 17 47 25 47C33 47 40 40 40 30C40 15 25 5 25 5Z" 
+            fill="url(#leafGradient)"
           />
           {/* Center vein */}
           <path 
-            d="M25 15V38" 
-            stroke="#134e2a" 
-            strokeWidth="1.5" 
+            d="M25 12V42" 
+            stroke="white" 
+            strokeWidth="2" 
             strokeLinecap="round"
+            opacity="0.6"
           />
           {/* Side veins */}
           <path 
-            d="M25 20L20 24M25 26L18 30M25 32L21 35" 
-            stroke="#134e2a" 
-            strokeWidth="1" 
+            d="M25 20L18 26M25 28L16 34M25 36L19 40" 
+            stroke="white" 
+            strokeWidth="1.5" 
             strokeLinecap="round"
-            opacity="0.7"
+            opacity="0.4"
           />
           <path 
-            d="M25 20L30 24M25 26L32 30M25 32L29 35" 
-            stroke="#134e2a" 
-            strokeWidth="1" 
+            d="M25 20L32 26M25 28L34 34M25 36L31 40" 
+            stroke="white" 
+            strokeWidth="1.5" 
             strokeLinecap="round"
-            opacity="0.7"
+            opacity="0.4"
           />
         </g>
+        <defs>
+          <linearGradient id="leafGradient" x1="25" y1="5" x2="25" y2="47" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#22c55e"/>
+            <stop offset="1" stopColor="#15803d"/>
+          </linearGradient>
+        </defs>
       </svg>
     );
   }
@@ -84,52 +81,49 @@ const GreenYPLogo: React.FC<GreenYPLogoProps> = ({
         fill="none" 
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* Circular background */}
-        <circle cx="25" cy="25" r="24" fill="#134e2a"/>
-        <circle cx="25" cy="25" r="22" fill="#1a5c34" stroke="#0d3d20" strokeWidth="1"/>
-        
-        {/* Leaf shape - rotated 90 degrees pointing right */}
         <g transform="rotate(90, 25, 25)">
+          {/* Main leaf shape */}
           <path 
-            d="M25 10C25 10 14 18 14 29C14 37 19 42 25 42C31 42 36 37 36 29C36 18 25 10 25 10Z" 
-            fill="#2d8a4e"
-          />
-          {/* Leaf highlight */}
-          <path 
-            d="M25 12C25 12 17 19 17 28C17 34 20 38 25 38" 
-            fill="#3da864"
-            opacity="0.6"
+            d="M25 5C25 5 10 15 10 30C10 40 17 47 25 47C33 47 40 40 40 30C40 15 25 5 25 5Z" 
+            fill="url(#leafGradientFull)"
           />
           {/* Center vein */}
           <path 
-            d="M25 15V38" 
-            stroke="#134e2a" 
-            strokeWidth="1.5" 
+            d="M25 12V42" 
+            stroke="white" 
+            strokeWidth="2" 
             strokeLinecap="round"
+            opacity="0.6"
           />
           {/* Side veins */}
           <path 
-            d="M25 20L20 24M25 26L18 30M25 32L21 35" 
-            stroke="#134e2a" 
-            strokeWidth="1" 
+            d="M25 20L18 26M25 28L16 34M25 36L19 40" 
+            stroke="white" 
+            strokeWidth="1.5" 
             strokeLinecap="round"
-            opacity="0.7"
+            opacity="0.4"
           />
           <path 
-            d="M25 20L30 24M25 26L32 30M25 32L29 35" 
-            stroke="#134e2a" 
-            strokeWidth="1" 
+            d="M25 20L32 26M25 28L34 34M25 36L31 40" 
+            stroke="white" 
+            strokeWidth="1.5" 
             strokeLinecap="round"
-            opacity="0.7"
+            opacity="0.4"
           />
         </g>
+        <defs>
+          <linearGradient id="leafGradientFull" x1="25" y1="5" x2="25" y2="47" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#22c55e"/>
+            <stop offset="1" stopColor="#15803d"/>
+          </linearGradient>
+        </defs>
       </svg>
       <span 
         className="font-bold" 
         style={{ fontSize: config.text }}
       >
-        <span style={{ color: '#134e2a' }}>Green</span>
-        <span style={{ color: '#2d8a4e' }}>YP</span>
+        <span className="text-green-700">Green</span>
+        <span className="text-green-500">YP</span>
       </span>
     </div>
   );

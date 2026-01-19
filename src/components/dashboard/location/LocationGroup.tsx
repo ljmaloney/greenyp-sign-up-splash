@@ -77,7 +77,6 @@ const LocationGroup = ({
               <ContactCard
                 key={contact.contactId}
                 contact={contact}
-                contacts={locationContacts}
                 onEdit={onEditContact}
                 onDelete={onDeleteContact}
                 getLocationName={getLocationNameById}
