@@ -15,7 +15,16 @@ const getInitialFormData = (): LocationFormData => ({
   postalCode: '',
   latitude: '',
   longitude: '',
-  websiteUrl: ''
+  websiteUrl: '',
+  // Contact-related fields
+  emailAddress: '',
+  cellPhoneNumber: '',
+  phoneNumber: '',
+  title: '',
+  lastName: '',
+  firstName: '',
+  genericContactName: '',
+  displayContactType: 'NO_DISPLAY'
 });
 
 export const useLocationForm = (initialData?: Partial<LocationFormData>) => {
