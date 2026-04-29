@@ -1,8 +1,8 @@
-FROM node:24.5.0 AS dev
+FROM node:25.9.0-alpine3.22 AS dev
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+COPY package.json package-lock.json .npmrc ./
 
 # 3. Install dependencies
 RUN npm ci

@@ -1,9 +1,52 @@
 plugins {
     id 'base'
+    id "com.github.node-gradle.node" version "7.0.2"
+}
+
+node {
+    version = "25.9.0"
+    download = true
+}
+
+// Configure existing npmInstall task from plugin
+tasks.named('npmInstall') {
+    description = "Install npm dependencies"
+}
+
+tasks.register('viteBuild', com.github.gradle.node.npm.task.NpmTask) {
+    description = "Build Vite application for production"
+    args = ['run', 'build']
+    dependsOn tasks.named('npmInstall')
+
+    // Tell Gradle what this task produces
+    outputs.dir(file("dist"))
+}
+
+tasks.register('npmDev', com.github.gradle.node.npm.task.NpmTask) {
+    description = "Run Vite development server"
+    args = ['run', 'dev']
+}
+
+tasks.register('npmLint', com.github.gradle.node.npm.task.NpmTask) {
+    description = "Lint code with ESLint"
+    args = ['run', 'lint']
+}
+
+tasks.register('cleanDist', Delete) {
+    description = "Clean dist directory"
+    delete(file("dist"))
 }
 
 tasks.register('dockerBuildDev', Exec) {
     group = "docker"
-    description = "Builds the dev Docker image with .env included"
+    description = "Build development Docker image"
     commandLine 'docker', 'build', '-f', 'Dockerfile', '-t', 'greenyp:dev', '.'
+}
+
+tasks.named('build') {
+    dependsOn tasks.named('viteBuild')
+}
+
+tasks.named('clean') {
+    dependsOn tasks.named('cleanDist')
 }
