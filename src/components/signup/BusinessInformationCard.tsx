@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCategories } from '@/hooks/useCategories';
 import { useSubscriptions } from '@/hooks/useSubscriptions';
 import { SignUpFormSchema } from '@/utils/signUpValidation';
+import { mdEditorStyles } from "@/services/mdEditorStyles";
 
 interface BusinessInformationCardProps {
   control: Control<SignUpFormSchema>;
@@ -29,6 +30,7 @@ const BusinessInformationCard = ({ control }: BusinessInformationCardProps) => {
 
   return (
     <Card>
+        <style>{mdEditorStyles}</style>
       <CardHeader>
         <CardTitle className="text-xl text-green-800">Business Information</CardTitle>
       </CardHeader>
@@ -174,8 +176,8 @@ const BusinessInformationCard = ({ control }: BusinessInformationCardProps) => {
                   value={field.value}
                   onChange={(val) => field.onChange(val || '')}
                   data-color-mode="light"
-                  height={120}
-                  preview="edit"
+                  height={200}
+                  preview="preview"
                   hideToolbar={false}
                   visibleDragbar={false}
                 />

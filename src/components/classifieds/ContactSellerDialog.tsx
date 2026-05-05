@@ -6,6 +6,7 @@ import { useContactSellerForm } from '@/hooks/useContactSellerForm';
 import ContactSellerForm from './ContactSellerForm';
 import SellerContactDisplay from './SellerContactDisplay';
 
+
 interface ContactSellerDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
@@ -45,9 +46,9 @@ const ContactSellerDialog = ({ isOpen, onOpenChange, classified }: ContactSeller
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Contact Seller</DialogTitle>
+          <DialogTitle>Message Seller</DialogTitle>
           <DialogDescription>
-            Send a message to the seller about "{classified.title}"
+               <b>Ad Title :<em>"{classified.title}"</em></b>
           </DialogDescription>
         </DialogHeader>
 

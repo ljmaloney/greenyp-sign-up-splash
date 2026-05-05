@@ -97,26 +97,17 @@ const ContactSellerForm = ({
           required
         />
       </div>
-        <style>{mdEditorStyles}</style>
+
       <div>
-          <style>
-              {`
-                    .editor-wrapper .w-md-editor-toolbar {
-                        background-color: #f0f4f8 !important; border-radius: 12px 12px 0 0;
-                        padding: 0.5rem 1rem; width: 100%; box-sizing: border-box;    
-                    }
-                    .editor-wrapper .w-md-editor-toolbar > button { color: #fff; }
-                    .editor-wrapper .w-md-editor-header { padding: 0;  }
-                `}
-          </style>
-        <Label htmlFor="message">Message *</Label>
+          <style>{mdEditorStyles}</style>
+          <Label htmlFor="message">Message *</Label>
           <div className="editor-wrapper focus-within:ring-2 focus-within:ring-greenyp-600 focus-within:border-greenyp-600 rounded-md">
         <MDEditor
           value={htmlToMarkdown(formData.message)}
           onChange={(val) => onFormDataChange({ ...formData, message: val || '' })}
           data-color-mode="light"
-          height={150}
-          preview="edit"
+          height={200}
+          preview="preview"
           commands={[
               commands.bold,
               commands.italic,

@@ -6,6 +6,7 @@ import MDEditor from '@uiw/react-md-editor';
 import '@uiw/react-md-editor/markdown-editor.css';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { mdEditorStyles } from "@/services/mdEditorStyles";
 
 interface ContactFormData {
   requestType: string;
@@ -130,15 +131,16 @@ export const MessageField = ({ control }: ContactFormFieldsProps) => (
     control={control}
     name="message"
     render={({ field }) => (
-      <FormItem>
+        <FormItem>
+            <style>{mdEditorStyles}</style>
         <FormLabel className="text-left block">Message *</FormLabel>
         <FormControl>
           <MDEditor
             value={field.value}
             onChange={(val) => field.onChange(val || '')}
             data-color-mode="light"
-            height={120}
-            preview="edit"
+            height={200}
+            preview="preview"
             hideToolbar={false}
             visibleDragbar={false}
           />

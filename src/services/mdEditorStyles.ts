@@ -8,8 +8,8 @@ export const mdEditorStyles = `
   }
 
   .w-md-editor .w-md-editor-toolbar ul li button {
-    height: 32px !important;
-    width: 32px !important;
+    height: 24px !important;
+    width: 24px !important;
     background: #ffffff !important;
     border: 1px solid #e2e8f0 !important;
     border-radius: 6px !important;
