@@ -45,7 +45,12 @@ const BusinessProfileHeader = ({
     }
   };
 
-  const getBadgeVariant = (subscriptionType: string) => {
+  const getBadgeVariant = (subscriptionType: string, cancelReason?: string) => {
+    // Prioritize cancel reason if it exists
+    if (cancelReason === 'PAYMENT_FAILED') {
+      return 'destructive'; // Red
+    }
+
     switch (subscriptionType) {
       case 'ADMIN':
       case 'LIVE_ACTIVE':
@@ -60,7 +65,12 @@ const BusinessProfileHeader = ({
     }
   };
 
-  const getSubscriptionDisplay = (subscriptionType: string) => {
+  const getSubscriptionDisplay = (subscriptionType: string, cancelReason?: string) => {
+    // Prioritize cancel reason if it exists
+    if (cancelReason === 'PAYMENT_FAILED') {
+      return 'Payment Failed';
+    }
+
     switch (subscriptionType) {
       case 'LIVE_ACTIVE':
         return 'Active';
@@ -91,16 +101,26 @@ const BusinessProfileHeader = ({
             onUploadClick={() => setIsLogoDialogOpen(true)}
           />
           
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col gap-2">
             <CardTitle className="text-2xl text-greenyp-600 font-semibold leading-none tracking-tight">
               {producer.businessName}
             </CardTitle>
-            <Badge 
-              variant={getBadgeVariant(producer.subscriptionType)}
-              className={producer.subscriptionType === 'BETA_TESTER' ? 'border-green-500' : ''}
-            >
-              {getSubscriptionDisplay(producer.subscriptionType)}
-            </Badge>
+            <div className="flex items-center gap-2">
+              <Badge
+                variant={getBadgeVariant(producer.subscriptionType, producer.cancelReason)}
+                className={producer.subscriptionType === 'BETA_TESTER' ? 'border-green-500' : ''}
+                title={producer.cancelReasonText || ''}
+              >
+                {getSubscriptionDisplay(producer.subscriptionType, producer.cancelReason)}
+              </Badge>
+              {producer.cancelReasonText && (
+                <span className="text-xs text-gray-600" title={producer.cancelReasonText}>
+                  {producer.cancelReasonText.length > 40
+                    ? `${producer.cancelReasonText.substring(0, 40)}...`
+                    : producer.cancelReasonText}
+                </span>
+              )}
+            </div>
           </div>
         </div>
         

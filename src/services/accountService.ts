@@ -77,6 +77,9 @@ export interface Producer {
   producerId: string;
   createDate: string;
   lastUpdateDate: string;
+  cancelDate?: string;
+  cancelReason?: string;
+  cancelReasonText?: string;
   businessName: string;
   lineOfBusinessId: string;
   subscriptionType: string;
