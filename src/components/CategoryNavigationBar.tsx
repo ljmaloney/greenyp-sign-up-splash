@@ -64,7 +64,7 @@ const CategoryNavigationBar = () => {
               WebkitOverflowScrolling: 'touch' // iOS smooth scrolling
             }}
           >
-            {categories.map((category) => (
+            {categoryList.map((category) => (
               <Link
                 key={category.lineOfBusinessId}
                 to={`/categories/${category.urlLob}`}
