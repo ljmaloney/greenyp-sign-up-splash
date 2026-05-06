@@ -3,6 +3,14 @@ import { useState } from 'react';
 import { LocationFormData } from "@/types/location";
 
 const getInitialFormData = (): LocationFormData => ({
+  emailAddress: '',
+  cellPhoneNumber: '',
+  phoneNumber: '',
+  title: '',
+  lastName: '',
+  firstName: '',
+  genericContactName: '',
+  displayContactType: '',
   locationName: '',
   locationType: 'HOME_OFFICE_PRIMARY',
   locationDisplayType: 'NO_DISPLAY',
