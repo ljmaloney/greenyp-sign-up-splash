@@ -10,7 +10,7 @@ interface LocationsDialogManagerProps {
   onCloseAddDialog: () => void;
   onCloseEditDialog: () => void;
   onLocationAdded: (newLocation: Location) => void;
-  onLocationUpdated: (updatedLocation: Location) => void;
+  onLocationUpdated: (updatedLocation: any) => void;
 }
 
 const LocationsDialogManager = ({
