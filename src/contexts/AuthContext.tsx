@@ -25,6 +25,14 @@ class AuthErrorBoundary extends React.Component<
 
   static getDerivedStateFromError(error: Error) {
     console.error('Auth Error Boundary caught an error:', error);
+    // Only block UI for actual auth-related errors. Transient React DOM errors
+    // (e.g. removeChild during reconciliation) should not take down the page.
+    const message = error?.message || '';
+    const name = error?.name || '';
+    const isDomError = name === 'NotFoundError' || message.includes('removeChild') || message.includes('insertBefore') || message.includes('appendChild');
+    if (isDomError) {
+      return { hasError: false };
+    }
     return { hasError: true };
   }
 

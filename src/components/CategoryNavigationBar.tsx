@@ -5,11 +5,8 @@ import { useLineOfBusiness } from '@/hooks/useLineOfBusiness';
 import { Button } from '@/components/ui/button';
 
 const CategoryNavigationBar = () => {
-  const { data: categories, isLoading, error } = useLineOfBusiness();
-
-  if (isLoading || error || !categories?.length) {
-    return null; // Don't render if loading, error, or no data
-  }
+  const { data: categories } = useLineOfBusiness();
+  const categoryList = categories ?? [];
 
   const scrollLeft = () => {
     const container = document.getElementById('category-nav-container');
@@ -67,7 +64,7 @@ const CategoryNavigationBar = () => {
               WebkitOverflowScrolling: 'touch' // iOS smooth scrolling
             }}
           >
-            {categories.map((category) => (
+            {categoryList.map((category) => (
               <Link
                 key={category.lineOfBusinessId}
                 to={`/categories/${category.urlLob}`}
