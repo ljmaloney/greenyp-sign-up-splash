@@ -5,6 +5,8 @@ WORKDIR /app
 COPY package.json package-lock.json .npmrc ./
 
 # 3. Install dependencies
+RUN npm install -g pnpm
+
 RUN npm ci
 
 # 4. Copy rest of app, including .env for dev
