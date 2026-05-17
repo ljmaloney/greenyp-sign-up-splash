@@ -3,5 +3,4 @@
 User-agent: *
 Allow: /
 
-# Sitemap location (add when you have one)
-# Sitemap: https://www.greenyp.com/sitemap.xml
+Sitemap: https://greenyp.com/sitemap.xml
