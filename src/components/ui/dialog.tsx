@@ -4,7 +4,37 @@ import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
-const Dialog = DialogPrimitive.Root
+// Original Dialog component
+const DialogOriginal = DialogPrimitive.Root
+
+// Wrapper to manage scroll locking globally for all dialogs
+const Dialog = ({ open, onOpenChange, children, ...props }: React.ComponentPropsWithoutRef<typeof DialogPrimitive.Root>) => {
+  // Manage scroll lock when any dialog opens/closes
+  React.useEffect(() => {
+    if (open) {
+      // Prevent scroll when dialog opens
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.overflow = 'hidden';
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    } else {
+      // Restore scroll when dialog closes
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    }
+
+    // Cleanup on unmount to ensure scroll is always restored
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    };
+  }, [open]);
+
+  return (
+    <DialogOriginal open={open} onOpenChange={onOpenChange} {...props}>
+      {children}
+    </DialogOriginal>
+  );
+}
 
 const DialogTrigger = DialogPrimitive.Trigger
 
