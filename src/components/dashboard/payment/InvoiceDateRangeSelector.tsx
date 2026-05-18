@@ -155,7 +155,7 @@ const InvoiceDateRangeSelector = ({
             onClick={onSearch}
             disabled={!hasFullRange}
             size="lg"
-            className="md:w-auto md:px-8 gap-2"
+            className="md:w-auto md:px-8 gap-2 bg-accent-foreground text-white hover:bg-accent-foreground/90"
           >
             <Search className="h-4 w-4" />
             Search invoices
