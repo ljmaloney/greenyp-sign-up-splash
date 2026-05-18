@@ -46,15 +46,15 @@ function Calendar({
           "h-9 w-9 p-0 font-normal aria-selected:opacity-100 hover:bg-accent hover:text-accent-foreground rounded-md"
         ),
         range_start:
-          "day-range-start rounded-l-md [&>button]:bg-primary [&>button]:text-primary-foreground [&>button]:hover:bg-primary [&>button]:hover:text-primary-foreground",
+          "day-range-start rounded-l-md [&>button]:bg-accent-foreground [&>button]:text-white [&>button]:hover:bg-accent-foreground [&>button]:hover:text-white",
         range_end:
-          "day-range-end rounded-r-md [&>button]:bg-primary [&>button]:text-primary-foreground [&>button]:hover:bg-primary [&>button]:hover:text-primary-foreground",
+          "day-range-end rounded-r-md [&>button]:bg-accent-foreground [&>button]:text-white [&>button]:hover:bg-accent-foreground [&>button]:hover:text-white",
         range_middle:
           "bg-accent [&>button]:bg-transparent [&>button]:text-accent-foreground [&>button]:hover:bg-accent [&>button]:hover:text-accent-foreground",
         selected:
-          "[&>button]:bg-primary [&>button]:text-primary-foreground [&>button]:hover:bg-primary [&>button]:hover:text-primary-foreground",
+          "[&>button]:bg-accent-foreground [&>button]:text-white [&>button]:hover:bg-accent-foreground [&>button]:hover:text-white",
         today:
-          "[&>button]:border [&>button]:border-primary [&>button]:text-foreground [&>button]:font-semibold",
+          "[&>button]:border [&>button]:border-accent-foreground [&>button]:text-foreground [&>button]:font-semibold",
         outside:
           "day-outside text-muted-foreground opacity-40 aria-selected:bg-accent/30 aria-selected:text-muted-foreground",
         disabled: "text-muted-foreground opacity-40",
