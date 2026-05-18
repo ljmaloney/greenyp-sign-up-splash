@@ -85,7 +85,7 @@ const InvoiceDateRangeSelector = ({
                   className={cn(
                     "px-3 py-1.5 text-xs font-semibold rounded-md transition-colors",
                     active
-                      ? "bg-accent-foreground text-white shadow-sm"
+                      ? "bg-primary text-primary-foreground shadow-sm"
                       : "text-muted-foreground hover:text-foreground hover:bg-accent"
                   )}
                 >
@@ -155,7 +155,7 @@ const InvoiceDateRangeSelector = ({
             onClick={onSearch}
             disabled={!hasFullRange}
             size="lg"
-            className="md:w-auto md:px-8 gap-2 bg-accent-foreground text-white hover:bg-accent-foreground/90"
+            className="md:w-auto md:px-8 gap-2"
           >
             <Search className="h-4 w-4" />
             Search invoices
