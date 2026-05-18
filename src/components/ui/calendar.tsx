@@ -46,17 +46,17 @@ function Calendar({
           "h-9 w-9 p-0 font-normal aria-selected:opacity-100 hover:bg-accent hover:text-accent-foreground rounded-md"
         ),
         range_start:
-          "day-range-start rounded-l-md [&>button]:bg-primary [&>button]:text-primary-foreground [&>button]:font-semibold [&>button]:hover:bg-primary [&>button]:hover:text-primary-foreground",
+          "day-range-start rounded-l-md [&>button]:bg-primary [&>button]:text-foreground [&>button]:font-semibold [&>button]:hover:bg-primary [&>button]:hover:text-foreground",
         range_end:
-          "day-range-end rounded-r-md [&>button]:bg-primary [&>button]:text-primary-foreground [&>button]:font-semibold [&>button]:hover:bg-primary [&>button]:hover:text-primary-foreground",
+          "day-range-end rounded-r-md [&>button]:bg-primary [&>button]:text-foreground [&>button]:font-semibold [&>button]:hover:bg-primary [&>button]:hover:text-foreground",
         range_middle:
-          "bg-accent [&>button]:bg-transparent [&>button]:text-accent-foreground [&>button]:hover:bg-accent [&>button]:hover:text-accent-foreground",
+          "[&>button]:bg-primary/40 [&>button]:text-foreground [&>button]:rounded-none [&>button]:hover:bg-primary/40 [&>button]:hover:text-foreground",
         selected:
-          "[&>button]:bg-primary [&>button]:text-primary-foreground [&>button]:font-semibold [&>button]:hover:bg-primary [&>button]:hover:text-primary-foreground",
+          "[&>button]:bg-primary [&>button]:text-foreground [&>button]:font-semibold [&>button]:hover:bg-primary [&>button]:hover:text-foreground",
         today:
           "[&>button]:border [&>button]:border-primary [&>button]:text-foreground [&>button]:font-semibold",
         outside:
-          "day-outside text-muted-foreground opacity-40 aria-selected:bg-accent/30 aria-selected:text-muted-foreground",
+          "day-outside [&>button]:bg-[hsl(142_12%_92%)] [&>button]:text-muted-foreground [&>button]:font-normal aria-selected:[&>button]:bg-primary/30 aria-selected:[&>button]:text-muted-foreground",
         disabled: "text-muted-foreground opacity-40",
         hidden: "invisible",
         ...classNames,
