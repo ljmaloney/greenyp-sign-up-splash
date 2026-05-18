@@ -83,9 +83,9 @@ const InvoiceDateRangeSelector = ({
                   onClick={() => handleQuickRange(months)}
                   title={full}
                   className={cn(
-                    "px-3 py-1.5 text-xs font-medium rounded-md transition-colors",
+                    "px-3 py-1.5 text-xs font-semibold rounded-md transition-colors",
                     active
-                      ? "bg-primary text-primary-foreground shadow-sm"
+                      ? "bg-accent-foreground text-white shadow-sm"
                       : "text-muted-foreground hover:text-foreground hover:bg-accent"
                   )}
                 >
