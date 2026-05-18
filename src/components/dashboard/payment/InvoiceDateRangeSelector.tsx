@@ -85,7 +85,7 @@ const InvoiceDateRangeSelector = ({
                   className={cn(
                     "px-3 py-1.5 text-xs font-semibold rounded-md transition-colors",
                     active
-                      ? "bg-accent-foreground text-white shadow-sm"
+                      ? "bg-primary text-primary-foreground shadow-sm"
                       : "text-muted-foreground hover:text-foreground hover:bg-accent"
                   )}
                 >
