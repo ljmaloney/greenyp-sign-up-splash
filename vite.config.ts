@@ -9,6 +9,7 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
       allowedHosts: [
+          "localhost",
           "greenyp-fe-tst-alb-1524420982.us-east-1.elb.amazonaws.com",
           "test.greenyp.com",
           "greenyp.com",
