@@ -1,0 +1,34 @@
+# GreenYP
+
+> The Green Industry Business Directory. Connect with landscapers, lawn care pros, nurseries, hardscape suppliers, and other green industry businesses. Tagline: Your Garden. Their Expertise.
+
+GreenYP (also known as GreenPages in mobile and marketing contexts) is a directory and marketplace for the green industry. Homeowners and businesses search for vetted green-industry providers by category and location. Subscribers list their business, manage locations, photos, services, and respond to inquiries. The site also hosts classifieds for green-industry goods and services.
+
+## Pages
+
+- [Home](/): Search the directory and browse featured green-industry categories.
+- [Categories](/categories): All green-industry business categories.
+- [Search](/search): Search providers by keyword, ZIP code, and distance.
+- [Classifieds](/classifieds): Browse classified ads for plants, equipment, and services.
+- [Classified Categories](/classifieds/categories): Descriptions of all classifieds categories.
+- [Post a Classified](/classifieds/create): Create a new classified ad.
+- [Contact](/contact): Get in touch with GreenYP.
+
+## Subscribers
+
+- [Subscribers Overview](/subscribers): Why list your green business on GreenYP.
+- [About](/subscribers/about): About GreenYP and its mission.
+- [Pricing](/subscribers/pricing): Subscription plans and pricing.
+- [Features](/subscribers/subscription-features): Features included with a subscription.
+- [Sign Up](/subscribers/signup): Create a subscriber account.
+- [Subscriber Categories](/subscribers/categories): Browse categories from a subscriber perspective.
+
+## Legal
+
+- [Terms](/terms): Terms of service.
+- [Privacy](/privacy): Privacy policy.
+- [Cookies](/cookies): Cookie policy.
+
+## Optional
+
+- [Sitemap](/sitemap.xml): Full machine-readable list of public URLs.
