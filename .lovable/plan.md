@@ -1,30 +1,39 @@
 ## Goal
 
-Make the date picker on `/dashboard/invoices` easier to use and lay out properly, while staying on the existing shadcn + react-day-picker stack (no new dependencies).
+Improve the `/dashboard/invoices` date range selector so it looks intentional, professional, and easy to understand—not like default calendar widgets dropped into a card.
 
-## Changes
+## Planned changes
 
-### 1. `src/components/ui/calendar.tsx`
-- Add `captionLayout="dropdown-buttons"` support with `fromYear` / `toYear` props passed through, so users can jump months and years quickly via dropdowns instead of clicking the month arrows.
-- Add `pointer-events-auto` to the wrapper so the calendar is always interactive inside popovers.
-- Style the new dropdowns to match the design system (green tokens, rounded, proper spacing) so they don't look like raw `<select>` elements.
+### 1. Redesign the date range card
+- Turn the plain card into a stronger “Billing period” control panel with better hierarchy.
+- Add concise supporting text under the title so users understand the purpose immediately.
+- Use green-accented design-system tokens, subtle border treatment, and cleaner spacing.
+- Keep the existing quick range actions, but restyle them as segmented preset chips instead of generic outline buttons.
 
-### 2. `src/components/dashboard/payment/InvoiceDateRangeSelector.tsx`
-- Replace the two separate single-date Popover+Calendar blocks with a single **range** calendar:
-  - One trigger button showing `"Start – End"` (or "Pick a date range").
-  - Inside the popover, render `<Calendar mode="range" numberOfMonths={2} captionLayout="dropdown-buttons" fromYear={currentYear - 10} toYear={currentYear} />`.
-  - Wire `selected={{ from: startDate, to: endDate }}` and `onSelect` to update both `onStartDateChange` and `onEndDateChange` in one go.
-- On smaller screens fall back to `numberOfMonths={1}` for proper layout.
-- Keep the existing quick-range buttons (Last Month / 3 / 6 / 12 Months) and the Search button beside the range trigger.
+### 2. Improve the range trigger
+- Replace the basic full-width button with a more informative range field:
+  - Calendar icon in a small accent container.
+  - Clear label such as “Invoice period”.
+  - Prominent selected range text.
+  - Muted helper text when the range is incomplete.
+- Keep the Search button aligned with the field and visually primary only when a complete date range is selected.
 
-### 3. Verify
-- Open `/dashboard/invoices`, confirm:
-  - The trigger button displays the chosen range cleanly.
-  - Month + year dropdowns appear at the top of the calendar.
-  - Range selection highlights properly.
-  - Layout doesn't overflow the card on the current viewport.
+### 3. Polish the calendar popover
+- Add popover padding, rounded corners, border, and shadow so it feels like a designed date picker surface.
+- Improve month/year dropdown styling inside `src/components/ui/calendar.tsx` so the dropdowns do not look raw or cramped.
+- Improve range styles:
+  - Selected endpoints use primary green.
+  - Range middle uses a softer green accent.
+  - Today and hover states remain visible without fighting the selected range.
+- Keep the responsive behavior: two months on desktop, one month on mobile.
 
-## Out of scope
-- No new dependencies.
-- No changes to the admin invoice search (`InvoiceSearch.tsx`) — only the dashboard invoice page picker, as requested.
-- No business-logic changes; `onDirectSearch` / quick-range behavior is preserved.
+### 4. Preserve behavior
+- No new datepicker dependency.
+- Keep the existing quick ranges: Last Month, Last 3 Months, Last 6 Months, Last 12 Months.
+- Preserve existing invoice search behavior and callbacks.
+- Only target the dashboard invoice date range selector and shared calendar styling needed for it.
+
+### 5. Verify
+- Check the `/dashboard/invoices` component styling at desktop width.
+- Check that the popover no longer looks cramped or unstyled.
+- Confirm the range selection still updates start/end dates and the Search button remains disabled until both dates are selected.
