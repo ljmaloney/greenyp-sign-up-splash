@@ -2,6 +2,7 @@ FROM node:25.9.0-alpine3.22 AS dev
 
 # Install nginx
 RUN apk add --no-cache nginx
+RUN apk add --no-cache curl
 
 WORKDIR /app
 
@@ -31,7 +32,7 @@ RUN mkdir -p /usr/share/nginx/html && \
 EXPOSE 8080
 
 # Run nginx in foreground
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["sh", "-c", "nginx -t && nginx -g 'daemon off;'"]
 
 ## 5. Expose Vite default port
 #EXPOSE 8080
