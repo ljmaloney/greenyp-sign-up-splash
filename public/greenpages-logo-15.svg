@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 120" fill="none">
+  <defs>
+    <linearGradient id="leaf15" x1="30" y1="4" x2="30" y2="124" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#86efac"/>
+      <stop offset="0.5" stop-color="#22c55e"/>
+      <stop offset="1" stop-color="#15803d"/>
+    </linearGradient>
+  </defs>
+
+  <g transform="translate(40 56) rotate(20) scale(0.55) translate(-30 -70)">
+    <rect x="28" y="122" width="4" height="14" rx="2" fill="#15803d"/>
+    <path d="M30 4 C 4 24, -12 60, -10 92 C -8 114, 12 126, 30 126 C 48 126, 68 114, 70 92 C 72 60, 56 24, 30 4 Z" fill="url(#leaf15)"/>
+    <path d="M30 10 Q 28 70 30 122" stroke="#14532d" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.5"/>
+    <path d="M30 100 Q 16 92 2 80" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+    <path d="M30 76 Q 16 66 4 58" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+    <path d="M30 50 Q 20 42 12 36" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+    <path d="M30 28 Q 25 24 20 21" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+    <path d="M30 100 Q 44 92 58 80" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+    <path d="M30 76 Q 44 66 56 58" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+    <path d="M30 50 Q 40 42 48 36" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+    <path d="M30 28 Q 35 24 40 21" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+  </g>
+
+  <text x="80" y="60" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="40" font-weight="800" letter-spacing="-0.5">
+    <tspan fill="#15803d">Green</tspan><tspan fill="#22c55e">YP</tspan>
+  </text>
+
+  <text x="80" y="89" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="500" letter-spacing="0.3" fill="#15803d" opacity="0.85">Your go-to directory for landscapers, gardeners, nurseries, and green industry professionals near you.</text>
+</svg>
