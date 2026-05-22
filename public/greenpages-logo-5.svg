@@ -1,5 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 90" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 90" fill="none">
   <defs>
+    <linearGradient id="leaf5" x1="30" y1="4" x2="30" y2="120" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#86efac"/>
+      <stop offset="0.5" stop-color="#22c55e"/>
+      <stop offset="1" stop-color="#15803d"/>
+    </linearGradient>
     <linearGradient id="canopy5" x1="0" y1="0" x2="0" y2="60" gradientUnits="userSpaceOnUse">
       <stop stop-color="#86efac"/>
       <stop offset="0.55" stop-color="#22c55e"/>
@@ -7,34 +12,59 @@
     </linearGradient>
   </defs>
 
-  <!-- "Green" -->
-  <text x="10" y="62" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="40" font-weight="800" letter-spacing="-0.5" fill="#15803d">Green</text>
-
-  <!-- Tree-Y: trunk + forked branches + canopy. Sits where the Y character would be. -->
-  <!-- Approx horizontal slot: x ~ 134..174, baseline y = 62 -->
-  <g transform="translate(154, 0)">
-    <!-- Trunk (tapered) -->
-    <path d="M-4 62 L -2.6 40 Q 0 36 2.6 40 L 4 62 Z" fill="#15803d"/>
-    <!-- Left branch -->
-    <path d="M-2.6 40 Q -8 32 -16 22 L -14 20 Q -6 30 0.6 38 Z" fill="#15803d"/>
-    <!-- Right branch -->
-    <path d="M2.6 40 Q 8 32 16 22 L 14 20 Q 6 30 -0.6 38 Z" fill="#15803d"/>
-
-    <!-- Canopy: cluster of overlapping leaf circles -->
-    <g>
-      <circle cx="-14" cy="18" r="11" fill="url(#canopy5)"/>
-      <circle cx="14" cy="18" r="11" fill="url(#canopy5)"/>
-      <circle cx="0" cy="10" r="13" fill="url(#canopy5)"/>
-      <circle cx="-7" cy="24" r="10" fill="url(#canopy5)"/>
-      <circle cx="7" cy="24" r="10" fill="url(#canopy5)"/>
-      <circle cx="0" cy="22" r="11" fill="url(#canopy5)"/>
+  <!-- Leaf from logo-4 (scaled ~0.62), rotated, on the left -->
+  <g transform="translate(8, 4) scale(0.62)">
+    <g transform="rotate(-8 30 70)">
+      <!-- Stem -->
+      <rect x="28" y="118" width="4" height="14" rx="2" fill="#15803d"/>
+      <!-- Leaf body -->
+      <path d="M30 4 C 14 22, -2 62, -2 88 C -2 108, 14 120, 30 120 C 46 120, 62 108, 62 88 C 62 62, 46 22, 30 4 Z" fill="url(#leaf5)"/>
+      <!-- Central vein -->
+      <path d="M30 10 Q 30 65 30 118" stroke="#14532d" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.5"/>
+      <!-- Side veins -->
+      <path d="M30 96 Q 18 86 6 78" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+      <path d="M30 72 Q 18 62 8 56" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+      <path d="M30 48 Q 22 40 16 36" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+      <path d="M30 28 Q 26 24 22 22" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+      <path d="M30 96 Q 42 86 54 78" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+      <path d="M30 72 Q 42 62 52 56" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+      <path d="M30 48 Q 38 40 44 36" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+      <path d="M30 28 Q 34 24 38 22" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
     </g>
-    <!-- A couple of small leaflets peeking out -->
-    <path d="M-20 14 q -4 -2 -6 -6 q 5 -1 8 3 Z" fill="#22c55e"/>
-    <path d="M20 14 q 4 -2 6 -6 q -5 -1 -8 3 Z" fill="#22c55e"/>
-    <path d="M0 -4 q 3 2 3 6 q -6 0 -6 -4 Z" fill="#22c55e"/>
+  </g>
+
+  <!-- "Green" -->
+  <text x="70" y="62" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="40" font-weight="800" letter-spacing="-0.5" fill="#15803d">Green</text>
+
+  <!-- Tree-Y: brown trunk + forked branches + green canopy. -->
+  <g transform="translate(214, 0)">
+    <!-- Trunk (tapered, brown) -->
+    <path d="M-5 62 L -3.5 38 Q 0 34 3.5 38 L 5 62 Z" fill="#6b4423"/>
+    <!-- Trunk shading -->
+    <path d="M-1.5 62 L -1 38 Q 0 36.5 1 38 L 1.5 62 Z" fill="#3f2a14" opacity="0.6"/>
+    <!-- Left branch -->
+    <path d="M-3.5 38 Q -10 28 -19 16 L -15 13 Q -7 24 0.8 36 Z" fill="#6b4423"/>
+    <!-- Right branch -->
+    <path d="M3.5 38 Q 10 28 19 16 L 15 13 Q 7 24 -0.8 36 Z" fill="#6b4423"/>
+    <!-- Branch outlines for visibility -->
+    <path d="M-3.5 38 Q -10 28 -17 14" stroke="#3f2a14" stroke-width="0.8" fill="none" opacity="0.7"/>
+    <path d="M3.5 38 Q 10 28 17 14" stroke="#3f2a14" stroke-width="0.8" fill="none" opacity="0.7"/>
+
+    <!-- Canopy: overlapping leaf circles -->
+    <g>
+      <circle cx="-16" cy="12" r="11" fill="url(#canopy5)"/>
+      <circle cx="16" cy="12" r="11" fill="url(#canopy5)"/>
+      <circle cx="0" cy="4" r="13" fill="url(#canopy5)"/>
+      <circle cx="-8" cy="20" r="10" fill="url(#canopy5)"/>
+      <circle cx="8" cy="20" r="10" fill="url(#canopy5)"/>
+      <circle cx="0" cy="18" r="11" fill="url(#canopy5)"/>
+    </g>
+    <!-- Small leaflets peeking out -->
+    <path d="M-22 8 q -4 -2 -6 -6 q 5 -1 8 3 Z" fill="#22c55e"/>
+    <path d="M22 8 q 4 -2 6 -6 q -5 -1 -8 3 Z" fill="#22c55e"/>
+    <path d="M0 -10 q 3 2 3 6 q -6 0 -6 -4 Z" fill="#22c55e"/>
   </g>
 
   <!-- "P" -->
-  <text x="178" y="62" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="40" font-weight="800" letter-spacing="-0.5" fill="#22c55e">P</text>
+  <text x="240" y="62" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="40" font-weight="800" letter-spacing="-0.5" fill="#22c55e">P</text>
 </svg>
