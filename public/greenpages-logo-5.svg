@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 90" fill="none">
+  <defs>
+    <linearGradient id="canopy5" x1="0" y1="0" x2="0" y2="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#86efac"/>
+      <stop offset="0.55" stop-color="#22c55e"/>
+      <stop offset="1" stop-color="#15803d"/>
+    </linearGradient>
+  </defs>
+
+  <!-- "Green" -->
+  <text x="10" y="62" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="40" font-weight="800" letter-spacing="-0.5" fill="#15803d">Green</text>
+
+  <!-- Tree-Y: trunk + forked branches + canopy. Sits where the Y character would be. -->
+  <!-- Approx horizontal slot: x ~ 134..174, baseline y = 62 -->
+  <g transform="translate(154, 0)">
+    <!-- Trunk (tapered) -->
+    <path d="M-4 62 L -2.6 40 Q 0 36 2.6 40 L 4 62 Z" fill="#15803d"/>
+    <!-- Left branch -->
+    <path d="M-2.6 40 Q -8 32 -16 22 L -14 20 Q -6 30 0.6 38 Z" fill="#15803d"/>
+    <!-- Right branch -->
+    <path d="M2.6 40 Q 8 32 16 22 L 14 20 Q 6 30 -0.6 38 Z" fill="#15803d"/>
+
+    <!-- Canopy: cluster of overlapping leaf circles -->
+    <g>
+      <circle cx="-14" cy="18" r="11" fill="url(#canopy5)"/>
+      <circle cx="14" cy="18" r="11" fill="url(#canopy5)"/>
+      <circle cx="0" cy="10" r="13" fill="url(#canopy5)"/>
+      <circle cx="-7" cy="24" r="10" fill="url(#canopy5)"/>
+      <circle cx="7" cy="24" r="10" fill="url(#canopy5)"/>
+      <circle cx="0" cy="22" r="11" fill="url(#canopy5)"/>
+    </g>
+    <!-- A couple of small leaflets peeking out -->
+    <path d="M-20 14 q -4 -2 -6 -6 q 5 -1 8 3 Z" fill="#22c55e"/>
+    <path d="M20 14 q 4 -2 6 -6 q -5 -1 -8 3 Z" fill="#22c55e"/>
+    <path d="M0 -4 q 3 2 3 6 q -6 0 -6 -4 Z" fill="#22c55e"/>
+  </g>
+
+  <!-- "P" -->
+  <text x="178" y="62" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="40" font-weight="800" letter-spacing="-0.5" fill="#22c55e">P</text>
+</svg>

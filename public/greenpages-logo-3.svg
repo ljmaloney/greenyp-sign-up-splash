@@ -1,29 +1,29 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 240" fill="none">
   <defs>
-    <linearGradient id="leaf3" x1="170" y1="16" x2="170" y2="132" gradientUnits="userSpaceOnUse">
+    <linearGradient id="leaf3" x1="30" y1="4" x2="30" y2="120" gradientUnits="userSpaceOnUse">
       <stop stop-color="#86efac"/>
       <stop offset="0.5" stop-color="#22c55e"/>
       <stop offset="1" stop-color="#15803d"/>
     </linearGradient>
   </defs>
 
-  <!-- Leaf: pointed apex at top, wide rounded base, small stem below -->
+  <!-- Leaf: smooth teardrop, pointed apex top, round bulb base, small stem -->
   <g transform="translate(140, 12) rotate(-8 30 70)">
     <!-- Stem -->
     <rect x="28" y="118" width="4" height="14" rx="2" fill="#15803d"/>
-    <!-- Leaf body (inverted teardrop) -->
-    <path d="M30 4 C 2 26, -2 88, 30 120 C 62 88, 58 26, 30 4 Z" fill="url(#leaf3)"/>
-    <!-- Central vein -->
-    <path d="M30 10 L 30 128" stroke="#14532d" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.55"/>
+    <!-- Leaf body (smooth teardrop) -->
+    <path d="M30 4 C 14 22, -2 62, -2 88 C -2 108, 14 120, 30 120 C 46 120, 62 108, 62 88 C 62 62, 46 22, 30 4 Z" fill="url(#leaf3)"/>
+    <!-- Central vein (slight curve) -->
+    <path d="M30 10 Q 30 65 30 118" stroke="#14532d" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.5"/>
     <!-- Side veins -->
-    <path d="M30 30 Q 22 36 14 42" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
-    <path d="M30 56 Q 18 64 6 72" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
-    <path d="M30 82 Q 18 90 8 98" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
-    <path d="M30 104 Q 22 110 16 114" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
-    <path d="M30 30 Q 38 36 46 42" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
-    <path d="M30 56 Q 42 64 54 72" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
-    <path d="M30 82 Q 42 90 52 98" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
-    <path d="M30 104 Q 38 110 44 114" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+    <path d="M30 96 Q 18 86 6 78" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+    <path d="M30 72 Q 18 62 8 56" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+    <path d="M30 48 Q 22 40 16 36" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+    <path d="M30 28 Q 26 24 22 22" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+    <path d="M30 96 Q 42 86 54 78" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+    <path d="M30 72 Q 42 62 52 56" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+    <path d="M30 48 Q 38 40 44 36" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+    <path d="M30 28 Q 34 24 38 22" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
   </g>
 
   <!-- Wordmark: GreenPages -->
