@@ -1,39 +1,23 @@
-## Goal
+# Create 3 new logo SVG variants
 
-Improve the `/dashboard/invoices` date range selector so it looks intentional, professional, and easy to understand—not like default calendar widgets dropped into a card.
+Add three new files alongside `public/greenpages-logo.svg`, each inspired by `src/assets/greenyp-logo.png` and `src/assets/greenpages-splash.png`.
 
-## Planned changes
+## Files to create
 
-### 1. Redesign the date range card
-- Turn the plain card into a stronger “Billing period” control panel with better hierarchy.
-- Add concise supporting text under the title so users understand the purpose immediately.
-- Use green-accented design-system tokens, subtle border treatment, and cleaner spacing.
-- Keep the existing quick range actions, but restyle them as segmented preset chips instead of generic outline buttons.
+1. **`public/greenpages-logo-2.svg`** — Horizontal: upright tear-drop leaf on the left + "GreenYP" wordmark on the right (single line). Based on `greenyp-logo.png`.
+2. **`public/greenpages-logo-3.svg`** — Stacked: upright leaf on top, "GreenPages" wordmark below, with tagline "Your Garden. Their Expertise." Based on `greenpages-splash.png`.
+3. **`public/greenpages-logo-4.svg`** — Same stacked layout as #3 but without the tagline.
 
-### 2. Improve the range trigger
-- Replace the basic full-width button with a more informative range field:
-  - Calendar icon in a small accent container.
-  - Clear label such as “Invoice period”.
-  - Prominent selected range text.
-  - Muted helper text when the range is incomplete.
-- Keep the Search button aligned with the field and visually primary only when a complete date range is selected.
+## Design details
 
-### 3. Polish the calendar popover
-- Add popover padding, rounded corners, border, and shadow so it feels like a designed date picker surface.
-- Improve month/year dropdown styling inside `src/components/ui/calendar.tsx` so the dropdowns do not look raw or cramped.
-- Improve range styles:
-  - Selected endpoints use primary green.
-  - Range middle uses a softer green accent.
-  - Today and hover states remain visible without fighting the selected range.
-- Keep the responsive behavior: two months on desktop, one month on mobile.
+- **Leaf**: refined upright tear-drop shape (pointed tip up, curved central vein, a few side veins) — closer to the references than the rounded rotated leaf in `greenpages-logo.svg`. Linear gradient from `#22c55e` (top) to `#15803d` (bottom), matching the existing palette.
+- **Typography**: system sans-serif, bold, matching current weights. Two-tone wordmark:
+  - "Green" in `#15803d` (dark green)
+  - "YP" / "Pages" in `#22c55e` (bright green)
+- **Tagline** (logo-3 only): smaller weight-400 text in `#22c55e`, "Your Garden. Their Expertise."
+- **ViewBoxes**: sized to fit each composition tightly with small padding; no external dependencies, pure inline SVG (same approach as the existing file).
 
-### 4. Preserve behavior
-- No new datepicker dependency.
-- Keep the existing quick ranges: Last Month, Last 3 Months, Last 6 Months, Last 12 Months.
-- Preserve existing invoice search behavior and callbacks.
-- Only target the dashboard invoice date range selector and shared calendar styling needed for it.
+## Notes
 
-### 5. Verify
-- Check the `/dashboard/invoices` component styling at desktop width.
-- Check that the popover no longer looks cramped or unstyled.
-- Confirm the range selection still updates start/end dates and the Search button remains disabled until both dates are selected.
+- No code references to these new files are added — they are static assets the user can wire up later.
+- The existing `greenpages-logo.svg` is untouched.
