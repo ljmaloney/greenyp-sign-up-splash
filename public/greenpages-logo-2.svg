@@ -1,27 +1,27 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 80" fill="none">
   <defs>
-    <linearGradient id="leaf2" x1="40" y1="0" x2="40" y2="76" gradientUnits="userSpaceOnUse">
+    <linearGradient id="leaf2" x1="30" y1="4" x2="30" y2="66" gradientUnits="userSpaceOnUse">
       <stop stop-color="#86efac"/>
       <stop offset="0.5" stop-color="#22c55e"/>
       <stop offset="1" stop-color="#15803d"/>
     </linearGradient>
   </defs>
 
-  <!-- Leaf: pointed apex at top, wide rounded base, small stem below -->
-  <g transform="translate(10, 0) rotate(-10 30 38)">
+  <!-- Leaf: smooth teardrop, pointed apex top, round bulb base, small stem -->
+  <g transform="translate(10, 4) rotate(-10 30 38)">
     <!-- Stem -->
     <rect x="28.5" y="64" width="3" height="10" rx="1.5" fill="#15803d"/>
-    <!-- Leaf body (inverted teardrop) -->
-    <path d="M30 4 C 8 22, 4 52, 30 66 C 56 52, 52 22, 30 4 Z" fill="url(#leaf2)"/>
-    <!-- Central vein -->
-    <path d="M30 8 L 30 72" stroke="#14532d" stroke-width="1.6" stroke-linecap="round" fill="none" opacity="0.55"/>
-    <!-- Side veins (fan outward, longer toward wider base) -->
-    <path d="M30 22 Q 24 26 19 30" stroke="#14532d" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.4"/>
-    <path d="M30 36 Q 21 42 13 48" stroke="#14532d" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.4"/>
-    <path d="M30 50 Q 22 56 16 60" stroke="#14532d" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.4"/>
-    <path d="M30 22 Q 36 26 41 30" stroke="#14532d" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.4"/>
-    <path d="M30 36 Q 39 42 47 48" stroke="#14532d" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.4"/>
-    <path d="M30 50 Q 38 56 44 60" stroke="#14532d" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.4"/>
+    <!-- Leaf body (smooth teardrop) -->
+    <path d="M30 4 C 18 14, 8 34, 8 48 C 8 60, 18 66, 30 66 C 42 66, 52 60, 52 48 C 52 34, 42 14, 30 4 Z" fill="url(#leaf2)"/>
+    <!-- Central vein (slight curve) -->
+    <path d="M30 8 Q 30 38 30 64" stroke="#14532d" stroke-width="1.6" stroke-linecap="round" fill="none" opacity="0.5"/>
+    <!-- Side veins (arc up toward apex) -->
+    <path d="M30 52 Q 22 46 15 40" stroke="#14532d" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.4"/>
+    <path d="M30 40 Q 22 34 16 30" stroke="#14532d" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.4"/>
+    <path d="M30 28 Q 25 24 21 22" stroke="#14532d" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.4"/>
+    <path d="M30 52 Q 38 46 45 40" stroke="#14532d" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.4"/>
+    <path d="M30 40 Q 38 34 44 30" stroke="#14532d" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.4"/>
+    <path d="M30 28 Q 35 24 39 22" stroke="#14532d" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.4"/>
   </g>
 
   <!-- Wordmark: GreenYP -->
