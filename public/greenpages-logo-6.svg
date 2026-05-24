@@ -1,52 +1,46 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 120" fill="none">
   <defs>
-    <linearGradient id="leaf6" x1="30" y1="4" x2="30" y2="124" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#86efac"/>
-      <stop offset="0.5" stop-color="#22c55e"/>
-      <stop offset="1" stop-color="#15803d"/>
+    <linearGradient id="leaf6light" x1="0" y1="0" x2="0" y2="130" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#a7e86b"/>
+      <stop offset="1" stop-color="#4ea83a"/>
     </linearGradient>
-    <linearGradient id="leaf6dark" x1="30" y1="4" x2="30" y2="124" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#4ade80"/>
-      <stop offset="0.5" stop-color="#16a34a"/>
-      <stop offset="1" stop-color="#14532d"/>
+    <linearGradient id="leaf6dark" x1="0" y1="0" x2="0" y2="130" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4ea83a"/>
+      <stop offset="1" stop-color="#1f6b25"/>
     </linearGradient>
     <clipPath id="leaf6clip">
-      <path d="M30 4 C 6 30, -6 64, -4 96 C -2 116, 14 126, 30 126 C 46 126, 64 116, 66 96 C 68 64, 54 30, 30 4 Z"/>
+      <path d="M30 6 C 60 28, 66 78, 38 122 C 34 124, 30 125, 28 125 C 26 125, 22 124, 20 122 C -6 78, 0 28, 30 6 Z"/>
     </clipPath>
   </defs>
 
-  <!-- Leaf: nearly upright, asymmetric, pointed apex -->
-  <g transform="translate(40 56) rotate(5) scale(0.55) translate(-30 -70)">
+  <g transform="translate(40 56) rotate(8) scale(0.5) translate(-30 -68)">
     <!-- Stem -->
-    <rect x="28" y="122" width="4" height="14" rx="2" fill="#15803d"/>
+    <path d="M28 120 C 28 128, 30 134, 32 138" stroke="#1f6b25" stroke-width="3" stroke-linecap="round" fill="none"/>
 
-    <!-- Leaf body: pointed apex, asymmetric S-curve silhouette -->
-    <path d="M30 4 C 6 30, -6 64, -4 96 C -2 116, 14 126, 30 126 C 46 126, 64 116, 66 96 C 68 64, 54 30, 30 4 Z" fill="url(#leaf6)"/>
+    <!-- Left half (lighter) -->
+    <path d="M30 6 C 0 28, -6 78, 20 122 C 22 124, 26 125, 28 125 L 30 125 Z" fill="url(#leaf6light)"/>
 
-    <!-- Darker right-half overlay to suggest the fold along the central vein -->
-    <g clip-path="url(#leaf6clip)">
-      <path d="M30 4 C 36 30, 50 64, 56 96 C 60 116, 48 126, 30 126 L 30 126 C 46 126, 64 116, 66 96 C 68 64, 54 30, 30 4 Z" fill="url(#leaf6dark)" opacity="0.45"/>
+    <!-- Right half (darker) -->
+    <path d="M30 6 C 60 28, 66 78, 38 122 C 36 124, 32 125, 30 125 L 30 6 Z" fill="url(#leaf6dark)"/>
+
+    <!-- Central S-curve fold/vein -->
+    <path d="M30 122 C 36 100, 22 60, 34 10" stroke="#0f4a1c" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.85"/>
+
+    <!-- Subtle side veins (right side only, like reference) -->
+    <g clip-path="url(#leaf6clip)" opacity="0.45">
+      <path d="M33 96 Q 46 92 56 84" stroke="#0f4a1c" stroke-width="1.1" stroke-linecap="round" fill="none"/>
+      <path d="M31 70 Q 44 64 54 56" stroke="#0f4a1c" stroke-width="1.1" stroke-linecap="round" fill="none"/>
+      <path d="M30 46 Q 40 40 48 34" stroke="#0f4a1c" stroke-width="1.1" stroke-linecap="round" fill="none"/>
+      <path d="M27 100 Q 16 96 6 90" stroke="#0f4a1c" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.7"/>
+      <path d="M26 74 Q 14 70 4 64" stroke="#0f4a1c" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.7"/>
     </g>
-
-    <!-- Central vein: S-curve from base to apex -->
-    <path d="M30 122 C 34 100, 26 70, 30 8" stroke="#14532d" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="0.7"/>
-
-    <!-- Left side veins -->
-    <path d="M31 104 Q 16 96 2 86" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.45"/>
-    <path d="M30 78 Q 16 70 2 64" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.45"/>
-    <path d="M29 50 Q 18 44 10 40" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.45"/>
-
-    <!-- Right side veins -->
-    <path d="M31 104 Q 46 96 60 86" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.45"/>
-    <path d="M30 78 Q 46 70 58 62" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.45"/>
-    <path d="M29 50 Q 40 44 48 38" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.45"/>
   </g>
 
-  <!-- Name on top -->
+  <!-- Wordmark -->
   <text x="80" y="60" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="40" font-weight="800" letter-spacing="-0.5">
     <tspan fill="#15803d">Green</tspan><tspan fill="#22c55e">YP</tspan>
   </text>
 
-  <!-- Tagline below -->
+  <!-- Tagline -->
   <text x="80" y="89" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="500" letter-spacing="0.3" fill="#15803d" opacity="0.85">Your Garden. Their Expertise.</text>
 </svg>
