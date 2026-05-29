@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Globe, Building, CreditCard, Calendar, Hash } from 'lucide-react';
+import { Globe, Building, CreditCard, Calendar, Hash, XCircle } from 'lucide-react';
 import { Producer } from '@/services/accountService';
 
 interface BusinessDetailsProps {
@@ -128,6 +128,36 @@ const BusinessDetails = ({ producer, lineOfBusinessName }: BusinessDetailsProps)
             {formatBillingDate(producer.lastBillPaidDate || '')}
           </span>
         </div>
+
+        {producer.cancelDate && (
+          <div className="flex items-center gap-2 text-sm">
+            <XCircle className="h-4 w-4 text-greenyp-600" />
+            <span className="text-gray-600 font-semibold">Cancel Date:</span>
+            <span className="text-gray-900">
+              {formatDate(producer.cancelDate)}
+            </span>
+          </div>
+        )}
+
+        {producer.cancelReason && (
+          <div className="flex items-center gap-2 text-sm">
+            <XCircle className="h-4 w-4 text-greenyp-600" />
+            <span className="text-gray-600 font-semibold">Cancel Reason:</span>
+            <span className="text-gray-900">
+              {producer.cancelReason}
+            </span>
+          </div>
+        )}
+
+        {producer.cancelReasonText && (
+          <div className="flex items-start gap-2 text-sm">
+            <XCircle className="h-4 w-4 text-greenyp-600 mt-0.5" />
+            <span className="text-gray-600 font-semibold">Cancel Details:</span>
+            <span className="text-gray-900">
+              {producer.cancelReasonText}
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );

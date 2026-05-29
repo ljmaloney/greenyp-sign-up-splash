@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 210" fill="none">
+  <defs>
+    <linearGradient id="leaf4" x1="30" y1="4" x2="30" y2="120" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#86efac"/>
+      <stop offset="0.5" stop-color="#22c55e"/>
+      <stop offset="1" stop-color="#15803d"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Leaf: smooth teardrop, pointed apex top, round bulb base, small stem -->
+  <g transform="translate(140, 12) rotate(-8 30 70)">
+    <!-- Stem -->
+    <rect x="28" y="118" width="4" height="14" rx="2" fill="#15803d"/>
+    <!-- Leaf body (smooth teardrop) -->
+    <path d="M30 4 C 14 22, -2 62, -2 88 C -2 108, 14 120, 30 120 C 46 120, 62 108, 62 88 C 62 62, 46 22, 30 4 Z" fill="url(#leaf4)"/>
+    <!-- Central vein -->
+    <path d="M30 10 Q 30 65 30 118" stroke="#14532d" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.5"/>
+    <!-- Side veins -->
+    <path d="M30 96 Q 18 86 6 78" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+    <path d="M30 72 Q 18 62 8 56" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+    <path d="M30 48 Q 22 40 16 36" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+    <path d="M30 28 Q 26 24 22 22" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+    <path d="M30 96 Q 42 86 54 78" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+    <path d="M30 72 Q 42 62 52 56" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+    <path d="M30 48 Q 38 40 44 36" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+    <path d="M30 28 Q 34 24 38 22" stroke="#14532d" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.4"/>
+  </g>
+
+  <!-- Wordmark: GreenPages -->
+  <text x="170" y="190" text-anchor="middle" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="40" font-weight="800" letter-spacing="-0.5">
+    <tspan fill="#15803d">Green</tspan><tspan fill="#22c55e">Pages</tspan>
+  </text>
+</svg>

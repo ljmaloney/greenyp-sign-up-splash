@@ -1,39 +1,31 @@
 ## Goal
 
-Improve the `/dashboard/invoices` date range selector so it looks intentional, professional, and easy to understand—not like default calendar widgets dropped into a card.
+Replace the leaf in `public/greenpages-logo-6.svg` with a shape that matches the uploaded reference: a more realistic, pointed-tip leaf with an asymmetric S-curve central vein, softer side veins, and a fuller body that tapers to a sharp apex (rather than the current symmetric teardrop).
 
-## Planned changes
+## Reference observations
 
-### 1. Redesign the date range card
-- Turn the plain card into a stronger “Billing period” control panel with better hierarchy.
-- Add concise supporting text under the title so users understand the purpose immediately.
-- Use green-accented design-system tokens, subtle border treatment, and cleaner spacing.
-- Keep the existing quick range actions, but restyle them as segmented preset chips instead of generic outline buttons.
+From `user-uploads://greenpages_splash.png`:
+- Pointed apex at top, gently rounded base.
+- Slight S-curve silhouette — left edge bulges lower, right edge bulges higher, so the leaf looks alive rather than perfectly symmetric.
+- Prominent dark-green central vein following the same S-curve, splitting the leaf into a lighter left half and a slightly darker right half.
+- 3–4 soft side veins per side branching off the central vein toward the edges.
+- Light-to-dark green gradient (light at the tip-facing side, darker toward the base/right).
+- Short stem at the base.
+- Leaf stands nearly upright (very slight tilt), not the current 20° rotation.
 
-### 2. Improve the range trigger
-- Replace the basic full-width button with a more informative range field:
-  - Calendar icon in a small accent container.
-  - Clear label such as “Invoice period”.
-  - Prominent selected range text.
-  - Muted helper text when the range is incomplete.
-- Keep the Search button aligned with the field and visually primary only when a complete date range is selected.
+## Changes to `public/greenpages-logo-6.svg`
 
-### 3. Polish the calendar popover
-- Add popover padding, rounded corners, border, and shadow so it feels like a designed date picker surface.
-- Improve month/year dropdown styling inside `src/components/ui/calendar.tsx` so the dropdowns do not look raw or cramped.
-- Improve range styles:
-  - Selected endpoints use primary green.
-  - Range middle uses a softer green accent.
-  - Today and hover states remain visible without fighting the selected range.
-- Keep the responsive behavior: two months on desktop, one month on mobile.
+1. Remove the existing teardrop `<path>`, central vein, and 8 side veins inside the leaf `<g>`.
+2. Replace with a new leaf composition:
+   - Outer silhouette: pointed apex at top, asymmetric curves (left side fuller below, right side fuller above), rounded base where the stem meets.
+   - Central vein: single dark-green path (`#14532d`) following an S-curve from base to apex, slightly off-center.
+   - 3 side veins per side, curving outward and upward from the central vein toward the edges, stroke `#14532d` at low opacity.
+   - Optional subtle two-tone fill: keep the existing `leaf6` gradient on the main body, plus a slightly darker overlay path on the right half (clipped to the leaf shape) to suggest the fold along the central vein.
+3. Reduce rotation from `rotate(20)` to about `rotate(5)` so the leaf stands nearly upright like the reference.
+4. Keep the stem rect, the leaf group's translate/scale, the surrounding viewBox (`280×120`), the wordmark, and the tagline exactly as they are.
 
-### 4. Preserve behavior
-- No new datepicker dependency.
-- Keep the existing quick ranges: Last Month, Last 3 Months, Last 6 Months, Last 12 Months.
-- Preserve existing invoice search behavior and callbacks.
-- Only target the dashboard invoice date range selector and shared calendar styling needed for it.
+## Out of scope
 
-### 5. Verify
-- Check the `/dashboard/invoices` component styling at desktop width.
-- Check that the popover no longer looks cramped or unstyled.
-- Confirm the range selection still updates start/end dates and the Search button remains disabled until both dates are selected.
+- `greenpages-logo.svg`, `-2`, `-3`, `-4`, `-5`, and `-7` through `-16` are not touched.
+- No code references change — static asset only.
+- Wordmark, tagline, colors, gradient stops, fonts, and layout remain unchanged.

@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 120" fill="none">
+  <defs>
+    <linearGradient id="leaf6light" x1="0" y1="0" x2="0" y2="130" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#a7e86b"/>
+      <stop offset="1" stop-color="#4ea83a"/>
+    </linearGradient>
+    <linearGradient id="leaf6dark" x1="0" y1="0" x2="0" y2="130" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4ea83a"/>
+      <stop offset="1" stop-color="#1f6b25"/>
+    </linearGradient>
+    <clipPath id="leaf6clip">
+      <path d="M30 6 C 60 28, 66 78, 38 122 C 34 124, 30 125, 28 125 C 26 125, 22 124, 20 122 C -6 78, 0 28, 30 6 Z"/>
+    </clipPath>
+  </defs>
+
+  <g transform="translate(40 56) rotate(8) scale(0.5) translate(-30 -68)">
+    <!-- Stem -->
+    <path d="M28 120 C 28 128, 30 134, 32 138" stroke="#1f6b25" stroke-width="3" stroke-linecap="round" fill="none"/>
+
+    <!-- Left half (lighter) -->
+    <path d="M30 6 C 0 28, -6 78, 20 122 C 22 124, 26 125, 28 125 L 30 125 Z" fill="url(#leaf6light)"/>
+
+    <!-- Right half (darker) -->
+    <path d="M30 6 C 60 28, 66 78, 38 122 C 36 124, 32 125, 30 125 L 30 6 Z" fill="url(#leaf6dark)"/>
+
+    <!-- Central S-curve fold/vein -->
+    <path d="M30 122 C 36 100, 22 60, 34 10" stroke="#0f4a1c" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.85"/>
+
+    <!-- Subtle side veins (right side only, like reference) -->
+    <g clip-path="url(#leaf6clip)" opacity="0.45">
+      <path d="M33 96 Q 46 92 56 84" stroke="#0f4a1c" stroke-width="1.1" stroke-linecap="round" fill="none"/>
+      <path d="M31 70 Q 44 64 54 56" stroke="#0f4a1c" stroke-width="1.1" stroke-linecap="round" fill="none"/>
+      <path d="M30 46 Q 40 40 48 34" stroke="#0f4a1c" stroke-width="1.1" stroke-linecap="round" fill="none"/>
+      <path d="M27 100 Q 16 96 6 90" stroke="#0f4a1c" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.7"/>
+      <path d="M26 74 Q 14 70 4 64" stroke="#0f4a1c" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.7"/>
+    </g>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="80" y="60" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="40" font-weight="800" letter-spacing="-0.5">
+    <tspan fill="#15803d">Green</tspan><tspan fill="#22c55e">YP</tspan>
+  </text>
+
+  <!-- Tagline -->
+  <text x="80" y="89" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="500" letter-spacing="0.3" fill="#15803d" opacity="0.85">Your Garden. Their Expertise.</text>
+</svg>
