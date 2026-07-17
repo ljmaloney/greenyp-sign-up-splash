@@ -1,31 +1,24 @@
-## Goal
+# Replace PublicHeader logo with uploaded banner
 
-Replace the leaf in `public/greenpages-logo-6.svg` with a shape that matches the uploaded reference: a more realistic, pointed-tip leaf with an asymmetric S-curve central vein, softer side veins, and a fuller body that tapers to a sharp apex (rather than the current symmetric teardrop).
+## Steps
 
-## Reference observations
+1. **Prepare the image asset**
+   - Take `user-uploads://mainpage-banner.png`, remove the white background to make it transparent, and resize to a header-friendly size (target ~1600px wide, height auto — retains crispness on retina while keeping file size small).
+   - Save as `src/assets/greenpages-banner.png` (or upload via `lovable-assets` CLI if we want CDN hosting — will use a local import for simplicity, matching how `greenyp-logo.png` is already imported).
 
-From `user-uploads://greenpages_splash.png`:
-- Pointed apex at top, gently rounded base.
-- Slight S-curve silhouette — left edge bulges lower, right edge bulges higher, so the leaf looks alive rather than perfectly symmetric.
-- Prominent dark-green central vein following the same S-curve, splitting the leaf into a lighter left half and a slightly darker right half.
-- 3–4 soft side veins per side branching off the central vein toward the edges.
-- Light-to-dark green gradient (light at the tip-facing side, darker toward the base/right).
-- Short stem at the base.
-- Leaf stands nearly upright (very slight tilt), not the current 20° rotation.
+2. **Update `src/components/PublicHeader.tsx`**
+   - Remove the `Leaf` icon import and the `<Leaf>` element.
+   - Remove the "GreenYP" text span.
+   - Remove the tagline `<p>` (the banner already contains the tagline).
+   - Replace the whole `<div className="flex flex-col">` block with a single `<Link to="/">` wrapping an `<img>` of the new banner.
+   - Give the image a sensible responsive height (e.g. `h-16 md:h-20 w-auto`) and descriptive `alt="GreenPages - Your go-to directory for landscapers, gardeners, nurseries, and green industry professionals"`.
+   - Keep the surrounding `<header>` and the `<CategoryNavigationBar />` untouched.
 
-## Changes to `public/greenpages-logo-6.svg`
+## Result
 
-1. Remove the existing teardrop `<path>`, central vein, and 8 side veins inside the leaf `<g>`.
-2. Replace with a new leaf composition:
-   - Outer silhouette: pointed apex at top, asymmetric curves (left side fuller below, right side fuller above), rounded base where the stem meets.
-   - Central vein: single dark-green path (`#14532d`) following an S-curve from base to apex, slightly off-center.
-   - 3 side veins per side, curving outward and upward from the central vein toward the edges, stroke `#14532d` at low opacity.
-   - Optional subtle two-tone fill: keep the existing `leaf6` gradient on the main body, plus a slightly darker overlay path on the right half (clipped to the leaf shape) to suggest the fold along the central vein.
-3. Reduce rotation from `rotate(20)` to about `rotate(5)` so the leaf stands nearly upright like the reference.
-4. Keep the stem rect, the leaf group's translate/scale, the surrounding viewBox (`280×120`), the wordmark, and the tagline exactly as they are.
+The header shows only the banner image (leaf + GreenPages wordmark + tagline), and clicking anywhere on it navigates to `/`.
 
-## Out of scope
+## Notes / open considerations
 
-- `greenpages-logo.svg`, `-2`, `-3`, `-4`, `-5`, and `-7` through `-16` are not touched.
-- No code references change — static asset only.
-- Wordmark, tagline, colors, gradient stops, fonts, and layout remain unchanged.
+- Only `PublicHeader.tsx` is changed. Other headers (`DashboardHeader`, `SubscribersHeader`, `ClassifiedsHeader`, `SignUpHeader`, `NoNavBarPublicHeader`) still use the Lucide Leaf + "GreenYP" wordmark. Let me know if you want those swapped too — not in scope for this plan.
+- The banner says "GreenPages" while the rest of the app says "GreenYP". Per your earlier branding memory that's intentional (GreenPages for marketing surfaces), so no text change is planned.
